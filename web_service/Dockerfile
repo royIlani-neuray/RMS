@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine AS base
+WORKDIR /app
+EXPOSE 8080
+
+ENV ASPNETCORE_URLS=http://+:8080
+
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
+WORKDIR /src
+COPY ["web_service/web_service.csproj", "./"]
+RUN dotnet restore "web_service.csproj"
+COPY web_service/. .
+RUN dotnet publish "web_service.csproj" -c Release -o /app/publish \
+    -r alpine-x64 \
+    --self-contained true \
+    -p:PublishTrimmed=true \
+    -p:PublishSingeFile=true
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["./web_service"]

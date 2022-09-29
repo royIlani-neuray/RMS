@@ -1,0 +1,21 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.9'
+
+services:
+  webservice:
+    image: webservice:latest
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: ./web_service/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - webservice_storage:/app/data
+      - ~/.vsdbg:/remote_debugger:rw
+
+volumes:
+  webservice_storage:
