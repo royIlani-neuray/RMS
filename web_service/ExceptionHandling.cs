@@ -59,7 +59,8 @@ public class ExceptionHandling
 
         if (exception is WebServiceException)
         {
-            context.Response.StatusCode = (exception as WebServiceException).StatusCode;
+            WebServiceException webException = (WebServiceException) exception; 
+            context.Response.StatusCode = webException.StatusCode;
         }
 
         _logger.LogError(exception.Message);

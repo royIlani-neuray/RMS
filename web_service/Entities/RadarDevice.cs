@@ -1,4 +1,7 @@
+using System.Text.Json.Serialization;
+
 namespace WebService.Entites;
+
 
 public class RadarDevice {
 
@@ -9,20 +12,41 @@ public class RadarDevice {
         Active
     };
 
+    [JsonPropertyName("state")]
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public DeviceState State { get; set; }
+
+    [JsonPropertyName("name")]
     public String Name { get; set; }
+
+    [JsonPropertyName("description")]
     public String Description { get; set; }
+
+    [JsonPropertyName("model")]
     public String Model { get; set; }
+
+    [JsonPropertyName("device_id")]
     public String Id { get; set; }
+    
+    [JsonPropertyName("enabled")]
     public bool Enabled {get; set; }
 
     public class RadarDeviceBrief 
     {
+        [JsonPropertyName("state")]
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceState State { get; set; }
+        [JsonPropertyName("name")]
         public String Name { get; set; }
+        [JsonPropertyName("description")]
         public String Description { get; set; }
+        [JsonPropertyName("model")]
         public String Model { get; set; }
+        [JsonPropertyName("device_id")]
         public String Id { get; set; }
+        [JsonPropertyName("enabled")]
         public bool Enabled {get; set; }
 
         public RadarDeviceBrief(RadarDevice device)

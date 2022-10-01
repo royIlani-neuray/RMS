@@ -32,10 +32,11 @@ public class DeviceStorage {
     {
         Dictionary<string, RadarDevice> devices = new Dictionary<string, RadarDevice>();
 
-        var files = System.IO.Directory.GetFiles(StoragePath, DeviceFileExtention);
+        var files = System.IO.Directory.GetFiles(StoragePath, "*" + DeviceFileExtention);
         foreach (string filePath in files)
         {
             string jsonString = File.ReadAllText(filePath);
+            
             RadarDevice? device = JsonSerializer.Deserialize<RadarDevice>(jsonString);
 
             if (device == null)

@@ -1,5 +1,7 @@
 using WebService.Entites;
 using WebService.Context;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebService.Controllers;
@@ -8,48 +10,60 @@ namespace WebService.Controllers;
 [Route("devices")]
 public class DeviceController : ControllerBase
 {
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<DeviceController> _logger;
 
-    public DeviceController(ILogger<WeatherForecastController> logger)
+    public DeviceController(ILogger<DeviceController> logger)
     {
         _logger = logger;
-    }
-
-    public class NewDeviceInfo {
-        public string Id = String.Empty;
-        public string Name = String.Empty;
-        public string Description = String.Empty;
-
-        public void Validate()
-        {
-            if (Name == String.Empty)
-                throw new HttpRequestException("Missing radar name.");
-            if (Id == String.Empty)
-                throw new HttpRequestException("Missing radar id.");            
-        }
     }
 
     [HttpGet]
     public List<RadarDevice.RadarDeviceBrief> GetDevices()
     {
-        Console.WriteLine("in GetDevices!");
         return DeviceContext.Instance.GetDevicesBrief();
     }
 
     [HttpGet("{deviceId}")]
     public RadarDevice GetRadarDevice(string deviceId)
-    {
-        Console.WriteLine($"in GetDevice - {deviceId}!");
-        
+    {        
         if (!DeviceContext.Instance.IsRadarDeviceExist(deviceId))
             throw new NotFoundException("There is no device with the provided id");
 
         return DeviceContext.Instance.GetDevice(deviceId);
     }
 
-    [HttpPost]
-    public string AddRadarDevice(NewDeviceInfo newDeviceInfo)
+    [HttpDelete("{deviceId}")]
+    public void DeleteRadarDevice(string deviceId)
+    {        
+
+    }
+
+    public class NewDeviceInfo 
     {
+        [JsonPropertyName("device_id")]
+        public string Id { get; set; } = String.Empty;
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = String.Empty;
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = String.Empty;
+
+        public void Validate()
+        {
+            if (string.IsNullOrWhiteSpace(Name))
+                throw new HttpRequestException("Missing radar name.");
+            if (string.IsNullOrWhiteSpace(Id))
+                throw new HttpRequestException("Missing radar id.");            
+        }
+    }
+
+    [HttpPost]
+    public string AddRadarDevice([FromBody] NewDeviceInfo newDeviceInfo)
+    {
+        string jsonString = JsonSerializer.Serialize(newDeviceInfo);
+        _logger.LogInformation($"info: {jsonString}");
+
         newDeviceInfo.Validate();
         RadarDevice device = new RadarDevice();
         device.Id = newDeviceInfo.Id;
@@ -59,4 +73,23 @@ public class DeviceController : ControllerBase
         DeviceContext.Instance.AddDevice(device);
         return device.Id;
     }
+
+    [HttpPost("{deviceId}/enable")]
+    public void EnableRadarDevice(string deviceId)
+    {
+        
+    }
+
+    [HttpPost("{deviceId}/disable")]
+    public void DisableRadarDevice(string deviceId)
+    {
+        
+    }
+
+    [HttpPut("{deviceId}/network")]
+    public void SetRadarDeviceNetwork(string deviceId)
+    {
+        
+    }
+
 }
