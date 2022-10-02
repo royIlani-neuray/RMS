@@ -48,7 +48,7 @@ public sealed class DeviceContext {
     public RadarDevice GetDevice(string deviceId)
     {
         if (!IsRadarDeviceExist(deviceId))
-            throw new Exception("Could not find device in context with id - {deviceId}");
+            throw new NotFoundException("Could not find device in context with id - {deviceId}");
 
         return devices[deviceId];
     }
@@ -60,6 +60,14 @@ public sealed class DeviceContext {
 
         DeviceStorage.SaveDevice(device);
         devices.Add(device.Id, device);
+    }
+
+    public void UpdateDevice(RadarDevice device)
+    {
+        if (!IsRadarDeviceExist(device.Id))
+            throw new NotFoundException("Could not find device in context with id - {deviceId}");
+
+        DeviceStorage.SaveDevice(device);
     }
 
     public void DeleteDevice(RadarDevice device)

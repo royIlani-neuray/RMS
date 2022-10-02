@@ -32,6 +32,9 @@ public class RadarDevice {
     [JsonPropertyName("enabled")]
     public bool Enabled {get; set; }
 
+    [JsonIgnore]
+    public ReaderWriterLockSlim deviceLock;
+
     public class RadarDeviceBrief 
     {
         [JsonPropertyName("state")]
@@ -62,6 +65,7 @@ public class RadarDevice {
 
     public RadarDevice()
     {
+        deviceLock = new ReaderWriterLockSlim();
         Name = "";
         Description = "";
         Model = "";

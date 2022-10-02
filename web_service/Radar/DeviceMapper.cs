@@ -1,6 +1,6 @@
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Text.Json.Serialization;
 
 namespace WebService.Radar;
 
@@ -8,6 +8,28 @@ public class DeviceMapper
 {
     private Task? broadcastListenerTask;
     private UdpClient? udpClient;
+
+    private Dictionary<string, MappedDevice> mappedDevices;
+
+    Action<MappedDevice>? deviceRegisteredCallback;
+
+    public class MappedDevice 
+    {
+        [JsonPropertyName("ip")]
+        public string ipAddress { get; set; } = String.Empty;
+        [JsonPropertyName("subnet")]
+        public string subnetMask { get; set; } = String.Empty;
+        [JsonPropertyName("gateway")]
+        public string gwAddress { get; set; } = String.Empty;
+        [JsonPropertyName("device_id")]
+        public string deviceId { get; set; } = String.Empty;
+        [JsonPropertyName("model")]
+        public string model { get; set; } = String.Empty;
+        [JsonPropertyName("application")]
+        public string appName { get; set; } = String.Empty;
+        [JsonPropertyName("static_ip")]
+        public bool staticIP { get; set; } = false;
+    }
 
     #region Singleton
     
@@ -30,7 +52,11 @@ public class DeviceMapper
         }
     }
 
-    private DeviceMapper() {}
+    private DeviceMapper() 
+    {
+        mappedDevices = new Dictionary<string, MappedDevice>();
+        deviceRegisteredCallback = null;
+    }
 
     #endregion
 
@@ -125,10 +151,24 @@ public class DeviceMapper
             var guidBytes = reader.ReadBytes(IPRadarClient.DEVICE_ID_SIZE_BYTES);           
             Guid guid = new Guid(guidBytes);
 
-            IPAddress ip = new IPAddress(reader.ReadBytes(4));
-            IPAddress subnet = new IPAddress(reader.ReadBytes(4));
-            IPAddress gateway = new IPAddress(reader.ReadBytes(4));
+            IPAddress ip = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
+            IPAddress subnet = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
+            IPAddress gateway = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
             bool staticIP = reader.ReadBoolean();
+            string model = new string(reader.ReadChars(IPRadarClient.MODEL_STRING_MAX_LENGTH)).Replace("\x00","");
+            string appName = new string(reader.ReadChars(IPRadarClient.APP_STRING_MAX_LENGTH)).Replace("\x00","");
+
+            
+            MappedDevice deviceInfo = new MappedDevice()
+            {
+                ipAddress = ip.ToString(),
+                subnetMask = subnet.ToString(),
+                gwAddress = gateway.ToString(),
+                deviceId = guid.ToString(),
+                staticIP = staticIP,
+                model = model,
+                appName = appName
+            };
 
             Console.WriteLine();
             Console.WriteLine($"Got a broadcast message from: {endpoint}");
@@ -137,6 +177,8 @@ public class DeviceMapper
             Console.WriteLine($"subnet: {subnet}");
             Console.WriteLine($"gateway: {gateway}");
             Console.WriteLine($"staticIP: {staticIP}");
+            Console.WriteLine($"model: {model}");
+            Console.WriteLine($"appName: {appName}");
             Console.WriteLine();
             
             // *** TEST
@@ -151,7 +193,33 @@ public class DeviceMapper
             System.Console.WriteLine($"Response: {resp}");
             Console.WriteLine();
             */
+
+            AddOrUpdateMappedDevice(deviceInfo);
         }
     }
 
+    public void SetDeviceRegisteredCallback(Action<MappedDevice> callback)
+    {
+        deviceRegisteredCallback = callback;
+    }
+
+    private void AddOrUpdateMappedDevice(MappedDevice mappedDevice)
+    {
+        if (mappedDevices.ContainsKey(mappedDevice.deviceId))
+        {
+            mappedDevices[mappedDevice.deviceId] = mappedDevice;
+        }
+        else
+        {
+            mappedDevices.Add(mappedDevice.deviceId, mappedDevice);
+        }
+
+        if (deviceRegisteredCallback != null)
+            deviceRegisteredCallback(mappedDevice);
+    }
+
+    public List<MappedDevice> GetMappedDevices()
+    {
+        return mappedDevices.Values.ToList();
+    }
 }

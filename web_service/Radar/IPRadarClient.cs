@@ -24,6 +24,10 @@ public class IPRadarClient
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
+
+    public const int IPV4_ADDRESS_SIZE = 4;
+    public const int MODEL_STRING_MAX_LENGTH = 15;
+    public const int APP_STRING_MAX_LENGTH = 30;
     
     #endregion
 
@@ -168,9 +172,17 @@ public class IPRadarClient
         }
 
         var responseChars = reader.ReadChars(MAX_TI_RESPONSE_SIZE);
-        string responseString = new string(responseChars);
+        string responseString = new string(responseChars).Replace("\x00","");
 
         return responseString;
+    }
+
+    public int ReadTIData(byte[] dataArray, int size)
+    {
+        if (!isConnected)
+            throw new Exception("ReadTIData failed - radar not connected.");
+        
+        return dataStream!.GetStream().Read(dataArray, 0, size);
     }
 
     public static List<IPAddress> GetBroadcastAddresses()
@@ -217,7 +229,7 @@ public class IPRadarClient
         writer.Write(IPAddress.Parse(gwAddress).GetAddressBytes());
         writer.Write(staticIP);
 
-        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES + 4 + 4 + 4 + 1];
+        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES + (IPV4_ADDRESS_SIZE * 3) + 1];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(packet, 0, packet.Length);
 
