@@ -158,4 +158,10 @@ public class DeviceController : ControllerBase
         action.Run();
     }
 
+    [HttpGet("{deviceId}/tracks")]
+    public string GetDeviceTracks(string deviceId)
+    {
+        // TODO: ......
+        return "";
+    }
 }

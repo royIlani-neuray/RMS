@@ -31,8 +31,14 @@ public class SettingsController : ControllerBase
     [HttpPost("tracking-report-url")]
     public void SetTrackingReportURL([FromBody] ReportsUrl reportsUrl)
     {
-         if (reportsUrl == null)
-            throw new BadRequestException("missing url");
+         if ((reportsUrl == null) || (reportsUrl.URL == null))
+            throw new BadRequestException("missing url.");
+        
+        if (reportsUrl.URL != String.Empty)
+        {
+            if (!Uri.IsWellFormedUriString(reportsUrl.URL, UriKind.Absolute))
+                throw new BadRequestException("invalid url provided.");
+        }
 
         ServiceSettings.Instance.ReportsURL = reportsUrl.URL!;       
     }
