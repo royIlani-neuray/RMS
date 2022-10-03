@@ -11,7 +11,7 @@ public class DeviceMapper
 
     private Dictionary<string, MappedDevice> mappedDevices;
 
-    Action<MappedDevice>? deviceRegisteredCallback;
+    Action<string>? deviceRegisteredCallback;
 
     public class MappedDevice 
     {
@@ -187,10 +187,7 @@ public class DeviceMapper
             Console.WriteLine();
             Console.WriteLine($"Connecting...");
             client.Connect();
-            string command = "sensorStop";
-            System.Console.WriteLine($"Sending command: {command}");
-            var resp = client.SendTICommand(command);
-            System.Console.WriteLine($"Response: {resp}");
+            client.ResetRadar();
             Console.WriteLine();
             */
 
@@ -198,7 +195,7 @@ public class DeviceMapper
         }
     }
 
-    public void SetDeviceRegisteredCallback(Action<MappedDevice> callback)
+    public void SetDeviceRegisteredCallback(Action<string> callback)
     {
         deviceRegisteredCallback = callback;
     }
@@ -215,11 +212,16 @@ public class DeviceMapper
         }
 
         if (deviceRegisteredCallback != null)
-            deviceRegisteredCallback(mappedDevice);
+            deviceRegisteredCallback(mappedDevice.deviceId);
     }
 
     public List<MappedDevice> GetMappedDevices()
     {
         return mappedDevices.Values.ToList();
+    }
+
+    public MappedDevice GetMappedDevice(string deviceId)
+    {
+        return mappedDevices[deviceId];
     }
 }

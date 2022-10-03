@@ -67,6 +67,7 @@ public class IPRadarClient
         {
             Console.WriteLine($"Connecting to radar data port at ({ipAddress}:{IP_RADAR_DATA_PORT})...");
             dataStream = new TcpClient(ipAddress, IP_RADAR_DATA_PORT);
+            dataStream.ReceiveTimeout = 1000;
         }
         catch (Exception ex)
         {
@@ -181,7 +182,8 @@ public class IPRadarClient
     {
         if (!isConnected)
             throw new Exception("ReadTIData failed - radar not connected.");
-        
+
+        //System.Console.WriteLine($"Debug: Trying to Read from data stream... size: {size}"); 
         return dataStream!.GetStream().Read(dataArray, 0, size);
     }
 
@@ -223,7 +225,8 @@ public class IPRadarClient
         writer.Write(IPRadarClient.PROTOCOL_REVISION);
         writer.Write(IPRadarClient.CONFIGURE_NETWORK_KEY);
 
-        writer.Write(deviceId.ToCharArray());
+        Guid guid = new Guid(deviceId);
+        writer.Write(guid.ToByteArray());
         writer.Write(IPAddress.Parse(ipAddress).GetAddressBytes());
         writer.Write(IPAddress.Parse(subnetMask).GetAddressBytes());
         writer.Write(IPAddress.Parse(gwAddress).GetAddressBytes());

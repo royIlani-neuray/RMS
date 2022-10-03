@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using WebService.Context;
 using WebService.Radar;
+using WebService.Actions.Radar;
 
 public class Startup {
 
@@ -15,6 +16,7 @@ public class Startup {
         DeviceContext.Instance.LoadDevicesFromStorage();
 
         Console.WriteLine("Starting Device Mapper...");
+        DeviceMapper.Instance.SetDeviceRegisteredCallback(DeviceRegisteredAction.OnDeviceRegisteredCallback);
         DeviceMapper.Instance.Start();
 
         Console.WriteLine("Starting web service thread...");

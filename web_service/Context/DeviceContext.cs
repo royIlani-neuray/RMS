@@ -35,6 +35,9 @@ public sealed class DeviceContext {
     public void LoadDevicesFromStorage()
     {
         devices = new Dictionary<string, RadarDevice>(DeviceStorage.LoadAllDevices());
+
+        foreach (var device in devices.Values)
+            device.State = RadarDevice.DeviceState.Disconnected;
     }
 
     public bool IsRadarDeviceExist(string deviceId)
@@ -48,7 +51,7 @@ public sealed class DeviceContext {
     public RadarDevice GetDevice(string deviceId)
     {
         if (!IsRadarDeviceExist(deviceId))
-            throw new NotFoundException("Could not find device in context with id - {deviceId}");
+            throw new NotFoundException($"Could not find device in context with id - {deviceId}");
 
         return devices[deviceId];
     }
@@ -65,7 +68,7 @@ public sealed class DeviceContext {
     public void UpdateDevice(RadarDevice device)
     {
         if (!IsRadarDeviceExist(device.Id))
-            throw new NotFoundException("Could not find device in context with id - {deviceId}");
+            throw new NotFoundException($"Could not find device in context with id - {device.Id}");
 
         DeviceStorage.SaveDevice(device);
     }

@@ -27,13 +27,11 @@ public abstract class RadarDeviceAction : IAction
             radarDevice.deviceLock.EnterWriteLock();
             RunDeviceAction(radarDevice);
         }
-        catch
-        {
-            throw;
-        }
         finally
         {
-            DeviceContext.Instance.UpdateDevice(radarDevice);
+            if (DeviceContext.Instance.IsRadarDeviceExist(deviceId))
+                DeviceContext.Instance.UpdateDevice(radarDevice);
+                
             radarDevice.deviceLock.ExitWriteLock();
             radarDevice.deviceLock.ExitUpgradeableReadLock();
         }
