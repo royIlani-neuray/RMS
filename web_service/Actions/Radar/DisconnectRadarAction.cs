@@ -12,7 +12,7 @@ public class DisconnectRadarAction : IAction
 
     public void Run()
     {
-        System.Console.WriteLine($"Debug: DisconnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
+        //System.Console.WriteLine($"Debug: DisconnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
 
         if (radarDevice.State == RadarDevice.DeviceState.Active)
         {

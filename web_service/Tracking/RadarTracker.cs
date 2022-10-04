@@ -9,11 +9,13 @@ public class RadarTracker
     private Task? trackerTask;
     private ITrackingApplication? trackingApp;
     private bool runTracker;
+    private TrackReporter trackReporter;
 
     public RadarTracker(RadarDevice radarDevice)
     {
         this.radarDevice = radarDevice;
         runTracker = false;
+        trackReporter = new TrackReporter();
     }
 
     public void TriggerDisconnectAction()
@@ -48,16 +50,19 @@ public class RadarTracker
         {
             try
             {
+                trackReporter.StartWorker();
                 ConfigureRadar();
-
                 trackingApp = new TrafficMonitoring();
-
-                TreakingLoop();                 
+                TreakingLoop();               
             }
             catch
             {
                 // unexpected connection timeout, trigger a disconnect flow
                 TriggerDisconnectAction();
+            }
+            finally
+            {
+                trackReporter.StopWorker();
             } 
         });
 
@@ -104,6 +109,8 @@ public class RadarTracker
         {
             System.Console.WriteLine("Getting next frame...");
             trackingApp!.GetNextFrame(radarDevice.ipRadarClient!.ReadTIData);
+
+            trackReporter.SendReport("");
         }
 
         System.Console.WriteLine("Debug: Tracking loop exited.");

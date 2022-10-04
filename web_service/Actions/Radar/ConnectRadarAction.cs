@@ -13,7 +13,7 @@ public class ConnectRadarAction : IAction
 
     public void Run()
     {
-        System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
+        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
 
         if (!radarDevice.Enabled)
         {
