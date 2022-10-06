@@ -1,30 +1,73 @@
+using System.Text;
+using System.Text.Json;
 using WebService.Utils;
 
 namespace WebService.Tracking;
 
-public class TrackReporter : WorkerThread<string>
+public class TrackReporter : WorkerThread<FrameData>
 {
     private const int MAX_QUEUE_CAPACITY = 5;
 
+    private DateTime LastReportTime;
+    private HttpClient httpClient;
+
     public TrackReporter() : base(MAX_QUEUE_CAPACITY)
     {
+        LastReportTime = DateTime.Now;
+        httpClient = new HttpClient();
     }
 
-    public void SendReport(string report)
+    public void SendReport(FrameData frameData)
     {
-        Enqueue(report);
+        Enqueue(frameData);
     }
 
-    protected override void DoWork(string workItem)
+    protected override void DoWork(FrameData workItem)
     {
         try
         {
-            
+            string reportsURL = ServiceSettings.Instance.ReportsURL;
+            int ReportsIntervalSec = ServiceSettings.Instance.ReportsIntervalSec;
+
+            //System.Console.WriteLine($"ReportsURL: {reportsURL}");
+            //System.Console.WriteLine($"ReportsIntervalSec: {ReportsIntervalSec}");
+
+            DateTime currentTime = DateTime.Now;
+            var timeDiffSeconds = (currentTime - LastReportTime).TotalSeconds;
+
+            if (reportsURL == String.Empty)
+            {
+                System.Console.WriteLine("Warning: reports URL is not set. cannot send report.");
+                return;
+            }
+
+            if (timeDiffSeconds < ReportsIntervalSec)
+            {
+                // avoid sending since we are still within ReportsIntervalSec
+                return;
+            }
+
+            if (workItem.tracksList.Count == 0)
+            {
+                // report only if there is a detection
+                return;
+            }
+            System.Console.WriteLine($"Sening report: - {reportsURL} - {DateTime.Now}");
+            LastReportTime = DateTime.Now;
+
+            string jsonString = JsonSerializer.Serialize(workItem);
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, reportsURL)
+            {
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+            };
+
+            httpClient.Send(httpRequest);
+
         }
-        catch (System.Exception)
+        catch (System.Exception ex)
         {
-            
-            throw;
+            System.Console.WriteLine($"Error: could not send tracks report - {ex.Message}");
         }
     }
 }

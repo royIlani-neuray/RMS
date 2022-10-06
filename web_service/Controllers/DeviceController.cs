@@ -2,7 +2,7 @@ using WebService.Entites;
 using WebService.Context;
 using WebService.Radar;
 using WebService.Actions.Radar;
-using System.Text.Json;
+using WebService.Tracking;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -159,9 +159,29 @@ public class DeviceController : ControllerBase
     }
 
     [HttpGet("{deviceId}/tracks")]
-    public string GetDeviceTracks(string deviceId)
+    public FrameData GetDeviceTracks(string deviceId)
     {
-        // TODO: ......
-        return "";
+        ValidateDeviceId(deviceId); 
+        var radarDevice = DeviceContext.Instance.GetDevice(deviceId);
+
+        if ((radarDevice.radarTracker != null) && (radarDevice.radarTracker.LastFrameData != null))
+        {
+            return radarDevice.radarTracker.LastFrameData;
+        }
+        else
+        {
+            return new FrameData() {
+                DeviceId = radarDevice.Id,
+                DeviceName = radarDevice.Name
+            };
+        }
+    }
+
+    [HttpPost("{deviceId}/tracks-loopback")]
+    public void TracksLoopback(string deviceId, [FromBody] object data)
+    {
+        System.Console.WriteLine("***** Tracks Loopback ******");
+        System.Console.WriteLine(data);
+        System.Console.WriteLine("****************************");
     }
 }

@@ -15,7 +15,7 @@ public class TrafficMonitoring : ITrackingApplication
     public const int TLV_TYPE_TARGETS_INDEX = 8;
     public const int TLV_TYPE_POINT_CLOUD_SIDE_INFO = 9;
 
-    public class FrameData {
+    public class TrafficAppFrameData {
         public class FrameHeader 
         {
             public ulong MagicWord;
@@ -88,36 +88,42 @@ public class TrafficMonitoring : ITrackingApplication
         public List<Track> tracksList = new List<Track>();
     }
 
-    public void GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public TrafficAppFrameData ReadFrame(ITrackingApplication.ReadTIData readTIDataFunction)
     {
-        FrameData frameData = new FrameData();
-        byte [] headerBytes = new byte[FRAME_HEADER_SIZE];
-        var len = readTIDataFunction(headerBytes, headerBytes.Length);
-        if (len != FRAME_HEADER_SIZE)
+        TrafficAppFrameData frameData = new TrafficAppFrameData();
+
+        while (true)
         {
-            Console.WriteLine($"failed reading frame header. read len: {len}");
-            return;
+            byte [] headerBytes = new byte[FRAME_HEADER_SIZE];
+            
+            var len = readTIDataFunction(headerBytes, headerBytes.Length);
+            if (len != FRAME_HEADER_SIZE)
+            {
+                //Console.WriteLine($"failed reading frame header. read len: {len}");
+                continue;
+            }
+
+            frameData.frameHeader = new TrafficAppFrameData.FrameHeader(headerBytes);
+            
+            if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
+            {
+                Console.WriteLine("invalid magic header");
+                continue;
+            }
+
+            break;
         }
 
-        frameData.frameHeader = new FrameData.FrameHeader(headerBytes);
-        
-        if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
-        {
-            Console.WriteLine("invalid magic header");
-            return;
-        }
-
-        Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
-        Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
-        Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
+        //Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
+        //Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
+        //Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
 
         for (int tlvIndex = 0; tlvIndex < frameData.frameHeader.NumTLVs; tlvIndex++)
         {
             byte [] tlvInfoBytes = new byte[TLV_HEADER_SIZE];
             if (readTIDataFunction(tlvInfoBytes, tlvInfoBytes.Length) != TLV_HEADER_SIZE)
             {
-                Console.WriteLine("failed reading TLV info");
-                return;
+                throw new Exception("failed reading TLV info");
             }
 
             var reader = new BinaryReader(new MemoryStream(tlvInfoBytes));
@@ -127,8 +133,7 @@ public class TrafficMonitoring : ITrackingApplication
             byte [] tlvDataBytes = new byte[tlvLength];
             if (readTIDataFunction(tlvDataBytes, tlvDataBytes.Length) != tlvLength)
             {
-                Console.WriteLine("failed reading TLV data!");
-                return;
+                throw new Exception("failed reading TLV data!");
             }
 
             reader = new BinaryReader(new MemoryStream(tlvDataBytes));
@@ -138,7 +143,7 @@ public class TrafficMonitoring : ITrackingApplication
                 var pointsCount = tlvLength / POINT_CLOUD_INFO_SIZE;
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
-                    FrameData.Point point = new FrameData.Point();
+                    TrafficAppFrameData.Point point = new TrafficAppFrameData.Point();
                     point.Range = reader.ReadSingle();
                     point.Azimuth = reader.ReadSingle();
                     point.Elevation = reader.ReadSingle();
@@ -154,7 +159,7 @@ public class TrafficMonitoring : ITrackingApplication
                 var pointsCount = tlvLength / POINT_CLOUD_SIDE_INFO_SIZE;
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
-                    FrameData.PointSideInfo point = new FrameData.PointSideInfo();
+                    TrafficAppFrameData.PointSideInfo point = new TrafficAppFrameData.PointSideInfo();
                     point.SNR = reader.ReadInt16();
                     point.Noise = reader.ReadInt16();
                     frameData.pointCloudSideInfo.Add(point);
@@ -168,7 +173,7 @@ public class TrafficMonitoring : ITrackingApplication
                 var tracksCount = tlvLength / TRACK_OBJECT_TLV_SIZE;
                 for (int trackIndex = 0; trackIndex < tracksCount; trackIndex++)
                 {
-                    FrameData.Track track = new FrameData.Track();
+                    TrafficAppFrameData.Track track = new TrafficAppFrameData.Track();
                     track.TrackId = reader.ReadUInt32();
                     track.PositionX = reader.ReadSingle();
                     track.PositionY = reader.ReadSingle();
@@ -189,7 +194,48 @@ public class TrafficMonitoring : ITrackingApplication
             }
         }
 
-        System.Console.WriteLine("Done reading frame!!! :)");
+        //System.Console.WriteLine("Done reading frame!!! :)");
+        return frameData;  
+    }
+
+    public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    {
+        TrafficAppFrameData trafficAppFrameData = ReadFrame(readTIDataFunction);
+        
+        // convert to generic frame data
+        FrameData outFrameData = new Tracking.FrameData();
+        
+        foreach (var point in trafficAppFrameData.pointCloudList)
+        {
+            var convertedPoint = new FrameData.Point {
+                Azimuth = point.Azimuth,
+                Elevation = point.Elevation,
+                Range = point.Range,
+                Doppler = point.Doppler
+            };
+            
+            outFrameData.pointsList.Add(convertedPoint);
+        }
+
+        foreach (var track in trafficAppFrameData.tracksList)
+        {
+            var convertedTrack = new FrameData.Track {
+                TrackId = track.TrackId,
+                PositionX = track.PositionX,
+                PositionY = track.PositionY,
+                PositionZ = track.PositionZ,
+                VelocityX = track.VelocityX,
+                VelocityY = track.VelocityY,
+                VelocityZ = track.VelocityZ,
+                AccelerationX = track.AccelerationX,
+                AccelerationY = track.AccelerationY,
+                AccelerationZ = track.AccelerationZ
+            };
+
+            outFrameData.tracksList.Add(convertedTrack);
+        }
+
+        return outFrameData;
     }
 
 }

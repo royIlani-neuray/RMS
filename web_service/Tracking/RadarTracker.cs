@@ -10,6 +10,8 @@ public class RadarTracker
     private ITrackingApplication? trackingApp;
     private bool runTracker;
     private TrackReporter trackReporter;
+    
+    public FrameData? LastFrameData;
 
     public RadarTracker(RadarDevice radarDevice)
     {
@@ -107,10 +109,23 @@ public class RadarTracker
     {
         while (runTracker)
         {
-            System.Console.WriteLine("Getting next frame...");
-            trackingApp!.GetNextFrame(radarDevice.ipRadarClient!.ReadTIData);
-
-            trackReporter.SendReport("");
+            FrameData nextFrame;
+            //System.Console.WriteLine("Getting next frame...");
+            
+            try
+            {
+                nextFrame = trackingApp!.GetNextFrame(radarDevice.ipRadarClient!.ReadTIData);
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine($"Error: failed getting frame: {ex.Message}");
+                throw;
+            }
+            
+            nextFrame.DeviceId = radarDevice.Id;
+            nextFrame.DeviceName = radarDevice.Name;
+            LastFrameData = nextFrame;
+            trackReporter.SendReport(LastFrameData);
         }
 
         System.Console.WriteLine("Debug: Tracking loop exited.");
