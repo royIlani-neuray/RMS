@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
 import { HttpClientModule} from '@angular/common/http'
+import {RouterModule} from '@angular/router';
 
 import {MatTableModule} from '@angular/material/table';
 import {MatChipsModule} from '@angular/material/chips';
@@ -18,6 +19,7 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
   imports: [
     CommonModule,
     HttpClientModule,
+    RouterModule,
 
     MatTableModule,
     MatChipsModule

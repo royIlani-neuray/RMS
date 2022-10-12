@@ -1,28 +1,18 @@
+
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <span>{{title}}</span>
-    <button mat-button>Home</button>
-    <button mat-button>Devices</button>
+    <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
+    <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Home</button></a>
+    <a routerLink="/devices" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Devices</button></a>
   </mat-toolbar-row>
 </mat-toolbar>
-<!--
-<button mat-button color="primary">Primary</button>
-<button mat-button color="accent">Accent</button>
-<button mat-button color="warn">Warn</button>
-<button mat-button disabled>Disabled</button>
-<br>
-<button mat-raised-button color="primary">Primary</button>
-<button mat-raised-button color="accent">Accent</button>
-<button mat-raised-button color="warn">Warn</button>
-<button mat-raised-button disabled>Disabled</button>
-<br>
--->
+
 <br>
 
 <div class="page-margin">
-  <app-devices-page></app-devices-page>
+  <router-outlet></router-outlet>
 </div>
 
 <!--<app-page-tracks-viewer></app-page-tracks-viewer>-->
 
-<router-outlet></router-outlet>
+

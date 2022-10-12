@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-device-page',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DevicePageComponent implements OnInit {
 
-  constructor() { }
+  constructor(private activatedRoute:ActivatedRoute) { }
 
   ngOnInit(): void {
+    let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
+    console.log('device id: %s', deviceId)
   }
 
 }

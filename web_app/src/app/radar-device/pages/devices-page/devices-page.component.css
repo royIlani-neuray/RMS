@@ -10,3 +10,7 @@
 .device-disabled {
     color: red; 
 }
+
+.mat-row:hover {
+    background-color:lightcyan;
+}
