@@ -6,11 +6,13 @@ import { DevicesPageComponent } from './radar-device/pages/devices-page/devices-
 
 import { HomepageComponent } from './homepage/pages/homepage/homepage.component';
 import { ErrorPageNotFoundComponent} from './homepage/pages/error-page-not-found/error-page-not-found.component';
+import { ErrorPageNoServiceComponent } from './homepage/pages/error-page-no-service/error-page-no-service.component';
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
   { path: 'device/:device_id', component: DevicePageComponent },
   { path: 'devices', component: DevicesPageComponent },
+  { path: 'no-service', component: ErrorPageNoServiceComponent },
   
   //Wild Card Route for 404 request
   { path: '**', pathMatch: 'full', component: ErrorPageNotFoundComponent },

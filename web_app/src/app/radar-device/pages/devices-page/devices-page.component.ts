@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { RadarDeviceBrief } from 'src/app/entities/radar-device';
-import { RadarDeviceModule } from '../../radar-device.module';
 import { DevicesService } from '../../services/devices.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-devices-page',
@@ -15,7 +15,7 @@ export class DevicesPageComponent implements OnInit {
   dataSource = new MatTableDataSource<RadarDeviceBrief>(this.deviceList)
   displayedColumns: string[] = ['name', 'state', 'enabled', 'device_id', 'description'];
 
-  constructor(private devicesService:DevicesService) { }
+  constructor(private devicesService : DevicesService, private router : Router) { }
 
   ngOnInit(): void {
     this.getDeviceList()
@@ -23,7 +23,10 @@ export class DevicesPageComponent implements OnInit {
 
   public getDeviceList()
   {
-    this.devicesService.getRadarDevices().subscribe(response => this.dataSource.data = response as RadarDeviceBrief[])
+    this.devicesService.getRadarDevices().subscribe({
+      next : (response) => this.dataSource.data = response as RadarDeviceBrief[],
+      error : (err) => this.router.navigate(['/no-service'])
+    })
   }
 
 }

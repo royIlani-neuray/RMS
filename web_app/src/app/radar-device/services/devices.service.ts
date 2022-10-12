@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { RadarDeviceBrief } from 'src/app/entities/radar-device';
 
+
 @Injectable({
   providedIn: 'root'
 })
