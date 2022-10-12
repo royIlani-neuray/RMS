@@ -2,8 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DevicesComponent } from './pages/devices/devices.component';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
+import { HttpClientModule} from '@angular/common/http'
 
-
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,9 @@ import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.compo
     TracksViewerComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatTableModule,
+    HttpClientModule
   ],
   exports: [
     DevicesComponent,
