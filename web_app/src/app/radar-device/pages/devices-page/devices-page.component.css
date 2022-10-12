@@ -1,0 +1,12 @@
+
+.devices-table {
+    width: 100%;
+  }
+
+.device-enabled {
+    color: blue; 
+}
+
+.device-disabled {
+    color: red; 
+}

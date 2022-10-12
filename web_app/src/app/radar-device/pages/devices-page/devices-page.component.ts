@@ -5,11 +5,11 @@ import { RadarDeviceModule } from '../../radar-device.module';
 import { DevicesService } from '../../services/devices.service';
 
 @Component({
-  selector: 'app-page-devices',
-  templateUrl: './devices.component.html',
-  styleUrls: ['./devices.component.css']
+  selector: 'app-devices-page',
+  templateUrl: './devices-page.component.html',
+  styleUrls: ['./devices-page.component.css']
 })
-export class DevicesComponent implements OnInit {
+export class DevicesPageComponent implements OnInit {
 
   deviceList: RadarDeviceBrief[] = [];
   dataSource = new MatTableDataSource<RadarDeviceBrief>(this.deviceList)

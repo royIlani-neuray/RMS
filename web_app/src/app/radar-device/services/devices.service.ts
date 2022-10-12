@@ -12,7 +12,7 @@ export class DevicesService {
 
   public getRadarDevices()
   {
-    console.log('in getRadarDevices service')
+    //console.log('in getRadarDevices service')
     return this.http.get("http://localhost:4200/api/devices")
   }
 }
