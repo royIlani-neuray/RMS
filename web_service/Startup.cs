@@ -19,15 +19,8 @@ public class Startup {
         DeviceMapper.Instance.SetDeviceRegisteredCallback(DeviceRegisteredAction.OnDeviceRegisteredCallback);
         DeviceMapper.Instance.Start();
 
-        Console.WriteLine("Starting web service thread...");
-
-        mainTask = new Task(() => 
-        { 
-            while (true)
-                Thread.Sleep(10000);                
-        });
-        
-        mainTask.Start();
+        Console.WriteLine("Starting WebSocket reporter...");
+        TracksWebsocketReporter.Instance.StartWorker();   
     }
 
 }

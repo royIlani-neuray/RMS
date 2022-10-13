@@ -1,4 +1,3 @@
-
 Startup.ApplicationStart();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +23,8 @@ app.UseMiddleware<ExceptionHandling>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseWebSockets();
 
 app.MapControllers();
 

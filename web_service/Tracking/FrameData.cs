@@ -18,31 +18,31 @@ public class FrameData
         [JsonPropertyName("track_id")]
         public uint TrackId { get; set; }
 
-        [JsonPropertyName("position-x")]
+        [JsonPropertyName("position_x")]
         public float PositionX { get; set; }
 
-        [JsonPropertyName("position-y")]
+        [JsonPropertyName("position_y")]
         public float PositionY { get; set; }
 
-        [JsonPropertyName("position-z")]
+        [JsonPropertyName("position_z")]
         public float PositionZ { get; set; }
 
-        [JsonPropertyName("velocity-x")]
+        [JsonPropertyName("velocity_x")]
         public float VelocityX { get; set; }
 
-        [JsonPropertyName("velocity-y")]
+        [JsonPropertyName("velocity_y")]
         public float VelocityY { get; set; }
 
-        [JsonPropertyName("velocity-z")]
+        [JsonPropertyName("velocity_z")]
         public float VelocityZ { get; set; }
 
-        [JsonPropertyName("acceleration-x")]
+        [JsonPropertyName("acceleration_x")]
         public float AccelerationX { get; set; }
 
-        [JsonPropertyName("acceleration-y")]
+        [JsonPropertyName("acceleration_y")]
         public float AccelerationY { get; set; }
 
-        [JsonPropertyName("acceleration-z")]
+        [JsonPropertyName("acceleration_z")]
         public float AccelerationZ { get; set; }
     }
 

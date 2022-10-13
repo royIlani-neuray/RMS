@@ -1,1 +1,9 @@
-<p>device-page works!</p>
+<div *ngIf="radarDevice">
+    <h2>{{radarDevice.name}}</h2>
+    <p>Device ID: {{radarDevice.device_id}}</p>
+    <p>State: {{radarDevice.state}}</p>
+    <p>Enabled: {{radarDevice.enabled}}</p>
+    <p>Description: {{radarDevice.description}}</p>
+</div>
+
+

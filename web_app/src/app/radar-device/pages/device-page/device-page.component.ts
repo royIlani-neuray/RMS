@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RadarDevice } from 'src/app/entities/radar-device';
+import { DevicesService } from '../../services/devices.service';
 
 @Component({
   selector: 'app-device-page',
@@ -8,11 +10,28 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class DevicePageComponent implements OnInit {
 
-  constructor(private activatedRoute:ActivatedRoute) { }
+  constructor(private devicesService : DevicesService, private router : Router, private activatedRoute:ActivatedRoute) { }
+
+  radarDevice : RadarDevice
 
   ngOnInit(): void {
     let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
-    console.log('device id: %s', deviceId)
+
+    if (deviceId == null)
+    {
+      this.router.navigate(['/error-404'])
+      return
+    }
+
+    this.getDevice(deviceId)
+  }
+
+  public getDevice(deviceId : string)
+  {
+    this.devicesService.getRadarDevice(deviceId).subscribe({
+      next : (response) => this.radarDevice = response as RadarDevice,
+      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
+    })
   }
 
 }

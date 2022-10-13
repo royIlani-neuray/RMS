@@ -16,4 +16,9 @@ export class DevicesService {
     //console.log('in getRadarDevices service')
     return this.http.get("http://localhost:4200/api/devices")
   }
+
+  public getRadarDevice(deviceId : string)
+  {
+    return this.http.get("http://localhost:4200/api/devices/" + deviceId)
+  }
 }

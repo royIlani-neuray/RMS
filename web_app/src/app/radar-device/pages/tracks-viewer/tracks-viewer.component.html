@@ -1,3 +1,11 @@
+<div>
+    <mat-form-field appearance="fill">
+    <mat-label>Select radar device</mat-label>
+    <mat-select (selectionChange)="RadarDeviceSelected($event.value)">
+        <mat-option *ngFor="let device of deviceList" [value]="device.device_id" [disabled]="!device.enabled">{{device.name}}{{device.enabled ? "" : " (disabled)"}}</mat-option>
+    </mat-select>
+    </mat-form-field>
+</div>
 
 <div>
     <canvas #canvas id="canvas" style="height: 100%; width: 100%;"></canvas>

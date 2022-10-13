@@ -9,7 +9,7 @@ public class RadarTracker
     private Task? trackerTask;
     private ITrackingApplication? trackingApp;
     private bool runTracker;
-    private TrackReporter trackReporter;
+    private TracksHttpReporter tracksHttpReporter;
     
     public FrameData? LastFrameData;
 
@@ -17,7 +17,7 @@ public class RadarTracker
     {
         this.radarDevice = radarDevice;
         runTracker = false;
-        trackReporter = new TrackReporter();
+        tracksHttpReporter = new TracksHttpReporter();
     }
 
     public void TriggerDisconnectAction()
@@ -52,7 +52,7 @@ public class RadarTracker
         {
             try
             {
-                trackReporter.StartWorker();
+                tracksHttpReporter.StartWorker();
                 ConfigureRadar();
                 trackingApp = new TrafficMonitoring();
                 TreakingLoop();               
@@ -64,7 +64,7 @@ public class RadarTracker
             }
             finally
             {
-                trackReporter.StopWorker();
+                tracksHttpReporter.StopWorker();
             } 
         });
 
@@ -125,7 +125,10 @@ public class RadarTracker
             nextFrame.DeviceId = radarDevice.Id;
             nextFrame.DeviceName = radarDevice.Name;
             LastFrameData = nextFrame;
-            trackReporter.SendReport(LastFrameData);
+
+            // send tracks report over HTTP and Websockets
+            tracksHttpReporter.SendReport(LastFrameData);
+            TracksWebsocketReporter.Instance.SendReport(LastFrameData);
         }
 
         System.Console.WriteLine("Debug: Tracking loop exited.");

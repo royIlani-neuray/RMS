@@ -6,6 +6,7 @@ import {RouterModule} from '@angular/router';
 
 import {MatTableModule} from '@angular/material/table';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatSelectModule} from '@angular/material/select';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
@@ -22,7 +23,8 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
     RouterModule,
 
     MatTableModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSelectModule
   ],
   exports: [
     DevicePageComponent,

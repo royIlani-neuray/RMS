@@ -4,14 +4,14 @@ using WebService.Utils;
 
 namespace WebService.Tracking;
 
-public class TrackReporter : WorkerThread<FrameData>
+public class TracksHttpReporter : WorkerThread<FrameData>
 {
     private const int MAX_QUEUE_CAPACITY = 5;
 
     private DateTime LastReportTime;
     private HttpClient httpClient;
 
-    public TrackReporter() : base(MAX_QUEUE_CAPACITY)
+    public TracksHttpReporter() : base(MAX_QUEUE_CAPACITY)
     {
         LastReportTime = DateTime.Now;
         httpClient = new HttpClient();
