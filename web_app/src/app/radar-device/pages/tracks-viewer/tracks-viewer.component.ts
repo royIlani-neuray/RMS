@@ -22,25 +22,9 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
-  @Input() public size: number = 200;
-  @Input() public fieldOfView: number = 45;
-  
-
-  @Input('nearClipping') public nearClippingPlane: number = 0.1;
-  @Input('farClipping') public farClippingPlane: number = 1000;
-
-  
   private get canvas() : HTMLCanvasElement {
     return this.canvasRef.nativeElement;
   }
-
-  private loader = new THREE.TextureLoader()
-  private geometry = new THREE.BoxGeometry(1,1,1)
-  private edges = new THREE.EdgesGeometry(this.geometry)
-  private line = new THREE.LineSegments(this.edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-  private material =  new THREE.MeshBasicMaterial({transparent : true})
-  private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material)
-
 
   private renderer!: THREE.WebGLRenderer
   private scene!: THREE.Scene
@@ -78,10 +62,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         this.websocketService.GetFrameData().subscribe({
           next : (frameData) => {
             this.lastframeData = frameData as FrameData
-            //console.log("Got Frame Data!!!! device id: " + this.lastframeData.device_id)
-            //console.log("Track Id: " + this.lastframeData.tracks[0].track_id)
-            //console.log("Position: [" + this.lastframeData.tracks[0].position_x + "," +  + this.lastframeData.tracks[0].position_y + "," +  + this.lastframeData.tracks[0].position_z + "]")
-            
+
             // update the scene with the latest frame data
             this.updateScene()
           }
@@ -103,13 +84,13 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     this.scene = new THREE.Scene()
     //this.scene.background = new THREE.Color(0x000000)
 
-    let aspectRatio = this.getAspectRatio()
+    let aspectRatio = (this.canvas.clientWidth / this.canvas.clientHeight)
 
     this.camera = new PerspectiveCamera(
-      this.fieldOfView,
+      45,
       aspectRatio,
-      this.nearClippingPlane,
-      this.farClippingPlane
+      0.1,
+      1000
     );
 
     this.camera.position.set(0,2,-17)
@@ -123,19 +104,10 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     this.controls.listenToKeyEvents(window)
     this.controls.update()
 
-
-    //this.scene.add(this.cube)
-    this.scene.add(this.line)
-
     this.planeGrid = new THREE.GridHelper(this.planeGridSize,this.planeGridDivisions)
     this.planeGrid.position.z += (this.planeGridSize / 2)
     this.scene.add(this.planeGrid)
 
-  }
-
-  private getAspectRatio()
-  {
-    return this.canvas.clientWidth / this.canvas.clientHeight
   }
 
   private startRenderingLoop()
