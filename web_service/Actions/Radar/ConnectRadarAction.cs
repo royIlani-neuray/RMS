@@ -33,6 +33,7 @@ public class ConnectRadarAction : IAction
             catch
             {
                 Console.WriteLine($"Error: connection attempt failed for device - {radarDevice.Id}");
+                return;
             }
 
             radarDevice.State = RadarDevice.DeviceState.Connected;

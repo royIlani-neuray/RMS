@@ -18,7 +18,10 @@ export class DevicesPageComponent implements OnInit {
   constructor(private devicesService : DevicesService, private router : Router) { }
 
   ngOnInit(): void {
-    this.getDeviceList()
+    setInterval(() => 
+    {
+      this.getDeviceList()
+    }, 3000)
   }
 
   public getDeviceList()

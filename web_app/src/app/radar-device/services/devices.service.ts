@@ -21,4 +21,14 @@ export class DevicesService {
   {
     return this.http.get("http://localhost:4200/api/devices/" + deviceId)
   }
+
+  public enableRadarDevice(deviceId : string)
+  {
+    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/enable", "")
+  }
+
+  public disableRadarDevice(deviceId : string)
+  {
+    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/disable", "")
+  }
 }

@@ -1,9 +1,27 @@
 <div *ngIf="radarDevice">
     <h2>{{radarDevice.name}}</h2>
-    <p>Device ID: {{radarDevice.device_id}}</p>
-    <p>State: {{radarDevice.state}}</p>
-    <p>Enabled: {{radarDevice.enabled}}</p>
-    <p>Description: {{radarDevice.description}}</p>
+    <table class="radar-info-table">
+        <tr>
+            <td>Device ID: </td>
+            <td>{{radarDevice.device_id}}</td>
+        </tr>
+        <tr>
+            <td>State: </td>
+            <td>{{radarDevice.state}}</td>
+        </tr>
+        <tr>
+            <td>Enabled: </td>
+            <td>{{radarDevice.enabled}}</td>
+        </tr>
+        <tr>
+            <td>Description: </td>
+            <td>{{radarDevice.description}}</td>
+        </tr>
+    </table>
+    <p>
+        <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary">Enable Radar</button>
+        <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary">Disable Radar</button>
+    </p>
 </div>
 
 

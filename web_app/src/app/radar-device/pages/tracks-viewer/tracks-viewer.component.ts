@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FrameData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import * as THREE from "three";
-import { PerspectiveCamera, PlaneGeometry } from 'three';
+import { PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
 import { WebsocketService } from '../../services/websocket.service';
