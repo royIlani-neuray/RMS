@@ -1,3 +1,10 @@
+.radar-info-table {
+    box-shadow: 0 5px 5px 4px lightblue;
+    border-radius:6px;
+    padding: 10px;
+}
+
 .radar-info-table td {
     padding: 10px;
 }
+
