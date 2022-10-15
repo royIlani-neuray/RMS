@@ -10,6 +10,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatDividerModule} from '@angular/material/divider';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
@@ -30,7 +31,8 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
     MatSelectModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDividerModule
   ],
   exports: [
     DevicePageComponent,

@@ -30,11 +30,14 @@ public class RadarDevice {
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
 
-    [JsonPropertyName("config")]
+    [JsonPropertyName("config_script")]
     public List<string> ConfigScript { get; set; }
 
     [JsonPropertyName("device_mapping")]
     public DeviceMapper.MappedDevice? deviceMapping { get; set;}
+
+    [JsonPropertyName("radar_settings")]
+    public RadarSettings? radarSettings { get; set;}
 
     [JsonIgnore]
     public ReaderWriterLockSlim deviceLock;
@@ -72,6 +75,8 @@ public class RadarDevice {
             Enabled = device.Enabled;
         }
     }
+
+
 
     public RadarDevice()
     {

@@ -13,7 +13,18 @@ public class SetRadarConfigAction : RadarDeviceAction
 
     protected override void RunDeviceAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Setting radar config for device - {deviceId}");
+        Console.WriteLine($"Setting radar config for device - {deviceId}");
+
+        try
+        {
+            RadarConfigParser configParser = new RadarConfigParser(configScript);
+            radarDevice.radarSettings = configParser.GetRadarSettings();
+        }
+        catch
+        {
+            throw new Exception($"Error: could not parse config script for device - {deviceId}. make sure the config is valid.");
+        }
+
         radarDevice.ConfigScript = configScript;
 
         var disconnectAction = new DisconnectRadarAction(radarDevice);
