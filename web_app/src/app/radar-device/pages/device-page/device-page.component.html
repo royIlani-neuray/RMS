@@ -1,6 +1,10 @@
+<div *ngIf="!radarDevice" style="display: flex; justify-content: center; align-items: center; background: white;">
+    <mat-spinner [diameter]="60"></mat-spinner>
+</div>
+
 <div *ngIf="radarDevice">
     <h2>{{radarDevice.name}}</h2>
-    <table class="radar-info-table">
+    <table class="radar-info-table" style="float: left; margin-right: 50px;">
         <tr>
             <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
             <td></td>
@@ -22,7 +26,6 @@
             <td>{{radarDevice.description}}</td>
         </tr>
     </table>
-    <br>
     <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
         <tr>
             <td><mat-label mat-basic-chip>Device Mapping:</mat-label></td>

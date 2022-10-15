@@ -1,4 +1,4 @@
-<p>devices page</p>
+<h3>Registered Devices</h3>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 devices-table">
     <!-- Name Column -->
@@ -38,5 +38,13 @@
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/device', row.device_id]"></tr>
+    <!--
+    <tr *ngIf="!deviceListLoaded"><td>Loading device list...</td><td></td><td></td><td></td><td></td></tr>
+    <tr mat-row *ngIf="deviceListLoaded && (deviceList.length == 0)"><td>There are no Registered devices</td></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns"><td>Loading device list...</td><td></td><td></td><td></td><td></td></tr>
+    -->
 </table>
 
+<div *ngIf="!(deviceListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
+    <mat-spinner [diameter]="40"></mat-spinner>
+</div>
