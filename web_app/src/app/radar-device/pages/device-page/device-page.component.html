@@ -67,7 +67,7 @@
     <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
         <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
         <mat-divider></mat-divider>
-        <div *ngIf="radarDevice.radar_settings.sensor_position != null" class="radar-setting-div">
+        <div *ngIf="radarDevice.radar_settings.sensor_position != null" class="radar-setting-div" style="float: left; margin-right: 50px;">
             <p><mat-label mat-basic-chip>Sensor Position</mat-label></p>
             <table class="radar-setting-table">
                 <thead>
@@ -111,7 +111,7 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="radarDevice.radar_settings.static_boundary_box != null" class="radar-setting-div">
+        <div *ngIf="radarDevice.radar_settings.static_boundary_box != null" class="radar-setting-div" style="float: left; margin-right: 50px;">
             <p><mat-label mat-basic-chip>Static Boundary Box</mat-label></p>
             <table class="radar-setting-table">
                 <thead>

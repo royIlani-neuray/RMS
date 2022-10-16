@@ -14,12 +14,16 @@ import {MatDividerModule} from '@angular/material/divider';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
+import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
+import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
 
 @NgModule({
   declarations: [
     DevicesPageComponent,
     TracksViewerComponent,
-    DevicePageComponent
+    DevicePageComponent,
+    DeviceMappingPageComponent,
+    NewDevicePageComponent
   ],
   imports: [
     CommonModule,
@@ -37,6 +41,8 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
   exports: [
     DevicePageComponent,
     DevicesPageComponent,
+    DeviceMappingPageComponent,
+    NewDevicePageComponent,
     TracksViewerComponent
   ]
 })

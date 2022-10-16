@@ -31,4 +31,15 @@ export class DevicesService {
   {
     return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/disable", "")
   }
+
+  public getDeviceMapping()
+  {
+    return this.http.get("http://localhost:4200/api/device-mapping")
+  }
+
+  public triggerDeviceMapping()
+  {
+    return this.http.post("http://localhost:4200/api/device-mapping", "")
+  }
+
 }

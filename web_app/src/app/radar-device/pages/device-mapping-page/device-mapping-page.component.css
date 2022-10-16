@@ -1,0 +1,12 @@
+
+.device-mapping-table {
+    width: 100%;
+  }
+
+.trigger-mapping-button {
+    color: blue; 
+}
+
+.mat-row:hover {
+    background-color:lightcyan;
+}
