@@ -1,12 +1,78 @@
-<div>
-    <mat-form-field appearance="fill">
-    <mat-label>Select radar device</mat-label>
-    <mat-select (selectionChange)="RadarDeviceSelected($event.value)">
-        <mat-option *ngFor="let device of deviceList" [value]="device.device_id" [disabled]="!device.enabled">{{device.name}}{{device.enabled ? "" : " (disabled)"}}</mat-option>
-    </mat-select>
-    </mat-form-field>
+
+<div class="canvas-view-wrapper">
+
+    <div>
+        <mat-drawer-container autosize>
+            <mat-drawer #drawer mode="side" position="end">
+                <table mat-table [dataSource]="dataSource" class="tracks-list-table">
+
+                    <ng-container matColumnDef="track_id">
+                        <th mat-header-cell *matHeaderCellDef> <b>Track ID</b> </th>
+                        <td mat-cell *matCellDef="let element"> Track-{{element.track_id}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="range">
+                        <th mat-header-cell *matHeaderCellDef> <b>Range</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.track_id}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="position_x">
+                        <th mat-header-cell *matHeaderCellDef> <b>Pos X</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.position_x}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="position_y">
+                        <th mat-header-cell *matHeaderCellDef> <b>Pos Y</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.position_y}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="position_z">
+                        <th mat-header-cell *matHeaderCellDef> <b>Pos Z</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.position_z}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="velocity_x">
+                        <th mat-header-cell *matHeaderCellDef> <b>Vel X</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_x}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="velocity_y">
+                        <th mat-header-cell *matHeaderCellDef> <b>Vel Y</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_y}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="velocity_z">
+                        <th mat-header-cell *matHeaderCellDef> <b>Vel Z</b> </th>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_z}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+            </mat-drawer>
+            
+            <div>
+                <canvas #canvas id="canvas" style="height: 100%; width: 100%;"></canvas>
+            </div>
+          
+        </mat-drawer-container>
+    </div>
+
+    <div id="canvas-view-controls">
+        <mat-form-field appearance="fill">
+        <mat-label>Select radar device</mat-label>
+        <mat-select (selectionChange)="RadarDeviceSelected($event.value)">
+            <mat-option *ngFor="let device of deviceList" [value]="device.device_id" [disabled]="!device.enabled">{{device.name}}{{device.enabled ? "" : " (disabled)"}}</mat-option>
+        </mat-select>
+        </mat-form-field>
+        <br>
+        <button type="button" mat-raised-button color="primary" (click)="drawer.toggle()">Toggle Tracks List</button>
+    </div>
+
 </div>
 
-<div>
-    <canvas #canvas id="canvas" style="height: 100%; width: 100%;"></canvas>
-</div>
+
+
+
+

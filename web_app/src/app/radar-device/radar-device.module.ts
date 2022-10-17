@@ -13,6 +13,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
@@ -40,7 +41,8 @@ import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.
     MatProgressSpinnerModule,
     MatDividerModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatSidenavModule
   ],
   exports: [
     DevicePageComponent,

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { FrameData } from 'src/app/entities/frame-data';
+import { FrameData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import * as THREE from "three";
 import { PerspectiveCamera } from 'three';
@@ -19,6 +20,9 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   radarDevice : RadarDevice
   deviceList: RadarDeviceBrief[] = [];
   lastframeData: FrameData
+
+  dataSource = new MatTableDataSource<TrackData>()
+  displayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
@@ -58,7 +62,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         this.websocketService.GetFrameData().subscribe({
           next : (frameData) => {
             this.lastframeData = frameData as FrameData
-
+            this.dataSource.data = this.lastframeData.tracks
             // update the scene with the latest frame data
             this.updateScene()
           }
