@@ -18,6 +18,7 @@ export class DevicePageComponent implements OnInit {
 
   radarDevice : RadarDevice
   deviceId : string
+  updateTimer : any
 
   ngOnInit(): void {
     let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
@@ -30,13 +31,23 @@ export class DevicePageComponent implements OnInit {
 
     this.deviceId = deviceId
 
-    setInterval(() => 
+    this.getDevice(this.deviceId)
+
+    this.updateTimer = setInterval(() => 
     {
       this.getDevice(this.deviceId)
     }, 3000)
     
   }
 
+  ngOnDestroy() 
+  {
+    if (this.updateTimer) 
+    {
+      clearInterval(this.updateTimer);
+    }
+  }
+  
   public getDevice(deviceId : string)
   {
     this.devicesService.getRadarDevice(deviceId).subscribe({

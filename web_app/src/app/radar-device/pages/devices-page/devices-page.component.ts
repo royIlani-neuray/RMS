@@ -13,9 +13,9 @@ import { Subject } from 'rxjs';
 export class DevicesPageComponent implements OnInit {
 
   deviceListLoaded = new Subject<boolean>();
-  deviceList: RadarDeviceBrief[] = [];
-  dataSource = new MatTableDataSource<RadarDeviceBrief>(this.deviceList)
+  dataSource = new MatTableDataSource<RadarDeviceBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'device_id', 'description'];
+  updateTimer : any
 
   constructor(private devicesService : DevicesService, private router : Router) { }
 
@@ -23,10 +23,20 @@ export class DevicesPageComponent implements OnInit {
   {
     this.deviceListLoaded.next(false);
     
-    setInterval(() => 
+    this.getDeviceList()
+    // trigger periodic update
+    this.updateTimer = setInterval(() => 
     {
       this.getDeviceList()
     }, 3000)
+  }
+
+  ngOnDestroy() 
+  {
+    if (this.updateTimer) 
+    {
+      clearInterval(this.updateTimer);
+    }
   }
 
   public getDeviceList()
@@ -34,11 +44,10 @@ export class DevicesPageComponent implements OnInit {
     this.devicesService.getRadarDevices().subscribe({
       next : (response) => 
       {
-        this.deviceListLoaded.next(true);
         this.dataSource.data = response as RadarDeviceBrief[]
+        this.deviceListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])
     })
   }
-
 }

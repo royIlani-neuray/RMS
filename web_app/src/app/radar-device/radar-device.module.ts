@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
-import { HttpClientModule} from '@angular/common/http'
-import {RouterModule} from '@angular/router';
+import { HttpClientModule } from '@angular/common/http'
+import { RouterModule } from '@angular/router';
 
 import {MatTableModule} from '@angular/material/table';
 import {MatChipsModule} from '@angular/material/chips';
@@ -11,6 +11,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
@@ -36,7 +38,9 @@ import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    MatDividerModule
+    MatDividerModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   exports: [
     DevicePageComponent,

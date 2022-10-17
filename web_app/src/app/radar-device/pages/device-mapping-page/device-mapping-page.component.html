@@ -37,6 +37,11 @@
         <td mat-cell *matCellDef="let element"> {{element.static_ip}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="set_network">
+        <th mat-header-cell *matHeaderCellDef> <b>Network</b></th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button (click)="setNetwork(element)" color="primary">Set Network</button></td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>

@@ -48,3 +48,6 @@
 <div *ngIf="!(deviceListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
     <mat-spinner [diameter]="40"></mat-spinner>
 </div>
+
+<br>
+<button mat-raised-button *ngIf="(deviceListLoaded | async)" [routerLink]="['/new-device']" color="primary">Add Device</button>

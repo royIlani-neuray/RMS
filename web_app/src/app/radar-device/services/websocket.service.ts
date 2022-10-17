@@ -30,7 +30,7 @@ export class WebsocketService {
     return new Observable((subscriber) => 
     {
       this.socket.onmessage = function (event) {
-        console.log('Websockets Message -' + event.data)
+        //console.log('Websockets Message -' + event.data)
         let frameData = JSON.parse(event.data)
         subscriber.next(frameData);
       }

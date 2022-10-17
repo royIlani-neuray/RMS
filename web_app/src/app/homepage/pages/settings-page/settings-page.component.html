@@ -1,0 +1,15 @@
+<h3>Settings</h3>
+<br>
+<form class="settings-form">
+    <mat-form-field class="settings-full-width"  appearance="fill">
+      <mat-label>Tracks reports URL</mat-label>
+      <input matInput #reportsUrlInput maxlength="200" placeholder="" type="url">
+    </mat-form-field>
+
+    <mat-form-field class="settings-full-width"  appearance="fill">
+      <mat-label>Tracks reports Interval</mat-label>
+      <input matInput #reportsIntervalInput placeholder="Interval in seconds" type="number">
+    </mat-form-field>
+</form>
+
+<button mat-raised-button color="primary">Save</button>

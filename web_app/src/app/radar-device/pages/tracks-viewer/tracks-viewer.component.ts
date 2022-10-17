@@ -31,10 +31,6 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   private camera!: THREE.PerspectiveCamera;
   private controls!: OrbitControls
 
-  private planeGridSize: number = 20
-  private planeGridDivisions: number = 20 // number of blocks
-  private planeGrid: THREE.GridHelper
-
   constructor(private devicesService : DevicesService,
               private websocketService : WebsocketService,
               private router : Router) { }
@@ -103,11 +99,6 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     this.controls.target.set(0,5,10) // change orbit center from [0,0,0] to plane center
     this.controls.listenToKeyEvents(window)
     this.controls.update()
-
-    this.planeGrid = new THREE.GridHelper(this.planeGridSize,this.planeGridDivisions)
-    this.planeGrid.position.z += (this.planeGridSize / 2)
-    this.scene.add(this.planeGrid)
-
   }
 
   private startRenderingLoop()
@@ -126,17 +117,63 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     this.startRenderingLoop()
   }
 
+  // Importent - Three.js rendering coordinates:
+  // X: positive => canvas left side. negative => canvas right side
+  // Y: positive => canvas top side. negative => canvas bottom
+  // Z: positive => far side (canvas depth). negative => close side.
+  //
+  // For Radar: 
+  //  X positive and negative are the opposite of Three.js X, 
+  //  Radar Y is Three.js Z
+  //  Radar Z is Three.js Y
+
+
   private updateScene()
   {
+    if (this.radarDevice.radar_settings == null)
+      return
+
     let scene = new THREE.Scene()
-    scene.add(this.planeGrid)
+
+    if (this.radarDevice.radar_settings.boundary_box != null)
+    {
+        let boundingBoxSizeX = Math.abs(this.radarDevice.radar_settings.boundary_box.x_max - this.radarDevice.radar_settings.boundary_box.x_min)
+        let boundingBoxSizeY = Math.abs(this.radarDevice.radar_settings.boundary_box.z_max - this.radarDevice.radar_settings.boundary_box.z_min)
+        let boundingBoxSizeZ = Math.abs(this.radarDevice.radar_settings.boundary_box.y_max - this.radarDevice.radar_settings.boundary_box.y_min)
+        let boundingBoxZoffset = this.radarDevice.radar_settings.boundary_box.y_min
+
+        // draw the floor (plane grid)
+        let planeGridSize = Math.max(this.radarDevice.radar_settings.boundary_box.y_max, boundingBoxSizeX)
+        let planeGridDivisions = planeGridSize
+        let planeGrid = new THREE.GridHelper(planeGridSize,planeGridDivisions)
+        planeGrid.position.z += (planeGridSize / 2)
+        scene.add(planeGrid)
+
+        // draw the bounding box
+        let boxGeometry = new THREE.BoxGeometry(boundingBoxSizeX,boundingBoxSizeY,boundingBoxSizeZ)
+        let boxEdges = new THREE.EdgesGeometry(boxGeometry)
+        let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xff00ff } ) )
+        box.position.set(0,0,boundingBoxZoffset + (boundingBoxSizeZ/2))
+        scene.add(box)         
+    }
+
+    if (this.radarDevice.radar_settings.sensor_position != null)
+    {
+      // draw the radar
+      let radarGeometery = new THREE.BoxGeometry(0.5,0.5,0.2)
+      let radar = new THREE.Mesh(radarGeometery, new THREE.MeshBasicMaterial({ color: 0xc91616 }))
+      radar.position.set(0,this.radarDevice.radar_settings.sensor_position.height,0)
+      scene.add(radar)  
+    }
+
+    // draw tracks
 
     this.lastframeData.tracks.forEach(function (track) 
     {
       let boxGeometry = new THREE.BoxGeometry(1,2,1)
       let boxEdges = new THREE.EdgesGeometry(boxGeometry)
       let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-      box.position.set(track.position_x,track.position_y,track.position_z)
+      box.position.set(-track.position_x,track.position_z,track.position_y)
       scene.add(box)
 
     });

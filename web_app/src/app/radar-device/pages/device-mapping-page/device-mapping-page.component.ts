@@ -15,8 +15,9 @@ export class DeviceMappingPageComponent implements OnInit {
 
   deviceListLoaded = new Subject<boolean>();
   deviceList: DeviceMapping[] = [];
-  dataSource = new MatTableDataSource<DeviceMapping>(this.deviceList)
-  displayedColumns: string[] = ['device_id', 'ip', 'subnet', 'gateway', 'model', 'application', 'static_ip'];
+  dataSource = new MatTableDataSource<DeviceMapping>()
+  displayedColumns: string[] = ['device_id', 'ip', 'subnet', 'gateway', 'model', 'application', 'static_ip', 'set_network'];
+  updateTimer : any
 
   constructor(private devicesService : DevicesService, private router : Router, private notification: MatSnackBar) { }
 
@@ -24,10 +25,21 @@ export class DeviceMappingPageComponent implements OnInit {
   {
     this.deviceListLoaded.next(false);
     
-    setInterval(() => 
+    this.getDeviceMapping()
+
+    // trigger periodic update
+    this.updateTimer = setInterval(() => 
     {
       this.getDeviceMapping()
     }, 3000)
+  }
+
+  ngOnDestroy() 
+  {
+    if (this.updateTimer) 
+    {
+      clearInterval(this.updateTimer);
+    }
   }
 
   public getDeviceMapping()
@@ -35,8 +47,9 @@ export class DeviceMappingPageComponent implements OnInit {
     this.devicesService.getDeviceMapping().subscribe({
       next : (response) => 
       {
+        this.deviceList = response as DeviceMapping[]
+        this.dataSource.data = this.deviceList
         this.deviceListLoaded.next(true);
-        this.dataSource.data = response as DeviceMapping[]
       },
       error : (err) => this.router.navigate(['/no-service'])
     })
@@ -48,5 +61,10 @@ export class DeviceMappingPageComponent implements OnInit {
       next : (response) => this.notification.open("Device mapping triggered!", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not trigger device mappping.", "Close", { duration : 4000 })
     })
+  }
+
+  public setNetwork(deviceMapping : DeviceMapping)
+  {
+    
   }
 }
