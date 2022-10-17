@@ -1,11 +1,20 @@
 
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
-    <a routerLink="/devices" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Devices</button></a>
-    <a routerLink="/device-mapping" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Device-Mapping</button></a>
-    <a routerLink="/tracks-viewer" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Tracks-Viewer</button></a>
-    <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a>
+    <div>
+      <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
+      <a routerLink="/devices" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Devices</button></a>
+      <a routerLink="/device-mapping" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Device-Mapping</button></a>
+      <a routerLink="/tracks-viewer" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Tracks-Viewer</button></a>
+      <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a> 
+    </div>
+
+    <span class="flexExpand"></span>
+    
+    <div class="logo-image-wrapper">
+      <img src="assets/images/neuRay_logo.png" class="logo-image">
+    </div>
+    
   </mat-toolbar-row>
 </mat-toolbar>
 
