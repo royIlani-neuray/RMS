@@ -131,7 +131,6 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   //  Radar Y is Three.js Z
   //  Radar Z is Three.js Y
 
-
   private updateScene()
   {
     if (this.radarDevice.radar_settings == null)
@@ -183,5 +182,10 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     });
 
     this.scene = scene
+  }
+
+  public getTrackRange(track : TrackData)
+  {
+    return Math.sqrt(Math.pow(track.position_x,2) + Math.pow(track.position_y,2) + Math.pow(track.position_z,2))
   }
 }

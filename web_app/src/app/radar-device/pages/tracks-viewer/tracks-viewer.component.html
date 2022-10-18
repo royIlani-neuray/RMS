@@ -13,37 +13,37 @@
 
                     <ng-container matColumnDef="range">
                         <th mat-header-cell *matHeaderCellDef> <b>Range</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.track_id}} </td>
+                        <td mat-cell *matCellDef="let element">{{ getTrackRange(element) | number:'1.0-2' }}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="position_x">
                         <th mat-header-cell *matHeaderCellDef> <b>Pos X</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.position_x}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.position_x  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="position_y">
                         <th mat-header-cell *matHeaderCellDef> <b>Pos Y</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.position_y}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.position_y  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="position_z">
                         <th mat-header-cell *matHeaderCellDef> <b>Pos Z</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.position_z}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.position_z  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="velocity_x">
                         <th mat-header-cell *matHeaderCellDef> <b>Vel X</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.velocity_x}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_x  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="velocity_y">
                         <th mat-header-cell *matHeaderCellDef> <b>Vel Y</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.velocity_y}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_y  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="velocity_z">
                         <th mat-header-cell *matHeaderCellDef> <b>Vel Z</b> </th>
-                        <td mat-cell *matCellDef="let element"> {{element.velocity_z}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.velocity_z  | number:'1.0-2'}} </td>
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
