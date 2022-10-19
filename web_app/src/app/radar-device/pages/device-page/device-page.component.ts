@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
 import { DevicesService } from '../../services/devices.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRadarInfoDialogComponent } from '../../components/edit-radar-info-dialog/edit-radar-info-dialog.component';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-device-page',
@@ -14,7 +17,8 @@ export class DevicePageComponent implements OnInit {
   constructor(private devicesService : DevicesService, 
               private router : Router, 
               private activatedRoute:ActivatedRoute,
-              private notification: MatSnackBar) { }
+              private notification: MatSnackBar,
+              public dialog: MatDialog) { }
 
   radarDevice : RadarDevice
   deviceId : string
@@ -70,6 +74,40 @@ export class DevicePageComponent implements OnInit {
       next : (response) => this.getDevice(this.deviceId),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable radar device")
     })
+  }
+
+  public deleteRadarDevice()
+  {
+    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      height: '140px',
+      data: { message : "Are you sure you want to delete the device?" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result)
+      {
+        console.log("Delete ME!")
+      }
+
+    });
+  }
+
+  public editInfoClicked()
+  {
+    let dialogRef = this.dialog.open(EditRadarInfoDialogComponent, {
+      width: '550px',
+      height: '370px',
+      data: { radarDevice: this.radarDevice }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result)
+      {
+        this.getDevice(this.deviceId)
+      }
+    });
   }
 
   private showNotification(message : string)

@@ -23,6 +23,8 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
 import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
 import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
 import { SetNetworkDialogComponent } from './components/set-network-dialog/set-network-dialog.component';
+import { EditRadarInfoDialogComponent } from './components/edit-radar-info-dialog/edit-radar-info-dialog.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { SetNetworkDialogComponent } from './components/set-network-dialog/set-n
     DevicePageComponent,
     DeviceMappingPageComponent,
     NewDevicePageComponent,
-    SetNetworkDialogComponent
+    SetNetworkDialogComponent,
+    EditRadarInfoDialogComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     CommonModule,

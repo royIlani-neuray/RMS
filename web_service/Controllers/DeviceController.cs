@@ -101,6 +101,15 @@ public class DeviceController : ControllerBase
         action.Run();
     }
 
+    [HttpPut("{deviceId}/radar-info")]
+    public void UpdateRadarInfo(string deviceId, [FromBody] UpdateRadarInfoArgs args)
+    {
+        ValidateDeviceId(deviceId); 
+        args.Validate();
+        var action = new UpdateRadarInfoAction(deviceId, args);
+        action.Run();        
+    }
+
     public class SetDeviceNetworkArgs
     {
         [JsonPropertyName("ip")]

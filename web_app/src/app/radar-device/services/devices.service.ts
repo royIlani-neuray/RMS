@@ -32,6 +32,11 @@ export class DevicesService {
     return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/disable", "")
   }
 
+  public deleteRadarDevice(deviceId : string)
+  {
+    return this.http.delete("http://localhost:4200/api/devices/" + deviceId)
+  }
+
   public getDeviceMapping()
   {
     return this.http.get("http://localhost:4200/api/device-mapping")
@@ -49,6 +54,14 @@ export class DevicesService {
       subnet: subnet,
       gateway : gateway,
       static_ip : staticIP
+    })
+  }
+
+  public updateRadarInfo(deviceId : string, name : string, description : string)
+  {
+    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/radar-info", {
+      name : name,
+      description: description
     })
   }
 

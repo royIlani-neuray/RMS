@@ -26,10 +26,16 @@
                 <td>Description: </td>
                 <td>{{radarDevice.description}}</td>
             </tr>
+            <tr>
+                <td></td>
+                <td><div align="end"><button mat-button (click)="editInfoClicked()" color="primary">Edit Info</button></div></td>
+            </tr>
         </table>
         <p>
             <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary">Enable Radar</button>
             <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary">Disable Radar</button>
+            
+            <button mat-raised-button (click)="deleteRadarDevice()" color="primary" style="margin-left: 10px;">Delete Radar</button>
         </p>
     </div>
 
@@ -63,7 +69,7 @@
             <td>{{radarDevice.device_mapping.static_ip}}</td>
         </tr>
     </table>
-    <br>
+    <br><br>
     <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
         <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
         <mat-divider></mat-divider>
