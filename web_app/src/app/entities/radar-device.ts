@@ -27,7 +27,7 @@ export interface DeviceMapping {
     device_id: string
     model: string
     application: string
-    static_ip: string
+    static_ip: boolean
 }
 
 export interface RadarSettings {

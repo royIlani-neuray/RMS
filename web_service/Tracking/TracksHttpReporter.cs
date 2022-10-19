@@ -37,7 +37,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
 
             if (reportsURL == String.Empty)
             {
-                System.Console.WriteLine("Warning: reports URL is not set. cannot send report.");
+                //System.Console.WriteLine("Warning: reports URL is not set. cannot send report.");
                 return;
             }
 

@@ -118,14 +118,18 @@ public class DeviceController : ControllerBase
 
         public void Validate()
         {
-            if (string.IsNullOrWhiteSpace(ipAddress) || !IPAddress.TryParse(ipAddress, out _))
-                throw new BadRequestException("invalid IP provided");
-            if (string.IsNullOrWhiteSpace(subnetMask) || !IPAddress.TryParse(subnetMask, out _))
-                throw new BadRequestException("invalid subnet provided");
-            if (string.IsNullOrWhiteSpace(gwAddress) || !IPAddress.TryParse(gwAddress, out _))
-                throw new BadRequestException("invalid gateway address provided");
             if (staticIP == null)
                 throw new BadRequestException("static IP option not provided");
+
+            if (staticIP == true)
+            {
+                if (string.IsNullOrWhiteSpace(ipAddress) || !IPAddress.TryParse(ipAddress, out _))
+                    throw new BadRequestException("invalid IP provided");
+                if (string.IsNullOrWhiteSpace(subnetMask) || !IPAddress.TryParse(subnetMask, out _))
+                    throw new BadRequestException("invalid subnet provided");
+                if (string.IsNullOrWhiteSpace(gwAddress) || !IPAddress.TryParse(gwAddress, out _))
+                    throw new BadRequestException("invalid gateway address provided");
+            }
         }
     }
 

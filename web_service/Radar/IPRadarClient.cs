@@ -218,6 +218,22 @@ public class IPRadarClient
     {
         List<IPAddress> broadcastSources = GetBroadcastAddresses();
 
+        if (!staticIP)
+        {
+            ipAddress = "0.0.0.0";
+            subnetMask = "255.255.255.0";
+            gwAddress = "0.0.0.0";
+        }
+
+        Console.WriteLine("");
+        Console.WriteLine("Setting Device Network:");
+        Console.WriteLine($"** Device: {deviceId}");
+        Console.WriteLine($"** IP Address: {deviceId}");
+        Console.WriteLine($"** Subnet Mask: {subnetMask}");
+        Console.WriteLine($"** Gateway Address: {gwAddress}");
+        Console.WriteLine($"** Static IP: {staticIP}");
+        Console.WriteLine("");
+
         // create the broadcast packet
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);

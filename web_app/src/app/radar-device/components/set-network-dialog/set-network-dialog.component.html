@@ -1,0 +1,54 @@
+<h4>Network Settings</h4> 
+<p>Device - {{deviceMapping.device_id}}</p>
+
+<table class="network-settings-table">
+    <tbody>
+        <tr>
+            <td><mat-radio-button (change)="radioSelectionChanged()" value="dynamic">Dynamic IP</mat-radio-button></td>
+            <td>
+                <p>
+                    The radar device will try to obtain IP address from an available DHCP.<br>
+                    In case no DHCP is found, a random link-local address is assigned.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-radio-button (change)="radioSelectionChanged()" value="static">Static IP</mat-radio-button></td>
+            <td>
+                <p>Assign a static IPv4 address to the radar device:</p>
+                <mat-form-field class=""  appearance="fill">
+                    <mat-label>IP Address</mat-label>
+                    <input #ipAddress matInput placeholder="Staic IP Address" maxlength="15" [formControl]="ipAddressValidation">
+                    <mat-error *ngIf="ipAddressValidation.invalid">Invalid IP Address</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class=""  appearance="fill">
+                    <mat-label>Subnet Mask</mat-label>
+                    <input matInput #subnetMask placeholder="i.e. 255.255.255.0" maxlength="15" [formControl]="subnetMaskValidation">
+                    <mat-error *ngIf="false">Invalid Subnet Mask</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class=""  appearance="fill">
+                    <mat-label>Gateway Address</mat-label>
+                    <input matInput #gatewayAddress placeholder="Gateway Address" maxlength="15" [formControl]="gatewayAddressValidation">
+                    <mat-error *ngIf="false">Invalid Gateway Address</mat-error>
+                </mat-form-field>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td>
+                <div mat-dialog-actions align="end">
+                    <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
+                    <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+
+
+

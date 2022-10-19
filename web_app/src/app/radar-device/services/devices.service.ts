@@ -42,4 +42,14 @@ export class DevicesService {
     return this.http.post("http://localhost:4200/api/device-mapping", "")
   }
 
+  public setNetwork(deviceId : string, ip : string, subnet : string, gateway : string, staticIP : boolean)
+  {
+    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/network", {
+      ip : ip,
+      subnet: subnet,
+      gateway : gateway,
+      static_ip : staticIP
+    })
+  }
+
 }

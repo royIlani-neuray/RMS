@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
 import { HttpClientModule } from '@angular/common/http'
 import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import {MatTableModule} from '@angular/material/table';
 import {MatChipsModule} from '@angular/material/chips';
@@ -14,11 +15,14 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
 import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
 import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
+import { SetNetworkDialogComponent } from './components/set-network-dialog/set-network-dialog.component';
 
 @NgModule({
   declarations: [
@@ -26,12 +30,15 @@ import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.
     TracksViewerComponent,
     DevicePageComponent,
     DeviceMappingPageComponent,
-    NewDevicePageComponent
+    NewDevicePageComponent,
+    SetNetworkDialogComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
     RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
 
     MatTableModule,
     MatChipsModule,
@@ -42,7 +49,9 @@ import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.
     MatDividerModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatDialogModule,
+    MatRadioModule
   ],
   exports: [
     DevicePageComponent,
