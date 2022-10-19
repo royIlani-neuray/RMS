@@ -88,9 +88,11 @@ export class DevicePageComponent implements OnInit {
 
       if (result)
       {
-        console.log("Delete ME!")
+        this.devicesService.deleteRadarDevice(this.deviceId).subscribe({
+          next : (response) => this.router.navigate(['/devices']),
+          error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
+        })
       }
-
     });
   }
 
