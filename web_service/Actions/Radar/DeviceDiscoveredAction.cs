@@ -3,9 +3,9 @@ using WebService.Radar;
 
 namespace WebService.Actions.Radar;
 
-public class DeviceRegisteredAction : RadarDeviceAction {
+public class DeviceDiscoveredAction : RadarDeviceAction {
 
-    public DeviceRegisteredAction(string deviceId) : base(deviceId) {}
+    public DeviceDiscoveredAction(string deviceId) : base(deviceId) {}
 
     protected override void RunDeviceAction(RadarDevice radarDevice)
     {
@@ -17,20 +17,20 @@ public class DeviceRegisteredAction : RadarDeviceAction {
         action.Run();
     }
 
-    public static void OnDeviceRegisteredCallback(string deviceId)
+    public static void OnDeviceDiscoveredCallback(string deviceId)
     {
         try
         {
-            var action = new DeviceRegisteredAction(deviceId);
+            var action = new DeviceDiscoveredAction(deviceId);
             action.Run();
         }
         catch (NotFoundException)
         {
-            System.Console.WriteLine($"The following device is not registerd in the system - {deviceId}. ignoring registration event.");
+            System.Console.WriteLine($"The following device is not registerd in the system - {deviceId}. ignoring discovery event.");
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine($"Unexpected error on device registation - {deviceId}. error: {ex.Message}");
+            System.Console.WriteLine($"Unexpected error on DeviceDiscoveredAction - {deviceId}. error: {ex.Message}");
         }
     }
 }

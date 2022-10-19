@@ -13,7 +13,6 @@ export class DevicesService {
 
   public getRadarDevices()
   {
-    //console.log('in getRadarDevices service')
     return this.http.get("http://localhost:4200/api/devices")
   }
 
@@ -62,6 +61,15 @@ export class DevicesService {
     return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/radar-info", {
       name : name,
       description: description
+    })
+  }
+
+  public registerRadarDevice(deviceId : string, name : string, description : string)
+  {
+    return this.http.post("http://localhost:4200/api/devices", {
+      name : name,
+      description: description,
+      device_id: deviceId
     })
   }
 

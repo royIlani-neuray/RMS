@@ -16,7 +16,7 @@ public class Startup {
         DeviceContext.Instance.LoadDevicesFromStorage();
 
         Console.WriteLine("Starting Device Mapper...");
-        DeviceMapper.Instance.SetDeviceRegisteredCallback(DeviceRegisteredAction.OnDeviceRegisteredCallback);
+        DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
         DeviceMapper.Instance.Start();
 
         Console.WriteLine("Starting WebSocket reporter...");

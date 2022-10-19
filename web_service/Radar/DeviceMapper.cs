@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json.Serialization;
+using WebService.Context;
 
 namespace WebService.Radar;
 
@@ -11,7 +12,7 @@ public class DeviceMapper
 
     private Dictionary<string, MappedDevice> mappedDevices;
 
-    Action<string>? deviceRegisteredCallback;
+    Action<string>? deviceDiscoveredCallback;
 
     public class MappedDevice 
     {
@@ -29,6 +30,10 @@ public class DeviceMapper
         public string appName { get; set; } = String.Empty;
         [JsonPropertyName("static_ip")]
         public bool staticIP { get; set; } = false;
+
+        [JsonPropertyName("registered")]
+        public bool registered { get; set; } = false;
+
     }
 
     #region Singleton
@@ -55,7 +60,7 @@ public class DeviceMapper
     private DeviceMapper() 
     {
         mappedDevices = new Dictionary<string, MappedDevice>();
-        deviceRegisteredCallback = null;
+        deviceDiscoveredCallback = null;
     }
 
     #endregion
@@ -169,6 +174,8 @@ public class DeviceMapper
                 model = model,
                 appName = appName
             };
+            
+            UpdateRegisteredStatus(deviceInfo);
 
             Console.WriteLine();
             Console.WriteLine($"Got a broadcast message from: {endpoint}");
@@ -181,23 +188,13 @@ public class DeviceMapper
             Console.WriteLine($"appName: {appName}");
             Console.WriteLine();
             
-            // *** TEST
-            /*
-            IPRadarClient client = new IPRadarClient(ip.ToString());
-            Console.WriteLine();
-            Console.WriteLine($"Connecting...");
-            client.Connect();
-            client.ResetRadar();
-            Console.WriteLine();
-            */
-
             AddOrUpdateMappedDevice(deviceInfo);
         }
     }
 
-    public void SetDeviceRegisteredCallback(Action<string> callback)
+    public void SetDeviceDiscoveredCallback(Action<string> callback)
     {
-        deviceRegisteredCallback = callback;
+        deviceDiscoveredCallback = callback;
     }
 
     private void AddOrUpdateMappedDevice(MappedDevice mappedDevice)
@@ -211,17 +208,29 @@ public class DeviceMapper
             mappedDevices.Add(mappedDevice.deviceId, mappedDevice);
         }
 
-        if (deviceRegisteredCallback != null)
-            deviceRegisteredCallback(mappedDevice.deviceId);
+        if (deviceDiscoveredCallback != null)
+            deviceDiscoveredCallback(mappedDevice.deviceId);
     }
 
+    private void UpdateRegisteredStatus(MappedDevice mappedDevice)
+    {
+        mappedDevice.registered = DeviceContext.Instance.IsRadarDeviceExist(mappedDevice.deviceId);
+    }
+    
     public List<MappedDevice> GetMappedDevices()
     {
-        return mappedDevices.Values.ToList();
+        var deviceList = mappedDevices.Values.ToList();
+        
+        // update registered status which may have changed by the service
+        deviceList.ForEach(mappedDevice => UpdateRegisteredStatus(mappedDevice));
+
+        return deviceList;
     }
 
     public MappedDevice GetMappedDevice(string deviceId)
     {
-        return mappedDevices[deviceId];
+        MappedDevice mappedDevice = mappedDevices[deviceId];
+        UpdateRegisteredStatus(mappedDevice);
+        return mappedDevice;
     }
 }

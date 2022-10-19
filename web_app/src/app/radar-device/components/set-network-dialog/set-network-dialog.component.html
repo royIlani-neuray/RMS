@@ -25,13 +25,13 @@
                 <mat-form-field class=""  appearance="fill">
                     <mat-label>Subnet Mask</mat-label>
                     <input matInput #subnetMask placeholder="i.e. 255.255.255.0" maxlength="15" [formControl]="subnetMaskValidation">
-                    <mat-error *ngIf="false">Invalid Subnet Mask</mat-error>
+                    <mat-error *ngIf="subnetMaskValidation.invalid">Invalid Subnet Mask</mat-error>
                 </mat-form-field>
                 <br>
                 <mat-form-field class=""  appearance="fill">
                     <mat-label>Gateway Address</mat-label>
                     <input matInput #gatewayAddress placeholder="Gateway Address" maxlength="15" [formControl]="gatewayAddressValidation">
-                    <mat-error *ngIf="false">Invalid Gateway Address</mat-error>
+                    <mat-error *ngIf="gatewayAddressValidation.invalid">Invalid Gateway Address</mat-error>
                 </mat-form-field>
             </td>
         </tr>

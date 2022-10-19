@@ -4,7 +4,15 @@
 
     <ng-container matColumnDef="device_id">
         <th mat-header-cell *matHeaderCellDef> <b>Device ID</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.device_id}} </td>
+        <td mat-cell *matCellDef="let element"> 
+            <a *ngIf="element.registered" [routerLink]="['/device', element.device_id]">{{element.device_id}}</a>
+            <span *ngIf="!element.registered">{{element.device_id}}</span> 
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="registered">
+        <th mat-header-cell *matHeaderCellDef> <b>Device Registered</b> </th>
+        <td mat-cell *matCellDef="let element"> {{element.registered}} </td>
     </ng-container>
 
     <ng-container matColumnDef="ip">

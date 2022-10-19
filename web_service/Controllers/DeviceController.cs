@@ -42,39 +42,12 @@ public class DeviceController : ControllerBase
         return DeviceContext.Instance.GetDevice(deviceId);
     }
 
-    public class AddRadarDeviceArgs 
-    {
-        [JsonPropertyName("device_id")]
-        public string Id { get; set; } = String.Empty;
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = String.Empty;
-
-        [JsonPropertyName("description")]
-        public string Description { get; set; } = String.Empty;
-
-        public void Validate()
-        {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new HttpRequestException("Missing radar name.");
-            if (string.IsNullOrWhiteSpace(Id))
-                throw new HttpRequestException("Missing radar id.");
-            if (!Guid.TryParse(Id, out _))
-                throw new BadRequestException("invalid device id provided.");            
-        }
-    }
-
     [HttpPost]
-    public string AddRadarDevice([FromBody] AddRadarDeviceArgs args)
+    public void AddRadarDevice([FromBody] AddRadarDeviceArgs args)
     {
-        args.Validate();
-        RadarDevice device = new RadarDevice();
-        device.Id = args.Id;
-        device.Name = args.Name;
-        device.Description = args.Description;
-
-        DeviceContext.Instance.AddDevice(device);
-        return device.Id;
+        AddRadarAction action = new AddRadarAction(args);
+        action.Run();
+        return;
     }
 
     [HttpDelete("{deviceId}")]
