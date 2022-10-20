@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using WebService.Database;
 using WebService.Context;
 using WebService.Radar;
 using WebService.Actions.Radar;
@@ -12,6 +13,14 @@ public class Startup {
 
     public static void ApplicationStart()
     {
+        Console.WriteLine("Radar Management Service Started!");
+
+        Console.WriteLine("Initializing DB...");
+        Database.DatabaseInit();
+
+        Console.WriteLine("Loading templates from storage...");
+        TemplateContext.Instance.LoadTemplatesFromStorage();
+
         Console.WriteLine("Loading devices from storage...");
         DeviceContext.Instance.LoadDevicesFromStorage();
 

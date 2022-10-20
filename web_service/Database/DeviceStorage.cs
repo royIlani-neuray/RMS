@@ -4,10 +4,9 @@ using System.Text.Json;
 namespace WebService.Database;
 
 public class DeviceStorage {
-    public static readonly string StoragePath = "./data";
+    public static readonly string StoragePath = "./data/devices";
     public static readonly string DeviceFileExtention = ".dev";
-    public static ReaderWriterLock storageLock = new ReaderWriterLock();
-
+    
     public static void SaveDevice(RadarDevice device)
     {
         string jsonString = JsonSerializer.Serialize(device);
