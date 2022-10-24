@@ -1,12 +1,16 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class ServiceSettings 
 {
     public static readonly string SettingsFilePath = "./data/settings.json";
 
-    private class SettingsData
+    public class SettingsData
     {
-        public int ReportsIntervalSec { get; set;} = 1; 
+        [JsonPropertyName("reports_interval")]
+        public int ReportsIntervalSec { get; set; } = 1; 
+        
+        [JsonPropertyName("reports_url")]
         public string ReportsURL { get; set; } = String.Empty;
     }
 
@@ -74,4 +78,15 @@ public class ServiceSettings
         string jsonString = JsonSerializer.Serialize(Settings);
         File.WriteAllText(SettingsFilePath, jsonString);
     }
+
+    public SettingsData GetSettings()
+    {
+        return Settings!;
+    }
+
+    public void UpdateSettings(SettingsData settings)
+    {
+        this.Settings = settings;
+    }
+
 }

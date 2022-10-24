@@ -14,6 +14,19 @@ public class SettingsController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("")]
+    public ServiceSettings.SettingsData GetSettings()
+    {
+        return ServiceSettings.Instance.GetSettings();
+    }
+
+    [HttpPut("")]
+    public void UpdateSettings([FromBody] ServiceSettings.SettingsData settings)
+    {
+        ServiceSettings.Instance.UpdateSettings(settings);
+    }
+
+
     public class ReportsUrl 
     {
         [JsonPropertyName("url")]

@@ -18,10 +18,10 @@ export class NewDevicePageComponent implements OnInit {
   deviceList: DeviceMapping[] = [];
   templatesList: RadarTemplateBrief[] = [];
   
-  radarNameValidation = new FormControl('', [Validators.required])
-  selectedDeviceValidation = new FormControl('', [Validators.required])
-  descriptionValidation = new FormControl('', [Validators.maxLength(450)])
-  selectedTemplateValidation = new FormControl('', [Validators.required])
+  radarNameFC = new FormControl('', [Validators.required])
+  selectedDeviceFC = new FormControl('', [Validators.required])
+  descriptionFC = new FormControl('', [Validators.maxLength(450)])
+  selectedTemplateFC = new FormControl('', [Validators.required])
 
   constructor(private devicesService : DevicesService,
               private templatesService : TemplatesService, 
@@ -69,13 +69,13 @@ export class NewDevicePageComponent implements OnInit {
 
   public onAddClicked()
   {
-    if (!this.radarNameValidation.valid || !this.selectedDeviceValidation.valid || !this.selectedTemplateValidation.valid)
+    if (!this.radarNameFC.valid || !this.selectedDeviceFC.valid || !this.selectedTemplateFC.valid)
       return
     
-    let name = this.radarNameValidation.value!
-    let description = this.descriptionValidation.value!
-    let device_id = this.selectedDeviceValidation.value!
-    let template_id = this.selectedTemplateValidation.value!
+    let name = this.radarNameFC.value!
+    let description = this.descriptionFC.value!
+    let device_id = this.selectedDeviceFC.value!
+    let template_id = this.selectedTemplateFC.value!
 
     this.devicesService.registerRadarDevice(device_id, name, description, template_id).subscribe({
       next : (response) => this.router.navigate(['/device', device_id]),

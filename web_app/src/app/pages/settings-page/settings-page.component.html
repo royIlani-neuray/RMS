@@ -3,13 +3,13 @@
 <form class="settings-form">
     <mat-form-field class="settings-full-width"  appearance="fill">
       <mat-label>Tracks reports URL</mat-label>
-      <input matInput #reportsUrlInput maxlength="200" placeholder="" type="url">
+      <input matInput #reportsUrlInput maxlength="200" placeholder="" type="url" [formControl]="reportsUrlFC">
     </mat-form-field>
 
     <mat-form-field class="settings-full-width"  appearance="fill">
       <mat-label>Tracks reports Interval</mat-label>
-      <input matInput #reportsIntervalInput placeholder="Interval in seconds" type="number">
+      <input matInput #reportsIntervalInput placeholder="Interval in seconds" type="number" [formControl]="reportsIntervalFC">
     </mat-form-field>
 </form>
 
-<button mat-raised-button color="primary">Save</button>
+<button mat-raised-button (click)="onSaveClicked()" color="primary">Save</button>
