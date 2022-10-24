@@ -16,6 +16,9 @@ public class AddRadarDeviceArgs
         [JsonPropertyName("description")]
         public string Description { get; set; } = String.Empty;
 
+        [JsonPropertyName("template_id")]
+        public string TemplateId { get; set; } = String.Empty;
+
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
@@ -24,6 +27,8 @@ public class AddRadarDeviceArgs
                 throw new HttpRequestException("Missing radar id.");
             if (!Guid.TryParse(Id, out _))
                 throw new BadRequestException("invalid device id provided.");            
+            if (!String.IsNullOrEmpty(TemplateId) && !Guid.TryParse(TemplateId, out _))
+                throw new BadRequestException("invalid template id provided.");            
         }
     }
 
@@ -46,6 +51,12 @@ public class AddRadarAction : IAction
         device.Id = args.Id;
         device.Name = args.Name;
         device.Description = args.Description;
+
+        if (!String.IsNullOrEmpty(args.TemplateId))
+        {
+            var template = TemplateContext.Instance.GetTemplate(args.TemplateId);
+            device.ConfigScript = template.ConfigScript;
+        }
 
         try
         {

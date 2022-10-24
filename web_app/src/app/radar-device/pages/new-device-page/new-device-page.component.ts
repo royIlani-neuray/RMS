@@ -18,7 +18,8 @@ export class NewDevicePageComponent implements OnInit {
   radarNameValidation = new FormControl('', [Validators.required])
   selectedDeviceValidation = new FormControl('', [Validators.required])
   descriptionValidation = new FormControl('', [Validators.maxLength(450)])
-  
+  selectedTemplateValidation = new FormControl('', [Validators.required])
+
   constructor(private devicesService : DevicesService, private router : Router, private notification: MatSnackBar) { }
 
   ngOnInit(): void 
