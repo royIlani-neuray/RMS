@@ -1,0 +1,8 @@
+
+.templates-table {
+    width: 100%;
+  }
+
+.mat-row:hover {
+    background-color:lightcyan;
+}

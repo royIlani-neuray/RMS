@@ -32,16 +32,15 @@ import { SetNetworkDialogComponent } from './components/set-network-dialog/set-n
 import { EditRadarInfoDialogComponent } from './components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
-import { HomepageComponent } from './pages/homepage/homepage.component';
 import { ErrorPageNotFoundComponent } from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomepageComponent,
     ErrorPageNotFoundComponent,
     ErrorPageNoServiceComponent,
     SettingsPageComponent,
@@ -52,7 +51,8 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
     TracksViewerComponent,
     SetNetworkDialogComponent,
     EditRadarInfoDialogComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    TemplatesPageComponent
   ],
   imports: [
     BrowserModule,
