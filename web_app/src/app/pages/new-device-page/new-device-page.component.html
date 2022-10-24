@@ -26,7 +26,7 @@
     <mat-form-field class="new-device-full-width" appearance="fill">
       <mat-label>Select Radar Template</mat-label>
       <mat-select [formControl]="selectedTemplateValidation">
-          <!--<mat-option *ngFor="let device of deviceList" [value]="device.device_id">{{device.device_id}}</mat-option>-->
+          <mat-option *ngFor="let template of templatesList" [value]="template.template_id">{{template.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 

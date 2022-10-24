@@ -61,12 +61,13 @@ export class DevicesService {
     })
   }
 
-  public registerRadarDevice(deviceId : string, name : string, description : string)
+  public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string)
   {
     return this.http.post("http://localhost:4200/api/devices", {
       name : name,
       description: description,
-      device_id: deviceId
+      device_id: deviceId,
+      template_id: templateId
     })
   }
 

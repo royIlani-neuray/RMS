@@ -14,7 +14,7 @@ export class TemplatesPageComponent implements OnInit {
  
   templateListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarTemplateBrief>()
-  displayedColumns: string[] = ['name', 'description'];
+  displayedColumns: string[] = ['name', 'description', 'model', 'application'];
   updateTimer : any
 
   constructor(private templatesService : TemplatesService, private router : Router) { }
