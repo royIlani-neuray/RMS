@@ -6,7 +6,7 @@ namespace WebService.Database;
 public class TemplateStorage {
 
     public static readonly string StoragePath = "./data/templates";
-    public static readonly string TemplateFileExtention = ".tmp";
+    public static readonly string TemplateFileExtention = ".json";
     
     public static void SaveTemplate(RadarTemplate template)
     {
