@@ -82,6 +82,8 @@ public class DeviceMapper
 
     public void MapDevices()
     {
+        mappedDevices.Clear();
+        
         List<IPAddress> broadcastSources = IPRadarClient.GetBroadcastAddresses();
 
         // create the broadcast packet
