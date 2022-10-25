@@ -11,7 +11,8 @@ public class IPRadarClient
 
     public const int IP_RADAR_CONTROL_PORT = 7001;
     public const int IP_RADAR_DATA_PORT = 7002;
-    public const int IP_RADAR_BROADCAST_PORT = 7003;
+    public const int IP_RADAR_BROADCAST_PORT_SERVER = 7003;
+    public const int IP_RADAR_BROADCAST_PORT_DEVICE = 7004;
     public const uint MESSAGE_HEADER_MAGIC = 0xE1AD1984;
     public const int MESSAGE_HEADER_SIZE = 6;
     public const byte PROTOCOL_REVISION = 1;
@@ -256,7 +257,7 @@ public class IPRadarClient
         foreach (var address in broadcastSources)
         {
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
-            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
 
             UdpClient sendClient = new UdpClient(sourceEndpoint);
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);

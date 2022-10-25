@@ -67,7 +67,7 @@ public class DeviceMapper
 
     public void Start()
     {
-        udpClient = new UdpClient(IPRadarClient.IP_RADAR_BROADCAST_PORT);
+        udpClient = new UdpClient(IPRadarClient.IP_RADAR_BROADCAST_PORT_SERVER);
         udpClient.EnableBroadcast = true;
 
         broadcastListenerTask = new Task(() => 
@@ -103,7 +103,7 @@ public class DeviceMapper
             System.Console.WriteLine($"address: {address}");
 
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
-            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
 
             UdpClient sendClient = new UdpClient(sourceEndpoint);
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
