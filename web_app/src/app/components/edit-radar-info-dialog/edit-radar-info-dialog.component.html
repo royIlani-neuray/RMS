@@ -3,7 +3,7 @@
 <form class="edit-info-form">
     <mat-form-field class="edit-info-full-width"  hintLabel="Max 30 characters" appearance="fill">
       <mat-label>Radar Name</mat-label>
-      <input matInput #radarNameInput maxlength="30" placeholder="Name this device" [formControl]="radarNameValidation">
+      <input matInput #radarNameInput maxlength="30" placeholder="Name this device" [formControl]="radarNameFC">
       <mat-hint align="end">{{radarNameInput.value!.length || 0}}/30</mat-hint>
     </mat-form-field>
   
@@ -12,8 +12,11 @@
       <textarea matInput maxlength="400" placeholder="Add optional description">{{radarDevice.description}}</textarea>
     </mat-form-field>
 
+    <mat-slide-toggle color="primary" [formControl]="sendTracksReportsFC">Send tracks reports</mat-slide-toggle>
+
     <div mat-dialog-actions align="end">
         <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
         <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
     </div>
+
 </form>

@@ -63,4 +63,5 @@ public class RadarTemplate
         ConfigScript = new List<string>();
         templateLock = new ReaderWriterLockSlim();
     }
+
 }

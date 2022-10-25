@@ -23,4 +23,5 @@ RUN dotnet publish "web_service.csproj" -c Release -o /app/publish \
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+ADD default_templates /app/
 ENTRYPOINT ["./web_service"]

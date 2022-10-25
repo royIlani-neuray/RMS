@@ -1,11 +1,16 @@
 
 .new-device-form {
     min-width: 150px;
-    max-width: 500px;
+    max-width: 700px;
     width: 100%;
   }
   
-  .new-device-full-width {
+  .full-width-500 {
     width: 100%;
+    max-width: 650px;
     margin-bottom: 15px;
+  }
+
+  .position-input {
+    margin-right: 20px;
   }

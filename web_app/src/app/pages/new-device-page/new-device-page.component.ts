@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
@@ -15,6 +16,8 @@ import { DevicesService } from '../../services/devices.service';
 })
 export class NewDevicePageComponent implements OnInit {
 
+  @ViewChildren(MatSlideToggle) slideToggleComponents: QueryList<MatSlideToggle>;
+
   deviceList: DeviceMapping[] = [];
   templatesList: RadarTemplateBrief[] = [];
   
@@ -22,6 +25,9 @@ export class NewDevicePageComponent implements OnInit {
   selectedDeviceFC = new FormControl('', [Validators.required])
   descriptionFC = new FormControl('', [Validators.maxLength(450)])
   selectedTemplateFC = new FormControl('', [Validators.required])
+  heightInputFC = new FormControl('', [Validators.required])
+  azimuthInputFC = new FormControl('', [Validators.required, Validators.min(-360), Validators.max(360)])
+  elevationInputFC = new FormControl('', [Validators.required, Validators.min(-360), Validators.max(360)])
 
   constructor(private devicesService : DevicesService,
               private templatesService : TemplatesService, 
@@ -67,18 +73,26 @@ export class NewDevicePageComponent implements OnInit {
     })
   }
 
-  public onAddClicked()
+  public onRegisterClicked()
   {
-    if (!this.radarNameFC.valid || !this.selectedDeviceFC.valid || !this.selectedTemplateFC.valid)
+    if (!this.radarNameFC.valid || !this.selectedDeviceFC.valid || !this.selectedTemplateFC.valid ||
+      !this.heightInputFC.valid || !this.azimuthInputFC.valid || !this.elevationInputFC.valid)
       return
     
     let name = this.radarNameFC.value!
     let description = this.descriptionFC.value!
-    let device_id = this.selectedDeviceFC.value!
-    let template_id = this.selectedTemplateFC.value!
+    let deviceId = this.selectedDeviceFC.value!
+    let templateId = this.selectedTemplateFC.value!
+    let radarEnabled : boolean = this.slideToggleComponents.get(0)!.checked
+    let sendTracksReport : boolean = this.slideToggleComponents.get(1)!.checked
 
-    this.devicesService.registerRadarDevice(device_id, name, description, template_id).subscribe({
-      next : (response) => this.router.navigate(['/device', device_id]),
+    let height : number = +this.heightInputFC.value!
+    let azimuthTilt : number = +this.azimuthInputFC.value!
+    let elevationTilt : number = +this.elevationInputFC.value!
+
+    this.devicesService.registerRadarDevice(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
+      height, azimuthTilt, elevationTilt).subscribe({
+      next : (response) => this.router.navigate(['/device', deviceId]),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not register the device", "Close", { duration : 4000 })
     })
   }

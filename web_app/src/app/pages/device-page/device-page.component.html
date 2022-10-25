@@ -11,16 +11,20 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Device ID: </td>
-                <td>{{radarDevice.device_id}}</td>
+                <td>Enabled: </td>
+                <td>{{radarDevice.enabled}}</td>
             </tr>
             <tr>
                 <td>State: </td>
                 <td>{{radarDevice.state}}</td>
             </tr>
             <tr>
-                <td>Enabled: </td>
-                <td>{{radarDevice.enabled}}</td>
+                <td>Send Tracks Reports: </td>
+                <td>{{radarDevice.send_tracks_report}}</td>
+            </tr>
+            <tr>
+                <td>Device ID: </td>
+                <td>{{radarDevice.device_id}}</td>
             </tr>
             <tr>
                 <td>Description: </td>
@@ -69,11 +73,11 @@
             <td>{{radarDevice.device_mapping.static_ip}}</td>
         </tr>
     </table>
-    <br><br>
+    <br><br><br><br><br><br>
     <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
         <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
         <mat-divider></mat-divider>
-        <div *ngIf="radarDevice.radar_settings.sensor_position != null" class="radar-setting-div" style="float: left; margin-right: 50px;">
+        <div *ngIf="radarDevice.radar_settings.sensor_position != null" class="radar-setting-div">
             <p><mat-label mat-basic-chip>Sensor Position</mat-label></p>
             <table class="radar-setting-table">
                 <thead>
@@ -117,7 +121,7 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="radarDevice.radar_settings.static_boundary_box != null" class="radar-setting-div" style="float: left; margin-right: 50px;">
+        <div *ngIf="radarDevice.radar_settings.static_boundary_box != null" class="radar-setting-div">
             <p><mat-label mat-basic-chip>Static Boundary Box</mat-label></p>
             <table class="radar-setting-table">
                 <thead>

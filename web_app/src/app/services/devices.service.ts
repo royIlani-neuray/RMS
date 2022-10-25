@@ -53,21 +53,30 @@ export class DevicesService {
     })
   }
 
-  public updateRadarInfo(deviceId : string, name : string, description : string)
+  public updateRadarInfo(deviceId : string, name : string, description : string, sendTracksReport : boolean)
   {
     return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/radar-info", {
       name : name,
-      description: description
+      description: description,
+      send_tracks_report: sendTracksReport
     })
   }
 
-  public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string)
+  public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
+    height : number, azimuthTilt : number, elevationTilt : number)
   {
     return this.http.post("http://localhost:4200/api/devices", {
       name : name,
       description: description,
       device_id: deviceId,
-      template_id: templateId
+      template_id: templateId,
+      enabled: enabled,
+      send_tracks_report : sendTracksReport,
+      radar_position : {
+        height : height,
+        azimuth_tilt : azimuthTilt,
+        elevation_tilt : elevationTilt
+      }
     })
   }
 

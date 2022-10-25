@@ -5,7 +5,7 @@ namespace WebService.Database;
 
 public class DeviceStorage {
     public static readonly string StoragePath = "./data/devices";
-    public static readonly string DeviceFileExtention = ".dev";
+    public static readonly string DeviceFileExtention = ".json";
     
     public static void SaveDevice(RadarDevice device)
     {

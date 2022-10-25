@@ -127,7 +127,12 @@ public class RadarTracker
             LastFrameData = nextFrame;
 
             // send tracks report over HTTP and Websockets
-            tracksHttpReporter.SendReport(LastFrameData);
+
+            if (radarDevice.SendTracksReport)
+            {
+                tracksHttpReporter.SendReport(LastFrameData);
+            }
+
             TracksWebsocketReporter.Instance.SendReport(LastFrameData);
         }
 

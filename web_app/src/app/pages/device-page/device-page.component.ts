@@ -100,7 +100,7 @@ export class DevicePageComponent implements OnInit {
   {
     let dialogRef = this.dialog.open(EditRadarInfoDialogComponent, {
       width: '550px',
-      height: '370px',
+      height: '390px',
       data: { radarDevice: this.radarDevice }
     });
 

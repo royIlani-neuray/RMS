@@ -14,7 +14,7 @@ export class DevicesPageComponent implements OnInit {
 
   deviceListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarDeviceBrief>()
-  displayedColumns: string[] = ['name', 'state', 'enabled', 'device_id', 'description'];
+  displayedColumns: string[] = ['name', 'state', 'enabled', 'send_tracks_report', 'device_id', 'description'];
   updateTimer : any
 
   constructor(private devicesService : DevicesService, private router : Router) { }

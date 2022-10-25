@@ -22,6 +22,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
@@ -73,6 +74,7 @@ import { TemplatesPageComponent } from './pages/templates-page/templates-page.co
     MatSidenavModule,
     MatDialogModule,
     MatRadioModule,
+    MatSlideToggleModule,
 
     HttpClientModule,
     RouterModule,

@@ -30,6 +30,9 @@ public class RadarDevice {
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
 
+    [JsonPropertyName("send_tracks_report")]
+    public bool SendTracksReport { get; set; }
+
     [JsonPropertyName("config_script")]
     public List<string> ConfigScript { get; set; }
 
@@ -66,6 +69,9 @@ public class RadarDevice {
         [JsonPropertyName("enabled")]
         public bool Enabled {get; set; }
 
+        [JsonPropertyName("send_tracks_report")]
+        public bool SendTracksReport { get; set; }
+
         public RadarDeviceBrief(RadarDevice device)
         {
             State = device.State;
@@ -73,6 +79,7 @@ public class RadarDevice {
             Description = device.Description;
             Id = device.Id;
             Enabled = device.Enabled;
+            SendTracksReport = device.SendTracksReport;
         }
     }
 

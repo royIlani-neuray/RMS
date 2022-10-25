@@ -4,7 +4,8 @@ export interface RadarDeviceBrief {
     state: string
     description: string
     device_id: string
-    enabled: boolean
+    enabled: boolean,
+    send_tracks_report: boolean
 }
 
 export interface RadarDevice {
@@ -13,6 +14,7 @@ export interface RadarDevice {
     description: string
     device_id: string
     enabled: boolean
+    send_tracks_report: boolean
 
     config_script: string[]
 
