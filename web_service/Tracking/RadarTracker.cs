@@ -39,6 +39,24 @@ public class RadarTracker
         disconnectTask.Start();
     }
 
+    private void InitTrackingApp()
+    {
+        if (radarDevice.deviceMapping == null)
+            throw new Exception("Error: cannot get device application.");
+
+        string appName = radarDevice.deviceMapping.appName;
+
+        if (appName == "PEOPLE_TRACKING")
+        {
+            trackingApp = new PeopleTracking();
+        }
+        else if (appName == "TRAFFIC_MONITORING")
+        {
+            trackingApp = new TrafficMonitoring();
+        }
+        else throw new Exception($"Error: no tracker exist for application: {appName}");
+    }
+
     public void Start()
     {
         if (runTracker)
@@ -54,7 +72,7 @@ public class RadarTracker
             {
                 tracksHttpReporter.StartWorker();
                 ConfigureRadar();
-                trackingApp = new TrafficMonitoring();
+                InitTrackingApp();                
                 TreakingLoop();               
             }
             catch

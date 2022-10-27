@@ -45,40 +45,13 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
     public void AddWebSocketClient(WebSocket webSocket, TaskCompletionSource<object> socketFinishedTcs)
     {
         WebSocketClientList.Add((webSocket,socketFinishedTcs));
-
-        /////////////////////////////
-        // TODO: Test - remove this!!!
-        ////////////////////////////
-        Task t = new Task(() => 
-        {
-            while (true)
-            {
-                FrameData data = new FrameData() {
-                    DeviceId = "6b817ec6-fb4b-fbe2-54f6-bddf7c1ce187",
-                    DeviceName = "2133121322",
-                    tracksList = new List<FrameData.Track>() { new FrameData.Track() {
-                        PositionX = 1,
-                        PositionY = 2,
-                        PositionZ = 1
-                    }}
-                };
-                System.Console.WriteLine("Sending Tracks Report...");
-                TracksWebsocketReporter.Instance.SendReport(data);
-
-                Thread.Sleep(3000);
-            }
-            
-        });
-        t.Start();
-
-        /////////////////////////////////
     }
 
     private void RemoveClosedSockets()
     {
         for (int i = WebSocketClientList.Count - 1; i >= 0; i--)
         {
-            System.Console.WriteLine($"state: {WebSocketClientList[i].Item1.State}");
+            //System.Console.WriteLine($"state: {WebSocketClientList[i].Item1.State}");
             if (WebSocketClientList[i].Item1.State == WebSocketState.Closed)
             {
                 System.Console.WriteLine("IN remove socket!!");
