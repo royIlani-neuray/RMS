@@ -60,8 +60,14 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         
         // we have the radar info, now subscribe for tracks streaming
         this.websocketService.GetFrameData().subscribe({
-          next : (frameData) => {
-            this.lastframeData = frameData as FrameData
+          next : (result) => {
+
+            let frameData = result as FrameData
+
+            if (frameData.device_id != this.selectedDeviceId)
+              return
+
+            this.lastframeData = frameData
             this.dataSource.data = this.lastframeData.tracks
             // update the scene with the latest frame data
             this.updateScene()
@@ -162,24 +168,27 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
     if (this.radarDevice.radar_settings.sensor_position != null)
     {
+      let radarHeight = this.radarDevice.radar_settings.sensor_position.height
+
       // draw the radar
       let radarGeometery = new THREE.BoxGeometry(0.5,0.5,0.2)
       let radar = new THREE.Mesh(radarGeometery, new THREE.MeshBasicMaterial({ color: 0xc91616 }))
-      radar.position.set(0,this.radarDevice.radar_settings.sensor_position.height,0)
+      radar.position.set(0,radarHeight,0)
       scene.add(radar)  
+
+      // draw tracks
+      this.lastframeData.tracks.forEach(function (track) 
+      {
+        let boxGeometry = new THREE.BoxGeometry(1,2,1)
+        let boxEdges = new THREE.EdgesGeometry(boxGeometry)
+        let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
+        box.position.set(-track.position_x, radarHeight + track.position_z, track.position_y)
+        scene.add(box)
+
+      });
     }
 
-    // draw tracks
 
-    this.lastframeData.tracks.forEach(function (track) 
-    {
-      let boxGeometry = new THREE.BoxGeometry(1,2,1)
-      let boxEdges = new THREE.EdgesGeometry(boxGeometry)
-      let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-      box.position.set(-track.position_x,track.position_z,track.position_y)
-      scene.add(box)
-
-    });
 
     this.scene = scene
   }
