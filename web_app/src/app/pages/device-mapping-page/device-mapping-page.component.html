@@ -58,5 +58,7 @@
     <mat-spinner [diameter]="40"></mat-spinner>
 </div>
 
+<label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>No devices found.<br></label>
+
 <br>
 <button mat-raised-button *ngIf="(deviceListLoaded | async)" (click)="triggerDeviceMapping()" color="primary">Trigger Mapping</button>

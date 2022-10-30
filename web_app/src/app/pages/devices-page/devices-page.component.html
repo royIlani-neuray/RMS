@@ -59,5 +59,6 @@
     <mat-spinner [diameter]="40"></mat-spinner>
 </div>
 
+<label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>There are no registered devices.<br></label>
 <br>
 <button mat-raised-button *ngIf="(deviceListLoaded | async)" [routerLink]="['/new-device']" color="primary">Add Device</button>
