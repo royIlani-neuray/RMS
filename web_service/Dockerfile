@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine AS base
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 16500
 
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_URLS=http://+:16500
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
@@ -22,6 +22,7 @@ RUN dotnet publish "web_service.csproj" -c Release -o /app/publish \
 
 FROM base AS final
 WORKDIR /app
+RUN mkdir /app/data
 COPY --from=build /app/publish .
-ADD default_templates /app/
+ADD web_service/default_templates /app/
 ENTRYPOINT ["./web_service"]

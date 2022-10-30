@@ -83,9 +83,21 @@ public class IPRadarClient
     public void Disconnect()
     {
         if (isConnected)
-            controlStream!.Close();
-            dataStream!.Close();
+        {
+            if (controlStream != null)
+            {
+                controlStream.Close();
+                controlStream = null;
+            }
+            
+            if (dataStream != null)
+            {
+                dataStream.Close();
+                dataStream = null;
+            }
+            
             isConnected = false;
+        }
     }
 
     public bool IsConnected()
