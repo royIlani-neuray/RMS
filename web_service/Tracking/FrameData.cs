@@ -54,10 +54,10 @@ public class FrameData
     }
 
     [JsonPropertyName("points")]
-    public List<Point> pointsList = new List<Point>();
+    public List<Point> PointsList { get; set; } = new List<Point>();
 
     [JsonPropertyName("targets_index")]
-    public List<byte> targetsIndexList = new List<byte>();
+    public List<byte> TargetsIndexList { get; set; } = new List<byte>();
 
     [JsonPropertyName("device_id")]
     public string DeviceId { get; set; } = String.Empty;

@@ -20,6 +20,8 @@ export class NewDevicePageComponent implements OnInit {
 
   deviceList: DeviceMapping[] = [];
   templatesList: RadarTemplateBrief[] = [];
+  validTemplatesList: RadarTemplateBrief[] = [];
+
   
   radarNameFC = new FormControl('', [Validators.required])
   selectedDeviceFC = new FormControl('', [Validators.required])
@@ -71,6 +73,18 @@ export class NewDevicePageComponent implements OnInit {
       },
       error : (err) => this.router.navigate(['/no-service'])
     })
+  }
+
+  public onDeviceSelected(event : any)
+  {
+    let selectedDeviceId = event.value
+    console.log(this.deviceList.length)
+    let deviceInfo = this.deviceList.find((device) => { return device.device_id == selectedDeviceId })
+    
+    this.validTemplatesList = this.templatesList.filter((template) => {
+      return (template.model == deviceInfo!.model) && (template.application == deviceInfo!.application)
+    })
+    
   }
 
   public onRegisterClicked()

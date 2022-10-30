@@ -219,7 +219,7 @@ public class PeopleTracking : ITrackingApplication
                 Doppler = point.Doppler
             };
             
-            outFrameData.pointsList.Add(convertedPoint);
+            outFrameData.PointsList.Add(convertedPoint);
         }
 
         foreach (var track in frameData.tracksList)
@@ -240,8 +240,8 @@ public class PeopleTracking : ITrackingApplication
             outFrameData.tracksList.Add(convertedTrack);
         }
 
-        outFrameData.targetsIndexList = frameData.targetsIndexList;
-        
+        outFrameData.TargetsIndexList = frameData.targetsIndexList;
+
         return outFrameData;
     }
 

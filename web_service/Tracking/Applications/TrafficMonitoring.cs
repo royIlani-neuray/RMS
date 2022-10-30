@@ -214,7 +214,7 @@ public class TrafficMonitoring : ITrackingApplication
                 Doppler = point.Doppler
             };
             
-            outFrameData.pointsList.Add(convertedPoint);
+            outFrameData.PointsList.Add(convertedPoint);
         }
 
         foreach (var track in trafficAppFrameData.tracksList)

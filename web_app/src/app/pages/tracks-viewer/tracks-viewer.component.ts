@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FrameData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import * as THREE from "three";
-import { PerspectiveCamera } from 'three';
+import { MeshBasicMaterial, PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
 import { WebsocketService } from '../../services/websocket.service';
@@ -20,6 +20,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   radarDevice : RadarDevice
   deviceList: RadarDeviceBrief[] = [];
   lastframeData: FrameData
+  numberOfPoints: Number = 0
 
   dataSource = new MatTableDataSource<TrackData>()
   displayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
@@ -69,6 +70,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
             this.lastframeData = frameData
             this.dataSource.data = this.lastframeData.tracks
+            this.numberOfPoints = this.lastframeData.points.length
             // update the scene with the latest frame data
             this.updateScene()
           }
@@ -186,6 +188,22 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         scene.add(box)
 
       });
+
+      // draw points...
+      /*
+      console.log("** Points List **")
+      this.lastframeData.points.forEach(function (point)
+      {
+        const pointCartesian = new THREE.Vector3()
+        pointCartesian.setFromSphericalCoords(point.range, point.azimuth, point.elevation)
+        console.log("Point - X: " + pointCartesian.x + " Y:" + pointCartesian.y + " Z:" + pointCartesian.z)
+
+        let pointGeometry = new THREE.SphereGeometry(0.05)
+        let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: 0xffffff}))
+        pointMesh.position.set(pointCartesian.x, pointCartesian.z, pointCartesian.y)
+        scene.add(pointMesh)
+      })
+      */
     }
 
 

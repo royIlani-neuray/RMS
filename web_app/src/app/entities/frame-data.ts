@@ -9,6 +9,8 @@ export interface FrameData {
     timestamp: string
 
     tracks: TrackData[]
+    points: PointData[]
+    targets_index: number[]
 }
 
 export interface TrackData {
@@ -22,4 +24,11 @@ export interface TrackData {
     acceleration_x : number
     acceleration_y : number
     acceleration_z : number
+}
+
+export interface PointData {
+    range: number
+    azimuth : number
+    elevation : number
+    doppler : number
 }
