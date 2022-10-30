@@ -145,18 +145,18 @@ public class DeviceController : ControllerBase
     }
 
     [HttpGet("{deviceId}/tracks")]
-    public FrameData GetDeviceTracks(string deviceId)
+    public HttpTracksReport GetDeviceTracks(string deviceId)
     {
         ValidateDeviceId(deviceId); 
         var radarDevice = DeviceContext.Instance.GetDevice(deviceId);
 
         if ((radarDevice.radarTracker != null) && (radarDevice.radarTracker.LastFrameData != null))
         {
-            return radarDevice.radarTracker.LastFrameData;
+            return new HttpTracksReport(radarDevice.radarTracker.LastFrameData);
         }
         else
         {
-            return new FrameData() {
+            return new HttpTracksReport() {
                 DeviceId = radarDevice.Id,
                 DeviceName = radarDevice.Name
             };

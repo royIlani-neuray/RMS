@@ -82,6 +82,7 @@ public class PeopleTracking : ITrackingApplication
 
         public FrameHeader? frameHeader;
         public List<Point> pointCloudList = new List<Point>();
+        public List<byte> targetsIndexList = new List<byte>();
         public List<Track> tracksList = new List<Track>();
 
     }
@@ -187,6 +188,16 @@ public class PeopleTracking : ITrackingApplication
                 }
             }
 
+            if (tlvType == TLV_TYPE_TARGETS_INDEX)
+            {
+                for (int i=0; i<tlvLength; i++)
+                {
+                    frameData.targetsIndexList.Add(reader.ReadByte());
+                }
+
+                Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
+            }
+
         }
 
         return frameData;
@@ -228,6 +239,9 @@ public class PeopleTracking : ITrackingApplication
 
             outFrameData.tracksList.Add(convertedTrack);
         }
+
+        outFrameData.targetsIndexList = frameData.targetsIndexList;
+        
         return outFrameData;
     }
 

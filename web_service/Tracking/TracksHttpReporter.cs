@@ -55,7 +55,8 @@ public class TracksHttpReporter : WorkerThread<FrameData>
             System.Console.WriteLine($"Sening report: - {reportsURL} - {DateTime.Now}");
             LastReportTime = DateTime.Now;
 
-            string jsonString = JsonSerializer.Serialize(workItem);
+            HttpTracksReport httpReport = new HttpTracksReport(workItem);
+            string jsonString = JsonSerializer.Serialize(httpReport);
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, reportsURL)
             {

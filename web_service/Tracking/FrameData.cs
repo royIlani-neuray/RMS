@@ -7,10 +7,17 @@ public class FrameData
 {
     public class Point
     {
-        public float Range;
-        public float Azimuth;
-        public float Elevation;
-        public float Doppler;
+        [JsonPropertyName("range")]
+        public float Range { get; set; }
+
+        [JsonPropertyName("azimuth")]
+        public float Azimuth { get; set; }
+
+        [JsonPropertyName("elevation")]
+        public float Elevation { get; set; }
+
+        [JsonPropertyName("doppler")]
+        public float Doppler { get; set; }
     }
 
     public class Track
@@ -46,8 +53,11 @@ public class FrameData
         public float AccelerationZ { get; set; }
     }
 
-    [JsonIgnore]
+    [JsonPropertyName("points")]
     public List<Point> pointsList = new List<Point>();
+
+    [JsonPropertyName("targets_index")]
+    public List<byte> targetsIndexList = new List<byte>();
 
     [JsonPropertyName("device_id")]
     public string DeviceId { get; set; } = String.Empty;
