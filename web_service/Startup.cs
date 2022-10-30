@@ -6,6 +6,7 @@ using WebService.Database;
 using WebService.Context;
 using WebService.Radar;
 using WebService.Actions.Radar;
+using WebService.Scheduler;
 
 public class Startup {
 
@@ -30,6 +31,12 @@ public class Startup {
 
         Console.WriteLine("Starting WebSocket reporter...");
         TracksWebsocketReporter.Instance.StartWorker();   
+
+        Console.WriteLine("Starting Device Mapping Scheduler...");
+        DeviceMappingScheduler.Instance.Start();
+
+        Console.WriteLine("Starting Connection Scheduler...");
+        ConnectionScheduler.Instance.Start();
     }
 
 }

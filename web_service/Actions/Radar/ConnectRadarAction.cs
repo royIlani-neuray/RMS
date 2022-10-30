@@ -25,8 +25,18 @@ public class ConnectRadarAction : IAction
         {
             try
             {
-                // Note: radar must be mapped before connection attempt
-                var mappedDevice = DeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
+                DeviceMapper.MappedDevice mappedDevice;
+
+                // Note: radar must be mapped before connection attempt, unless it has static IP.
+                if ((radarDevice.deviceMapping != null) && radarDevice.deviceMapping.staticIP)
+                {
+                    mappedDevice = radarDevice.deviceMapping;
+                }
+                else
+                {
+                    mappedDevice = DeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
+                }
+
                 radarDevice.ipRadarClient = new IPRadarClient(mappedDevice.ipAddress);
                 radarDevice.ipRadarClient.Connect();
             }
