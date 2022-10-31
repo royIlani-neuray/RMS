@@ -16,6 +16,8 @@ public class Startup {
     {
         Console.WriteLine("Radar Management Service Started!");
 
+        Console.WriteLine($"Running as user: {Environment.UserName}");
+
         Console.WriteLine("Initializing DB...");
         Database.DatabaseInit();
 

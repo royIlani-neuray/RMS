@@ -351,3 +351,6 @@ MigrationBackup/
 
 # data folder
 data/
+
+# output bin folder
+bin/

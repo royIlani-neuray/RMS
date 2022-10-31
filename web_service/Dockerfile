@@ -21,8 +21,12 @@ RUN dotnet publish "web_service.csproj" -c Release -o /app/publish \
     -p:PublishSingeFile=true
 
 FROM base AS final
+USER root
 WORKDIR /app
 RUN mkdir /app/data
 COPY --from=build /app/publish .
 ADD web_service/default_templates /app/
+RUN chown -R user:user /app
+USER user
 ENTRYPOINT ["./web_service"]
+

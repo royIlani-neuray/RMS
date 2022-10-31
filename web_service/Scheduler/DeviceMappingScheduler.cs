@@ -4,7 +4,7 @@ using WebService.Radar;
 
 namespace WebService.Scheduler;
 
-public class DeviceMappingScheduler : TaskScheduler{
+public class DeviceMappingScheduler : TaskScheduler {
 
     #region Singleton
     
@@ -40,7 +40,5 @@ public class DeviceMappingScheduler : TaskScheduler{
 
         DeviceMapper.Instance.MapDevices();
     }
-
-
 
 }

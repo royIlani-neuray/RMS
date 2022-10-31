@@ -4,7 +4,7 @@
 #docker run  -it --rm --network host --name radar_service radar_service
 
 # to clear the storage:
-# docker volume rm radar_roe_service_radar_service_storage
+# docker volume rm rms_webservice_storage
 
 # save-load docker
 #docker save --output image.tar image-name
