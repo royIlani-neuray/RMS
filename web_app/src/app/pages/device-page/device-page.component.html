@@ -219,6 +219,51 @@
                 </tbody>
             </table>
         </div>
+        <div *ngIf="radarDevice.radar_settings.detection_params != null" class="radar-setting-div">
+            <p><mat-label mat-basic-chip>Detection Parameters</mat-label></p>
+            <table class="radar-setting-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Max Range</td>
+                        <td>{{radarDevice.radar_settings.detection_params.max_range | number:'1.0-2'}}m</td>
+                    </tr>
+                    <tr>
+                        <td>Range Resolution</td>
+                        <td>{{radarDevice.radar_settings.detection_params.range_resolution| number:'1.0-3'}}m</td>
+                    </tr>
+                    <tr>
+                        <td>Max Velocity</td>
+                        <td>{{radarDevice.radar_settings.detection_params.max_velocity | number:'1.0-2'}} m/s</td>
+                    </tr>
+                    <tr>
+                        <td>Velocity Resolution</td>
+                        <td>{{radarDevice.radar_settings.detection_params.velocity_resolution | number:'1.0-3'}} m/s</td>
+                    </tr>
+                    <tr>
+                        <td>Frame Rate</td>
+                        <td>{{radarDevice.radar_settings.detection_params.frame_rate | number:'1.0-2'}} fps</td>
+                    </tr>
+                    <tr>
+                        <td>Frame Size</td>
+                        <td>{{radarDevice.radar_settings.detection_params.frame_size}} bytes</td>
+                    </tr>
+                    <tr>
+                        <td>TX antennas count</td>
+                        <td>{{radarDevice.radar_settings.detection_params.tx_count}}</td>
+                    </tr>
+                    <tr>
+                        <td>RX antennas count</td>
+                        <td>{{radarDevice.radar_settings.detection_params.rx_count}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>        
         <br>
     </div>
     <br>

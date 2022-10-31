@@ -51,6 +51,19 @@ public class RadarSettings
 
         [JsonPropertyName("max_velocity")]
         public float MaxVelocity {get; set;} = -1;
+
+        [JsonPropertyName("frame_rate")]
+        public float FrameRate {get; set;} = -1;
+
+        [JsonPropertyName("frame_size")]
+        public float FrameSize {get; set;} = -1;
+
+        [JsonPropertyName("tx_count")]
+        public float TxCount {get; set;} = -1;
+
+        [JsonPropertyName("rx_count")]
+        public float RxCount {get; set;} = -1;
+
     }
 
     public class AllocationParameters

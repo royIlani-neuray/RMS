@@ -76,6 +76,13 @@ export interface GatingParams {
 }
 
 export interface DetectionParams {
-
+    range_resolution : number
+    velocity_resolution : number
+    max_range : number
+    max_velocity : number
+    frame_rate : number
+    frame_size : number
+    tx_count : number
+    rx_count : number
 }
 

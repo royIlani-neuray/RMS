@@ -4,6 +4,7 @@ namespace WebService.Radar;
 
 public class RadarConfigParser
 {
+    private const int LIGHT_SPEED_METER_PER_SEC = 299792458;
     private RadarSettings? radarSettings;
 
     private List<(string, Action<List<float>>)> ParseMethods;
@@ -18,7 +19,6 @@ public class RadarConfigParser
             ("presenceBoundaryBox", ParsePresenseBoundryBox),
             ("allocationParam", ParseAllocationParams),
             ("gatingParam", ParseGatingParams),
-            //("profileCfg", ParseDetectionParams)
         };
 
         ParseConfig(configScript);
@@ -41,6 +41,15 @@ public class RadarConfigParser
             //System.Console.WriteLine("Parsing config line: " + key);
             if (TryGetConfigParams(configScript, key, out configParams))
                 action(configParams);
+        }
+
+        // detection params require 'frameCfg' 'profileCfg' and 'channelCfg'
+        List<float> profileConfig, frameConfig, channelConfig;
+        if (TryGetConfigParams(configScript, "frameCfg", out frameConfig) && 
+            TryGetConfigParams(configScript, "profileCfg", out profileConfig) &&
+            TryGetConfigParams(configScript, "channelCfg", out channelConfig))
+        {
+            ParseDetectionParams(configScript, frameConfig, profileConfig, channelConfig);
         }
     }
 
@@ -112,9 +121,106 @@ public class RadarConfigParser
         };
     }
 
-    private void ParseDetectionParams(List<float> configParams)
+    private int CountBits(uint value)
     {
+        int count = 0;
+        while (value != 0)
+        {
+            uint lsb = value & 1;
+
+            if (lsb > 0)
+                count++;
+
+            value >>= 1;
+        }
+
+        return count;
+    }
+
+    private void GetAntennasCount(List<float> channelConfig, out int TxCount, out int RxCount)
+    {
+        uint rxChannelEn = (uint) channelConfig[0];
+        uint txChannelEn = (uint) channelConfig[1];
+
+        TxCount = CountBits(txChannelEn);
+        RxCount = CountBits(rxChannelEn);
+
+        //Console.WriteLine($"TX Count: {TxCount}, RX Count: {RxCount}");
+    }
+
+    private void GetDopplerResolution(int chirpCount, double bandwidth, float startFreq, float rampEndTime, float idleTime, float chirpLoops, int txCount, out double dopplerResolution, out double maxVelocity)
+    {
+        var tc = (idleTime * 1e-6 + rampEndTime * 1e-6) * chirpCount;
+        var lda = 3e8 / (startFreq * 1e9);
+        maxVelocity = lda / (4 * tc);
+        dopplerResolution = lda / (2 * tc * chirpLoops * txCount);
+    }
+
+    private double GetMaxRange(float digOutSampleRate, float freqSlopeConst)
+    {
+        // System.Console.WriteLine($"digOutSampleRate: {digOutSampleRate}");
+        // System.Console.WriteLine($"freqSlopeConst: {freqSlopeConst}");
+
+        var freqSlopeHzPerSec = freqSlopeConst * 1e12;
+        return (digOutSampleRate * 1e3 * 0.9 * 3e8) / (2 * freqSlopeHzPerSec);
+    }
+
+    private void CalcRangeResolution(int numAdcSamples, float digOutSampleRate, float freqSlopeConst, out double rangeResolution, out double bandwidth)
+    {
+        double adcSamplePerioduSec = 1000.0 / digOutSampleRate * numAdcSamples;
+        bandwidth = freqSlopeConst * adcSamplePerioduSec * 1e6;
+        rangeResolution = LIGHT_SPEED_METER_PER_SEC / (2.0 * bandwidth);
+    }
+
+    private int GetFrameSizeBytes(float chirpLoops, int txCount, int rxCount, int numAdcSamples)
+    {
+        int sampleSizeBytes = 4; // hard coded for now
+        return (int) (chirpLoops * txCount * numAdcSamples * rxCount * sampleSizeBytes);
+    }
+
+    // frameCfg <chirpStartIndex> <chirpEndIndex> <chirpLoops> <numberOfFrames> <framePeriodicity> <triggerSelect> <triggerDelay>
+    // profileCfg <profileId> <startFreq> <idleTime> <adcStartTime> <rampEndTime> <txOutPower> <txPhaseShifter> <freqSlopeConst> <txStartTime> <numAdcSamples> <digOutSampleRate> <hpfCornerFreq1> <hpfCornerFreq2> <rxGain>  
+    // channelCfg <rxChannelEn> <txChannelEn> <cascading>
+    private void ParseDetectionParams(List<string> configScript, List<float> frameConfig,  List<float> profileConfig, List<float> channelConfig)
+    {
+        int txCount, rxCount;
+        double rangeResolution, bandwidth;
+        double dopplerResolution, maxVelocity;
+
+        float frameRate = 1000 / frameConfig[4];
+        float chirpLoops = frameConfig[2];
+
+        float startFreq = profileConfig[1];
+        float idleTime = profileConfig[2];
+        float rampEndTime = profileConfig[4];
+        float freqSlopeConst = profileConfig[7];
+        int numAdcSamples = (int) profileConfig[9];
+        float digOutSampleRate = profileConfig[10];
+
+        int chirpCount = configScript.Count(cfgLine => cfgLine.StartsWith("chirpCfg"));
+
+        CalcRangeResolution(numAdcSamples, digOutSampleRate, freqSlopeConst, out rangeResolution, out bandwidth);
+        GetAntennasCount(channelConfig, out txCount, out rxCount);
         
+        GetDopplerResolution(chirpCount, bandwidth, startFreq, rampEndTime, idleTime, chirpLoops, txCount, out dopplerResolution, out maxVelocity);
+        double maxRange = GetMaxRange(digOutSampleRate, freqSlopeConst);
+        int frameSize = GetFrameSizeBytes(chirpLoops, txCount, rxCount, numAdcSamples);
+
+        // System.Console.WriteLine($"RangeRes: {rangeResolution}");
+        // System.Console.WriteLine($"DoppplerRes: {dopplerResolution}");
+        // System.Console.WriteLine($"Max Velocity: {maxVelocity}");
+        // System.Console.WriteLine($"Max Range: {maxRange}");
+
+        this.radarSettings!.DetectionParams = new RadarSettings.DetectionParameters() {
+            FrameRate = frameRate,
+            FrameSize = frameSize,
+            TxCount = txCount,
+            RxCount = rxCount,
+            RangeResolution = (float) rangeResolution,
+            VelocityResolution = (float) dopplerResolution,
+            MaxRange = (float) maxRange,
+            MaxVelocity = (float) maxVelocity
+        };
     }
 
     private bool TryGetConfigParams(List<string> configScript, string configKey, out List<float> configParams)
@@ -125,7 +231,7 @@ public class RadarConfigParser
         if (line == null)
             return false;
         
-        List<string> splitValues = line.Trim().Split(' ').ToList();
+        List<string> splitValues = line.Trim().Replace("  "," ").Split(' ').ToList();
         splitValues.RemoveAt(0); // remove the key
         configParams = splitValues.ConvertAll<float>(val => float.Parse(val));
         return true;

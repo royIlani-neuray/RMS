@@ -80,6 +80,8 @@ public class DeviceMapper
 
     public void MapDevices()
     {
+        System.Console.WriteLine($"Sending device mapping broadcast...");
+
         mappedDevices.Clear();
         
         List<IPAddress> broadcastSources = IPRadarClient.GetBroadcastAddresses();
@@ -98,7 +100,7 @@ public class DeviceMapper
         // send for each address
         foreach (var address in broadcastSources)
         {
-            System.Console.WriteLine($"address: {address}");
+            // System.Console.WriteLine($"address: {address}");
 
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
             IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
