@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditRadarInfoDialogComponent } from '../../components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { SetDeviceConfigDialogComponent } from 'src/app/components/set-device-config-dialog/set-device-config-dialog.component';
 
 @Component({
   selector: 'app-device-page',
@@ -110,6 +111,23 @@ export class DevicePageComponent implements OnInit {
         this.getDevice(this.deviceId)
       }
     });
+  }
+
+  public setDeviceConfiguration()
+  {
+    let dialogRef = this.dialog.open(SetDeviceConfigDialogComponent, {
+      width: '550px',
+      height: '270px',
+      data: { radarDevice: this.radarDevice }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result)
+      {
+        this.notification.open("Radar configuration updated.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
+        this.getDevice(this.deviceId)
+      }
+    });    
   }
 
   private showNotification(message : string)

@@ -80,4 +80,12 @@ export class DevicesService {
     })
   }
 
+  public setDeviceConfiguration(deviceId : string, templateId : string)
+  {
+    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/config", 
+    {
+      template_id: templateId,
+    })    
+  }
+
 }

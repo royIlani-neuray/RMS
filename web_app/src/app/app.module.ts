@@ -37,6 +37,7 @@ import { ErrorPageNotFoundComponent } from './pages/error-page-not-found/error-p
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
+import { SetDeviceConfigDialogComponent } from './components/set-device-config-dialog/set-device-config-dialog.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { TemplatesPageComponent } from './pages/templates-page/templates-page.co
     SetNetworkDialogComponent,
     EditRadarInfoDialogComponent,
     ConfirmDialogComponent,
-    TemplatesPageComponent
+    TemplatesPageComponent,
+    SetDeviceConfigDialogComponent
   ],
   imports: [
     BrowserModule,

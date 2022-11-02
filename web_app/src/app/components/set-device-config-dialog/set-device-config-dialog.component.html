@@ -1,0 +1,16 @@
+<h4>Select Radar Configuration</h4>
+
+<form>
+
+    <mat-form-field class="full-width-500" appearance="fill">
+        <mat-label>Select Radar Template</mat-label>
+        <mat-select [formControl]="selectedTemplateFC">
+            <mat-option *ngFor="let template of validTemplatesList" [value]="template.template_id">{{template.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div mat-dialog-actions align="end">
+        <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
+        <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
+    </div>
+</form>
