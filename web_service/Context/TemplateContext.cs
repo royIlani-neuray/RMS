@@ -1,5 +1,6 @@
 using WebService.Database;
 using WebService.Entites;
+using WebService.Radar;
 
 namespace WebService.Context;
 
@@ -35,6 +36,23 @@ public sealed class TemplateContext {
     public void LoadTemplatesFromStorage()
     {
         templates = new Dictionary<string, RadarTemplate>(TemplateStorage.LoadAllTemplates());
+
+        // default templates doesn't have thier radar setting serialized
+        foreach (var template in templates.Values)
+        {
+            if (template.radarSettings != null)
+                continue;
+
+            try
+            {
+                RadarConfigParser configParser = new RadarConfigParser(template.ConfigScript);
+                template.radarSettings = configParser.GetRadarSettings();
+            }
+            catch
+            {
+                System.Console.WriteLine($"Error: failed to parse config script for template - {template.Id}");
+            }
+        }
     }
 
     public bool IsRadarTemplateExist(string templateId)

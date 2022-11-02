@@ -1,3 +1,4 @@
+import { RadarSettings } from "./radar-settings"
 
 export interface RadarTemplate {
     name: string
@@ -7,6 +8,8 @@ export interface RadarTemplate {
     application: string
 
     config_script: string[]
+    
+    radar_settings: RadarSettings
 }
 
 export interface RadarTemplateBrief {

@@ -37,7 +37,7 @@ public class TemplateController : ControllerBase
     public RadarTemplate GetRadarDevice(string templateId)
     {
         ValidateTemplateId(templateId);        
-        if (!DeviceContext.Instance.IsRadarDeviceExist(templateId))
+        if (!TemplateContext.Instance.IsRadarTemplateExist(templateId))
             throw new NotFoundException("There is no template with the provided id");
 
         return TemplateContext.Instance.GetTemplate(templateId);

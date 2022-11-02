@@ -23,6 +23,9 @@ public class RadarTemplate
     [JsonPropertyName("config_script")]
     public List<string> ConfigScript { get; set; }
 
+    [JsonPropertyName("radar_settings")]
+    public RadarSettings? radarSettings { get; set;}
+
     [JsonIgnore]
     public ReaderWriterLockSlim templateLock;
 

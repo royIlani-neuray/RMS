@@ -7,6 +7,7 @@ import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-m
 import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
+import { TemplatePageComponent } from './pages/template-page/template-page.component';
 
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'new-device', component: NewDevicePageComponent },
 
   { path: 'templates', component: TemplatesPageComponent},
+  { path: 'template/:template_id', component: TemplatePageComponent },
 
   { path: 'tracks-viewer', component: TracksViewerComponent},
   { path: 'settings', component: SettingsPageComponent },

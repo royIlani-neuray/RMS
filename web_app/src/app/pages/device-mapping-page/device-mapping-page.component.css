@@ -7,6 +7,14 @@
     color: blue; 
 }
 
+.device-mapping-table th {
+    background-color: #7385d3;
+}
+  
+.device-mapping-table tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+}
+
 .mat-row:hover {
     background-color:lightcyan;
 }

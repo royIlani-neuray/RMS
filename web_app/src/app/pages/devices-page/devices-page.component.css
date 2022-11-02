@@ -11,6 +11,14 @@
     color: red; 
 }
 
+.devices-table th {
+    background-color: #7385d3;
+}
+  
+.devices-table tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+}
+
 .mat-row:hover {
     background-color:lightcyan;
 }

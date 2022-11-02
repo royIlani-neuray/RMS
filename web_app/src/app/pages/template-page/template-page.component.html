@@ -1,0 +1,214 @@
+<div *ngIf="!template" style="display: flex; justify-content: center; align-items: center; background: white;">
+    <mat-spinner [diameter]="60"></mat-spinner>
+</div>
+
+<div *ngIf="template">
+    <h3>Template: {{template.name}}</h3>
+
+    <div class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Device Details</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>Radar Model</th>
+                    <th>Radar Application</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.model}}</td>
+                    <td>{{template.application}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.sensor_position != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Sensor Position</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>Height</th>
+                    <th>Azimuth Tilt</th>
+                    <th>Elevation Tilt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.sensor_position.height}}m</td>
+                    <td>{{template.radar_settings.sensor_position.azimuth_tilt}} deg</td>
+                    <td>{{template.radar_settings.sensor_position.elevation_tilt}} deg</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.boundary_box != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Boundary Box</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>X Min</th>
+                    <th>X Max</th>
+                    <th>Y Min</th>
+                    <th>Y Max</th>
+                    <th>Z Min</th>
+                    <th>Z Max</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.boundary_box.x_min}}m</td>
+                    <td>{{template.radar_settings.boundary_box.x_max}}m</td>
+                    <td>{{template.radar_settings.boundary_box.y_min}}m</td>
+                    <td>{{template.radar_settings.boundary_box.y_max}}m</td>
+                    <td>{{template.radar_settings.boundary_box.z_min}}m</td>
+                    <td>{{template.radar_settings.boundary_box.z_max}}m</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.static_boundary_box != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Static Boundary Box</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>X Min</th>
+                    <th>X Max</th>
+                    <th>Y Min</th>
+                    <th>Y Max</th>
+                    <th>Z Min</th>
+                    <th>Z Max</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.static_boundary_box.x_min}}m</td>
+                    <td>{{template.radar_settings.static_boundary_box.x_max}}m</td>
+                    <td>{{template.radar_settings.static_boundary_box.y_min}}m</td>
+                    <td>{{template.radar_settings.static_boundary_box.y_max}}m</td>
+                    <td>{{template.radar_settings.static_boundary_box.z_min}}m</td>
+                    <td>{{template.radar_settings.static_boundary_box.z_max}}m</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.presence_boundary_box != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Presence Boundary Box</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>X Min</th>
+                    <th>X Max</th>
+                    <th>Y Min</th>
+                    <th>Y Max</th>
+                    <th>Z Min</th>
+                    <th>Z Max</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.presence_boundary_box.x_min}}m</td>
+                    <td>{{template.radar_settings.presence_boundary_box.x_max}}m</td>
+                    <td>{{template.radar_settings.presence_boundary_box.y_min}}m</td>
+                    <td>{{template.radar_settings.presence_boundary_box.y_max}}m</td>
+                    <td>{{template.radar_settings.presence_boundary_box.z_min}}m</td>
+                    <td>{{template.radar_settings.presence_boundary_box.z_max}}m</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.allocation_params != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Allocation Parameters</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>SNR Threshold</th>
+                    <th>SNR Threshold Obscured</th>
+                    <th>Velocity Threshold</th>
+                    <th>Points Threshold</th>
+                    <th>Max Distance Threshold</th>
+                    <th>Max Velocity Threshold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.allocation_params.snr_threshold}}</td>
+                    <td>{{template.radar_settings.allocation_params.snr_threshold_obscured}}</td>
+                    <td>{{template.radar_settings.allocation_params.velocity_threshold}} m/s</td>
+                    <td>{{template.radar_settings.allocation_params.points_threshold}} points</td>
+                    <td>{{template.radar_settings.allocation_params.max_distance_threshold}} m²</td>
+                    <td>{{template.radar_settings.allocation_params.max_velocity_threshold}} m/s</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.gating_params != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Gating Parameters</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>Gain</th>
+                    <th>Limit Width</th>
+                    <th>Limit Depth</th>
+                    <th>Limit Height</th>
+                    <th>Limit Velocity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{template.radar_settings.gating_params.gain}}</td>
+                    <td>{{template.radar_settings.gating_params.limit_width}}m</td>
+                    <td>{{template.radar_settings.gating_params.limit_depth}}m</td>
+                    <td>{{template.radar_settings.gating_params.limit_height}}m</td>
+                    <td>{{template.radar_settings.gating_params.limit_velocity}} m/s</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="template.radar_settings.detection_params != null" class="radar-setting-div">
+        <p><mat-label mat-basic-chip>Detection Parameters</mat-label></p>
+        <table class="radar-setting-table">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Max Range</td>
+                    <td>{{template.radar_settings.detection_params.max_range | number:'1.0-2'}}m</td>
+                </tr>
+                <tr>
+                    <td>Range Resolution</td>
+                    <td>{{template.radar_settings.detection_params.range_resolution| number:'1.0-3'}}m</td>
+                </tr>
+                <tr>
+                    <td>Max Velocity</td>
+                    <td>{{template.radar_settings.detection_params.max_velocity | number:'1.0-2'}} m/s</td>
+                </tr>
+                <tr>
+                    <td>Velocity Resolution</td>
+                    <td>{{template.radar_settings.detection_params.velocity_resolution | number:'1.0-3'}} m/s</td>
+                </tr>
+                <tr>
+                    <td>Frame Rate</td>
+                    <td>{{template.radar_settings.detection_params.frame_rate | number:'1.0-2'}} fps</td>
+                </tr>
+                <tr>
+                    <td>Frame Size</td>
+                    <td>{{template.radar_settings.detection_params.frame_size}} bytes</td>
+                </tr>
+                <tr>
+                    <td>TX antennas count</td>
+                    <td>{{template.radar_settings.detection_params.tx_count}}</td>
+                </tr>
+                <tr>
+                    <td>RX antennas count</td>
+                    <td>{{template.radar_settings.detection_params.rx_count}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div> 
+    <br><br>
+
+</div>

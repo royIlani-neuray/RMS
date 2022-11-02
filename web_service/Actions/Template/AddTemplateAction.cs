@@ -62,6 +62,9 @@ public class AddTemplateAction : IAction
         template.Application = args.Application;
         template.ConfigScript = args.ConfigScript;
 
+        RadarConfigParser configParser = new RadarConfigParser(template.ConfigScript);
+        template.radarSettings = configParser.GetRadarSettings();
+
         System.Console.WriteLine($"Adding new template - [{template.Name}]");
  
         TemplateContext.Instance.AddTemplate(template);

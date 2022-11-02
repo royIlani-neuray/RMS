@@ -1,7 +1,15 @@
 
 .templates-table {
     width: 100%;
-  }
+}
+
+.templates-table th {
+  background-color: #7385d3;
+}
+
+.templates-table tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
 
 .mat-row:hover {
     background-color:lightcyan;
