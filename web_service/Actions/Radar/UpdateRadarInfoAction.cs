@@ -12,15 +12,10 @@ public class UpdateRadarInfoArgs
     [JsonPropertyName("description")]
     public string Description { get; set; } = String.Empty;
 
-    [JsonPropertyName("send_tracks_report")]
-    public bool? SendTracksReport { get; set; }
-
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Name))
-            throw new HttpRequestException("Missing radar name.");    
-        if (SendTracksReport == null)
-            throw new HttpRequestException("Missing send_tracks_report argument");        
+            throw new HttpRequestException("Missing radar name.");           
     }
 }
 
@@ -39,6 +34,5 @@ public class UpdateRadarInfoAction : RadarDeviceAction
 
         radarDevice.Name = args.Name;
         radarDevice.Description = args.Description;
-        radarDevice.SendTracksReport = args.SendTracksReport!.Value;
     }
 }

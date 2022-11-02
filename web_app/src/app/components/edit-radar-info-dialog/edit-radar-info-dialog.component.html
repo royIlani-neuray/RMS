@@ -12,8 +12,6 @@
       <textarea matInput maxlength="400" placeholder="Add optional description">{{radarDevice.description}}</textarea>
     </mat-form-field>
 
-    <mat-slide-toggle color="primary" [formControl]="sendTracksReportsFC">Send tracks reports</mat-slide-toggle>
-
     <div mat-dialog-actions align="end">
         <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
         <button mat-raised-button (click)="onCancelClicked()">Cancel</button>

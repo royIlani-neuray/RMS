@@ -81,6 +81,15 @@ public class DeviceController : ControllerBase
         action.Run();        
     }
 
+    [HttpPut("{deviceId}/tracks-reports")]
+    public void SetTracksReports(string deviceId, [FromBody] SetTracksReportsArgs args)
+    {
+        ValidateDeviceId(deviceId); 
+        args.Validate();
+        var action = new SetTracksReportsAction(deviceId, args);
+        action.Run();        
+    }
+
     [HttpPut("{deviceId}/network")]
     public void SetDeviceNetwork(string deviceId, [FromBody] SetDeviceNetworkArgs args)
     {

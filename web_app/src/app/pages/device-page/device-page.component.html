@@ -37,7 +37,10 @@
         </table>
         <p>
             <button mat-raised-button *ngIf="radarDevice.enabled" (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
-            
+
+            <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
+            <button mat-raised-button *ngIf="radarDevice.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
+
             <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
             <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
             

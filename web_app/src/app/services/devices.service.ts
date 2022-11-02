@@ -53,11 +53,17 @@ export class DevicesService {
     })
   }
 
-  public updateRadarInfo(deviceId : string, name : string, description : string, sendTracksReport : boolean)
+  public updateRadarInfo(deviceId : string, name : string, description : string)
   {
     return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/radar-info", {
       name : name,
-      description: description,
+      description: description
+    })
+  }
+
+  public setTracksReports(deviceId : string, sendTracksReport : boolean)
+  {
+    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/tracks-reports", {
       send_tracks_report: sendTracksReport
     })
   }

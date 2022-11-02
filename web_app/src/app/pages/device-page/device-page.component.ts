@@ -130,6 +130,14 @@ export class DevicePageComponent implements OnInit {
     });    
   }
 
+  public setTracksReports(sendReports : boolean)
+  {
+    this.devicesService.setTracksReports(this.deviceId, sendReports).subscribe({
+      next : (response) => this.getDevice(this.deviceId),
+      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar device")
+    })    
+  }
+
   private showNotification(message : string)
   {
     this.notification.open(message, "Close", { duration : 4000 })
