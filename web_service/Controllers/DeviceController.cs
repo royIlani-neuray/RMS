@@ -1,11 +1,9 @@
 using WebService.Entites;
 using WebService.Context;
-using WebService.Radar;
 using WebService.Actions.Radar;
 using WebService.Tracking;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+
 
 namespace WebService.Controllers;
 
@@ -83,64 +81,21 @@ public class DeviceController : ControllerBase
         action.Run();        
     }
 
-    public class SetDeviceNetworkArgs
-    {
-        [JsonPropertyName("ip")]
-        public string ipAddress { get; set; } = String.Empty;
-
-        [JsonPropertyName("subnet")]
-        public string subnetMask { get; set; } = String.Empty;
-
-        [JsonPropertyName("gateway")]
-        public string gwAddress { get; set; } = String.Empty;
-
-        [JsonPropertyName("static_ip")]
-        public bool? staticIP { get; set; }
-
-
-        public void Validate()
-        {
-            if (staticIP == null)
-                throw new BadRequestException("static IP option not provided");
-
-            if (staticIP == true)
-            {
-                if (string.IsNullOrWhiteSpace(ipAddress) || !IPAddress.TryParse(ipAddress, out _))
-                    throw new BadRequestException("invalid IP provided");
-                if (string.IsNullOrWhiteSpace(subnetMask) || !IPAddress.TryParse(subnetMask, out _))
-                    throw new BadRequestException("invalid subnet provided");
-                if (string.IsNullOrWhiteSpace(gwAddress) || !IPAddress.TryParse(gwAddress, out _))
-                    throw new BadRequestException("invalid gateway address provided");
-            }
-        }
-    }
-
     [HttpPut("{deviceId}/network")]
     public void SetDeviceNetwork(string deviceId, [FromBody] SetDeviceNetworkArgs args)
     {
         ValidateDeviceId(deviceId); 
         args.Validate();
-        IPRadarClient.SetDeviceNetwork(deviceId, args.ipAddress, args.subnetMask, args.gwAddress, args.staticIP!.Value);
+        var action = new SetDeviceNetworkAction(deviceId, args);
+        action.Run();
     }
     
-    public class SetRadarConfigArgs
-    {
-        [JsonPropertyName("config")]
-        public List<string>? Config { get; set; }
-
-        public void Validate()
-        {
-            if (Config == null)
-                throw new BadRequestException("missing radar configuration.");
-        }
-    }
-
     [HttpPost("{deviceId}/config")]
     public void SetRadarConfig(string deviceId, [FromBody] SetRadarConfigArgs args)
     {
         ValidateDeviceId(deviceId); 
         args.Validate();
-        var action = new SetRadarConfigAction(deviceId, args.Config!);
+        var action = new SetRadarConfigAction(deviceId, args);
         action.Run();
     }
 
