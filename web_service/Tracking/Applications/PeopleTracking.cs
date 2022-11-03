@@ -151,8 +151,8 @@ public class PeopleTracking : ITrackingApplication
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
                     PeopleTrackingFrameData.Point point = new PeopleTrackingFrameData.Point();
-                    point.Elevation = reader.ReadByte() * pointUnit.ElevationUnit;
-                    point.Azimuth = reader.ReadByte() * pointUnit.AzimuthUnit;
+                    point.Elevation = reader.ReadSByte() * pointUnit.ElevationUnit;
+                    point.Azimuth = reader.ReadSByte() * pointUnit.AzimuthUnit;
                     point.Doppler = reader.ReadInt16() * pointUnit.DopplerUnit;
                     point.Range = reader.ReadUInt16() * pointUnit.RangeUnit;
                     point.SNR = reader.ReadUInt16() * pointUnit.SnrUnit;

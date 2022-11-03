@@ -1,7 +1,9 @@
 using WebService.Entites;
 using WebService.Radar;
 using WebService.Context;
+using WebService.Utils;
 using System.Text.Json.Serialization;
+
 
 namespace WebService.Actions.Radar;
 
@@ -13,10 +15,16 @@ public class SetRadarConfigArgs
     [JsonPropertyName("template_id")]
     public string? TemplateId { get; set; }
 
+    [JsonPropertyName("sensor_position")]
+    public RadarSettings.SensorPositionParams? SensorPosition {get; set;} = null;
+
     public void Validate()
     {
         if ((Config == null) && (TemplateId == null))
             throw new BadRequestException("missing radar configuration / template id");
+
+        if ((TemplateId != null) && (SensorPosition == null))
+            throw new BadRequestException("sensor position must be provided with radar config");
     }
 }
 
@@ -36,20 +44,22 @@ public class SetRadarConfigAction : RadarDeviceAction
         if (!string.IsNullOrWhiteSpace(args.TemplateId))
         {
             var template = TemplateContext.Instance.GetTemplate(args.TemplateId);
-            configScript = template.ConfigScript;
+            configScript = new List<string>(template.ConfigScript);
+            ConfigScriptUtils.UpdateSensorPosition(configScript, args.SensorPosition!);
         }
         else
         {
-            try
-            {
-                configScript = args.Config!;
-                RadarConfigParser configParser = new RadarConfigParser(configScript);
-                radarDevice.radarSettings = configParser.GetRadarSettings();
-            }
-            catch
-            {
-                throw new Exception($"Error: could not parse config script for device - {deviceId}. make sure the config is valid.");
-            }
+            configScript = args.Config!;
+        }
+
+        try
+        {
+            RadarConfigParser configParser = new RadarConfigParser(configScript);
+            radarDevice.radarSettings = configParser.GetRadarSettings();
+        }
+        catch
+        {
+            throw new Exception($"Error: could not parse config script for device - {deviceId}. make sure the config is valid.");
         }
 
         radarDevice.ConfigScript = configScript;

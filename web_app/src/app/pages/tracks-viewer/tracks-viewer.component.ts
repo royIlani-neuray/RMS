@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { FrameData, TrackData } from 'src/app/entities/frame-data';
+import { FrameData, PointData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import * as THREE from "three";
 import { MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
@@ -19,6 +19,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
   showBoundryBoxFC = new FormControl(true)
   showStaticBoundryBoxFC = new FormControl(false)
+  showPointCloudFC = new FormControl(false)
 
   selectedDeviceId : string = ''
   radarDevice : RadarDevice
@@ -223,27 +224,39 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
       });
 
-      // draw points...
-      /*
-      console.log("** Points List **")
-      this.lastframeData.points.forEach(function (point)
+      // draw points 
+      if (this.showPointCloudFC.value)
       {
-        const pointCartesian = new THREE.Vector3()
-        pointCartesian.setFromSphericalCoords(point.range, point.azimuth, point.elevation)
-        console.log("Point - X: " + pointCartesian.x + " Y:" + pointCartesian.y + " Z:" + pointCartesian.z)
-
-        let pointGeometry = new THREE.SphereGeometry(0.05)
-        let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: 0xffffff}))
-        pointMesh.position.set(pointCartesian.x, pointCartesian.z, pointCartesian.y)
-        scene.add(pointMesh)
-      })
-      */
+        this.lastframeData.points.forEach((point) =>
+        {
+          //let azimuthDeg = point.azimuth * (180 / Math.PI)
+          //let elevationDeg = point.elevation * (180 / Math.PI)
+          //console.log(" Az:" + azimuthDeg + " El:" + elevationDeg)
+  
+          let pointCartesian = this.sphericalToCartesianPoint(point)
+  
+          let pointGeometry = new THREE.SphereGeometry(0.02)
+          let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: 0xffffff}))
+          pointMesh.position.set(-pointCartesian.x, radarHeight + pointCartesian.z, pointCartesian.y)
+          scene.add(pointMesh)
+        })
+      }
     }
-
-
 
     this.scene = scene
   }
+
+  public sphericalToCartesianPoint(point : PointData)
+  {
+      let x = point.range * Math.sin(point.azimuth) * Math.cos(point.elevation)
+      let y = point.range * Math.cos(point.azimuth) * Math.cos(point.elevation)
+      let z = point.range * Math.sin(point.elevation)
+      
+      console.log("ALG: Point - X: " + x + " Y:" + y + " Z:" + z)
+
+      return new THREE.Vector3(x,y,z)
+  }
+
 
   public getTrackRange(track : TrackData)
   {

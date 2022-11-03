@@ -63,7 +63,7 @@ export class SetDeviceConfigDialogComponent implements OnInit {
 
     let templateId = this.selectedTemplateFC.value!
 
-    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId).subscribe({
+    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, this.radarDevice.radar_settings.sensor_position).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
