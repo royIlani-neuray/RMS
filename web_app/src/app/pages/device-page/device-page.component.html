@@ -5,7 +5,7 @@
 <div *ngIf="radarDevice">
     <h2>{{radarDevice.name}}</h2>
     <div style="float: left; margin-right: 50px;">
-        <table class="radar-info-table" >
+        <table class="radar-info-table">
             <tr>
                 <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
                 <td></td>
@@ -28,24 +28,13 @@
             </tr>
             <tr>
                 <td>Description: </td>
-                <td>{{radarDevice.description}}</td>
+                <td><div style="max-width: 500px;">{{radarDevice.description}}</div></td>
             </tr>
             <tr>
                 <td></td>
                 <td><div align="end"><button mat-button (click)="editInfoClicked()" color="primary">Edit Info</button></div></td>
             </tr>
         </table>
-        <p>
-            <button mat-raised-button *ngIf="radarDevice.enabled" (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
-
-            <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
-            <button mat-raised-button *ngIf="radarDevice.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
-
-            <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
-            <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
-            
-            <button mat-raised-button (click)="deleteRadarDevice()" color="primary" style="margin-left: 10px;">Delete Radar</button>
-        </p>
     </div>
 
     <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
@@ -78,7 +67,19 @@
             <td>{{radarDevice.device_mapping.static_ip}}</td>
         </tr>
     </table>
-    <br><br><br><br><br><br>
+    <div>
+        <br><br>
+        <button mat-raised-button *ngIf="radarDevice.enabled" (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
+
+        <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
+        <button mat-raised-button *ngIf="radarDevice.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
+
+        <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
+        <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
+        
+        <button mat-raised-button (click)="deleteRadarDevice()" color="primary" style="margin-left: 10px;">Delete Radar</button>
+    </div>
+    <br><br><br>
     <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
         <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
         <mat-divider></mat-divider>
@@ -151,6 +152,7 @@
                 </tbody>
             </table>
         </div>
+        <!-- No need to display presence_boundary_box
         <div *ngIf="radarDevice.radar_settings.presence_boundary_box != null" class="radar-setting-div">
             <p><mat-label mat-basic-chip>Presence Boundary Box</mat-label></p>
             <table class="radar-setting-table">
@@ -176,6 +178,7 @@
                 </tbody>
             </table>
         </div>
+        -->
         <div *ngIf="radarDevice.radar_settings.allocation_params != null" class="radar-setting-div">
             <p><mat-label mat-basic-chip>Allocation Parameters</mat-label></p>
             <table class="radar-setting-table">

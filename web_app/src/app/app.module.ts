@@ -23,6 +23,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
@@ -79,6 +81,8 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
     MatDialogModule,
     MatRadioModule,
     MatSlideToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
 
     HttpClientModule,
     RouterModule,

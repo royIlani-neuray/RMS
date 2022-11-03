@@ -50,7 +50,17 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
                 <br>
-                <label>Number of Points: {{numberOfPoints}}</label>
+                <div style="padding-left: 10px;">
+                    <label>Total number of points: {{numberOfPoints}}</label>
+                </div>
+                <br><br>
+                <mat-divider></mat-divider>
+                <div style="padding-left: 10px;">
+                    <h4>Display Options:</h4>
+                    <mat-checkbox [formControl]="showBoundryBoxFC">Show boundry box</mat-checkbox><br>
+                    <mat-checkbox [formControl]="showStaticBoundryBoxFC">Show static boundry box</mat-checkbox><br>
+                </div>
+                <br>
             </mat-drawer>
             
             <div>
@@ -68,7 +78,7 @@
         </mat-select>
         </mat-form-field>
         <br>
-        <button type="button" mat-raised-button color="primary" (click)="drawer.toggle()">Toggle Tracks List</button>
+        <button type="button" mat-raised-button color="primary" (click)="drawer.toggle()">Toggle Extended Info</button>
     </div>
 
 </div>
