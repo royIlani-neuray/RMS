@@ -5,6 +5,11 @@ docker compose rm
 docker rmi webservice
 docker rmi web_app
 
+docker volume rm rms_webservice_storage
+
+rm -rf bin/rms
+rm -rf bin/neuRay_rms.tar.gz
+
 docker compose build
 
 mkdir bin
