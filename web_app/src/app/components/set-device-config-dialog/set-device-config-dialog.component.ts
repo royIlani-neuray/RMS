@@ -1,9 +1,11 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
-import { RadarTemplateBrief } from 'src/app/entities/radar-template';
+import { BoundaryBoxParams, SensorPositionParams } from 'src/app/entities/radar-settings';
+import { RadarTemplate, RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { DevicesService } from 'src/app/services/devices.service';
 import { TemplatesService } from 'src/app/services/templates.service';
 
@@ -22,10 +24,37 @@ export class SetDeviceConfigDialogComponent implements OnInit {
   templatesList: RadarTemplateBrief[] = [];
   validTemplatesList: RadarTemplateBrief[] = [];
   
-  selectedTemplateFC = new FormControl('', [Validators.required])
-  
+  templateFormGroup = this.formBuilder.group({
+    selectedTemplateFC: ['', Validators.required],
+  });
+
+  radarPositionFormGroup = this.formBuilder.group({
+    heightInputFC: ['', Validators.required],
+    azimuthInputFC: ['', [Validators.required, Validators.min(-90), Validators.max(90)] ],
+    elevationInputFC: ['', [Validators.required, Validators.min(-90), Validators.max(90)] ],
+  });
+
+  boundaryBoxFormGroup = this.formBuilder.group({
+    xMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    xMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    yMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    yMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    zMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    zMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+  });
+
+  staticBoundaryBoxFormGroup = this.formBuilder.group({
+    xMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    xMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    yMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    yMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    zMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    zMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+  });
+
   constructor(public dialogRef: MatDialogRef<SetDeviceConfigDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData, private cd : ChangeDetectorRef,
+              private formBuilder: FormBuilder,
               private router : Router,
               private devicesService : DevicesService,
               private templatesService : TemplatesService) { }
@@ -33,6 +62,24 @@ export class SetDeviceConfigDialogComponent implements OnInit {
   ngOnInit(): void 
   {
     this.radarDevice = this.data.radarDevice
+
+    this.radarPositionFormGroup.controls.heightInputFC.setValue(this.radarDevice.radar_settings.sensor_position.height.toString())
+    this.radarPositionFormGroup.controls.azimuthInputFC.setValue(this.radarDevice.radar_settings.sensor_position.azimuth_tilt.toString())
+    this.radarPositionFormGroup.controls.elevationInputFC.setValue(this.radarDevice.radar_settings.sensor_position.elevation_tilt.toString())
+
+    this.boundaryBoxFormGroup.controls.xMin.setValue(this.radarDevice.radar_settings.boundary_box.x_min.toString())
+    this.boundaryBoxFormGroup.controls.yMin.setValue(this.radarDevice.radar_settings.boundary_box.y_min.toString())
+    this.boundaryBoxFormGroup.controls.zMin.setValue(this.radarDevice.radar_settings.boundary_box.z_min.toString())
+    this.boundaryBoxFormGroup.controls.xMax.setValue(this.radarDevice.radar_settings.boundary_box.x_max.toString())
+    this.boundaryBoxFormGroup.controls.yMax.setValue(this.radarDevice.radar_settings.boundary_box.y_max.toString())
+    this.boundaryBoxFormGroup.controls.zMax.setValue(this.radarDevice.radar_settings.boundary_box.z_max.toString())
+
+    this.staticBoundaryBoxFormGroup.controls.xMin.setValue(this.radarDevice.radar_settings.static_boundary_box.x_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.yMin.setValue(this.radarDevice.radar_settings.static_boundary_box.y_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.zMin.setValue(this.radarDevice.radar_settings.static_boundary_box.z_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.xMax.setValue(this.radarDevice.radar_settings.static_boundary_box.x_max.toString())
+    this.staticBoundaryBoxFormGroup.controls.yMax.setValue(this.radarDevice.radar_settings.static_boundary_box.y_max.toString())
+    this.staticBoundaryBoxFormGroup.controls.zMax.setValue(this.radarDevice.radar_settings.static_boundary_box.z_max.toString())
 
     this.getTemplates()
   }
@@ -58,15 +105,56 @@ export class SetDeviceConfigDialogComponent implements OnInit {
 
   public onSaveClicked()
   {
-    if (!this.selectedTemplateFC.valid)
-      return
+    if (!this.templateFormGroup.valid || !this.radarPositionFormGroup.valid || 
+        !this.boundaryBoxFormGroup.valid || !this.staticBoundaryBoxFormGroup.valid)
+       return
 
-    let templateId = this.selectedTemplateFC.value!
+    let templateId = this.templateFormGroup.controls.selectedTemplateFC.value!
 
-    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, this.radarDevice.radar_settings.sensor_position).subscribe({
+    let sensorPosition : SensorPositionParams = {
+      height : +this.radarPositionFormGroup.controls.heightInputFC.value!,
+      azimuth_tilt : +this.radarPositionFormGroup.controls.azimuthInputFC.value!,
+      elevation_tilt : +this.radarPositionFormGroup.controls.elevationInputFC.value!
+    }
+
+    let boundaryBox : BoundaryBoxParams = {
+      x_min: +this.boundaryBoxFormGroup.controls.xMin.value!,
+      y_min: +this.boundaryBoxFormGroup.controls.yMin.value!,
+      z_min: +this.boundaryBoxFormGroup.controls.zMin.value!,
+      x_max: +this.boundaryBoxFormGroup.controls.xMax.value!,
+      y_max: +this.boundaryBoxFormGroup.controls.yMax.value!,
+      z_max: +this.boundaryBoxFormGroup.controls.zMax.value!,
+    }
+
+    let staticBoundaryBox : BoundaryBoxParams = {
+      x_min: +this.staticBoundaryBoxFormGroup.controls.xMin.value!,
+      y_min: +this.staticBoundaryBoxFormGroup.controls.yMin.value!,
+      z_min: +this.staticBoundaryBoxFormGroup.controls.zMin.value!,
+      x_max: +this.staticBoundaryBoxFormGroup.controls.xMax.value!,
+      y_max: +this.staticBoundaryBoxFormGroup.controls.yMax.value!,
+      z_max: +this.staticBoundaryBoxFormGroup.controls.zMax.value!,
+    }
+
+    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
+  }
+
+  public onTemplateSelected(event : any)
+  {
+    let templateId = event.value
+
+    this.templatesService.getRadarTemplate(templateId).subscribe({
+      next : (response) =>
+      {
+        let template = response as RadarTemplate
+
+        // TODO: set validation for Y max according to the max range...
+      },
+      error : (err) => this.router.navigate(['/no-service'])
+    })
+
   }
 
   public onCancelClicked()

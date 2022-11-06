@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SensorPositionParams } from '../entities/radar-settings';
+import { BoundaryBoxParams, SensorPositionParams } from '../entities/radar-settings';
 
 @Injectable({
   providedIn: 'root'
@@ -87,12 +87,15 @@ export class DevicesService {
     })
   }
 
-  public setDeviceConfiguration(deviceId : string, templateId : string, sensorPosition : SensorPositionParams)
+  public setDeviceConfiguration(deviceId : string, templateId : string, sensorPosition : SensorPositionParams, 
+                                boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams)
   {
     return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/config", 
     {
       template_id: templateId,
-      sensor_position: sensorPosition
+      sensor_position: sensorPosition,
+      boundary_box: boundaryBox,
+      static_boundary_box: staticBoundaryBox
     })    
   }
 

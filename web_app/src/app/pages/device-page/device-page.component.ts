@@ -116,8 +116,8 @@ export class DevicePageComponent implements OnInit {
   public setDeviceConfiguration()
   {
     let dialogRef = this.dialog.open(SetDeviceConfigDialogComponent, {
-      width: '550px',
-      height: '270px',
+      width: '850px',
+      height: '690px',
       data: { radarDevice: this.radarDevice }
     });
 

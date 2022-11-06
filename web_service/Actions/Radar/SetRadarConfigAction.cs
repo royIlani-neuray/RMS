@@ -18,13 +18,30 @@ public class SetRadarConfigArgs
     [JsonPropertyName("sensor_position")]
     public RadarSettings.SensorPositionParams? SensorPosition {get; set;} = null;
 
+    [JsonPropertyName("boundary_box")]
+    public RadarSettings.BoundaryBoxParams? BoundaryBox {get; set;} = null;
+
+    [JsonPropertyName("static_boundary_box")]
+    public RadarSettings.BoundaryBoxParams? StaticBoundaryBox {get; set;} = null;
+
+
     public void Validate()
     {
         if ((Config == null) && (TemplateId == null))
             throw new BadRequestException("missing radar configuration / template id");
 
-        if ((TemplateId != null) && (SensorPosition == null))
-            throw new BadRequestException("sensor position must be provided with radar config");
+        if (TemplateId != null)
+        {
+            if (SensorPosition == null)
+                throw new BadRequestException("sensor_position must be provided with radar config");
+
+            if (BoundaryBox == null)
+                throw new BadRequestException("boundary_box must be provided with radar config");
+
+            if (StaticBoundaryBox == null)
+                throw new BadRequestException("static_boundary_box must be provided with radar config");
+        }
+        
     }
 }
 
@@ -46,6 +63,8 @@ public class SetRadarConfigAction : RadarDeviceAction
             var template = TemplateContext.Instance.GetTemplate(args.TemplateId);
             configScript = new List<string>(template.ConfigScript);
             ConfigScriptUtils.UpdateSensorPosition(configScript, args.SensorPosition!);
+            ConfigScriptUtils.UpdateBoundaryBox(configScript,args.BoundaryBox!);
+            ConfigScriptUtils.UpdateStaticBoundaryBox(configScript,args.StaticBoundaryBox!);
         }
         else
         {

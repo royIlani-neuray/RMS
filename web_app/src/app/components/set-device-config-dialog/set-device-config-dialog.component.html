@@ -1,16 +1,114 @@
-<h4>Select Radar Configuration</h4>
+<h4>Radar Configuration</h4>
 
-<form>
 
-    <mat-form-field class="full-width-500" appearance="fill">
-        <mat-label>Select Radar Template</mat-label>
-        <mat-select [formControl]="selectedTemplateFC">
-            <mat-option *ngFor="let template of validTemplatesList" [value]="template.template_id">{{template.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+<mat-stepper orientation="vertical" [linear]="true">
+    <mat-step [stepControl]="templateFormGroup">
+        <br>
+        <form [formGroup]="templateFormGroup">
+            <ng-template matStepLabel>Select Radar Template</ng-template>
+            <mat-form-field class="full-width-500" appearance="fill">
+                <mat-label>Select Radar Template</mat-label>
+                <mat-select (selectionChange)="onTemplateSelected($event)" formControlName="selectedTemplateFC">
+                    <mat-option *ngFor="let template of validTemplatesList" [value]="template.template_id">{{template.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+        <div>
+            <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="radarPositionFormGroup">
+        <br>
+        <form [formGroup]="radarPositionFormGroup">
+            <ng-template matStepLabel>Radar Position</ng-template>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Height</mat-label>
+                <input matInput placeholder="Height in meters" type="number" formControlName="heightInputFC">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Azimuth Tilt</mat-label>
+                <input matInput placeholder="Azimuth in degrees" type="number" formControlName="azimuthInputFC">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Elevation Tilt</mat-label>
+                <input matInput placeholder="Elevation in degrees" type="number" formControlName="elevationInputFC">
+            </mat-form-field>
+        </form>
+        <div>
+            <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="boundaryBoxFormGroup">
+        <br>
+        <form [formGroup]="boundaryBoxFormGroup">
+            <ng-template matStepLabel>Boundary Box</ng-template>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>X Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="xMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Y Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="yMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Z Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="zMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>X Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="xMax">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Y Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="yMax">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Z Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="zMax">
+            </mat-form-field>
+        </form>
+        <div>
+            <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="staticBoundaryBoxFormGroup">
+        <br>
+        <form [formGroup]="staticBoundaryBoxFormGroup">
+            <ng-template matStepLabel>Static Boundary Box</ng-template>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>X Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="xMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Y Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="yMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Z Min</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="zMin">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>X Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="xMax">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Y Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="yMax">
+            </mat-form-field>
+            <mat-form-field class="position-input"  appearance="fill">
+                <mat-label>Z Max</mat-label>
+                <input matInput placeholder="Value in meters" type="number" formControlName="zMax">
+            </mat-form-field>
+        </form>
+    </mat-step>
 
-      <div mat-dialog-actions align="end">
-        <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
-        <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
-    </div>
-</form>
+</mat-stepper>
+
+
+
+
+
+<div mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>
+    <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
+</div>
