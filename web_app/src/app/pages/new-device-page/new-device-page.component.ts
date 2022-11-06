@@ -28,8 +28,8 @@ export class NewDevicePageComponent implements OnInit {
   descriptionFC = new FormControl('', [Validators.maxLength(450)])
   selectedTemplateFC = new FormControl('', [Validators.required])
   heightInputFC = new FormControl('', [Validators.required])
-  azimuthInputFC = new FormControl('', [Validators.required, Validators.min(-360), Validators.max(360)])
-  elevationInputFC = new FormControl('', [Validators.required, Validators.min(-360), Validators.max(360)])
+  azimuthInputFC = new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)])
+  elevationInputFC = new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)])
 
   constructor(private devicesService : DevicesService,
               private templatesService : TemplatesService, 
