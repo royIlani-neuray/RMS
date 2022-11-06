@@ -31,4 +31,7 @@ export interface PointData {
     azimuth : number
     elevation : number
     doppler : number
+    position_x : number
+    position_y : number
+    position_z : number
 }

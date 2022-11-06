@@ -18,6 +18,15 @@ public class FrameData
 
         [JsonPropertyName("doppler")]
         public float Doppler { get; set; }
+
+        [JsonPropertyName("position_x")]
+        public float PositionX { get; set; }       
+
+        [JsonPropertyName("position_y")]
+        public float PositionY { get; set; }       
+
+        [JsonPropertyName("position_z")]
+        public float PositionZ { get; set; }       
     }
 
     public class Track

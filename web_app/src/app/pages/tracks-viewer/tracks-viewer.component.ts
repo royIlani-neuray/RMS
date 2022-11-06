@@ -214,12 +214,12 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         let boxGeometry = new THREE.BoxGeometry(1,2,1)
         let boxEdges = new THREE.EdgesGeometry(boxGeometry)
         let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-        box.position.set(-track.position_x, radarHeight + track.position_z, track.position_y)
+        box.position.set(-track.position_x, track.position_z, track.position_y)
         scene.add(box)
         */
         let trackGeometry = new THREE.SphereGeometry(0.25)
         let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
-        trackMesh.position.set(-track.position_x, radarHeight + track.position_z, track.position_y)
+        trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
         scene.add(trackMesh)
 
       });
@@ -232,29 +232,16 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
           //let azimuthDeg = point.azimuth * (180 / Math.PI)
           //let elevationDeg = point.elevation * (180 / Math.PI)
           //console.log(" Az:" + azimuthDeg + " El:" + elevationDeg)
-  
-          let pointCartesian = this.sphericalToCartesianPoint(point)
-  
+          
           let pointGeometry = new THREE.SphereGeometry(0.02)
           let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: 0xffffff}))
-          pointMesh.position.set(-pointCartesian.x, radarHeight + pointCartesian.z, pointCartesian.y)
+          pointMesh.position.set(-point.position_x, point.position_z, point.position_y)
           scene.add(pointMesh)
         })
       }
     }
 
     this.scene = scene
-  }
-
-  public sphericalToCartesianPoint(point : PointData)
-  {
-      let x = point.range * Math.sin(point.azimuth) * Math.cos(point.elevation)
-      let y = point.range * Math.cos(point.azimuth) * Math.cos(point.elevation)
-      let z = point.range * Math.sin(point.elevation)
-      
-      console.log("ALG: Point - X: " + x + " Y:" + y + " Z:" + z)
-
-      return new THREE.Vector3(x,y,z)
   }
 
 
