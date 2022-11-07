@@ -31,6 +31,7 @@ export interface DeviceMapping {
     model: string
     application: string
     static_ip: boolean,
-    registered: boolean
+    registered: boolean,
+    fw_version: string
 }
 

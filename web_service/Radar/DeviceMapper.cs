@@ -18,16 +18,25 @@ public class DeviceMapper
     {
         [JsonPropertyName("ip")]
         public string ipAddress { get; set; } = String.Empty;
+        
         [JsonPropertyName("subnet")]
         public string subnetMask { get; set; } = String.Empty;
+        
         [JsonPropertyName("gateway")]
         public string gwAddress { get; set; } = String.Empty;
+        
         [JsonPropertyName("device_id")]
         public string deviceId { get; set; } = String.Empty;
+        
         [JsonPropertyName("model")]
         public string model { get; set; } = String.Empty;
+        
         [JsonPropertyName("application")]
         public string appName { get; set; } = String.Empty;
+
+        [JsonPropertyName("fw_version")]
+        public string fwVersion { get; set; } = String.Empty;
+
         [JsonPropertyName("static_ip")]
         public bool staticIP { get; set; } = false;
 
@@ -112,6 +121,16 @@ public class DeviceMapper
         }
     }
 
+    private string ParseFwVersion(uint fwVersion)
+    {
+        uint major = fwVersion >> (14 + 7 + 7);     // 4 msb
+        uint minor = fwVersion >> (14 + 7) & 0x7F;  // 7 bits
+        uint hotfix = fwVersion >> (14) & 0x7F;     // 7 bits
+        uint build = fwVersion & 0x3FFF;            // 14 lsb
+
+        return $"{major}.{minor}.{hotfix}.{build}";
+    }
+
     private void BrodcastListnerTask()
     {
         IPEndPoint? endpoint = null;
@@ -164,6 +183,7 @@ public class DeviceMapper
             bool staticIP = reader.ReadBoolean();
             string model = new string(reader.ReadChars(IPRadarClient.MODEL_STRING_MAX_LENGTH)).Replace("\x00","");
             string appName = new string(reader.ReadChars(IPRadarClient.APP_STRING_MAX_LENGTH)).Replace("\x00","");
+            uint fwVersion = reader.ReadUInt32();
 
             
             MappedDevice deviceInfo = new MappedDevice()
@@ -174,7 +194,8 @@ public class DeviceMapper
                 deviceId = guid.ToString(),
                 staticIP = staticIP,
                 model = model,
-                appName = appName
+                appName = appName,
+                fwVersion = ParseFwVersion(fwVersion)
             };
             
             UpdateRegisteredStatus(deviceInfo);
@@ -188,6 +209,7 @@ public class DeviceMapper
             Console.WriteLine($"staticIP: {staticIP}");
             Console.WriteLine($"model: {model}");
             Console.WriteLine($"appName: {appName}");
+            Console.WriteLine($"FW version: {deviceInfo.fwVersion}");
             Console.WriteLine();
             
             AddOrUpdateMappedDevice(deviceInfo);

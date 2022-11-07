@@ -7,7 +7,7 @@
     <div style="float: left; margin-right: 50px;">
         <table class="radar-info-table">
             <tr>
-                <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
+                <td><mat-label mat-basic-chip>Radar Info:</mat-label></td>
                 <td></td>
             </tr>
             <tr>
@@ -39,7 +39,7 @@
 
     <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
         <tr>
-            <td><mat-label mat-basic-chip>Device Mapping:</mat-label></td>
+            <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
             <td></td>
         </tr>
         <tr>
@@ -55,6 +55,10 @@
             <td>{{radarDevice.device_mapping.gateway}}</td>
         </tr>
         <tr>
+            <td>Static IP:</td>
+            <td>{{radarDevice.device_mapping.static_ip}}</td>
+        </tr>
+        <tr>
             <td>Model:</td>
             <td>{{radarDevice.device_mapping.model}}</td>
         </tr>
@@ -63,8 +67,8 @@
             <td>{{radarDevice.device_mapping.application}}</td>
         </tr>
         <tr>
-            <td>Static IP:</td>
-            <td>{{radarDevice.device_mapping.static_ip}}</td>
+            <td>FW Version:</td>
+            <td>{{radarDevice.device_mapping.fw_version}}</td>
         </tr>
     </table>
     <div>

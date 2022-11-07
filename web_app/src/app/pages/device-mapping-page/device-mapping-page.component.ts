@@ -18,7 +18,7 @@ export class DeviceMappingPageComponent implements OnInit {
   deviceListLoaded = new Subject<boolean>();
   deviceList: DeviceMapping[] = [];
   dataSource = new MatTableDataSource<DeviceMapping>()
-  displayedColumns: string[] = ['device_id', 'registered', 'ip', 'subnet', 'gateway', 'model', 'application', 'static_ip', 'set_network'];
+  displayedColumns: string[] = ['device_id', 'registered', 'ip', 'subnet', 'gateway', 'model', 'application', 'fw_version', 'static_ip', 'set_network'];
   updateTimer : any
 
   constructor(private devicesService : DevicesService, private router : Router, 
