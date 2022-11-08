@@ -127,6 +127,20 @@ public class DeviceController : ControllerBase
         }
     }
 
+    [HttpPost("{deviceId}/fw-update")]
+    public async Task<IActionResult> FirmewareUpdate(string deviceId)
+    {
+        MemoryStream ms = new MemoryStream();
+        await Request.Body.CopyToAsync(ms);
+        byte [] image = new byte[ms.Length];
+        ms.Read(image, 0, image.Length);
+
+        var action = new FWUpdateAction(deviceId, image);
+        action.Run();
+
+        return Ok();
+    }   
+
     [HttpPost("{deviceId}/tracks-loopback")]
     public void TracksLoopback(string deviceId, [FromBody] object data)
     {

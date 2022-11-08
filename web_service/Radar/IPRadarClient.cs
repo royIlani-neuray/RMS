@@ -16,12 +16,19 @@ public class IPRadarClient
     public const uint MESSAGE_HEADER_MAGIC = 0xE1AD1984;
     public const int MESSAGE_HEADER_SIZE = 6;
     public const byte PROTOCOL_REVISION = 1;
+
     public const byte DEVICE_INFO_KEY = 100;
     public const byte TI_COMMAND_RESPONSE_KEY = 101;
+    public const byte FW_UPDATE_RESPONSE_KEY = 102;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
     public const byte RESET_RADAR_KEY = 203;
+    public const byte FW_UPDATE_INIT_KEY = 205;
+    public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
+    public const byte FW_UPDATE_APPLY_KEY = 207;
+
+    public const int FW_UPDATE_CHUNK_SIZE = 256;
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
@@ -155,35 +162,7 @@ public class IPRadarClient
             writer.Write(padArray);
         }
         
-        var packet = new byte[MESSAGE_HEADER_SIZE + MAX_TI_COMMAND_SIZE];
-        stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(packet, 0, packet.Length);
-
-        // send the command
-        controlStream!.GetStream().Write(packet, 0, packet.Length);
-
-        int responseSize = MESSAGE_HEADER_SIZE + MAX_TI_RESPONSE_SIZE;
-        var responseBytes = new byte[responseSize];
-        int count = controlStream.GetStream().Read(responseBytes, 0, responseBytes.Length);
-
-        if (count != responseSize)
-            throw new Exception("Error: Invalid response size for TI command");
-        
-
-        var reader = new BinaryReader(new MemoryStream(responseBytes));
-        var magic = reader.ReadUInt32();
-        var protocol = reader.ReadByte();
-        var messageType = reader.ReadByte();
-            
-        if (magic != IPRadarClient.MESSAGE_HEADER_MAGIC)
-        {
-            throw new Exception("Error: invalid magic in response header");
-        }
-
-        if (protocol != IPRadarClient.PROTOCOL_REVISION)
-        {
-            throw new Exception("Invalid protocol in response header");
-        }
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + MAX_TI_RESPONSE_SIZE, TI_COMMAND_RESPONSE_KEY);
 
         var responseChars = reader.ReadChars(MAX_TI_RESPONSE_SIZE);
         string responseString = new string(responseChars).Replace("\x00","");
@@ -276,5 +255,167 @@ public class IPRadarClient
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontRoute, 1);
             sendClient.Send(packet, targetEndpoint);
         }
+    }
+
+    private BinaryReader SendAndRecieveMessage(MemoryStream requestStream, int responseSize, byte expectedResponseType)
+    {
+        var request = new byte[requestStream.Length];
+        
+        requestStream.Seek(0, SeekOrigin.Begin);
+        requestStream.Read(request, 0, request.Length);
+
+        // send the command
+        controlStream!.GetStream().Write(request, 0, request.Length);
+
+        
+        // read the response
+        var responseBytes = new byte[responseSize];
+        int count = controlStream.GetStream().Read(responseBytes, 0, responseBytes.Length);
+
+        if (count != responseSize)
+            throw new Exception("Error: Invalid response size for command");
+        
+        var reader = new BinaryReader(new MemoryStream(responseBytes));
+
+        ReadResponseMessageHeader(reader, expectedResponseType);
+
+        return reader;
+    }
+
+    private void ReadResponseMessageHeader(BinaryReader reader, byte expectedMessageType)
+    {
+        var magic = reader.ReadUInt32();
+        var protocol = reader.ReadByte();
+        var messageType = reader.ReadByte();
+
+        if (magic != IPRadarClient.MESSAGE_HEADER_MAGIC)
+        {
+            throw new Exception("Error: invalid magic in response header");
+        }
+
+        if (protocol != IPRadarClient.PROTOCOL_REVISION)
+        {
+            throw new Exception("Invalid protocol in response header");
+        }
+
+        if (messageType != expectedMessageType)
+        {
+            throw new Exception("Unexpected message type in response header");
+        }
+    }
+
+    private void UploadFirmwareImage(byte [] image)
+    {
+        var totalChunks = image.Length / FW_UPDATE_CHUNK_SIZE;
+
+        if (image.Length % FW_UPDATE_CHUNK_SIZE > 0)
+            totalChunks++;
+
+        ushort chunkNumber = 0;
+        
+        int pos = 0;
+
+        while (pos < image.Length)
+        {
+            var stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(MESSAGE_HEADER_MAGIC);
+            writer.Write(PROTOCOL_REVISION);
+            writer.Write(FW_UPDATE_WRITE_CHUNK_KEY);
+            writer.Write(chunkNumber);
+
+            if (image.Length - pos >= FW_UPDATE_CHUNK_SIZE)
+            {
+                writer.Write(image, pos, FW_UPDATE_CHUNK_SIZE);
+                pos += FW_UPDATE_CHUNK_SIZE;
+            }
+            else
+            {
+                var dataSize = image.Length - pos;
+                writer.Write(image, pos, dataSize);
+                var padArray = new byte[FW_UPDATE_CHUNK_SIZE - dataSize];
+                writer.Write(padArray, 0, padArray.Length);
+                pos += dataSize;
+            }
+
+            System.Console.WriteLine($"uploading chunk: {chunkNumber + 1} / {totalChunks}");
+            
+            var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 1, FW_UPDATE_RESPONSE_KEY);
+
+            byte status = reader.ReadByte();
+
+            if (status != 0)
+            {
+                throw new Exception("Unexpected FW error when uploading firmware image chunk");
+            }
+            
+            chunkNumber++;
+        }
+    }
+
+    private void ApplyFirmwareUpdate()
+    {
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(MESSAGE_HEADER_MAGIC);
+        writer.Write(PROTOCOL_REVISION);
+        writer.Write(FW_UPDATE_APPLY_KEY);
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 1, FW_UPDATE_RESPONSE_KEY);
+
+        byte status = reader.ReadByte();
+
+        if (status != 0)
+        {
+            throw new Exception("Unexpected FW error when applying firmware update.");
+        }
+    }
+
+    private void InitFirmwareUpdate(byte [] image)
+    {
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(MESSAGE_HEADER_MAGIC);
+        writer.Write(PROTOCOL_REVISION);
+        writer.Write(FW_UPDATE_INIT_KEY);
+
+        uint imageSize = (uint) image.Length;
+        writer.Write(imageSize);
+
+        ushort totalChunks = (ushort) (image.Length / FW_UPDATE_CHUNK_SIZE);
+        if (image.Length % FW_UPDATE_CHUNK_SIZE > 0)
+            totalChunks++;
+
+        writer.Write(totalChunks);
+
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 1, FW_UPDATE_RESPONSE_KEY);
+
+        byte status = reader.ReadByte();
+
+        if (status != 0)
+        {
+            throw new Exception("Unexpected FW error during firmware update init.");
+        }
+    }
+
+    public void UpdateFirmware(byte [] image)
+    {
+        if (!isConnected)
+            throw new Exception("UpdateFirmware failed - radar not connected.");
+
+        System.Console.WriteLine($"Initializing FW update process...");
+        InitFirmwareUpdate(image);
+
+        System.Console.WriteLine($"Uploading Firmware image. image size: {image.Length}");
+
+        UploadFirmwareImage(image);
+
+        System.Console.WriteLine($"FW image uploaded, applying update...");
+
+        ApplyFirmwareUpdate();
+
+        System.Console.WriteLine($"FW update process is done!");
+
     }
 }
