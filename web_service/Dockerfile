@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine AS base
 WORKDIR /app
 EXPOSE 16500
 
@@ -9,7 +9,7 @@ ENV ASPNETCORE_URLS=http://+:16500
 RUN adduser -u 5678 --disabled-password --gecos "" user && chown -R user /app
 USER user
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /src
 COPY ["web_service/web_service.csproj", "./"]
 RUN dotnet restore "web_service.csproj"
