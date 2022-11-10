@@ -7,6 +7,8 @@ services:
     build:
       context: .
       dockerfile: ./web_service/Dockerfile
+    env_file:
+      - rms-variables.env
     volumes:
       - webservice_storage:/app/data
 
