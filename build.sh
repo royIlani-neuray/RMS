@@ -23,6 +23,7 @@ cp ./scripts/uninstall.sh ./bin/rms
 cp ./scripts/start.sh ./bin/rms
 cp ./scripts/stop.sh ./bin/rms
 cp ./docker-compose.yml ./bin/rms
+cp ./rms-variables.env ./bin/rms
 
 cd bin
 tar -czvf neuRay_rms.tar.gz rms

@@ -11,42 +11,42 @@ export class DevicesService {
 
   public getRadarDevices()
   {
-    return this.http.get("http://localhost:4200/api/devices")
+    return this.http.get("/api/devices")
   }
 
   public getRadarDevice(deviceId : string)
   {
-    return this.http.get("http://localhost:4200/api/devices/" + deviceId)
+    return this.http.get("/api/devices/" + deviceId)
   }
 
   public enableRadarDevice(deviceId : string)
   {
-    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/enable", "")
+    return this.http.post("/api/devices/" + deviceId + "/enable", "")
   }
 
   public disableRadarDevice(deviceId : string)
   {
-    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/disable", "")
+    return this.http.post("/api/devices/" + deviceId + "/disable", "")
   }
 
   public deleteRadarDevice(deviceId : string)
   {
-    return this.http.delete("http://localhost:4200/api/devices/" + deviceId)
+    return this.http.delete("/api/devices/" + deviceId)
   }
 
   public getDeviceMapping()
   {
-    return this.http.get("http://localhost:4200/api/device-mapping")
+    return this.http.get("/api/device-mapping")
   }
 
   public triggerDeviceMapping()
   {
-    return this.http.post("http://localhost:4200/api/device-mapping", "")
+    return this.http.post("/api/device-mapping", "")
   }
 
   public setNetwork(deviceId : string, ip : string, subnet : string, gateway : string, staticIP : boolean)
   {
-    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/network", {
+    return this.http.put("/api/devices/" + deviceId + "/network", {
       ip : ip,
       subnet: subnet,
       gateway : gateway,
@@ -56,7 +56,7 @@ export class DevicesService {
 
   public updateRadarInfo(deviceId : string, name : string, description : string)
   {
-    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/radar-info", {
+    return this.http.put("/api/devices/" + deviceId + "/radar-info", {
       name : name,
       description: description
     })
@@ -64,7 +64,7 @@ export class DevicesService {
 
   public setTracksReports(deviceId : string, sendTracksReport : boolean)
   {
-    return this.http.put("http://localhost:4200/api/devices/" + deviceId + "/tracks-reports", {
+    return this.http.put("/api/devices/" + deviceId + "/tracks-reports", {
       send_tracks_report: sendTracksReport
     })
   }
@@ -72,7 +72,7 @@ export class DevicesService {
   public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
     height : number, azimuthTilt : number, elevationTilt : number)
   {
-    return this.http.post("http://localhost:4200/api/devices", {
+    return this.http.post("/api/devices", {
       name : name,
       description: description,
       device_id: deviceId,
@@ -90,7 +90,7 @@ export class DevicesService {
   public setDeviceConfiguration(deviceId : string, templateId : string, sensorPosition : SensorPositionParams, 
                                 boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams)
   {
-    return this.http.post("http://localhost:4200/api/devices/" + deviceId + "/config", 
+    return this.http.post("/api/devices/" + deviceId + "/config", 
     {
       template_id: templateId,
       sensor_position: sensorPosition,

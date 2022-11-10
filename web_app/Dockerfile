@@ -8,6 +8,6 @@ RUN npm run build
 
 ## STAGE 2: Run ###
 FROM nginx:1.23.2-alpine
-COPY web_app/nginx.conf /etc/nginx/nginx.conf
+COPY web_app/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY --from=build /src/dist/web_app /usr/share/nginx/html
 

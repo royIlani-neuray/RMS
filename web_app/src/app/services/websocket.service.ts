@@ -10,7 +10,7 @@ export class WebsocketService {
 
   constructor() 
   { 
-    this.socket = new WebSocket('ws://localhost:16500')
+    this.socket = new WebSocket("ws://" + window.location.host + "/websocket");
     this.socket.onopen = function (event) {
       console.log('Websockets connection state: [Open]')
     }

@@ -16,5 +16,10 @@ services:
     build:
       context: .
       dockerfile: ./web_app/Dockerfile
+    env_file:
+      - rms-variables.env
+    command: /bin/sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    
+
 volumes:
   webservice_storage:

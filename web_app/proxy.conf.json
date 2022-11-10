@@ -6,5 +6,15 @@
       "pathRewrite": {
         "^/api": ""
       }
+    },
+
+    "/websocket": {
+      "target": "http://localhost:16500",
+      "secure": false,
+      "ws": true,
+
+      "pathRewrite": {
+        "^/websocket": ""
+      }
     }
 }

@@ -15,22 +15,22 @@ export class SettingsService {
 
   public getTrackingReportURL()
   {
-    return this.http.get("http://localhost:4200/api/settings/tracking-report-url")
+    return this.http.get("/api/settings/tracking-report-url")
   }
 
   public getReportsInterval()
   {
-    return this.http.get("http://localhost:4200/api/settings/reports-interval")
+    return this.http.get("/api/settings/reports-interval")
   }
 
   public getSettings()
   {
-    return this.http.get("http://localhost:4200/api/settings")
+    return this.http.get("/api/settings")
   }
 
   public updateSettings(reportsInterval : number, reportsURL : string)
   {
-    return this.http.put("http://localhost:4200/api/settings", 
+    return this.http.put("/api/settings", 
     {
       reports_interval : reportsInterval,
       reports_url: reportsURL

@@ -1,0 +1,27 @@
+
+events{}
+
+http {
+    include /etc/nginx/mime.types;
+    server {
+        listen ${RMS_WEB_APP_PORT};
+        server_name localhost;
+        root /usr/share/nginx/html;
+        index index.html;
+        location / {
+            try_files ${DOLLAR}uri ${DOLLAR}uri/ /index.html;
+        }
+
+        location /api/ {
+            proxy_pass http://localhost:${RMS_SERVICE_PORT}/;
+            add_header Access-Control-Allow-Origin *;
+        }
+
+        location /websocket {
+            proxy_pass http://localhost:${RMS_SERVICE_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${DOLLAR}http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+}

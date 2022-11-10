@@ -10,17 +10,17 @@ export class TemplatesService {
 
   public getRadarTemplates()
   {
-    return this.http.get("http://localhost:4200/api/templates")
+    return this.http.get("/api/templates")
   }
 
   public getRadarTemplate(templateId : string)
   {
-    return this.http.get("http://localhost:4200/api/templates/" + templateId)
+    return this.http.get("/api/templates/" + templateId)
   }
 
   public deleteRadarTemplate(templateId : string)
   {
-    return this.http.delete("http://localhost:4200/api/templates/" + templateId)
+    return this.http.delete("/api/templates/" + templateId)
   }
   
 }
