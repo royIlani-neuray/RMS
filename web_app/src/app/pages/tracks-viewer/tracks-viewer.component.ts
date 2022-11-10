@@ -203,7 +203,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
       // draw the radar
       let radarGeometery = new THREE.BoxGeometry(0.4,0.4,0.05)
-      let radar = new THREE.Mesh(radarGeometery, new THREE.MeshStandardMaterial({ color: 0xff00ff, metalness:0.5, roughness: 0 }))
+      let radar = new THREE.Mesh(radarGeometery, new THREE.MeshStandardMaterial({ color: 0xffffff, metalness:0.5, roughness: 0 }))
       radar.position.set(0,radarHeight,0)
       scene.add(radar)  
 
