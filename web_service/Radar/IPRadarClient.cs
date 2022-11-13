@@ -28,7 +28,7 @@ public class IPRadarClient
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
 
-    public const int FW_UPDATE_CHUNK_SIZE = 256;
+    public const int FW_UPDATE_CHUNK_SIZE = 512;
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
@@ -399,11 +399,23 @@ public class IPRadarClient
         }
     }
 
+    private void ValidateImage(byte [] image)
+    {
+        string header = $"{(char)image[0]}{(char)image[1]}{(char)image[2]}{(char)image[3]}";
+
+        if (header != "MSTR")
+        {
+            throw new Exception("Invalid FW image provided. could not find MSTR header.");
+        }
+    }
+
     public void UpdateFirmware(byte [] image)
     {
         if (!isConnected)
             throw new Exception("UpdateFirmware failed - radar not connected.");
 
+        ValidateImage(image);
+        
         System.Console.WriteLine($"Initializing FW update process...");
         InitFirmwareUpdate(image);
 
@@ -416,6 +428,6 @@ public class IPRadarClient
         ApplyFirmwareUpdate();
 
         System.Console.WriteLine($"FW update process is done!");
-
+        
     }
 }

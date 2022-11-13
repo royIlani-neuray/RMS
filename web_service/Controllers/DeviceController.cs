@@ -130,13 +130,16 @@ public class DeviceController : ControllerBase
     [HttpPost("{deviceId}/fw-update")]
     public async Task<IActionResult> FirmewareUpdate(string deviceId)
     {
-        MemoryStream ms = new MemoryStream();
-        await Request.Body.CopyToAsync(ms);
-        byte [] image = new byte[ms.Length];
-        ms.Read(image, 0, image.Length);
+        using (var ms = new MemoryStream())
+        {
+            await Request.Body.CopyToAsync(ms);
+            byte [] image = new byte[ms.Length];
+            ms.Seek(0,SeekOrigin.Begin);
+            ms.Read(image, 0, image.Length);
 
-        var action = new FWUpdateAction(deviceId, image);
-        action.Run();
+            var action = new FWUpdateAction(deviceId, image);
+            action.Run();
+        }
 
         return Ok();
     }   
