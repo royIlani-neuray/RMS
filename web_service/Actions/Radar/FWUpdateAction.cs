@@ -19,8 +19,6 @@ public class FWUpdateAction : IAction {
     public void Run()
     {
         bool enableDevice = false;
-        System.Console.WriteLine("In FW Update ACTION!");
-
 
         if (DeviceContext.Instance.IsRadarDeviceExist(deviceId))
         {

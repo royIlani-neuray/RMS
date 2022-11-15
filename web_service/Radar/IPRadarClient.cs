@@ -20,10 +20,12 @@ public class IPRadarClient
     public const byte DEVICE_INFO_KEY = 100;
     public const byte TI_COMMAND_RESPONSE_KEY = 101;
     public const byte FW_UPDATE_RESPONSE_KEY = 102;
+    public const byte SET_DEVICE_ID_RESPONSE_KEY = 103;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
     public const byte RESET_RADAR_KEY = 203;
+    public const byte SET_DEVICE_ID_KEY = 204;
     public const byte FW_UPDATE_INIT_KEY = 205;
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
@@ -257,6 +259,20 @@ public class IPRadarClient
         }
     }
 
+    public void SetDeviceId(string deviceId, string newDeviceId)
+    {
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(MESSAGE_HEADER_MAGIC);
+        writer.Write(PROTOCOL_REVISION);
+        writer.Write(SET_DEVICE_ID_KEY);
+
+        Guid guid = new Guid(newDeviceId);
+        writer.Write(guid.ToByteArray());
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE, SET_DEVICE_ID_RESPONSE_KEY);
+    }
+
     private BinaryReader SendAndRecieveMessage(MemoryStream requestStream, int responseSize, byte expectedResponseType)
     {
         var request = new byte[requestStream.Length];
@@ -430,4 +446,5 @@ public class IPRadarClient
         System.Console.WriteLine($"FW update process is done!");
         
     }
+
 }

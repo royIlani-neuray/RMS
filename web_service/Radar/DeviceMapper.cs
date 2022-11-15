@@ -257,4 +257,9 @@ public class DeviceMapper
         UpdateRegisteredStatus(mappedDevice);
         return mappedDevice;
     }
+
+    public bool IsDeviceHasMapping(string deviceId)
+    {
+        return mappedDevices.ContainsKey(deviceId);
+    }
 }

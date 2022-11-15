@@ -99,6 +99,15 @@ public class DeviceController : ControllerBase
         action.Run();
     }
     
+    [HttpPut("{deviceId}/device-id")]
+    public void SetDeviceId(string deviceId, [FromBody] SetDeviceIdArgs args)
+    {
+        ValidateDeviceId(deviceId); 
+        args.Validate();
+        var action = new SetDeviceIdAction(deviceId, args);
+        action.Run();
+    }
+
     [HttpPost("{deviceId}/config")]
     public void SetRadarConfig(string deviceId, [FromBody] SetRadarConfigArgs args)
     {
