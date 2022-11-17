@@ -57,6 +57,8 @@ public class ServiceSettings
         }
     }
 
+    public string RMSVersion { get; set; } = String.Empty;
+
     private ServiceSettings() 
     {
         if (File.Exists(SettingsFilePath))

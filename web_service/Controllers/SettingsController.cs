@@ -79,4 +79,13 @@ public class SettingsController : ControllerBase
 
         ServiceSettings.Instance.ReportsIntervalSec = reportsInterval.IntervalSeconds.Value;
     }
+
+    [HttpGet("version")]
+    public object GetVersion()
+    {
+        return new 
+        {
+            version = ServiceSettings.Instance.RMSVersion
+        };
+    }
 }

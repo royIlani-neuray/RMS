@@ -1,6 +1,7 @@
-Startup.ApplicationStart();
 
 var builder = WebApplication.CreateBuilder(args);
+
+Startup.ApplicationStart(builder.Configuration);
 
 // Add services to the container.
 

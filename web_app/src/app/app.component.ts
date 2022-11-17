@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,17 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Radar Management Service';
+
+  version : string
+
+  constructor(private settingsService : SettingsService) { }
+
+  ngOnInit(): void 
+  {
+    this.settingsService.getRMSVersion().subscribe({
+      next : (result) => {
+        this.version = result.version
+      }
+    })
+  }
 }

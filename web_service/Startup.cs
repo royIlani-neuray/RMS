@@ -8,15 +8,19 @@ using WebService.Radar;
 using WebService.Actions.Radar;
 using WebService.Scheduler;
 
-public class Startup {
-
+public class Startup 
+{
     public static Task? mainTask;
 
-    public static void ApplicationStart()
+    public static void ApplicationStart(ConfigurationManager config)
     {
-        Console.WriteLine("Radar Management Service Started!");
+        string version = config["RMS_version"]!;
+
+        Console.WriteLine($"Radar Management Service Started - Version: {version}");
 
         Console.WriteLine($"Running as user: {Environment.UserName}");
+
+        ServiceSettings.Instance.RMSVersion = version;
 
         Console.WriteLine("Initializing DB...");
         Database.DatabaseInit();

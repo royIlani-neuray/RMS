@@ -6,6 +6,10 @@ export interface RMSSettings {
   reports_url: string
 }
 
+export interface RMSVersion {
+  version: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,5 +39,10 @@ export class SettingsService {
       reports_interval : reportsInterval,
       reports_url: reportsURL
     })
+  }
+
+  public getRMSVersion()
+  {
+    return this.http.get<RMSVersion>("/api/settings/version")
   }
 }
