@@ -37,7 +37,10 @@ public sealed class DeviceContext {
         devices = new Dictionary<string, RadarDevice>(DeviceStorage.LoadAllDevices());
 
         foreach (var device in devices.Values)
+        {
             device.State = RadarDevice.DeviceState.Disconnected;
+            device.Status = device.Enabled ? "The device is disconnected." : "The device is disabled.";
+        }
     }
 
     public bool IsRadarDeviceExist(string deviceId)

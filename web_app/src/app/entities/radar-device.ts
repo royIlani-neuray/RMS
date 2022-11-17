@@ -12,6 +12,7 @@ export interface RadarDeviceBrief {
 export interface RadarDevice {
     name: string
     state: string
+    status: string
     description: string
     device_id: string
     enabled: boolean

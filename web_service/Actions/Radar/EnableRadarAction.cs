@@ -9,11 +9,10 @@ public class EnableRadarAction : RadarDeviceAction
 
     protected override void RunDeviceAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Enabling radar device - {deviceId}");
-
         if (radarDevice.Enabled)
             return; // nothing to do.
         
+        radarDevice.SetStatus("Enabling radar device...");
         radarDevice.Enabled = true;
 
         var connectAction = new ConnectRadarAction(radarDevice);

@@ -9,14 +9,15 @@ public class DisableRadarAction : RadarDeviceAction
 
     protected override void RunDeviceAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Disabling radar device - {deviceId}");
-
         if (!radarDevice.Enabled)
             return; // nothing to do.
+
+        radarDevice.SetStatus("Disabling radar device...");
 
         var disconnectAction = new DisconnectRadarAction(radarDevice);
         disconnectAction.Run();
 
         radarDevice.Enabled = false;
+        radarDevice.SetStatus("The device is disabled.");
     }
 }

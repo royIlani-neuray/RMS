@@ -110,7 +110,7 @@ public class RadarTracker
 
     private void ConfigureRadar()
     {
-        Console.WriteLine($"Configuring radar device - {radarDevice.Id}...");
+        radarDevice.SetStatus("Configuring the device...");
 
         foreach (string tiCommand in radarDevice.ConfigScript)
         {
@@ -124,12 +124,15 @@ public class RadarTracker
             if (response != "Done")
             {
                 Console.WriteLine($"The command '{tiCommand}' failed - got: {response}");
+                throw new Exception("Error: failed to configure the device!");
             }
         }
     }
 
     private void TreakingLoop()
     {
+        radarDevice.SetStatus("The device is active.");
+
         while (runTracker)
         {
             FrameData nextFrame;
@@ -159,6 +162,6 @@ public class RadarTracker
             TracksWebsocketReporter.Instance.SendReport(LastFrameData);
         }
 
-        System.Console.WriteLine("Debug: Tracking loop exited.");
+        // System.Console.WriteLine("Debug: Tracking loop exited.");
     }
 } 

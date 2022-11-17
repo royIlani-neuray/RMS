@@ -16,15 +16,16 @@ public class DisconnectRadarAction : IAction
 
         if (radarDevice.State == RadarDevice.DeviceState.Active)
         {
-            System.Console.WriteLine("Stopping tracker...");
+            radarDevice.SetStatus("Stopping tracker...");
             radarDevice.radarTracker!.Stop();
             radarDevice.radarTracker = null;
+            radarDevice.SetStatus("Tracker stopped.");
             radarDevice.State = RadarDevice.DeviceState.Connected;
         }   
 
         if (radarDevice.State == RadarDevice.DeviceState.Connected)
         {
-            System.Console.WriteLine("Disconnecting from radar...");
+            radarDevice.SetStatus("Disconnecting from the radar device...");
             if (radarDevice.ipRadarClient!.IsConnected())
             {
                 radarDevice.ipRadarClient!.Disconnect();
@@ -32,9 +33,8 @@ public class DisconnectRadarAction : IAction
             }
 
             radarDevice.State = RadarDevice.DeviceState.Disconnected;
-        }
-
-        System.Console.WriteLine($"Disconnected from radar device - {radarDevice.Id}");     
+            radarDevice.SetStatus("The device is disconnected.");
+        }    
     }
 
 }

@@ -18,6 +18,9 @@ public class RadarDevice {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public DeviceState State { get; set; }
 
+    [JsonPropertyName("status")]
+    public String Status { get; set; }
+
     [JsonPropertyName("name")]
     public String Name { get; set; }
 
@@ -83,16 +86,21 @@ public class RadarDevice {
         }
     }
 
-
-
     public RadarDevice()
     {
         deviceLock = new ReaderWriterLockSlim();
-        Name = "";
-        Description = "";
-        Id = "";
+        Name = String.Empty;
+        Description = String.Empty;
+        Id = String.Empty;
         Enabled = false;
         State = DeviceState.Disconnected;
+        Status = String.Empty;
         ConfigScript = new List<string>();
+    }
+
+    public void SetStatus(string status)
+    {
+        this.Status = status;
+        System.Console.WriteLine($"[{Id}] {status}");
     }
 }

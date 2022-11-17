@@ -3,7 +3,10 @@
 </div>
 
 <div *ngIf="radarDevice">
-    <h2>{{radarDevice.name}}</h2>
+    <div style="margin-bottom: 10px;">
+        <h2 style="display: inline">{{radarDevice.name}} </h2> <h4 style="display: inline; color: rgb(77, 77, 77);"> ({{radarDevice.state}})</h4>
+    </div>
+    <!--<h2>{{radarDevice.name}} ({{radarDevice.state}})</h2>-->
     <div style="float: left; margin-right: 50px;">
         <table class="radar-info-table">
             <tr>
@@ -14,9 +17,15 @@
                 <td>Enabled: </td>
                 <td>{{radarDevice.enabled}}</td>
             </tr>
+            <!--
             <tr>
                 <td>State: </td>
                 <td>{{radarDevice.state}}</td>
+            </tr>
+            -->
+            <tr>
+                <td>Status: </td>
+                <td>{{radarDevice.status}}</td>
             </tr>
             <tr>
                 <td>Send Tracks Reports: </td>

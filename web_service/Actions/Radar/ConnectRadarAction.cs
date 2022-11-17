@@ -17,12 +17,14 @@ public class ConnectRadarAction : IAction
 
         if (!radarDevice.Enabled)
         {
-            Console.WriteLine($"device is disabled - {radarDevice.Id}. ignore connect action.");
+            Console.WriteLine($"[{radarDevice.Id}] device is disabled - ignore connect action.");
             return;
         }
 
         if (radarDevice.State == RadarDevice.DeviceState.Disconnected)
         {
+            radarDevice.SetStatus("Connecting to the radar device...");
+
             try
             {
                 DeviceMapper.MappedDevice mappedDevice;
@@ -42,22 +44,23 @@ public class ConnectRadarAction : IAction
             }
             catch
             {
-                Console.WriteLine($"Error: connection attempt failed for device - {radarDevice.Id}");
+                radarDevice.SetStatus("Error: connection attempt to the device failed.");
                 return;
             }
 
             radarDevice.State = RadarDevice.DeviceState.Connected;
-            Console.WriteLine($"Successfully connected to device - {radarDevice.Id}");
+            radarDevice.SetStatus("The device is connected.");
         }
 
         if (radarDevice.State == RadarDevice.DeviceState.Connected)
         {
             if (radarDevice.ConfigScript.Count == 0)
             {
-                Console.WriteLine($"Error: no connection script defined for device - {radarDevice.Id}");
+                radarDevice.SetStatus("Error: no connection script is assigned to this device.");
                 return;
             }
 
+            radarDevice.SetStatus("Starting radar tracker...");
             radarDevice.radarTracker = new RadarTracker(radarDevice);
             radarDevice.radarTracker.Start();
 

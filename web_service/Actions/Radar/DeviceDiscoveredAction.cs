@@ -26,11 +26,11 @@ public class DeviceDiscoveredAction : RadarDeviceAction {
         }
         catch (NotFoundException)
         {
-            System.Console.WriteLine($"The following device is not registerd in the system - {deviceId}. ignoring discovery event.");
+            System.Console.WriteLine($"[{deviceId}] The following device is not registerd in the system. ignoring discovery event.");
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine($"Unexpected error on DeviceDiscoveredAction - {deviceId}. error: {ex.Message}");
+            System.Console.WriteLine($"[{deviceId}] Unexpected error on DeviceDiscoveredAction. error: {ex.Message}");
         }
     }
 }
