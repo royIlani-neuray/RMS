@@ -56,7 +56,7 @@ export class DevicePageComponent implements OnInit {
   public getDevice(deviceId : string)
   {
     this.devicesService.getRadarDevice(deviceId).subscribe({
-      next : (response) => this.radarDevice = response as RadarDevice,
+      next : (device) => this.radarDevice = device,
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
   }

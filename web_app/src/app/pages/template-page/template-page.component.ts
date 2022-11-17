@@ -35,7 +35,7 @@ export class TemplatePageComponent implements OnInit {
   public getTemplate(templateId : string)
   {
     this.templatesService.getRadarTemplate(templateId).subscribe({
-      next : (response) => this.template = response as RadarTemplate,
+      next : (template) => this.template = template,
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
   }

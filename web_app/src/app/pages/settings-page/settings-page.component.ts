@@ -33,8 +33,7 @@ export class SettingsPageComponent implements OnInit {
   ngOnInit(): void 
   {
     this.settingsService.getSettings().subscribe({
-      next : (result) => {
-        let settings = result as RMSSettings
+      next : (settings) => {
         this.getReportsUrlInput().value = settings.reports_url
         this.getReportsIntervalInput().value = settings.reports_interval
       },

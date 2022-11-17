@@ -29,7 +29,7 @@ export class SettingsService {
 
   public getSettings()
   {
-    return this.http.get("/api/settings")
+    return this.http.get<RMSSettings>("/api/settings")
   }
 
   public updateSettings(reportsInterval : number, reportsURL : string)

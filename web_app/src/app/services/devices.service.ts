@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DeviceMapping, RadarDevice, RadarDeviceBrief } from '../entities/radar-device';
 import { BoundaryBoxParams, SensorPositionParams } from '../entities/radar-settings';
 
 @Injectable({
@@ -11,12 +12,12 @@ export class DevicesService {
 
   public getRadarDevices()
   {
-    return this.http.get("/api/devices")
+    return this.http.get<RadarDeviceBrief[]>("/api/devices")
   }
 
   public getRadarDevice(deviceId : string)
   {
-    return this.http.get("/api/devices/" + deviceId)
+    return this.http.get<RadarDevice>("/api/devices/" + deviceId)
   }
 
   public enableRadarDevice(deviceId : string)
@@ -36,7 +37,7 @@ export class DevicesService {
 
   public getDeviceMapping()
   {
-    return this.http.get("/api/device-mapping")
+    return this.http.get<DeviceMapping[]>("/api/device-mapping")
   }
 
   public triggerDeviceMapping()

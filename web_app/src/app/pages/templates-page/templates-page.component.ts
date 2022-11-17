@@ -42,9 +42,9 @@ export class TemplatesPageComponent implements OnInit {
   public getDeviceList()
   {
     this.templatesService.getRadarTemplates().subscribe({
-      next : (response) => 
+      next : (templates) => 
       {
-        this.dataSource.data = response as RadarTemplateBrief[]
+        this.dataSource.data = templates
         this.templateListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])

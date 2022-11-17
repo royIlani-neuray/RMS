@@ -48,9 +48,9 @@ export class DeviceMappingPageComponent implements OnInit {
   public getDeviceMapping()
   {
     this.devicesService.getDeviceMapping().subscribe({
-      next : (response) => 
+      next : (mappedDevices) => 
       {
-        this.deviceList = response as DeviceMapping[]
+        this.deviceList = mappedDevices
         this.dataSource.data = this.deviceList
         this.deviceListLoaded.next(true);
       },

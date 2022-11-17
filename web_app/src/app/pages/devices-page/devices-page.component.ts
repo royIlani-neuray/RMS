@@ -42,9 +42,9 @@ export class DevicesPageComponent implements OnInit {
   public getDeviceList()
   {
     this.devicesService.getRadarDevices().subscribe({
-      next : (response) => 
+      next : (devices) => 
       {
-        this.dataSource.data = response as RadarDeviceBrief[]
+        this.dataSource.data = devices
         this.deviceListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])
