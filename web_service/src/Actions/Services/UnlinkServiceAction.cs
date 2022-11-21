@@ -1,4 +1,5 @@
 using WebService.Entites;
+using WebService.Services;
 
 namespace WebService.Actions.Services;
 
@@ -18,6 +19,7 @@ public class UnlinkServiceAction : RadarDeviceAction
         if (linkedService == null)
             throw new Exception($"Could not find linked service with id - {serviceId}");
         
+        ServiceManager.Instance.DisposeServiceContext(linkedService);
         radarDevice.LinkedServices.Remove(linkedService);
     }
 }

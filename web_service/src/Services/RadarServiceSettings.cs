@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace WebService.Services;
 
-public class RegisteredService 
+public class RadarServiceSettings 
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = String.Empty;

@@ -38,10 +38,17 @@ public class LinkServiceAction : RadarDeviceAction
         if (!ServiceManager.Instance.ServiceExist(args.ServiceId))
             throw new Exception($"Cannot find service with the provided id.");
 
-        radarDevice.LinkedServices.Add(new RadarDevice.LinkedService() 
+        var linkedService = new RadarDevice.LinkedService() 
         {
             ServiceId = args.ServiceId,
             ServiceOptions = args.ServiceOptions
-        });
+        };
+
+        if (radarDevice.State == RadarDevice.DeviceState.Active)
+        {
+            ServiceManager.Instance.InitServiceContext(radarDevice, linkedService);
+        }
+
+        radarDevice.LinkedServices.Add(linkedService);
     }
 }

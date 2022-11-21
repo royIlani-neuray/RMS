@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using WebService.Radar;
 using WebService.Tracking;
+using WebService.Services;
 
 namespace WebService.Entites;
 
@@ -22,7 +23,7 @@ public class RadarDevice {
         public Dictionary<string,string> ServiceOptions { get; set; } = new Dictionary<string, string>();
 
         [JsonIgnore]
-        object ServiceContext = new Object(); // TODO...
+        public IServiceContext? ServiceContext;
     }
 
     [JsonPropertyName("state")]

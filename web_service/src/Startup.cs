@@ -30,8 +30,8 @@ public class Startup
         TemplateContext.Instance.LoadTemplatesFromStorage();
 
         Console.WriteLine("Loading services...");
-        var registerdServices = config.GetSection("services").Get<List<RegisteredService>>();
-        ServiceManager.Instance.RegisterServices(registerdServices!);
+        var servicesSettings = config.GetSection("services").Get<List<RadarServiceSettings>>();
+        ServiceManager.Instance.InitServices(servicesSettings!);
 
         Console.WriteLine("Loading devices from storage...");
         DeviceContext.Instance.LoadDevicesFromStorage();

@@ -1,4 +1,6 @@
 using WebService.Entites;
+using WebService.Tracking;
+using WebService.Services.Recording;
 
 namespace WebService.Services;
 
@@ -27,30 +29,76 @@ public sealed class ServiceManager {
 
     private ServiceManager() 
     {
-        registeredServices = new List<RegisteredService>();
+        servicesSettings = new List<RadarServiceSettings>();
+        services = new List<IRadarService>();
     }
 
     #endregion
 
-    private List<RegisteredService> registeredServices;
+    private List<RadarServiceSettings> servicesSettings;
 
-    public void RegisterServices(List<RegisteredService> registeredServices)
+    private List<IRadarService> services;
+
+    public void InitServices(List<RadarServiceSettings> servicesSettings)
     {
-        this.registeredServices = registeredServices;
+        this.servicesSettings = servicesSettings;
 
-        foreach (var registerdService in registeredServices)
+        services.Add(new RecordingService());
+
+        foreach (var service in services)
         {
+            service.Settings = servicesSettings.FirstOrDefault(settings => settings.Id == service.ServiceId);
 
+            if (service.Settings == null)
+                throw new Exception($"Error: Missing service settings for service: {service.ServiceId}");
         }
     }
 
     public bool ServiceExist(string serviceId)
     {
-        return this.registeredServices.Exists(service => service.Id == serviceId);
+        return services.Exists(service => service.ServiceId == serviceId);
     }
 
-    public void InitServiceContext(RadarDevice.LinkedService linkedService)
+    public void InitServiceContext(RadarDevice device, RadarDevice.LinkedService linkedService)
     {
-        //if (linkedService.ServiceId)
+        IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+
+        if (service.Settings!.Enabled)
+        {
+            linkedService.ServiceContext = service.CreateServiceContext(device, linkedService.ServiceOptions);
+        }
+        else
+        {
+            linkedService.ServiceContext = null;
+        }
+    }
+
+    public void DisposeServiceContext(RadarDevice.LinkedService linkedService)
+    {
+        if (linkedService.ServiceContext == null)
+            return;
+
+        IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+        service.DisposeServiceContext(linkedService.ServiceContext!);
+    }
+
+    public void HandleFrame(FrameData frame, List<RadarDevice.LinkedService> linkedServices)
+    {
+        foreach (var linkedService in linkedServices)
+        {
+            try
+            {
+                IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+
+                if ((!service.Settings!.Enabled) || (linkedService.ServiceContext == null))
+                    continue;
+
+                service.HandleFrame(frame, linkedService.ServiceContext);
+            }
+            catch
+            {
+                System.Console.WriteLine($"[{frame.DeviceId}] Error: unexpected error while handling frame data in service: {linkedService.ServiceId}");
+            }
+        }
     }
 }

@@ -116,7 +116,7 @@ public class RadarTracker
         {
             try
             {
-                ServiceManager.Instance.InitServiceContext(linkedService);
+                ServiceManager.Instance.InitServiceContext(radarDevice, linkedService);
             }
             catch
             {
@@ -178,6 +178,9 @@ public class RadarTracker
             }
 
             TracksWebsocketReporter.Instance.SendReport(LastFrameData);
+
+            // pass the frame to linked services
+            ServiceManager.Instance.HandleFrame(LastFrameData, radarDevice.LinkedServices);
         }
 
         // System.Console.WriteLine("Debug: Tracking loop exited.");
