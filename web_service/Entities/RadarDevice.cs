@@ -13,6 +13,18 @@ public class RadarDevice {
         Active
     };
 
+    public class LinkedService
+    {
+        [JsonPropertyName("service_id")]
+        public String ServiceId { get; set; } = String.Empty;
+
+        [JsonPropertyName("service_options")]
+        public Dictionary<string,string> ServiceOptions { get; set; } = new Dictionary<string, string>();
+
+        [JsonIgnore]
+        object ServiceContext = new Object(); // TODO...
+    }
+
     [JsonPropertyName("state")]
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -44,6 +56,9 @@ public class RadarDevice {
 
     [JsonPropertyName("radar_settings")]
     public RadarSettings? radarSettings { get; set;}
+
+    [JsonPropertyName("linked_services")]
+    public List<LinkedService> LinkedServices { get; set; }
 
     [JsonIgnore]
     public ReaderWriterLockSlim deviceLock;
@@ -96,6 +111,7 @@ public class RadarDevice {
         State = DeviceState.Disconnected;
         Status = String.Empty;
         ConfigScript = new List<string>();
+        LinkedServices = new List<LinkedService>();
     }
 
     public void SetStatus(string status)

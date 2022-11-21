@@ -3,7 +3,7 @@ using WebService.Context;
 using WebService.Actions.Radar;
 using WebService.Tracking;
 using Microsoft.AspNetCore.Mvc;
-
+using WebService.Actions.Services;
 
 namespace WebService.Controllers;
 
@@ -156,8 +156,28 @@ public class DeviceController : ControllerBase
     [HttpPost("{deviceId}/tracks-loopback")]
     public void TracksLoopback(string deviceId, [FromBody] object data)
     {
+        // this API is used for debug
+
         System.Console.WriteLine("***** Tracks Loopback ******");
         System.Console.WriteLine(data);
         System.Console.WriteLine("****************************");
     }
+
+    [HttpPost("{deviceId}/services")]
+    public void LinkToService(string deviceId, [FromBody] LinkServiceArgs args)
+    {
+        ValidateDeviceId(deviceId); 
+        args.Validate();
+        LinkServiceAction action = new LinkServiceAction(deviceId, args);
+        action.Run();
+    }
+
+    [HttpDelete("{deviceId}/services/{serviceId}")]
+    public void UnlinkService(string deviceId, string serviceId)
+    {        
+        ValidateDeviceId(deviceId); 
+        var action = new UnlinkServiceAction(deviceId, serviceId);
+        action.Run();
+    }
+
 }

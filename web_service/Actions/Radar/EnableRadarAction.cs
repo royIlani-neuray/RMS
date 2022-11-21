@@ -1,5 +1,4 @@
 using WebService.Entites;
-using WebService.Radar;
 
 namespace WebService.Actions.Radar;
 

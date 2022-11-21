@@ -7,6 +7,7 @@ using WebService.Context;
 using WebService.Radar;
 using WebService.Actions.Radar;
 using WebService.Scheduler;
+using WebService.Services;
 
 public class Startup 
 {
@@ -27,6 +28,10 @@ public class Startup
 
         Console.WriteLine("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();
+
+        Console.WriteLine("Loading services...");
+        var registerdServices = config.GetSection("services").Get<List<RegisteredService>>();
+        ServiceManager.Instance.RegisterServices(registerdServices!);
 
         Console.WriteLine("Loading devices from storage...");
         DeviceContext.Instance.LoadDevicesFromStorage();

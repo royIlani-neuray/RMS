@@ -1,4 +1,5 @@
 using WebService.Entites;
+using WebService.Services;
 using WebService.Tracking.Applications;
 
 namespace WebService.Tracking;
@@ -76,6 +77,7 @@ public class RadarTracker
             try
             {
                 tracksHttpReporter.StartWorker();
+                InitServices();
                 ConfigureRadar();
                 InitTrackingApp();                
                 TreakingLoop();               
@@ -106,6 +108,22 @@ public class RadarTracker
             return;
 
         trackerTask.Wait();
+    }
+
+    private void InitServices()
+    {
+        foreach (var linkedService in radarDevice.LinkedServices)
+        {
+            try
+            {
+                ServiceManager.Instance.InitServiceContext(linkedService);
+            }
+            catch
+            {
+                System.Console.WriteLine($"[{radarDevice.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
+                throw;
+            }
+        }
     }
 
     private void ConfigureRadar()

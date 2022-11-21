@@ -122,7 +122,7 @@ public class PeopleTracking : ITrackingApplication
         }
 
         // Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
-        Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
+        // Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
         // Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
 
         for (int tlvIndex = 0; tlvIndex < frameData.frameHeader.NumTLVs; tlvIndex++)
@@ -192,7 +192,7 @@ public class PeopleTracking : ITrackingApplication
                     track.ConfidenceLevel = reader.ReadSingle();
                     frameData.tracksList.Add(track);
 
-                    Console.WriteLine($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
+                    // Console.WriteLine($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
                 }
             }
 
@@ -203,7 +203,7 @@ public class PeopleTracking : ITrackingApplication
                     frameData.targetsIndexList.Add(reader.ReadByte());
                 }
 
-                Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
+                // Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
             }
 
         }
