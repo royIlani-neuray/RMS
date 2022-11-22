@@ -11,6 +11,7 @@ services:
       - rms-variables.env
     volumes:
       - webservice_storage:/app/data
+      - webservice_recordings:/app/data/recordings
 
   web_app:
     image: web_app:latest
@@ -25,3 +26,4 @@ services:
 
 volumes:
   webservice_storage:
+  webservice_recordings:

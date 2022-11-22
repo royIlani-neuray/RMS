@@ -15,6 +15,7 @@ services:
       - rms-variables.env
     volumes:
       - webservice_storage:/app/data
+      - webservice_recordings:/app/data/recordings
       - ~/.vsdbg:/remote_debugger:rw
 
   web_app:
@@ -29,3 +30,4 @@ services:
 
 volumes:
   webservice_storage:
+  webservice_recordings:

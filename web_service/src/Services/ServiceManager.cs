@@ -39,8 +39,13 @@ public sealed class ServiceManager {
 
     private List<IRadarService> services;
 
-    public void InitServices(List<RadarServiceSettings> servicesSettings)
+    public void InitServices(List<RadarServiceSettings>? servicesSettings)
     {
+        if (servicesSettings == null)
+        {
+            servicesSettings = new List<RadarServiceSettings>();
+        }
+        
         this.servicesSettings = servicesSettings;
 
         services.Add(new RecordingService());

@@ -31,7 +31,8 @@ public class Startup
 
         Console.WriteLine("Loading services...");
         var servicesSettings = config.GetSection("services").Get<List<RadarServiceSettings>>();
-        ServiceManager.Instance.InitServices(servicesSettings!);
+
+        ServiceManager.Instance.InitServices(servicesSettings);
 
         Console.WriteLine("Loading devices from storage...");
         DeviceContext.Instance.LoadDevicesFromStorage();
