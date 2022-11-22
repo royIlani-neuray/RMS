@@ -30,6 +30,8 @@ public class RecordingService : IRadarService
     {
         System.Console.WriteLine($"[{device.Id}] Creating recording context.");
 
+        float frameRate = device.radarSettings!.DetectionParams!.FrameRate;
+
         string filename = $"{device.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
         string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}.bin");
 
@@ -37,7 +39,7 @@ public class RecordingService : IRadarService
         string configPath = System.IO.Path.Combine(StoragePath, $"{filename}.json");
         File.WriteAllText(configPath, deviceString);
 
-        RecordingContext recordingContext = new RecordingContext(device.Id, recordingPath);
+        RecordingContext recordingContext = new RecordingContext(device.Id, recordingPath, frameRate);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
         return recordingContext;
