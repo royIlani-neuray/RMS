@@ -88,6 +88,8 @@ public class Emulator {
 
         playback = playbackArgs;
         
+        await RegisterEmulatorAsync(); // register the device again in case it was removed.
+
         System.Console.WriteLine("Update emulator device configuration script");
         await rmsClient!.SetDeviceConfig(deviceId, deviceSettings.ConfigScript);
 
