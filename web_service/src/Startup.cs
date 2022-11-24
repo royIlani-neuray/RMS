@@ -11,8 +11,6 @@ using WebService.Services;
 
 public class Startup 
 {
-    public static Task? mainTask;
-
     public static void ApplicationStart(ConfigurationManager config)
     {
         string version = config["RMS_version"]!;

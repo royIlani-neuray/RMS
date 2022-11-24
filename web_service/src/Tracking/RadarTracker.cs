@@ -60,6 +60,10 @@ public class RadarTracker
         {
             trackingApp = new TrafficMonitoring();
         }
+        else if (appName == "EMULATOR_APPLICATION")
+        {
+            trackingApp = new EmulatorStream(radarDevice.Name, radarDevice.Id);
+        }
         else throw new Exception($"Error: no tracker exist for application: {appName}");
     }
 
