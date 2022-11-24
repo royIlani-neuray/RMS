@@ -34,11 +34,22 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
 
     protected override void DoWork(FrameData workItem)
     {
-        string jsonString = JsonSerializer.Serialize(workItem);
-        byte [] frameBytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
-        UInt32 frameBytesSize = (uint) frameBytes.Length;
-        binaryWriter.Write(frameBytesSize);
-        binaryWriter.Write(frameBytes);
+        if ((workItem.tracksList.Count == 0) && (workItem.PointsList.Count == 0) && (workItem.TargetsIndexList.Count == 0))
+        {
+            // empty frame, store just a 0 for optimization
+            uint frameBytesSize = 0;
+            binaryWriter.Write(frameBytesSize);
+        }
+        else
+        {
+            // serialize the frame as json (a bit expensive size wise)
+            string jsonString = JsonSerializer.Serialize(workItem);
+            byte [] frameBytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
+            UInt32 frameBytesSize = (uint) frameBytes.Length;
+            binaryWriter.Write(frameBytesSize);
+            binaryWriter.Write(frameBytes);
+        }
+
         binaryWriter.Flush();
     }
 

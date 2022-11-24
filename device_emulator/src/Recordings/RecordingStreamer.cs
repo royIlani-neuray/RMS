@@ -100,15 +100,17 @@ public class RecordingStreamer {
                 {
                     lock (readerLock)
                     {
-                        byte[]? frameBytes = reader.GetNextFrame();
+                        byte[]? frameBytes = null;
 
-                        if (frameBytes == null)
+                        bool gotFrame = reader.GetNextFrame(out frameBytes);
+
+                        if (!gotFrame)
                         {
                             if (loopForever)
                             {
                                 System.Console.WriteLine("Got to end of recording. rewinding...");
                                 reader.Rewind();
-                                frameBytes = reader.GetNextFrame();
+                                reader.GetNextFrame(out frameBytes);
                             }
                             else
                             {
@@ -116,11 +118,20 @@ public class RecordingStreamer {
                                 reader = null;
                                 continue;
                             }
-
                         }
-                        uint frameSize = (uint) frameBytes!.Length;
-                        dataStream!.Write(BitConverter.GetBytes(frameSize));
-                        dataStream!.Write(frameBytes);
+
+                        if (frameBytes != null)
+                        {
+                            uint frameSize = (uint) frameBytes!.Length;
+                            dataStream!.Write(BitConverter.GetBytes(frameSize));
+                            dataStream!.Write(frameBytes);
+                        }
+                        else
+                        {
+                            uint frameSize = 0; // tell RMS to generate an empty frame
+                            dataStream!.Write(BitConverter.GetBytes(frameSize));
+                        }
+                        
                     }
                 }
                 

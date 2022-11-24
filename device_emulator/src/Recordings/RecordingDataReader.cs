@@ -23,17 +23,26 @@ public class RecordingDataReader
         System.Console.WriteLine($"Recording frame rate: {frameRate} fps");
     }
 
-    public byte[]? GetNextFrame()
+    public bool GetNextFrame(out byte[]? frameBytes)
     {
+        frameBytes = null;
+
         try
         {
             UInt32 frameDataSize = binaryReader.ReadUInt32();
-            byte [] frameBytes = binaryReader.ReadBytes((int) frameDataSize); 
-            return frameBytes;
+
+            // frameDataSize == 0 ==> means an empty frame
+
+            if (frameDataSize > 0)
+            {
+                frameBytes = binaryReader.ReadBytes((int) frameDataSize); 
+            }
+
+            return true;
         }
         catch (EndOfStreamException)
         {
-            return null;
+            return false;
         }
     }
 
