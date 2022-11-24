@@ -64,6 +64,8 @@ public class Emulator {
     }
 
     public const string RecordingsFolderPath = "./data";
+    public const string RecordingDataFileExtention = ".bin";
+    public const string RecordingSettingFileExtention = ".json";
 
     private Task? emulatorTask;
     private RMSClient? rmsClient;
@@ -99,7 +101,7 @@ public class Emulator {
 
     private DeviceSettings GetDeviceSettings(string playbackFileName)
     {
-        string deviceFileName = $"{System.IO.Path.GetFileNameWithoutExtension(playbackFileName)}.json";
+        string deviceFileName = $"{System.IO.Path.GetFileNameWithoutExtension(playbackFileName)}{RecordingSettingFileExtention}";
         string deviceFilePath = System.IO.Path.Combine(RecordingsFolderPath, deviceFileName);
         string jsonString = File.ReadAllText(deviceFilePath);
         return JsonSerializer.Deserialize<DeviceSettings>(jsonString)!;
@@ -154,5 +156,52 @@ public class Emulator {
             System.Console.WriteLine($"Error: unexpcted error during device run - {ex.Message}");
         }
         
+    }
+
+    public class RecordingInfo 
+    {
+        [JsonPropertyName("device_name")]
+        public String Name { get; set; } = String.Empty;
+
+        [JsonPropertyName("device_id")]
+        public String Id { get; set; } = String.Empty;
+
+        [JsonPropertyName("file_name")]
+        public String Filename { get; set; } = String.Empty;
+
+        [JsonPropertyName("file_size_bytes")]
+        public float FileSizeBytes { get; set; }
+
+        [JsonPropertyName("timestamp")]
+        public string Timestamp { get; set; } = String.Empty;
+
+    }
+
+    public List<RecordingInfo> GetRecordingsList()
+    {
+        List<RecordingInfo> recordings = new List<RecordingInfo>();
+
+        var files = System.IO.Directory.GetFiles(RecordingsFolderPath, "*" + RecordingDataFileExtention);
+
+        foreach (string filePath in files)
+        {
+            string filename = System.IO.Path.GetFileName(filePath);
+
+            var deviceSettings = GetDeviceSettings(filename);
+
+            float fileSizeBytes = (new FileInfo(filePath).Length);
+            string timestamp = System.IO.Path.GetFileNameWithoutExtension(filename).Substring(filename.IndexOf('_') + 1);
+
+            recordings.Add(new RecordingInfo() 
+            {
+                Name = deviceSettings.Name,
+                Id = deviceSettings.Id,
+                Filename = filename,
+                FileSizeBytes = fileSizeBytes,
+                Timestamp = timestamp
+            });
+        }
+
+        return recordings;
     }
 }

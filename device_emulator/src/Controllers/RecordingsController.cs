@@ -14,10 +14,10 @@ public class RecordingsController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPut]
-    public void SetActiveRecording(string deviceId, [FromBody] object args)
+    [HttpGet]
+    public List<Emulator.RecordingInfo> GetRecordings()
     {
-        
+        return Emulator.Instance.GetRecordingsList();
     }
 
 }
