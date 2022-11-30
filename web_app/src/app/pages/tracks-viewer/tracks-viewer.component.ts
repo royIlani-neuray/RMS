@@ -247,6 +247,11 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
   public getTrackRange(track : TrackData)
   {
-    return Math.sqrt(Math.pow(track.position_x,2) + Math.pow(track.position_y,2) + Math.pow(track.position_z,2))
+    let radarHeight = this.radarDevice.radar_settings.sensor_position.height
+
+    // track x,y,z is in reference to the floor which is the origin (0,0,0).
+    // in order to get the range from the radar and not from the floor we reduce the radar height.
+
+    return Math.sqrt(Math.pow(track.position_x,2) + Math.pow(track.position_y,2) + Math.pow((track.position_z - radarHeight),2))
   }
 }
