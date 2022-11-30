@@ -95,7 +95,7 @@ export class SetDeviceConfigDialogComponent implements OnInit {
           return
 
         this.validTemplatesList = this.templatesList.filter((template) => {
-          return (template.model == this.radarDevice.device_mapping.model) && (template.application == this.radarDevice.device_mapping.application)
+          return (this.radarDevice.device_mapping.model.startsWith(template.model)) && (template.application == this.radarDevice.device_mapping.application)
         })
 
       },

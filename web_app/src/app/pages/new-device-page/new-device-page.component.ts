@@ -82,7 +82,7 @@ export class NewDevicePageComponent implements OnInit {
     let deviceInfo = this.deviceList.find((device) => { return device.device_id == selectedDeviceId })
     
     this.validTemplatesList = this.templatesList.filter((template) => {
-      return (template.model == deviceInfo!.model) && (template.application == deviceInfo!.application)
+      return (deviceInfo!.model.startsWith(template.model)) && (template.application == deviceInfo!.application)
     })
     
   }
