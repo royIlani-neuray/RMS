@@ -7,3 +7,4 @@ docker load < rms-web_app.tar
 
 docker compose up -d
 
+echo "Install script done."
