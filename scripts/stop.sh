@@ -2,7 +2,7 @@
 
 echo "Stopping neuRay Radar Management Service (RMS)..."
 
-docker compose down
+docker-compose down
 
 
 
