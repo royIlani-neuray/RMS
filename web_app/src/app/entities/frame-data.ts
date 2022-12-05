@@ -1,8 +1,12 @@
+/***
+** Copyright (C) 2020-2023 neuRay Labs. All rights reserved.
+**
+** The information and source code contained herein is the exclusive 
+** property of neuRay Labs and may not be disclosed, examined, reproduced, redistributed, used in source and binary forms, in whole or in part  
+** without explicit written authorization from the company.
+**
+***/
 
-//
-// {"device_id":"6b817ec6-fb4b-fbe2-54f6-bddf7c1ce187","device_name":"2133121322","timestamp":"2022-10-13T07:26:32.9471835Z","tracks":[
-//    {"track_id":0,"position-x":1,"position-y":2,"position-z":1,"velocity-x":0,"velocity-y":0,"velocity-z":0,"acceleration-x":0,"acceleration-y":0,"acceleration-z":0}]}
-//
 export interface FrameData {
     device_id: string
     device_name: string
