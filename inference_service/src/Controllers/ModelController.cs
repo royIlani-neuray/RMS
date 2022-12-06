@@ -8,17 +8,16 @@
 ***/
 using Microsoft.AspNetCore.Mvc;
 
-namespace GateId.Controllers;
+namespace InferenceService.Controllers;
 
 
 [ApiController]
-[Route("api/service")]
-public class ServiceController : ControllerBase
+[Route("api/models")]
+public class ModelController : ControllerBase
 {
-    public static string ServiceVersion = string.Empty;
-    private readonly ILogger<ServiceController> _logger;
+    private readonly ILogger<ModelController> _logger;
 
-    public ServiceController(ILogger<ServiceController> logger)
+    public ModelController(ILogger<ModelController> logger)
     {
         _logger = logger;
     }
@@ -28,7 +27,7 @@ public class ServiceController : ControllerBase
     {
         return new 
         {
-            version = ServiceVersion
+            //version = EmulatorSettings.Instance.EmulatorVersion
         };
     }
 

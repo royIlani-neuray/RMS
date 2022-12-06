@@ -9,7 +9,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GateId.Controllers;
+using InferenceService.Controllers;
+using InferenceService.Context;
+using InferenceService.Storage;
 
 public class Startup 
 {
@@ -18,9 +20,15 @@ public class Startup
         string version = config["service_version"]!;
         ServiceController.ServiceVersion = version;
 
-        Console.WriteLine($"Gate ID Service Started - Version: {version}");
+        Console.WriteLine($"Inference Service Started - Version: {version}");
 
         Console.WriteLine($"Running as user: {Environment.UserName}");
+
+        Console.WriteLine("Initializing storage...");
+        ModelsStorage.InitStorage();
+
+        Console.WriteLine("Loading models from storage...");
+        ModelsContext.Instance.LoadModelsFromStorage();
     }
 
 }
