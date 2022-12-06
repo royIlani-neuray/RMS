@@ -26,6 +26,19 @@ public class ModelsStorage
         {
             System.Console.WriteLine("Creating models storage folder.");
             Directory.CreateDirectory(StoragePath);
+
+            // copy default models
+
+            foreach (string modelFilePath in Directory.GetFiles("./default_models"))
+            {
+
+                if (!modelFilePath.EndsWith(ModelFileExtention) && !modelFilePath.EndsWith(ModelMetaFileExtention))
+                    continue;
+
+                string filename = Path.GetFileName(modelFilePath);
+                string targetPath = Path.Combine(StoragePath, filename);
+                File.Copy(modelFilePath, targetPath);
+            }
         }
     }
 

@@ -39,4 +39,14 @@ public class ModelController : ControllerBase
         return ModelsContext.Instance.GetModel(modelName);
     }
 
+    [HttpPost("{modelName}/predict")]
+    public object RunPrediction(string modelName)
+    {      
+        if (!ModelsContext.Instance.IsModelExist(modelName))
+            throw new NotFoundException("There is no model with the given name");
+
+        // TODO:....
+        return new {};
+    }
+
 }
