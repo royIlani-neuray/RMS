@@ -14,6 +14,16 @@ using DeviceEmulator;
 
 public class Startup 
 {
+    public static void SetServicePort()
+    {
+        var port = Environment.GetEnvironmentVariable("DEVICE_EMULATOR_PORT");
+
+        if (port != null)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://+:{port}");
+        }
+    }
+
     public static void ApplicationStart(ConfigurationManager config)
     {
         string version = config["emulator_version"]!;

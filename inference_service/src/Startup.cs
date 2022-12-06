@@ -16,6 +16,16 @@ using InferenceService.Entities;
 
 public class Startup 
 {
+    public static void SetServicePort()
+    {
+        var port = Environment.GetEnvironmentVariable("INFERENCE_SERVICE_PORT");
+
+        if (port != null)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://+:{port}");
+        }
+    }
+
     public static void ApplicationStart(ConfigurationManager config)
     {
         string version = config["service_version"]!;

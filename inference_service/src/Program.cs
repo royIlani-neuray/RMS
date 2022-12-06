@@ -7,6 +7,8 @@
 **
 ***/
 
+Startup.SetServicePort();
+
 var builder = WebApplication.CreateBuilder(args);
 
 Startup.ApplicationStart(builder.Configuration);
