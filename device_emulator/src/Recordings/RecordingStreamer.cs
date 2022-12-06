@@ -41,7 +41,7 @@ public class RecordingStreamer {
     #endregion
 
     private const float IDLE_STREAMING_RATE = 5; // 5 fps
-    private const string RecordingPath = "./data";
+    private const string RecordingPath = "./data/recordings";
 
     private bool streamFrames;
     private Task? streamingTask;

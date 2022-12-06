@@ -5,9 +5,10 @@ echo "Removing Radar Management Service (RMS) installation..."
 docker compose down
 docker compose rm
 
+docker rmi web_app
 docker rmi web_service
 docker rmi inference_service
-docker rmi web_app
+docker rmi device_emulator
 
 while true; do
 

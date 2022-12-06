@@ -42,6 +42,20 @@ services:
       - inference_service_storage:/app/data
       - ~/.vsdbg:/remote_debugger:rw
 
+  device_emulator:
+    image: device_emulator:latest
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: ./device_emulator/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - rms-variables.env
+    volumes:
+      - webservice_recordings:/app/data:ro
+      - ~/.vsdbg:/remote_debugger:rw
+
 volumes:
   webservice_storage:
   webservice_recordings:

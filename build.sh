@@ -5,6 +5,7 @@ docker compose rm
 docker rmi web_service
 docker rmi web_app
 docker rmi inference_service
+docker rmi device_emulator
 
 docker volume rm rms_webservice_storage
 docker volume rm rms_webservice_recordings
@@ -21,6 +22,7 @@ mkdir bin/rms
 docker save --output ./bin/rms/rms-web_service.tar web_service
 docker save --output ./bin/rms/rms-web_app.tar web_app
 docker save --output ./bin/rms/rms-inference_service.tar inference_service
+docker save --output ./bin/rms/rms-device_emulator.tar device_emulator
 
 cp ./scripts/install.sh ./bin/rms
 cp ./scripts/uninstall.sh ./bin/rms
