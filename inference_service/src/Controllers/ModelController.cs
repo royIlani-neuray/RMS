@@ -7,6 +7,8 @@
 **
 ***/
 using Microsoft.AspNetCore.Mvc;
+using InferenceService.Context;
+using InferenceService.Entities;
 
 namespace InferenceService.Controllers;
 
@@ -22,13 +24,19 @@ public class ModelController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("version")]
-    public object GetVersion()
+    [HttpGet]
+    public List<Model.ModelBrief> GetModels()
     {
-        return new 
-        {
-            //version = EmulatorSettings.Instance.EmulatorVersion
-        };
+        return ModelsContext.Instance.GetModelsBrief();
+    }
+
+    [HttpGet("{modelName}")]
+    public Model GetModel(string modelName)
+    {      
+        if (!ModelsContext.Instance.IsModelExist(modelName))
+            throw new NotFoundException("There is no model with the given name");
+
+        return ModelsContext.Instance.GetModel(modelName);
     }
 
 }

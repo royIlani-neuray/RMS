@@ -1,6 +1,15 @@
+/***
+** Copyright (C) 2020-2023 neuRay Labs. All rights reserved.
+**
+** The information and source code contained herein is the exclusive 
+** property of neuRay Labs and may not be disclosed, examined, reproduced, redistributed, used in source and binary forms, in whole or in part  
+** without explicit written authorization from the company.
+**
+***/
 using System.IO;
 using InferenceService.Entities;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace InferenceService.Storage;
 
@@ -30,10 +39,22 @@ public class ModelsStorage
         return Path.Combine(StoragePath, $"{modelName}{ModelFileExtention}");
     }
 
+    private static bool IsValidFileName(string fileName)
+    {
+        // The regular expression used to check if the file name is valid
+        Regex regex = new Regex("^[^/\\\\:*?\"<>|]*$");
+        return regex.IsMatch(fileName);
+    }
+
     public static void SaveModelMetadata(Model model)
     {
+        if (!IsValidFileName(model.Name))
+        {
+            throw new BadRequestException("Error: model name is invalid.");
+        }
+
         string jsonString = JsonSerializer.Serialize(model);
-        File.WriteAllText(Path.Combine(StoragePath, model.Name + ModelMetaFileExtention), jsonString);
+        File.WriteAllText(GetModelMetaFilePath(model.Name), jsonString);
     }
 
     public static void DeleteModel(Model model)

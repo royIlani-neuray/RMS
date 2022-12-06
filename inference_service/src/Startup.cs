@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using InferenceService.Controllers;
 using InferenceService.Context;
 using InferenceService.Storage;
+using InferenceService.Entities;
 
 public class Startup 
 {
@@ -29,6 +30,14 @@ public class Startup
 
         Console.WriteLine("Loading models from storage...");
         ModelsContext.Instance.LoadModelsFromStorage();
+
+        /*
+        Model tempModle = new Model();
+        tempModle.Name = "temp";
+        tempModle.Description = "temp model";
+        tempModle.ModelType = Model.ModelTypes.GateId;
+        ModelsContext.Instance.AddModel(tempModle);
+        */
     }
 
 }
