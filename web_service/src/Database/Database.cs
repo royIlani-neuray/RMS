@@ -20,6 +20,12 @@ public class Database
             System.IO.Directory.CreateDirectory(DeviceStorage.StoragePath);
         }
 
+        if (!System.IO.Directory.Exists(UserStorage.StoragePath))
+        {
+            System.Console.WriteLine("Creating users storage folder.");
+            System.IO.Directory.CreateDirectory(UserStorage.StoragePath);
+        }
+
         if (!System.IO.Directory.Exists(TemplateStorage.StoragePath))
         {
             System.Console.WriteLine("Creating templates storage folder.");
