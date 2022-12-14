@@ -8,6 +8,7 @@
 ***/
 using InferenceService.Storage;
 using InferenceService.Entities;
+using Microsoft.ML.OnnxRuntime;
 
 namespace InferenceService.Context;
 
@@ -43,6 +44,16 @@ public sealed class ModelsContext {
     public void LoadModelsFromStorage()
     {
         models = new Dictionary<string, Model>(ModelsStorage.LoadAllModels());
+
+        // create a onnx runtime sessions
+
+        foreach (var model in models.Values)
+        {
+            string modelFilePath = ModelsStorage.GetModelFilePath(model.Name);
+
+            System.Console.WriteLine("\n\nLoading model: " + modelFilePath + "\n");
+            model.Session = new InferenceSession(modelFilePath);
+        }
     }
 
     public bool IsModelExist(string modelName)

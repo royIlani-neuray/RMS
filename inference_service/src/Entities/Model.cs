@@ -8,6 +8,7 @@
 ***/
 using System;
 using System.Text.Json.Serialization;
+using Microsoft.ML.OnnxRuntime;
 
 namespace InferenceService.Entities;
 
@@ -36,6 +37,9 @@ public class Model
 
     [JsonPropertyName("settings")]
     public Dictionary<string,string> Settings { get; set; }
+
+    [JsonIgnore]
+    public InferenceSession? Session { get; set; }
 
     public class ModelBrief 
     {
