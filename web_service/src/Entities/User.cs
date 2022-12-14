@@ -46,9 +46,9 @@ public class User
 
         public UserBrief(User user)
         {
-            Id = String.Empty;
-            FirstName = String.Empty;
-            LastName = String.Empty;
+            Id = user.Id;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
         }
     }
 

@@ -42,6 +42,9 @@ public class Startup
         Console.WriteLine("Initializing DB...");
         Database.DatabaseInit();
 
+        Console.WriteLine("Loading users from storage...");
+        UserContext.Instance.LoadUsersFromStorage();
+
         Console.WriteLine("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();
 
