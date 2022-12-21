@@ -6,7 +6,8 @@
     <div style="margin-bottom: 10px;">
         <h2 style="display: inline">{{radarDevice.name}} </h2> <h4 style="display: inline; color: rgb(77, 77, 77);"> ({{radarDevice.state}})</h4>
     </div>
-    <!--<h2>{{radarDevice.name}} ({{radarDevice.state}})</h2>-->
+    
+    <!-- Radar Info card -->
     <div style="float: left; margin-right: 50px;">
         <table class="radar-info-table">
             <tr>
@@ -32,6 +33,10 @@
                 <td>{{radarDevice.send_tracks_report}}</td>
             </tr>
             <tr>
+                <td>Record Radar Data:</td>
+                <td>{{isRadarRecordingEnabled()}}</td>
+            </tr>
+            <tr>
                 <td>Device ID: </td>
                 <td>{{radarDevice.device_id}}</td>
             </tr>
@@ -46,6 +51,7 @@
         </table>
     </div>
 
+    <!-- Device Info card -->
     <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
         <tr>
             <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
@@ -80,6 +86,8 @@
             <td>{{radarDevice.device_mapping.fw_version}}</td>
         </tr>
     </table>
+
+    <!-- Control buttons -->
     <div>
         <br><br>
         <button mat-raised-button (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
@@ -89,10 +97,28 @@
 
         <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
         <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
-        
+
+        <button mat-raised-button *ngIf="!isRadarRecordingEnabled()" (click)="enableRadarRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
+        <button mat-raised-button *ngIf="isRadarRecordingEnabled()" (click)="disableRadarRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
+
         <button mat-raised-button (click)="deleteRadarDevice()" color="primary" style="margin-left: 10px;">Delete Radar</button>
     </div>
-    <br><br><br>
+
+    <br>
+
+    <!-- Linked Services card -->
+    <div class="radar-info-card">
+        <p><mat-label mat-basic-chip>Linked Services:</mat-label></p>
+        <mat-divider></mat-divider>
+        <ul>
+            <li *ngFor="let service of radarDevice.linked_services">{{service.service_id}}</li>
+            <li *ngIf="radarDevice.linked_services.length == 0">No services linked to this device.</li>
+        </ul>
+    </div>
+
+    <br>
+
+    <!-- Radar Settings card -->
     <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
         <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
         <mat-divider></mat-divider>

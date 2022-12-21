@@ -108,4 +108,18 @@ export class DevicesService {
     })    
   }
 
+  public enableRadarRecording(deviceId : string)
+  {
+    return this.http.post("/api/devices/" + deviceId + "/services", 
+    {
+      service_id : "RADAR_RECORDER",
+      service_options : {}
+    })
+  }
+
+  public disableRadarRecording(deviceId : string)
+  {
+    return this.http.delete("/api/devices/" + deviceId + "/services/RADAR_RECORDER")
+  }
+
 }
