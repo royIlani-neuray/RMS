@@ -28,4 +28,10 @@ public class RecordingsController : ControllerBase
         return Emulator.Instance.GetRecordingsList();
     }
 
+    [HttpDelete("{recordingFile}")]
+    public void DeleteRecording(string recordingFile)
+    {        
+        Emulator.Instance.DeleteRecording(recordingFile);
+    }
+
 }

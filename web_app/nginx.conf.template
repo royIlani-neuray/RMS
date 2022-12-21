@@ -23,5 +23,11 @@ http {
             proxy_set_header Upgrade ${DOLLAR}http_upgrade;
             proxy_set_header Connection "upgrade";
         }
+
+        location /device-emulator/ {
+            proxy_pass http://localhost:${DEVICE_EMULATOR_PORT}/;
+            add_header Access-Control-Allow-Origin *;
+        }
+        
     }
 }

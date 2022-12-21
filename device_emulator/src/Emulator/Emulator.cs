@@ -71,7 +71,7 @@ public class Emulator {
         public List<string> ConfigScript { get; set; } = new List<string>();
     }
 
-    public const string RecordingsFolderPath = "./data";
+    public const string RecordingsFolderPath = "./data/recordings";
     public const string RecordingDataFileExtention = ".bin";
     public const string RecordingSettingFileExtention = ".json";
 
@@ -211,5 +211,44 @@ public class Emulator {
         }
 
         return recordings;
+    }
+
+    public void DeleteRecording(string recordingFile)
+    {
+        if (String.IsNullOrWhiteSpace(recordingFile))
+        {
+            throw new BadRequestException("Recording file not provided");
+        }
+
+        if (System.IO.Path.GetExtension(recordingFile) != RecordingDataFileExtention)
+        {
+            throw new BadRequestException("Invalid recording file");
+        }
+
+        var dataFilePath = System.IO.Path.Combine(RecordingsFolderPath, recordingFile);
+        
+        if (!File.Exists(dataFilePath))
+        {
+            throw new BadRequestException($"Cannot find the given recording file: {recordingFile}");
+        }
+
+        string fileBaseName = System.IO.Path.GetFileNameWithoutExtension(recordingFile);
+
+        string metaFilePath = System.IO.Path.Combine(RecordingsFolderPath, $"{fileBaseName}{RecordingSettingFileExtention}");
+
+        try
+        {
+            File.Delete(dataFilePath);
+
+            if (File.Exists(metaFilePath))
+            {
+                File.Delete(metaFilePath);
+            }
+        }
+        catch
+        {
+            throw new Exception("Cannot delete the given recording file. Recording/Playback might be in progress.");
+        }
+
     }
 }

@@ -50,6 +50,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
 import { SetDeviceConfigDialogComponent } from './components/set-device-config-dialog/set-device-config-dialog.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
+import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
     ConfirmDialogComponent,
     TemplatesPageComponent,
     SetDeviceConfigDialogComponent,
-    TemplatePageComponent
+    TemplatePageComponent,
+    RecordingsPageComponent
   ],
   imports: [
     BrowserModule,
