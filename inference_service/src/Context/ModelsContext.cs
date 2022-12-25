@@ -51,7 +51,7 @@ public sealed class ModelsContext {
         {
             string modelFilePath = ModelsStorage.GetModelFilePath(model.Name);
 
-            System.Console.WriteLine("\n\nLoading model: " + modelFilePath + "\n");
+            //System.Console.WriteLine("Loading model: " + modelFilePath);
             model.Session = new InferenceSession(modelFilePath);
         }
     }

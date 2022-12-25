@@ -19,7 +19,7 @@
     },
 
     "/device-emulator": {
-      "target": "http://localhost:16100",
+      "target": "http://localhost:16503",
       "secure": false,
       "changeOrigin": false,
       "pathRewrite": {
