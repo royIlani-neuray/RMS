@@ -55,6 +55,15 @@ public class ModelController : ControllerBase
     }
 
 
+    private float[] Softmax(float[] values)
+    {
+        var maxVal = values.Max();
+        var exp = values.Select(v => Math.Exp(v - maxVal));
+        var sumExp = exp.Sum();
+
+        return exp.Select(v => (float)(v / sumExp)).ToArray();
+    }
+
     void PrdeictTest(string modelName)
     {
         var model = ModelsContext.Instance.GetModel(modelName);
@@ -81,7 +90,8 @@ public class ModelController : ControllerBase
         //System.Console.WriteLine(output[0].Value);
         DenseTensor<float> outTensor = (DenseTensor<float>) output[0].Value;
 
-        foreach (var x in outTensor)
+        var softmax = Softmax(outTensor.ToArray());
+        foreach (var x in softmax)
             System.Console.WriteLine(x);
 
     }
