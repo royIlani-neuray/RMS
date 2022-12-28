@@ -1,0 +1,9 @@
+{
+    "name": "closed_set_v1",
+    "type": "GateId",
+    "description": "Gate id closed set model",
+    "registered_at": "2022-12-06T08:41:47.656858Z",
+    "settings": {
+        "labels": ["alon", "elad", "nitzan"]
+    }
+}

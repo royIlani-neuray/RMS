@@ -26,6 +26,9 @@ public class FrameData
         [JsonPropertyName("doppler")]
         public float Doppler { get; set; }
 
+        [JsonPropertyName("snr")]
+        public float SNR { get; set; }
+
         [JsonPropertyName("position_x")]
         public float PositionX { get; set; }       
 

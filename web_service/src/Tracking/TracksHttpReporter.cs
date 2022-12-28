@@ -30,7 +30,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
         Enqueue(frameData);
     }
 
-    protected override void DoWork(FrameData workItem)
+    protected override Task DoWork(FrameData workItem)
     {
         try
         {
@@ -46,19 +46,19 @@ public class TracksHttpReporter : WorkerThread<FrameData>
             if (reportsURL == String.Empty)
             {
                 //System.Console.WriteLine("Warning: reports URL is not set. cannot send report.");
-                return;
+                return Task.CompletedTask;
             }
 
             if (timeDiffSeconds < ReportsIntervalSec)
             {
                 // avoid sending since we are still within ReportsIntervalSec
-                return;
+                return Task.CompletedTask;
             }
 
             if (workItem.tracksList.Count == 0)
             {
                 // report only if there is a detection
-                return;
+                return Task.CompletedTask;
             }
             System.Console.WriteLine($"Sening report: - {reportsURL} - {DateTime.Now}");
             LastReportTime = DateTime.Now;
@@ -78,5 +78,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
         {
             System.Console.WriteLine($"Error: could not send tracks report - {ex.Message}");
         }
+
+        return Task.CompletedTask;
     }
 }

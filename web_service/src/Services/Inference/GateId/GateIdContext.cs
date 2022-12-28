@@ -8,7 +8,6 @@
 ***/
 using WebService.Utils;
 using WebService.Tracking;
-using System.Text.Json;
 
 namespace WebService.Services.Inference.GateId;
 
@@ -17,10 +16,15 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     public IServiceContext.ServiceState State { get; set; }
 
     private const int MAX_QUEUE_CAPACITY = 5;
+
+    private TracksWindowBuilder tracksWindowBuilder;
+    private string modelName;
     
-    public GateIdContext() : base(MAX_QUEUE_CAPACITY)
+    public GateIdContext(string modelName, int requiredWindowSize) : base(MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
+        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize);
+        this.modelName = modelName;
     }
 
     public void HandleFrame(FrameData frameData)
@@ -28,8 +32,13 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
         Enqueue(frameData);
     }
 
-    protected override void DoWork(FrameData workItem)
+    protected override Task DoWork(FrameData frame)
     {
+        tracksWindowBuilder.AddFrame(frame);
 
+        var readyWindows = tracksWindowBuilder.PullReadyWindows();
+
+        //TODO: call the inference service....
+        return Task.CompletedTask;
     }
 }

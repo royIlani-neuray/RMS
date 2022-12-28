@@ -81,7 +81,7 @@ public class ModelController : ControllerBase
             NamedOnnxValue.CreateFromTensor<float>("y_axis", yTensor),
             NamedOnnxValue.CreateFromTensor<float>("z_axis", zTensor), 
             NamedOnnxValue.CreateFromTensor<float>("velocity", vTensor), 
-            NamedOnnxValue.CreateFromTensor<float>("intencity", iTensor) 
+            NamedOnnxValue.CreateFromTensor<float>("intensity", iTensor) 
         };
 
         var output = model.Session!.Run(inputs).ToList();

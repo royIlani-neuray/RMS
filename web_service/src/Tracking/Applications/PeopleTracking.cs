@@ -232,7 +232,8 @@ public class PeopleTracking : ITrackingApplication
                 Azimuth = point.Azimuth,
                 Elevation = point.Elevation,
                 Range = point.Range,
-                Doppler = point.Doppler
+                Doppler = point.Doppler,
+                SNR = point.SNR
             };
 
             CalcCartesianFromSpherical(convertedPoint);

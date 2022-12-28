@@ -77,7 +77,7 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
         }
     }
 
-    protected override void DoWork(FrameData workItem)
+    protected override async Task DoWork(FrameData workItem)
     {
         try
         {
@@ -91,7 +91,7 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
                 
                 try
                 {
-                    webSocket.Item1.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), System.Net.WebSockets.WebSocketMessageType.Text, true, CancellationToken.None).Wait();
+                    await webSocket.Item1.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), System.Net.WebSockets.WebSocketMessageType.Text, true, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
