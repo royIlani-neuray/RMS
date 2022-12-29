@@ -33,21 +33,34 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
         Enqueue(frameData);
     }
 
-    protected override async Task DoWork(FrameData frame)
+    private async Task RunInference(Dictionary<byte, GateIdRequest> readyWindows)
     {
-        tracksWindowBuilder.AddFrame(frame);
-
-        var readyWindows = tracksWindowBuilder.PullReadyWindows();
-
         foreach (var trackId in readyWindows.Keys)
         {
             GateIdRequest predictRequest = readyWindows[trackId];
             string requestJsonString = JsonSerializer.Serialize(predictRequest);
             string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
             GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
-            System.Console.WriteLine($"RESPONSE: {responseJsonString}");
-
-            
+            System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Prediction * 100):0.00} % ]");   
         }
+    }
+
+    protected override async Task DoWork(FrameData frame)
+    {
+        tracksWindowBuilder.AddFrame(frame);
+
+        Dictionary<byte, GateIdRequest> readyWindows = tracksWindowBuilder.PullReadyWindows();
+
+        try
+        {
+            await RunInference(readyWindows);
+        }
+        catch (Exception ex)
+        {
+            State = IServiceContext.ServiceState.Error;
+            System.Console.WriteLine("Error: failed running GateId inference: " + ex.Message);
+            return;
+        }
+
     }
 }
