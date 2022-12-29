@@ -16,6 +16,19 @@ using InferenceService.Entities;
 
 public class Startup 
 {
+    private static bool IsGpuSupported()
+    {
+        bool gpuSupport = false;
+        var gpuSupportVar = Environment.GetEnvironmentVariable("INFERENCE_SERVICE_USE_GPU");
+
+        if (!String.IsNullOrWhiteSpace(gpuSupportVar) && gpuSupportVar.ToLower().Trim() == "true")
+        {
+            gpuSupport = true;
+        }
+
+        return gpuSupport;
+    }
+
     public static void SetServicePort()
     {
         var port = Environment.GetEnvironmentVariable("INFERENCE_SERVICE_PORT");
@@ -35,19 +48,15 @@ public class Startup
 
         Console.WriteLine($"Running as user: {Environment.UserName}");
 
+        bool gpuSupport = IsGpuSupported();
+        System.Console.WriteLine($"Inference over GPU: {gpuSupport}");
+
         Console.WriteLine("Initializing storage...");
         ModelsStorage.InitStorage();
 
         Console.WriteLine("Loading models from storage...");
-        ModelsContext.Instance.LoadModelsFromStorage();
-
-        /*
-        Model tempModle = new Model();
-        tempModle.Name = "temp";
-        tempModle.Description = "temp model";
-        tempModle.ModelType = Model.ModelTypes.GateId;
-        ModelsContext.Instance.AddModel(tempModle);
-        */
+        ModelsContext.Instance.LoadModelsFromStorage(gpuSupport);
+        
     }
 
 }

@@ -6,9 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-namespace InferenceService.Entities;
 
-public class PoseEstimationModel
-{
-
+public interface IAction {
+    void Run();
 }

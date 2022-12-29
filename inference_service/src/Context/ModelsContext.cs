@@ -41,7 +41,7 @@ public sealed class ModelsContext {
 
     #endregion
 
-    public void LoadModelsFromStorage()
+    public void LoadModelsFromStorage(bool gpuSupport)
     {
         models = new Dictionary<string, Model>(ModelsStorage.LoadAllModels());
 
@@ -52,7 +52,19 @@ public sealed class ModelsContext {
             string modelFilePath = ModelsStorage.GetModelFilePath(model.Name);
 
             //System.Console.WriteLine("Loading model: " + modelFilePath);
-            model.Session = new InferenceSession(modelFilePath);
+            
+            if (gpuSupport)
+            {
+                // TODO: not tested yet.
+                int gpuDeviceId = 0; // The GPU device ID to execute on
+                var sessionOptions = Microsoft.ML.OnnxRuntime.SessionOptions.MakeSessionOptionWithCudaProvider(gpuDeviceId);
+                sessionOptions.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_VERBOSE;
+                model.Session = new InferenceSession(modelFilePath, sessionOptions);
+            }
+            else
+            {
+                model.Session = new InferenceSession(modelFilePath);
+            }
         }
     }
 

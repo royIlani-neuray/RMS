@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.13.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.13.1" />
     <PackageReference Include="System.Numerics.Tensors" Version="0.1.0" />
   </ItemGroup>
 

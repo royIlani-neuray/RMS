@@ -38,6 +38,9 @@ public class Model
     [JsonPropertyName("settings")]
     public Dictionary<string,string> Settings { get; set; }
 
+    [JsonPropertyName("labels")]
+    public List<string> Labels { get; set; }
+
     [JsonIgnore]
     public InferenceSession? Session { get; set; }
 
@@ -72,6 +75,7 @@ public class Model
         ModelType = ModelTypes.Unknown;
         Description = string.Empty;
         RegisteredAt = DateTime.UtcNow;
+        Labels = new List<string>();
         Settings = new Dictionary<string, string>();
     }
 }

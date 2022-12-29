@@ -6,9 +6,10 @@
 ** without explicit written authorization from the company.
 **
 ***/
-namespace InferenceService.Entities;
 
-public class GateIdModel
+namespace InferenceService.Models;
+
+public interface IModelImplementation 
 {
-
+    public object Predict(string request);
 }

@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using System.Text.Json;
 using WebService.Utils;
 using WebService.Tracking;
 
@@ -32,13 +33,21 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
         Enqueue(frameData);
     }
 
-    protected override Task DoWork(FrameData frame)
+    protected override async Task DoWork(FrameData frame)
     {
         tracksWindowBuilder.AddFrame(frame);
 
         var readyWindows = tracksWindowBuilder.PullReadyWindows();
 
-        //TODO: call the inference service....
-        return Task.CompletedTask;
+        foreach (var trackId in readyWindows.Keys)
+        {
+            GateIdRequest predictRequest = readyWindows[trackId];
+            string requestJsonString = JsonSerializer.Serialize(predictRequest);
+            string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
+            GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
+            System.Console.WriteLine($"RESPONSE: {responseJsonString}");
+
+            
+        }
     }
 }
