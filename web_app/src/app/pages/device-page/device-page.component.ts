@@ -151,4 +151,26 @@ export class DevicePageComponent implements OnInit {
     this.notification.open(message, "Close", { duration : 4000 })
   }
 
+  public isRadarRecordingEnabled()
+  {
+    let recordService = this.radarDevice.linked_services.find(linkedService => { return linkedService.service_id == "RADAR_RECORDER"})
+    return recordService != null;
+  }
+
+  public enableRadarRecording()
+  {
+    this.devicesService.enableRadarRecording(this.deviceId).subscribe({
+      next : (response) => this.getDevice(this.deviceId),
+      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar recording")
+    })
+  }
+
+  public disableRadarRecording()
+  {
+    this.devicesService.disableRadarRecording(this.deviceId).subscribe({
+      next : (response) => this.getDevice(this.deviceId),
+      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable radar recording")
+    })
+  }
+
 }

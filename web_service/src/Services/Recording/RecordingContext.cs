@@ -40,7 +40,7 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
         Enqueue(frameData);
     }
 
-    protected override void DoWork(FrameData workItem)
+    protected override Task DoWork(FrameData workItem)
     {
         if ((workItem.tracksList.Count == 0) && (workItem.PointsList.Count == 0) && (workItem.TargetsIndexList.Count == 0))
         {
@@ -59,6 +59,8 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
         }
 
         binaryWriter.Flush();
+        
+        return Task.CompletedTask;
     }
 
     ~RecordingContext()

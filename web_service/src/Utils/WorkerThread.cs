@@ -54,9 +54,9 @@ public abstract class WorkerThread<T>
         if (WorkerTask != null)
             return;
 
-        WorkerTask = new Task(() => 
+        WorkerTask = new Task(async () => 
         {
-            WorkerMainLoop();
+            await WorkerMainLoop();
         });
 
         RunWorker = true;
@@ -75,9 +75,9 @@ public abstract class WorkerThread<T>
         WorkerTask = null;
     }
 
-    protected abstract void DoWork(T workItem);
+    protected abstract Task DoWork(T workItem);
 
-    private void WorkerMainLoop()
+    private async Task WorkerMainLoop()
     {
         while (RunWorker)
         {
@@ -87,7 +87,7 @@ public abstract class WorkerThread<T>
             {
                 try
                 {
-                    DoWork(workItem); 
+                    await DoWork(workItem); 
                 }
                 catch
                 {

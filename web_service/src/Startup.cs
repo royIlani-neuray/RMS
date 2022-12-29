@@ -19,6 +19,16 @@ using WebService.Services;
 
 public class Startup 
 {
+    public static void SetServicePort()
+    {
+        var port = Environment.GetEnvironmentVariable("RMS_SERVICE_PORT");
+
+        if (port != null)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://+:{port}");
+        }
+    }
+
     public static void ApplicationStart(ConfigurationManager config)
     {
         string version = config["RMS_version"]!;
@@ -31,6 +41,9 @@ public class Startup
 
         Console.WriteLine("Initializing DB...");
         Database.DatabaseInit();
+
+        Console.WriteLine("Loading users from storage...");
+        UserContext.Instance.LoadUsersFromStorage();
 
         Console.WriteLine("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();

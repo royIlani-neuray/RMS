@@ -16,5 +16,14 @@
       "pathRewrite": {
         "^/websocket": ""
       }
+    },
+
+    "/device-emulator": {
+      "target": "http://localhost:16503",
+      "secure": false,
+      "changeOrigin": false,
+      "pathRewrite": {
+        "^/device-emulator": ""
+      }
     }
 }

@@ -14,14 +14,11 @@ namespace WebService.Services.Recording;
 
 public class RecordingService : IRadarService 
 {
-    public const string SERVICE_ID = "RADAR_RECORDER";
+    private const string SERVICE_ID = "RADAR_RECORDER";
 
     public static readonly string StoragePath = "./data/recordings";
 
-    public string ServiceId 
-    { 
-        get { return SERVICE_ID; }
-    }
+    public string ServiceId => SERVICE_ID;
 
     public RadarServiceSettings? Settings { get; set; }
 
@@ -36,8 +33,6 @@ public class RecordingService : IRadarService
 
     public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string,string> serviceOptions)
     {
-        System.Console.WriteLine($"[{device.Id}] Creating recording context.");
-
         float frameRate = device.radarSettings!.DetectionParams!.FrameRate;
 
         string filename = $"{device.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
@@ -56,7 +51,6 @@ public class RecordingService : IRadarService
     public void DisposeServiceContext(IServiceContext serviceContext)
     {
         RecordingContext recordingContext = (RecordingContext) serviceContext;
-        System.Console.WriteLine($"[{recordingContext.deviceId}] Disposing recording context.");
         recordingContext.StopWorker();
         recordingContext.State = IServiceContext.ServiceState.Initialized;
     }

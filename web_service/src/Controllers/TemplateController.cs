@@ -8,13 +8,8 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Radar;
-using WebService.Actions.Radar;
 using WebService.Actions.Template;
-using WebService.Tracking;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace WebService.Controllers;
 

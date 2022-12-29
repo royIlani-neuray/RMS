@@ -15,7 +15,11 @@ using WebService.Tracking;
 public class TracksWebsocketReporter : WorkerThread<FrameData>
 {
     private const int MAX_QUEUE_CAPACITY = 5;
+    private const int MAX_FRAME_RATE_FPS = 10;
+
     private List<(WebSocket, TaskCompletionSource<object>)> WebSocketClientList;
+
+    private FrameRateLimiter frameRateLimiter;
 
     #region Singleton
     
@@ -41,13 +45,15 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
     private TracksWebsocketReporter() : base(MAX_QUEUE_CAPACITY)
     {
         WebSocketClientList = new List<(WebSocket, TaskCompletionSource<object>)>();
+        frameRateLimiter = new FrameRateLimiter(MAX_FRAME_RATE_FPS);
     }
 
     #endregion
 
     public void SendReport(FrameData frameData)
     {
-        Enqueue(frameData);
+        // limit the rate since a high frame rate may cause display issues at the web app.
+        frameRateLimiter.Run(() => Enqueue(frameData));
     }
 
     public void AddWebSocketClient(WebSocket webSocket, TaskCompletionSource<object> socketFinishedTcs)
@@ -71,7 +77,7 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
         }
     }
 
-    protected override void DoWork(FrameData workItem)
+    protected override async Task DoWork(FrameData workItem)
     {
         try
         {
@@ -85,7 +91,7 @@ public class TracksWebsocketReporter : WorkerThread<FrameData>
                 
                 try
                 {
-                    webSocket.Item1.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), System.Net.WebSockets.WebSocketMessageType.Text, true, CancellationToken.None).Wait();
+                    await webSocket.Item1.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), System.Net.WebSockets.WebSocketMessageType.Text, true, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
