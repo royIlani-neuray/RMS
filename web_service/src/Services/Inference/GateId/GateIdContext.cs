@@ -17,7 +17,7 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
 {
     public IServiceContext.ServiceState State { get; set; }
 
-    private const int MAX_QUEUE_CAPACITY = 5;
+    private const int MAX_QUEUE_CAPACITY = 20;
 
     private TracksWindowBuilder tracksWindowBuilder;
     private GateIdPredictions predictions;

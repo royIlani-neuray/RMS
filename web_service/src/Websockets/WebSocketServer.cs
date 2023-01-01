@@ -15,7 +15,7 @@ namespace WebService.WebSockets;
 
 public class WebSocketServer : WorkerThread<WebSocketMessage>
 {
-    private const int MAX_QUEUE_CAPACITY = 5;
+    private const int MAX_QUEUE_CAPACITY = 20;
 
     private List<(WebSocket, TaskCompletionSource<object>)> WebSocketClientList;
 

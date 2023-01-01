@@ -19,18 +19,23 @@ export interface GateIdPrediction {
 @Injectable()
 export class DeviceWebsocketService {
 
+  private connected : boolean
   private socket : WebSocket  
   private frameDataSubject: Subject<FrameData>;
   private gateIdPredictionsSubject: Subject<GateIdPrediction[]>;
   
   constructor() 
   { 
-    this.frameDataSubject = new Subject<FrameData>();
-    this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    this.connected = false
   }
 
   public Connect(deviceId : string)
   {
+    if (this.connected)
+    {
+      this.Disconnect()
+    }
+    
     console.log(`connecting to device: ${deviceId}`)
     this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/devices/" + deviceId);
     
@@ -46,6 +51,9 @@ export class DeviceWebsocketService {
       console.log('Websockets connection state: [Closed]')
     };
 
+    this.frameDataSubject = new Subject<FrameData>();
+    this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    
     var frameDataSubject = this.frameDataSubject
     var gateIdPredictionsSubject = this.gateIdPredictionsSubject
 
@@ -62,6 +70,8 @@ export class DeviceWebsocketService {
         gateIdPredictionsSubject.next(message['data'])
       }
     }
+
+    this.connected = true
   }
 
   public Disconnect()
@@ -71,6 +81,8 @@ export class DeviceWebsocketService {
     {
       this.socket.close();
     }
+
+    this.connected = false
   }
 
   public GetFrameData() 
