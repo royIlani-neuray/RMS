@@ -14,11 +14,11 @@ namespace WebService.WebSockets;
 public class DeviceWebSocketServer : WebSocketServer
 {
     private const int MAX_FRAME_RATE_FPS = 10;
-    private FrameRateLimiter frameRateLimiter;
+    private ActionRateLimiter frameRateLimiter;
 
     public DeviceWebSocketServer()
     {
-        frameRateLimiter = new FrameRateLimiter(MAX_FRAME_RATE_FPS);
+        frameRateLimiter = new ActionRateLimiter(MAX_FRAME_RATE_FPS);
         StartWorker();
     }
 
