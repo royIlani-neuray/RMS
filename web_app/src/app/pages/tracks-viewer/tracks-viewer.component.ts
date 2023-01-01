@@ -15,7 +15,7 @@ import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import { MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
-import { DeviceWebsocketService } from 'src/app/services/device-websocket.service';
+import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
 import * as THREE from "three";
 import { concatWith } from 'rxjs';
 
@@ -37,8 +37,12 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   lastframeData: FrameData
   numberOfPoints: Number = 0
 
-  dataSource = new MatTableDataSource<TrackData>()
-  displayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksDataSource = new MatTableDataSource<TrackData>()
+  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
+
+  gateIdPredictionsSource = new MatTableDataSource<GateIdPrediction>()
+  gateIdDisplayedColumns: string[] = ['track_id', 'identity', 'accuracy'];
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
@@ -84,10 +88,16 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         this.deviceWebsocketService.GetFrameData().subscribe({
           next : (frameData) => {
             this.lastframeData = frameData
-            this.dataSource.data = this.lastframeData.tracks
+            this.tracksDataSource.data = this.lastframeData.tracks
             this.numberOfPoints = this.lastframeData.points.length
             // update the scene with the latest frame data
             this.updateScene()
+          }
+        })
+
+        this.deviceWebsocketService.GetGateIdPredictions().subscribe({
+          next : (predictions) => {
+            this.gateIdPredictionsSource.data = predictions
           }
         })
         

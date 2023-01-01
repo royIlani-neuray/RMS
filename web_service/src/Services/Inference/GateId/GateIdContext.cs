@@ -9,6 +9,7 @@
 using System.Text.Json;
 using WebService.Utils;
 using WebService.Tracking;
+using WebService.Entites;
 
 namespace WebService.Services.Inference.GateId;
 
@@ -19,12 +20,14 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     private const int MAX_QUEUE_CAPACITY = 5;
 
     private TracksWindowBuilder tracksWindowBuilder;
+    private GateIdPredictions predictions;
     private string modelName;
     
-    public GateIdContext(string modelName, int requiredWindowSize) : base(MAX_QUEUE_CAPACITY)
+    public GateIdContext(RadarDevice device, string modelName, int requiredWindowSize) : base(MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
         tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize);
+        predictions = new GateIdPredictions(device.DeviceWebSocket);
         this.modelName = modelName;
     }
 
@@ -41,12 +44,16 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
             string requestJsonString = JsonSerializer.Serialize(predictRequest);
             string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
             GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
-            System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Prediction * 100):0.00} % ]");   
+            System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Prediction * 100):0.00} % ]");
+
+            predictions.UpdateTrackPrediction(trackId, response.Label, response.Prediction);   
         }
     }
 
     protected override async Task DoWork(FrameData frame)
     {
+        predictions.RemoveLostTracks(frame);
+
         tracksWindowBuilder.AddFrame(frame);
 
         Dictionary<byte, GateIdRequest> readyWindows = tracksWindowBuilder.PullReadyWindows();
@@ -62,5 +69,6 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
             return;
         }
 
+        predictions.PublishPredictions();
     }
 }

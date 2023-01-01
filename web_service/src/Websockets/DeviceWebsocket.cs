@@ -14,11 +14,15 @@ namespace WebService.WebSockets;
 public class DeviceWebSocketServer : WebSocketServer
 {
     private const int MAX_FRAME_RATE_FPS = 10;
+    private const int GATE_ID_PREDICTIONS_RATE = 2;
     private ActionRateLimiter frameRateLimiter;
+    private ActionRateLimiter gateIdRateLimiter;
 
     public DeviceWebSocketServer()
     {
         frameRateLimiter = new ActionRateLimiter(MAX_FRAME_RATE_FPS);
+        gateIdRateLimiter = new ActionRateLimiter(GATE_ID_PREDICTIONS_RATE);
+
         StartWorker();
     }
 
@@ -39,5 +43,15 @@ public class DeviceWebSocketServer : WebSocketServer
         frameRateLimiter.Run(() => Enqueue(message));
     }
 
+    public void SendGateIdPredictions(Object predictions)
+    {
+        var message = new WebSocketMessage() 
+        {
+            MessageType = "GATE_ID_PREDICTIONS",
+            MessageData = predictions
+        };
+
+        gateIdRateLimiter.Run(() => Enqueue(message));
+    }
     
 }
