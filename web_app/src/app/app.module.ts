@@ -34,6 +34,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
@@ -95,6 +96,7 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
     MatCardModule,
     MatCheckboxModule,
     MatStepperModule,
+    MatTabsModule,
 
     HttpClientModule,
     RouterModule,

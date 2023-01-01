@@ -8,8 +8,6 @@
   height: inherit;
   padding-left: 5px;
   padding-right: 10px;
-  padding-top: 7px;
-  box-shadow: -2px 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 .logo-image {
@@ -22,5 +20,17 @@
 }
 
 .page-margin {
-    margin: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.app-navbar {
+  box-shadow: 0 3px 5px -1px #0003, 0 6px 10px #00000024,0 1px 18px #0000001f;
+
+  position: sticky;
+  position: -webkit-sticky; /* For macOS/iOS Safari */
+  top: 0; /* Sets the sticky toolbar to be on top */
+  z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+
+  min-height: 0px;
 }
