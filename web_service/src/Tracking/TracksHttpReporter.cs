@@ -19,7 +19,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
     private DateTime LastReportTime;
     private HttpClient httpClient;
 
-    public TracksHttpReporter() : base(MAX_QUEUE_CAPACITY)
+    public TracksHttpReporter() : base("TracksHttpReporter", MAX_QUEUE_CAPACITY)
     {
         LastReportTime = DateTime.Now;
         httpClient = new HttpClient();
@@ -55,7 +55,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
                 return Task.CompletedTask;
             }
 
-            if (workItem.tracksList.Count == 0)
+            if (workItem.TracksList.Count == 0)
             {
                 // report only if there is a detection
                 return Task.CompletedTask;

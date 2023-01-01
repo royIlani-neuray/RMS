@@ -47,7 +47,7 @@ public class GateIdPredictions
 
         foreach (var trackId in predictions.Keys)
         {
-            if (!frame.tracksList.Exists(track => track.TrackId == trackId))
+            if (!frame.TracksList.Exists(track => track.TrackId == trackId))
                 deadTracks.Add(trackId);
         }
 

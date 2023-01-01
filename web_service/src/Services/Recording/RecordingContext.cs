@@ -24,7 +24,7 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
 
     private const int MAX_QUEUE_CAPACITY = 5;
     
-    public RecordingContext(string deviceId, string recordingPath, float frameRate) : base(MAX_QUEUE_CAPACITY)
+    public RecordingContext(string deviceId, string recordingPath, float frameRate) : base("RecordingContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
         this.deviceId = deviceId;
@@ -42,7 +42,7 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
 
     protected override Task DoWork(FrameData workItem)
     {
-        if ((workItem.tracksList.Count == 0) && (workItem.PointsList.Count == 0) && (workItem.TargetsIndexList.Count == 0))
+        if ((workItem.TracksList.Count == 0) && (workItem.PointsList.Count == 0) && (workItem.TargetsIndexList.Count == 0))
         {
             // empty frame, store just a 0 for optimization
             uint frameBytesSize = 0;

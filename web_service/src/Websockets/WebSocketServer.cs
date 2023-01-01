@@ -19,7 +19,7 @@ public class WebSocketServer : WorkerThread<WebSocketMessage>
 
     private List<(WebSocket, TaskCompletionSource<object>)> WebSocketClientList;
 
-    public WebSocketServer() : base(MAX_QUEUE_CAPACITY)
+    public WebSocketServer() : base("WebSocketServer", MAX_QUEUE_CAPACITY)
     {
         WebSocketClientList = new List<(WebSocket, TaskCompletionSource<object>)>();
     }

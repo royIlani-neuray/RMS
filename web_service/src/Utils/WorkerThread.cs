@@ -16,9 +16,12 @@ public abstract class WorkerThread<T>
     private AutoResetEvent RunWorkerSignal;
     private int MaxCapacity;
     private object QueueLock;
+    
+    private string WorkerName;
 
-    public WorkerThread(int maxCapacity)
+    public WorkerThread(string name, int maxCapacity)
     {
+        WorkerName = name;
         WorkQueue = new Queue<T>();
         RunWorker = false;
         RunWorkerSignal = new AutoResetEvent(true);
@@ -33,6 +36,7 @@ public abstract class WorkerThread<T>
             if (WorkQueue.Count == MaxCapacity)
             {
                 // remove the oldest item from the queue in favor of the new one.
+                System.Console.WriteLine($"Warning: Worker thread '{WorkerName}' is full! dropping item!");
                 WorkQueue.Dequeue();
             }
 
@@ -89,9 +93,10 @@ public abstract class WorkerThread<T>
                 {
                     await DoWork(workItem); 
                 }
-                catch
+                catch (Exception ex)
                 {
                     System.Console.WriteLine("Unexpected exception in worker thread!");
+                    System.Console.WriteLine(ex);
                 } 
             }
             else
