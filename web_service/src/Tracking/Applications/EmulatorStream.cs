@@ -15,11 +15,13 @@ public class EmulatorStream : ITrackingApplication
 {
     private string deviceId;
     private string deviceName;
+    private uint frameNumber;
 
     public EmulatorStream(string deviceName, string deviceId)
     {
         this.deviceId = deviceId;
         this.deviceName = deviceName;
+        frameNumber = 0;
     }
 
     public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
@@ -62,6 +64,8 @@ public class EmulatorStream : ITrackingApplication
         frame.DeviceId = deviceId;
         frame.DeviceName = deviceName;
         frame.Timestamp = DateTime.UtcNow;
+        frame.FrameNumber = frameNumber;
+        frameNumber++;
 
         return frame;
     }

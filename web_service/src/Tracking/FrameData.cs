@@ -88,5 +88,8 @@ public class FrameData
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     [JsonPropertyName("tracks")]
-    public List<Track> tracksList { get; set; } = new List<Track>();
+    public List<Track> TracksList { get; set; } = new List<Track>();
+
+    [JsonPropertyName("frame_number")]
+    public uint FrameNumber;
 }

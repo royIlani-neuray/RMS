@@ -12,16 +12,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { FrameData, PointData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
-import * as THREE from "three";
 import { MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
-import { WebsocketService } from '../../services/websocket.service';
+import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
+import * as THREE from "three";
+import { concatWith } from 'rxjs';
 
 @Component({
   selector: 'app-page-tracks-viewer',
   templateUrl: './tracks-viewer.component.html',
-  styleUrls: ['./tracks-viewer.component.css']
+  styleUrls: ['./tracks-viewer.component.css'],
+  providers: [DeviceWebsocketService]
 })
 export class TracksViewerComponent implements OnInit, AfterViewInit {
 
@@ -35,8 +37,12 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   lastframeData: FrameData
   numberOfPoints: Number = 0
 
-  dataSource = new MatTableDataSource<TrackData>()
-  displayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksDataSource = new MatTableDataSource<TrackData>()
+  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
+
+  gateIdPredictionsSource = new MatTableDataSource<GateIdPrediction>()
+  gateIdDisplayedColumns: string[] = ['track_id', 'identity', 'accuracy'];
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
@@ -50,11 +56,15 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   private controls!: OrbitControls
 
   constructor(private devicesService : DevicesService,
-              private websocketService : WebsocketService,
+              private deviceWebsocketService : DeviceWebsocketService,
               private router : Router) { }
 
   ngOnInit(): void {
     this.getDeviceList()
+  }
+
+  ngOnDestroy(): void {
+    this.deviceWebsocketService.Disconnect()
   }
 
   public getDeviceList()
@@ -72,23 +82,25 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       next : (response) => {
         this.radarDevice = response as RadarDevice
         
+        this.deviceWebsocketService.Connect(this.selectedDeviceId)
+        
         // we have the radar info, now subscribe for tracks streaming
-        this.websocketService.GetFrameData().subscribe({
-          next : (result) => {
-
-            let frameData = result as FrameData
-
-            if (frameData.device_id != this.selectedDeviceId)
-              return
-
+        this.deviceWebsocketService.GetFrameData().subscribe({
+          next : (frameData) => {
             this.lastframeData = frameData
-            this.dataSource.data = this.lastframeData.tracks
+            this.tracksDataSource.data = this.lastframeData.tracks
             this.numberOfPoints = this.lastframeData.points.length
             // update the scene with the latest frame data
             this.updateScene()
           }
         })
 
+        this.deviceWebsocketService.GetGateIdPredictions().subscribe({
+          next : (predictions) => {
+            this.gateIdPredictionsSource.data = predictions
+          }
+        })
+        
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })

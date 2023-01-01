@@ -8,17 +8,13 @@
 ***/
 using System.Text.Json.Serialization;
 
-public class GateIdResponse
+namespace WebService.WebSockets;
+
+public class WebSocketMessage 
 {
-    [JsonPropertyName("label")]
-    public string Label { get; set; }
+    [JsonPropertyName("type")]
+    public String MessageType { get; set; } = String.Empty;
 
-    [JsonPropertyName("accuracy")]
-    public float Accuracy { get; set; }
-
-    public GateIdResponse()
-    {
-        Label = String.Empty;
-        Accuracy = -1;
-    }
+    [JsonPropertyName("data")]
+    public Object MessageData { get; set; } = new Object();
 }

@@ -33,7 +33,7 @@ public class GateIdService : IRadarService
     public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string, string> serviceOptions)
     {
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(modelName, REQUIRED_WINDOW_SIZE);
+        GateIdContext gateIdContext = new GateIdContext(device, modelName, REQUIRED_WINDOW_SIZE);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;

@@ -12,18 +12,18 @@ namespace WebService.Utils;
 /// <summary>
 /// A class that limits the rate at which an action is run.
 /// </summary>
-public class FrameRateLimiter
+public class ActionRateLimiter
 {
-    private int frameRateFPS;
+    private int actionRatePerSecond;
     private DateTime lastRunTime;
 
     /// <summary>
-    /// Creates a new FrameRateLimiter with the specified frame rate.
+    /// Creates a new ActionRateLimiter with the specified rate.
     /// </summary>
-    /// <param name="frameRate">The number of times per second that the action should be run.</param>
-    public FrameRateLimiter(int frameRate)
+    /// <param name="actionRate">The number of times per second that the action should be run.</param>
+    public ActionRateLimiter(int actionRate)
     {
-        frameRateFPS = frameRate;
+        actionRatePerSecond = actionRate;
         lastRunTime = DateTime.Now;
     }
 
@@ -37,7 +37,7 @@ public class FrameRateLimiter
         var currentTime = DateTime.Now;
         var timeSinceLastRun = (currentTime - lastRunTime).TotalMilliseconds;
 
-        if (timeSinceLastRun >= 1000 / frameRateFPS)
+        if (timeSinceLastRun >= 1000 / actionRatePerSecond)
         {
             // Enough time has passed, so run the action
             action();

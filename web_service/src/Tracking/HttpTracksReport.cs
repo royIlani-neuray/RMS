@@ -33,6 +33,6 @@ public class HttpTracksReport
         this.DeviceId = frameData.DeviceId;
         this.DeviceName = frameData.DeviceName;
         this.Timestamp = frameData.Timestamp;
-        this.tracksList = frameData.tracksList;
+        this.tracksList = frameData.TracksList;
     }
 }

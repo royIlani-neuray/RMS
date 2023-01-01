@@ -91,16 +91,16 @@ public class GateIdModel : IModelImplementation
 
         var softmax = Softmax(outTensor.ToArray());
         
-        float predictionPrecent = -1;
+        float accuracy = -1;
         string label = String.Empty;
 
         for (int lableIndex=0; lableIndex < softmax.Length; lableIndex++)
         {
             System.Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]}");
 
-            if (predictionPrecent < softmax[lableIndex])
+            if (accuracy < softmax[lableIndex])
             {
-                predictionPrecent = softmax[lableIndex];
+                accuracy = softmax[lableIndex];
                 label = this.model.Labels[lableIndex];
             }
         }
@@ -110,13 +110,12 @@ public class GateIdModel : IModelImplementation
         GateIdResponse response = new GateIdResponse() 
         {
             Label = label,
-            Prediction = predictionPrecent
+            Accuracy = accuracy
         };
 
         return response;
     }
 
-    
     private float[] Softmax(float[] values)
     {
         var maxVal = values.Max();
@@ -126,37 +125,4 @@ public class GateIdModel : IModelImplementation
         return exp.Select(v => (float)(v / sumExp)).ToArray();
     }
     
-    /*
-    void PrdeictTest()
-    {
-
-        // 1 Batch X 1 sample X 128 points X 30 Frames
-        Tensor<float> xTensor = new DenseTensor<float>(new[] {1, 1, 128, 30});
-        Tensor<float> yTensor = new DenseTensor<float>(new[] {1, 1, 128, 30});
-        Tensor<float> zTensor = new DenseTensor<float>(new[] {1, 1, 128, 30});
-        Tensor<float> vTensor = new DenseTensor<float>(new[] {1, 1, 128, 30});
-        Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, 128, 30});
-
-        var inputs = new List<NamedOnnxValue> 
-        { 
-            NamedOnnxValue.CreateFromTensor<float>("x_axis", xTensor),
-            NamedOnnxValue.CreateFromTensor<float>("y_axis", yTensor),
-            NamedOnnxValue.CreateFromTensor<float>("z_axis", zTensor), 
-            NamedOnnxValue.CreateFromTensor<float>("velocity", vTensor), 
-            NamedOnnxValue.CreateFromTensor<float>("intensity", iTensor) 
-        };
-
-        var output = model.Session!.Run(inputs).ToList();
-        //var output = model.Session!.Run(inputs).ToList().AsEnumerable<NamedOnnxValue>();
-        //System.Console.WriteLine(output[0].Name);
-        //System.Console.WriteLine(output[0].Value);
-        DenseTensor<float> outTensor = (DenseTensor<float>) output[0].Value;
-
-        var softmax = Softmax(outTensor.ToArray());
-        foreach (var x in softmax)
-            System.Console.WriteLine(x);
-
-    }
-    */
-
 }

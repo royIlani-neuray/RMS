@@ -9,6 +9,7 @@
 using System.Text.Json.Serialization;
 using WebService.Radar;
 using WebService.Tracking;
+using WebService.WebSockets;
 using WebService.Services;
 
 namespace WebService.Entites;
@@ -78,6 +79,9 @@ public class RadarDevice {
     [JsonIgnore]
     public RadarTracker? radarTracker;
 
+    [JsonIgnore]
+    public DeviceWebSocketServer DeviceWebSocket;
+
     public class RadarDeviceBrief 
     {
         [JsonPropertyName("state")]
@@ -121,6 +125,7 @@ public class RadarDevice {
         Status = String.Empty;
         ConfigScript = new List<string>();
         LinkedServices = new List<LinkedService>();
+        DeviceWebSocket = new DeviceWebSocketServer();
     }
 
     public void SetStatus(string status)

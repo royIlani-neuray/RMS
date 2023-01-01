@@ -239,7 +239,7 @@ public class TrafficMonitoring : ITrackingApplication
                 AccelerationZ = track.AccelerationZ
             };
 
-            outFrameData.tracksList.Add(convertedTrack);
+            outFrameData.TracksList.Add(convertedTrack);
         }
 
         return outFrameData;

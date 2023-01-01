@@ -23,5 +23,9 @@ public class DeleteRadarAction : RadarDeviceAction
         disconnectAction.Run();
 
         DeviceContext.Instance.DeleteDevice(radarDevice);
+
+        radarDevice.DeviceWebSocket.CloseServer();
+
+        radarDevice.SetStatus("Device deleted.");
     }
 }

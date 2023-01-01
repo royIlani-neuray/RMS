@@ -109,16 +109,23 @@ public class TracksWindowBuilder
             window.windowPoints.Push(new List<FrameData.Point>());
         }
 
-        // fill the points in the relevant windows
-        for (int index = 0; index < frame.TargetsIndexList.Count; index ++)
+        if ((lastFrame.FrameNumber + 1) == frame.FrameNumber)
         {
-            if (frame.TargetsIndexList[index] > MAX_TRACK_ID_NUMBER) // point is not assocaited to a track. 
-                continue;
+            // fill the points in the relevant windows
+            for (int index = 0; index < frame.TargetsIndexList.Count; index ++)
+            {
+                if (frame.TargetsIndexList[index] > MAX_TRACK_ID_NUMBER) // point is not assocaited to a track. 
+                    continue;
 
-            byte trackId = frame.TargetsIndexList[index];
+                byte trackId = frame.TargetsIndexList[index];
 
-            var trackPoint = lastFrame.PointsList[index];
-            tracksWindows[trackId].windowPoints.Peek().Add(trackPoint);
+                var trackPoint = lastFrame.PointsList[index];
+                tracksWindows[trackId].windowPoints.Peek().Add(trackPoint);
+            }
+        }
+        else
+        {
+            System.Console.WriteLine("Warning: lost frames! ignoring last frame points!");
         }
 
         // check invalid frames per track

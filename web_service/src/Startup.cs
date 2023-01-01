@@ -16,6 +16,7 @@ using WebService.Radar;
 using WebService.Actions.Radar;
 using WebService.Scheduler;
 using WebService.Services;
+using WebService.Events;
 
 public class Startup 
 {
@@ -60,8 +61,8 @@ public class Startup
         DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
         DeviceMapper.Instance.Start();
 
-        Console.WriteLine("Starting WebSocket reporter...");
-        TracksWebsocketReporter.Instance.StartWorker();   
+        Console.WriteLine("Starting Events WebSocket...");
+        RMSEvents.Instance.StartWorker();   
 
         Console.WriteLine("Starting Device Mapping Scheduler...");
         DeviceMappingScheduler.Instance.Start();
