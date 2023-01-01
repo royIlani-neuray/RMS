@@ -44,9 +44,9 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
             string requestJsonString = JsonSerializer.Serialize(predictRequest);
             string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
             GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
-            System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Prediction * 100):0.00} % ]");
+            //System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
 
-            predictions.UpdateTrackPrediction(trackId, response.Label, response.Prediction);   
+            predictions.UpdateTrackPrediction(trackId, response.Label, response.Accuracy);   
         }
     }
 

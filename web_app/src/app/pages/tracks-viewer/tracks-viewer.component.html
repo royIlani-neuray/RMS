@@ -9,42 +9,42 @@
                     <mat-tab label="Tracker">
                         <table mat-table [dataSource]="tracksDataSource" class="tracks-list-table">
                             <ng-container matColumnDef="track_id">
-                                <th mat-header-cell *matHeaderCellDef> <b>Track ID</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Track ID </th>
                                 <td mat-cell *matCellDef="let element"> Track-{{element.track_id}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="range">
-                                <th mat-header-cell *matHeaderCellDef> <b>Range</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Range</th>
                                 <td mat-cell *matCellDef="let element">{{ getTrackRange(element) | number:'1.0-2' }}</td>
                             </ng-container>
         
                             <ng-container matColumnDef="position_x">
-                                <th mat-header-cell *matHeaderCellDef> <b>Pos X</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Pos X </th>
                                 <td mat-cell *matCellDef="let element"> {{element.position_x  | number:'1.0-2'}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="position_y">
-                                <th mat-header-cell *matHeaderCellDef> <b>Pos Y</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Pos Y </th>
                                 <td mat-cell *matCellDef="let element"> {{element.position_y  | number:'1.0-2'}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="position_z">
-                                <th mat-header-cell *matHeaderCellDef> <b>Pos Z</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Pos Z </th>
                                 <td mat-cell *matCellDef="let element"> {{element.position_z  | number:'1.0-2'}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="velocity_x">
-                                <th mat-header-cell *matHeaderCellDef> <b>Vel X</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Vel X </th>
                                 <td mat-cell *matCellDef="let element"> {{element.velocity_x  | number:'1.0-2'}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="velocity_y">
-                                <th mat-header-cell *matHeaderCellDef> <b>Vel Y</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Vel Y </th>
                                 <td mat-cell *matCellDef="let element"> {{element.velocity_y  | number:'1.0-2'}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="velocity_z">
-                                <th mat-header-cell *matHeaderCellDef> <b>Vel Z</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Vel Z </th>
                                 <td mat-cell *matCellDef="let element"> {{element.velocity_z  | number:'1.0-2'}} </td>
                             </ng-container>
         
@@ -61,17 +61,17 @@
                     <mat-tab label="Gate ID">
                         <table mat-table [dataSource]="gateIdPredictionsSource" class="tracks-list-table">
                             <ng-container matColumnDef="track_id">
-                                <th mat-header-cell *matHeaderCellDef> <b>Track ID</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Track ID </th>
                                 <td mat-cell *matCellDef="let element"> Track-{{element.track_id}} </td>
                             </ng-container>
         
                             <ng-container matColumnDef="identity">
-                                <th mat-header-cell *matHeaderCellDef> <b>Identity</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Identity </th>
                                 <td mat-cell *matCellDef="let element">{{element.identity}}</td>
                             </ng-container>
         
                             <ng-container matColumnDef="accuracy">
-                                <th mat-header-cell *matHeaderCellDef> <b>Accuracy</b> </th>
+                                <th mat-header-cell *matHeaderCellDef> Accuracy </th>
                                 <td mat-cell *matCellDef="let element"> {{(element.accuracy * 100)  | number:'1.0-2'}} % </td>
                             </ng-container>
         
