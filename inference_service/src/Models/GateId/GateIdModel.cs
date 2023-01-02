@@ -98,16 +98,16 @@ public class GateIdModel : IModelImplementation
 
         var softmax = Softmax(outTensor.ToArray());
         
-        float accuracy = -1;
+        float confidence = -1;
         string label = String.Empty;
 
         for (int lableIndex=0; lableIndex < softmax.Length; lableIndex++)
         {
             System.Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]}");
 
-            if (accuracy < softmax[lableIndex])
+            if (confidence < softmax[lableIndex])
             {
-                accuracy = softmax[lableIndex];
+                confidence = softmax[lableIndex];
                 label = this.model.Labels[lableIndex];
             }
         }
@@ -117,7 +117,7 @@ public class GateIdModel : IModelImplementation
         GateIdResponse response = new GateIdResponse() 
         {
             Label = label,
-            Accuracy = accuracy
+            Confidence = confidence
         };
 
         return response;

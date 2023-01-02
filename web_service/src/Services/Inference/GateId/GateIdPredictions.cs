@@ -22,8 +22,8 @@ public class GateIdPredictions
         [JsonPropertyName("identity")]
         public String Identity {get; set;}
 
-        [JsonPropertyName("accuracy")]
-        public float Accuracy {get; set;}
+        [JsonPropertyName("confidence")]
+        public float Confidence {get; set;}
 
         public Prediction(uint trackId)
         {
@@ -57,7 +57,7 @@ public class GateIdPredictions
         }
     }
 
-    public void UpdateTrackPrediction(byte trackId, string identity, float accuracy)
+    public void UpdateTrackPrediction(byte trackId, string identity, float confidence)
     {
         if (!predictions.ContainsKey(trackId))
         {
@@ -65,7 +65,7 @@ public class GateIdPredictions
         }
 
         predictions[trackId].Identity = identity;
-        predictions[trackId].Accuracy = accuracy;
+        predictions[trackId].Confidence = confidence;
     }
 
     public void PublishPredictions()

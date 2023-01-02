@@ -44,7 +44,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
 
   gateIdPredictionsSource = new MatTableDataSource<GateIdPrediction>()
-  gateIdDisplayedColumns: string[] = ['track_id', 'identity', 'accuracy'];
+  gateIdDisplayedColumns: string[] = ['track_id', 'identity', 'confidence'];
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
