@@ -28,6 +28,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 })
 export class TracksViewerComponent implements OnInit, AfterViewInit {
 
+  showTracksFC = new FormControl(true)
   showBoundryBoxFC = new FormControl(true)
   showStaticBoundryBoxFC = new FormControl(false)
   showPointCloudFC = new FormControl(false)
@@ -235,44 +236,50 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       scene.add(radar)  
 
       // draw tracks
-      this.lastframeData.tracks.forEach((track) => 
+      if (this.showTracksFC.value)
       {
-        /*
-        let boxGeometry = new THREE.BoxGeometry(1,2,1)
-        let boxEdges = new THREE.EdgesGeometry(boxGeometry)
-        let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-        box.position.set(-track.position_x, track.position_z, track.position_y)
-        scene.add(box)
-        */
-        let trackGeometry = new THREE.SphereGeometry(0.25)
-        let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
-        trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
-        scene.add(trackMesh)
-
-
-        // Draw Track number text
-
-        // Create a text geometry with the desired text and font
-        const textGeometry = new TextGeometry(`Track-${track.track_id}`, {
-          font: this.threeJsFont,
-          size: 0.2,
-          height: 0.02,
-          curveSegments: 12
+        this.lastframeData.tracks.forEach((track) => 
+        {
+          /*
+          let boxGeometry = new THREE.BoxGeometry(1,2,1)
+          let boxEdges = new THREE.EdgesGeometry(boxGeometry)
+          let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
+          box.position.set(-track.position_x, track.position_z, track.position_y)
+          scene.add(box)
+          */
+          let trackGeometry = new THREE.SphereGeometry(0.25)
+          let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
+          trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
+          scene.add(trackMesh)
+  
+  
+          // Draw Track number text
+  
+          // Create a text geometry with the desired text and font
+          const textGeometry = new TextGeometry(`Track-${track.track_id}`, {
+            font: this.threeJsFont,
+            size: 0.2,
+            height: 0.02,
+            curveSegments: 12
+          });
+  
+          // Center the text geometry
+          textGeometry.center();
+  
+          // Create a material for the text
+          const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffea00 } );
+  
+          // Create a mesh for the text using the geometry and material
+          const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+          textMesh.rotateY(Math.PI);
+          textMesh.position.set(-track.position_x, track.position_z + 0.5, track.position_y)
+          scene.add(textMesh)
+  
         });
 
-        // Center the text geometry
-        textGeometry.center();
+      }
 
-        // Create a material for the text
-        const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffea00 } );
-
-        // Create a mesh for the text using the geometry and material
-        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.rotateY(Math.PI);
-        textMesh.position.set(-track.position_x, track.position_z + 0.5, track.position_y)
-        scene.add(textMesh)
-
-      });
+      
 
       // draw points 
       if (this.showPointCloudFC.value)

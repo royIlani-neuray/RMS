@@ -77,6 +77,13 @@ public class GateIdModel : IModelImplementation
             }
         }
         
+        // need to normalize the xTensor
+        var average = xTensor.Average();
+        for (int index=0; index < xTensor.Length; index++)
+        {
+            xTensor.SetValue(index, xTensor.GetValue(index) - average);
+        }
+
         var inputs = new List<NamedOnnxValue> 
         { 
             NamedOnnxValue.CreateFromTensor<float>("x_axis", xTensor),
