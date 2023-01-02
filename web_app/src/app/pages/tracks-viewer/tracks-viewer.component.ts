@@ -82,6 +82,9 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       next : (response) => {
         this.radarDevice = response as RadarDevice
         
+        // clear existing scene
+        this.clearScene()
+
         this.deviceWebsocketService.Connect(this.selectedDeviceId)
         
         // we have the radar info, now subscribe for tracks streaming
@@ -197,7 +200,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
           let boxGeometry = new THREE.BoxGeometry(boundingBoxSizeX,boundingBoxSizeY,boundingBoxSizeZ)
           let boxEdges = new THREE.EdgesGeometry(boxGeometry)
           let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xff00ff } ) )
-          box.position.set(0,0,boundingBoxZoffset + (boundingBoxSizeZ/2))
+          box.position.set(0,(boundingBoxSizeY/2),boundingBoxZoffset + (boundingBoxSizeZ/2))
           scene.add(box)   
         }
     }
@@ -213,7 +216,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       let staticBoxGeometry = new THREE.BoxGeometry(staticBoundingBoxSizeX,staticBoundingBoxSizeY,staticBoundingBoxSizeZ)
       let staticBoxEdges = new THREE.EdgesGeometry(staticBoxGeometry)
       let staticBox = new THREE.LineSegments(staticBoxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-      staticBox.position.set(0,0,staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
+      staticBox.position.set(0,(staticBoundingBoxSizeY/2),staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
       scene.add(staticBox)         
     }
 
@@ -262,6 +265,11 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     }
 
     this.scene = scene
+  }
+
+  private clearScene()
+  {
+    this.scene = new THREE.Scene()
   }
 
 
