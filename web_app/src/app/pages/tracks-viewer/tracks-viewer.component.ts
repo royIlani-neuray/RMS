@@ -17,7 +17,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
 import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
 import * as THREE from "three";
-import { concatWith } from 'rxjs';
+import { FontLoader, Font } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 
 @Component({
   selector: 'app-page-tracks-viewer',
@@ -54,6 +55,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   private scene!: THREE.Scene
   private camera!: THREE.PerspectiveCamera;
   private controls!: OrbitControls
+  private threeJsFont: Font
 
   constructor(private devicesService : DevicesService,
               private deviceWebsocketService : DeviceWebsocketService,
@@ -61,6 +63,8 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getDeviceList()
+
+    this.loadThreeJsFonts()
   }
 
   ngOnDestroy(): void {
@@ -231,7 +235,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       scene.add(radar)  
 
       // draw tracks
-      this.lastframeData.tracks.forEach(function (track) 
+      this.lastframeData.tracks.forEach((track) => 
       {
         /*
         let boxGeometry = new THREE.BoxGeometry(1,2,1)
@@ -244,6 +248,29 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
         trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
         scene.add(trackMesh)
+
+
+        // Draw Track number text
+
+        // Create a text geometry with the desired text and font
+        const textGeometry = new TextGeometry(`Track-${track.track_id}`, {
+          font: this.threeJsFont,
+          size: 0.2,
+          height: 0.02,
+          curveSegments: 12
+        });
+
+        // Center the text geometry
+        textGeometry.center();
+
+        // Create a material for the text
+        const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffea00 } );
+
+        // Create a mesh for the text using the geometry and material
+        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        textMesh.rotateY(Math.PI);
+        textMesh.position.set(-track.position_x, track.position_z + 0.5, track.position_y)
+        scene.add(textMesh)
 
       });
 
@@ -265,6 +292,15 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     }
 
     this.scene = scene
+  }
+
+  private loadThreeJsFonts()
+  {
+    const loader = new FontLoader()
+
+    loader.load('assets/threejs-fonts/roboto/normal-400.json', (font) => {
+      this.threeJsFont = font
+    });
   }
 
   private clearScene()
