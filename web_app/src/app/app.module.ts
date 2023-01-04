@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
+import {MatSortModule} from '@angular/material/sort';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -81,6 +82,7 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
     MatToolbarModule,
     MatButtonModule,    
     MatTableModule,
+    MatSortModule,
     MatChipsModule,
     MatSelectModule,
     MatButtonModule,

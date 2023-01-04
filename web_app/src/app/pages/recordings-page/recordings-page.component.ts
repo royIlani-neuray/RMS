@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { DeviceEmulatorService, RecordingInfo } from 'src/app/services/device-emulator.service';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-recordings-page',
@@ -22,6 +23,8 @@ import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confir
 })
 export class RecordingsPageComponent implements OnInit {
 
+  @ViewChild(MatSort) sort: MatSort;
+  
   recordingListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RecordingInfo>()
   displayedColumns: string[] = ['timestamp', 'device_name', 'device_id', 'recording_size', 'actions'];
@@ -58,6 +61,7 @@ export class RecordingsPageComponent implements OnInit {
       next : (recordings) => 
       {
         this.dataSource.data = recordings
+        this.dataSource.sort = this.sort
         this.recordingListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])
