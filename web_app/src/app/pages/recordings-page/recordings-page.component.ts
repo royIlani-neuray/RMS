@@ -27,7 +27,7 @@ export class RecordingsPageComponent implements OnInit {
   
   recordingListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RecordingInfo>()
-  displayedColumns: string[] = ['timestamp', 'device_name', 'device_id', 'recording_size', 'actions'];
+  displayedColumns: string[] = ['timestamp', 'device_name', 'device_id', 'file_size_bytes', 'actions'];
   updateTimer : any
 
   constructor(private deviceEmulatorService : DeviceEmulatorService, 
@@ -61,11 +61,14 @@ export class RecordingsPageComponent implements OnInit {
       next : (recordings) => 
       {
         this.dataSource.data = recordings
-        this.dataSource.sort = this.sort
         this.recordingListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])
     })
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   public getLocalDateString(timestamp : string)
