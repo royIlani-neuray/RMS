@@ -23,17 +23,6 @@ services:
       - rms-variables.env
     command: /bin/sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
   
-  inference_service:
-    image: inference_service:latest
-    network_mode: "host"
-    build:
-      context: .
-      dockerfile: ./inference_service/Dockerfile
-    env_file:
-      - rms-variables.env
-    volumes:
-      - inference_service_storage:/app/data
-
   device_emulator:
     image: device_emulator:latest
     network_mode: "host"
@@ -44,6 +33,19 @@ services:
       - rms-variables.env
     volumes:
       - webservice_recordings:/app/data/recordings
+
+  inference_service:
+    image: inference_service:latest
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: ./inference_service/Dockerfile
+    env_file:
+      - rms-variables.env
+    volumes:
+      - inference_service_storage:/app/data
+    profiles:
+      - donotstart
 
 volumes:
   webservice_storage:

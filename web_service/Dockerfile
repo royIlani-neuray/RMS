@@ -25,7 +25,7 @@ WORKDIR /app
 RUN mkdir /app/data
 RUN mkdir /app/data/recordings
 COPY --from=build /app/publish .
-ADD web_service/default_templates /app/
+COPY web_service/default_templates /app/
 RUN chown -R user:user /app
 USER user
 ENTRYPOINT ["./web_service"]
