@@ -43,11 +43,11 @@ public class GateIdModel : IModelImplementation
             throw new BadRequestException($"Invalid GateId request provided. request should contain {FRAMES_PER_WINDOW} frames.");
 
         // 1 Batch X 1 sample X 128 points X 30 Frames
-        Tensor<float> xTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> yTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> zTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> vTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
+        Tensor<float> xTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> yTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> zTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> vTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
 
         //System.Console.WriteLine($"Tensor len: {xTensor.Length}");
 

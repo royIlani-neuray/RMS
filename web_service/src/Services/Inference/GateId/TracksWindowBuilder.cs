@@ -20,7 +20,7 @@ public class TracksWindowBuilder
 {
     private const byte MAX_TRACK_ID_NUMBER = 252;
     private const int MIN_TARCK_POINTS_IN_VALID_FRAME = 7;
-    private const int MAX_INVALID_FRAMES = 5;
+    private const int MAX_INVALID_FRAMES = 10;
     private const int REQUIRED_POINTS_PER_FRAME = 128;
 
     private class TrackWindow 
