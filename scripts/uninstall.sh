@@ -7,8 +7,8 @@ docker compose rm
 
 docker rmi web_app
 docker rmi web_service
-docker rmi inference_service
 docker rmi device_emulator
+# docker rmi inference_service
 
 while true; do
 
@@ -18,7 +18,7 @@ case $yn in
 	[yY] ) echo deleting RMS data volumes...;
         docker volume rm rms_webservice_storage
         docker volume rm rms_webservice_recordings
-		docker volume rm rms_inference_service_storage
+		# docker volume rm rms_inference_service_storage
 		break;;
 	[nN] ) echo keeping RMS data volumes.;
 		exit;;

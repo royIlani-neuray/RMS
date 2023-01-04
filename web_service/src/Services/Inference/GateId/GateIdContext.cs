@@ -46,7 +46,7 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
             GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
             //System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
 
-            predictions.UpdateTrackPrediction(trackId, response.Label, response.Accuracy);   
+            predictions.UpdateTrackPrediction(trackId, response.Label, response.Confidence);   
         }
     }
 

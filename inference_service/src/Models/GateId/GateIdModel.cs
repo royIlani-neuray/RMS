@@ -43,11 +43,11 @@ public class GateIdModel : IModelImplementation
             throw new BadRequestException($"Invalid GateId request provided. request should contain {FRAMES_PER_WINDOW} frames.");
 
         // 1 Batch X 1 sample X 128 points X 30 Frames
-        Tensor<float> xTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> yTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> zTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> vTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
-        Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, POINTS_PER_FRAME, FRAMES_PER_WINDOW});
+        Tensor<float> xTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> yTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> zTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> vTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
+        Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, FRAMES_PER_WINDOW, POINTS_PER_FRAME});
 
         //System.Console.WriteLine($"Tensor len: {xTensor.Length}");
 
@@ -77,6 +77,13 @@ public class GateIdModel : IModelImplementation
             }
         }
         
+        // need to normalize the xTensor
+        var average = xTensor.Average();
+        for (int index=0; index < xTensor.Length; index++)
+        {
+            xTensor.SetValue(index, xTensor.GetValue(index) - average);
+        }
+
         var inputs = new List<NamedOnnxValue> 
         { 
             NamedOnnxValue.CreateFromTensor<float>("x_axis", xTensor),
@@ -91,16 +98,16 @@ public class GateIdModel : IModelImplementation
 
         var softmax = Softmax(outTensor.ToArray());
         
-        float accuracy = -1;
+        float confidence = -1;
         string label = String.Empty;
 
         for (int lableIndex=0; lableIndex < softmax.Length; lableIndex++)
         {
             System.Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]}");
 
-            if (accuracy < softmax[lableIndex])
+            if (confidence < softmax[lableIndex])
             {
-                accuracy = softmax[lableIndex];
+                confidence = softmax[lableIndex];
                 label = this.model.Labels[lableIndex];
             }
         }
@@ -110,7 +117,7 @@ public class GateIdModel : IModelImplementation
         GateIdResponse response = new GateIdResponse() 
         {
             Label = label,
-            Accuracy = accuracy
+            Confidence = confidence
         };
 
         return response;

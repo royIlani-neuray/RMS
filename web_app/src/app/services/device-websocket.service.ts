@@ -13,7 +13,7 @@ import { FrameData } from '../entities/frame-data';
 export interface GateIdPrediction {
   track_id: number
   identity: string
-  accuracy: number
+  confidence: number
 }
 
 @Injectable()
@@ -54,20 +54,17 @@ export class DeviceWebsocketService {
     this.frameDataSubject = new Subject<FrameData>();
     this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
     
-    var frameDataSubject = this.frameDataSubject
-    var gateIdPredictionsSubject = this.gateIdPredictionsSubject
-
-    this.socket.onmessage = function (event) {
+    this.socket.onmessage = (event) => {
       //console.log('Websockets Message -' + event.data)
       let message = JSON.parse(event.data)
       
       if (message['type'] == 'FRAME_DATA')
       {
-        frameDataSubject.next(message['data'])
+        this.frameDataSubject.next(message['data'])
       }
       else if (message['type'] == 'GATE_ID_PREDICTIONS')
       {
-        gateIdPredictionsSubject.next(message['data'])
+        this.gateIdPredictionsSubject.next(message['data'])
       }
     }
 

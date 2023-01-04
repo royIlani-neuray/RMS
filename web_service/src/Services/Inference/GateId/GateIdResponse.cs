@@ -13,12 +13,12 @@ public class GateIdResponse
     [JsonPropertyName("label")]
     public string Label { get; set; }
 
-    [JsonPropertyName("accuracy")]
-    public float Accuracy { get; set; }
+    [JsonPropertyName("confidence")]
+    public float Confidence { get; set; }
 
     public GateIdResponse()
     {
         Label = String.Empty;
-        Accuracy = -1;
+        Confidence = -1;
     }
 }

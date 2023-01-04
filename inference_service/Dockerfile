@@ -24,7 +24,7 @@ USER root
 WORKDIR /app
 RUN mkdir /app/data
 COPY --from=build /app/publish .
-ADD inference_service/default_models /app/
+COPY inference_service/default_models /app/
 RUN chown -R user:user /app
 USER user
 ENTRYPOINT ["./inference_service"]

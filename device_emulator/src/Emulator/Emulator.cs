@@ -40,6 +40,14 @@ public class Emulator {
     {
         deviceId = EmulatorSettings.Instance.DeviceId.ToString();
         playback = new PlaybackArgs();
+
+        var recordingPath = Environment.GetEnvironmentVariable("RMS_RECORDING_PATH");
+
+        if (recordingPath != null)
+        {
+            System.Console.WriteLine($"Override recording path to: {recordingPath}");
+            RecordingsFolderPath = recordingPath;
+        }
     }
 
     #endregion
@@ -71,7 +79,7 @@ public class Emulator {
         public List<string> ConfigScript { get; set; } = new List<string>();
     }
 
-    public const string RecordingsFolderPath = "./data/recordings";
+    public string RecordingsFolderPath = "./data/recordings";
     public const string RecordingDataFileExtention = ".bin";
     public const string RecordingSettingFileExtention = ".json";
 
