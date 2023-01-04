@@ -53,7 +53,7 @@ services:
     env_file:
       - rms-variables.env
     volumes:
-      - webservice_recordings:/app/data:ro
+      - webservice_recordings:/app/data/recordings
       - ~/.vsdbg:/remote_debugger:rw
 
 volumes:

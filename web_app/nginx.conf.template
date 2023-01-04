@@ -17,7 +17,7 @@ http {
             add_header Access-Control-Allow-Origin *;
         }
 
-        location /websocket {
+        location /websocket/ {
             proxy_pass http://localhost:${RMS_SERVICE_PORT}/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade ${DOLLAR}http_upgrade;

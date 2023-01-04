@@ -43,7 +43,7 @@ services:
     env_file:
       - rms-variables.env
     volumes:
-      - webservice_recordings:/app/data/recordings:ro
+      - webservice_recordings:/app/data/recordings
 
 volumes:
   webservice_storage:
