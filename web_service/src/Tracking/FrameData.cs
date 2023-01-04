@@ -26,6 +26,9 @@ public class FrameData
         [JsonPropertyName("doppler")]
         public float Doppler { get; set; }
 
+        [JsonPropertyName("snr")]
+        public float SNR { get; set; }
+
         [JsonPropertyName("position_x")]
         public float PositionX { get; set; }       
 
@@ -85,5 +88,8 @@ public class FrameData
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     [JsonPropertyName("tracks")]
-    public List<Track> tracksList { get; set; } = new List<Track>();
+    public List<Track> TracksList { get; set; } = new List<Track>();
+
+    [JsonPropertyName("frame_number")]
+    public uint FrameNumber;
 }

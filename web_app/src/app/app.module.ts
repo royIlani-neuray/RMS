@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
+import {MatSortModule} from '@angular/material/sort';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -34,6 +35,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
@@ -50,6 +52,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
 import { SetDeviceConfigDialogComponent } from './components/set-device-config-dialog/set-device-config-dialog.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
+import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
 
 
 @NgModule({
@@ -68,7 +71,8 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
     ConfirmDialogComponent,
     TemplatesPageComponent,
     SetDeviceConfigDialogComponent,
-    TemplatePageComponent
+    TemplatePageComponent,
+    RecordingsPageComponent
   ],
   imports: [
     BrowserModule,
@@ -78,6 +82,7 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
     MatToolbarModule,
     MatButtonModule,    
     MatTableModule,
+    MatSortModule,
     MatChipsModule,
     MatSelectModule,
     MatButtonModule,
@@ -93,6 +98,7 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
     MatCardModule,
     MatCheckboxModule,
     MatStepperModule,
+    MatTabsModule,
 
     HttpClientModule,
     RouterModule,

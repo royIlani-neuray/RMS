@@ -9,6 +9,7 @@
 using WebService.Entites;
 using WebService.Tracking;
 using WebService.Services.Recording;
+using WebService.Services.Inference.GateId;
 
 namespace WebService.Services;
 
@@ -57,6 +58,7 @@ public sealed class ServiceManager {
         this.servicesSettings = servicesSettings;
 
         services.Add(new RecordingService());
+        services.Add(new GateIdService());
 
         foreach (var service in services)
         {
@@ -78,6 +80,7 @@ public sealed class ServiceManager {
 
         if (service.Settings!.Enabled)
         {
+            System.Console.WriteLine($"[{device.Id}] Creating {service.ServiceId} context.");
             linkedService.ServiceContext = service.CreateServiceContext(device, linkedService.ServiceOptions);
         }
         else
@@ -86,12 +89,13 @@ public sealed class ServiceManager {
         }
     }
 
-    public void DisposeServiceContext(RadarDevice.LinkedService linkedService)
+    public void DisposeServiceContext(string deviceId, RadarDevice.LinkedService linkedService)
     {
         if (linkedService.ServiceContext == null)
             return;
 
         IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+        System.Console.WriteLine($"[{deviceId}] Disposing {service.ServiceId} context.");
         service.DisposeServiceContext(linkedService.ServiceContext!);
     }
 

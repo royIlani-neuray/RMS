@@ -16,9 +16,20 @@ using WebService.Radar;
 using WebService.Actions.Radar;
 using WebService.Scheduler;
 using WebService.Services;
+using WebService.Events;
 
 public class Startup 
 {
+    public static void SetServicePort()
+    {
+        var port = Environment.GetEnvironmentVariable("RMS_SERVICE_PORT");
+
+        if (port != null)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://+:{port}");
+        }
+    }
+
     public static void ApplicationStart(ConfigurationManager config)
     {
         string version = config["RMS_version"]!;
@@ -31,6 +42,9 @@ public class Startup
 
         Console.WriteLine("Initializing DB...");
         Database.DatabaseInit();
+
+        Console.WriteLine("Loading users from storage...");
+        UserContext.Instance.LoadUsersFromStorage();
 
         Console.WriteLine("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();
@@ -47,8 +61,8 @@ public class Startup
         DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
         DeviceMapper.Instance.Start();
 
-        Console.WriteLine("Starting WebSocket reporter...");
-        TracksWebsocketReporter.Instance.StartWorker();   
+        Console.WriteLine("Starting Events WebSocket...");
+        RMSEvents.Instance.StartWorker();   
 
         Console.WriteLine("Starting Device Mapping Scheduler...");
         DeviceMappingScheduler.Instance.Start();

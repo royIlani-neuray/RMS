@@ -1,6 +1,6 @@
 
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
+<mat-toolbar color="primary" class="app-navbar">
+  <mat-toolbar-row style="height: 54px;">
     <div>
       <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
       <span style="padding-right: 50px;"></span>
@@ -8,6 +8,7 @@
       <a routerLink="/device-mapping" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Device Mapping</button></a>|
       <a routerLink="/tracks-viewer" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Tracks Viewer</button></a>|
       <a routerLink="/templates" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Templates</button></a>|
+      <a routerLink="/recordings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Recordings</button></a>|
       <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a> 
     </div>
 
@@ -16,11 +17,10 @@
     <div style="margin-right: 200px;">
       <span style="font-size: 14px;">Version: {{version}}</span>
     </div>
-
-    <div class="logo-image-wrapper">
-      <img src="assets/images/neuRay_logo.png" class="logo-image">
-    </div>
     
+    <div class="logo-image-wrapper">
+      <img src="assets/images/neuRay_logo.png" class="logo-image" style="margin-top: 8px;">
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 

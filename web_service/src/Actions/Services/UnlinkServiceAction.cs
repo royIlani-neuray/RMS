@@ -27,7 +27,7 @@ public class UnlinkServiceAction : RadarDeviceAction
         if (linkedService == null)
             throw new Exception($"Could not find linked service with id - {serviceId}");
         
-        ServiceManager.Instance.DisposeServiceContext(linkedService);
+        ServiceManager.Instance.DisposeServiceContext(radarDevice.Id, linkedService);
         radarDevice.LinkedServices.Remove(linkedService);
     }
 }

@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+Startup.SetServicePort();
 
 var builder = WebApplication.CreateBuilder(args);
 

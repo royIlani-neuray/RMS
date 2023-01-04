@@ -225,6 +225,7 @@ public class PeopleTracking : ITrackingApplication
         
         // convert to generic frame data
         FrameData outFrameData = new Tracking.FrameData();
+        outFrameData.FrameNumber = frameData.frameHeader!.FrameNumber;
 
         foreach (var point in frameData.pointCloudList)
         {
@@ -232,7 +233,8 @@ public class PeopleTracking : ITrackingApplication
                 Azimuth = point.Azimuth,
                 Elevation = point.Elevation,
                 Range = point.Range,
-                Doppler = point.Doppler
+                Doppler = point.Doppler,
+                SNR = point.SNR
             };
 
             CalcCartesianFromSpherical(convertedPoint);
@@ -268,7 +270,7 @@ public class PeopleTracking : ITrackingApplication
             convertedTrack.PositionY = rotatedY;
             convertedTrack.PositionZ = rotatedZ + this.radarPosition.HeightMeters;
 
-            outFrameData.tracksList.Add(convertedTrack);
+            outFrameData.TracksList.Add(convertedTrack);
         }
 
         outFrameData.TargetsIndexList = frameData.targetsIndexList;

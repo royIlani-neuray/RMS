@@ -12,19 +12,23 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { FrameData, PointData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
-import * as THREE from "three";
 import { MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
-import { WebsocketService } from '../../services/websocket.service';
+import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
+import * as THREE from "three";
+import { FontLoader, Font } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 
 @Component({
   selector: 'app-page-tracks-viewer',
   templateUrl: './tracks-viewer.component.html',
-  styleUrls: ['./tracks-viewer.component.css']
+  styleUrls: ['./tracks-viewer.component.css'],
+  providers: [DeviceWebsocketService]
 })
 export class TracksViewerComponent implements OnInit, AfterViewInit {
 
+  showTracksFC = new FormControl(true)
   showBoundryBoxFC = new FormControl(true)
   showStaticBoundryBoxFC = new FormControl(false)
   showPointCloudFC = new FormControl(false)
@@ -35,8 +39,12 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   lastframeData: FrameData
   numberOfPoints: Number = 0
 
-  dataSource = new MatTableDataSource<TrackData>()
-  displayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksDataSource = new MatTableDataSource<TrackData>()
+  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
+
+  gateIdPredictionsSource = new MatTableDataSource<GateIdPrediction>()
+  gateIdDisplayedColumns: string[] = ['track_id', 'identity', 'confidence'];
 
   @ViewChild('canvas') private canvasRef : ElementRef;
   
@@ -48,13 +56,20 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
   private scene!: THREE.Scene
   private camera!: THREE.PerspectiveCamera;
   private controls!: OrbitControls
+  private threeJsFont: Font
 
   constructor(private devicesService : DevicesService,
-              private websocketService : WebsocketService,
+              private deviceWebsocketService : DeviceWebsocketService,
               private router : Router) { }
 
   ngOnInit(): void {
     this.getDeviceList()
+
+    this.loadThreeJsFonts()
+  }
+
+  ngOnDestroy(): void {
+    this.deviceWebsocketService.Disconnect()
   }
 
   public getDeviceList()
@@ -72,23 +87,28 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       next : (response) => {
         this.radarDevice = response as RadarDevice
         
+        // clear existing scene
+        this.clearScene()
+
+        this.deviceWebsocketService.Connect(this.selectedDeviceId)
+        
         // we have the radar info, now subscribe for tracks streaming
-        this.websocketService.GetFrameData().subscribe({
-          next : (result) => {
-
-            let frameData = result as FrameData
-
-            if (frameData.device_id != this.selectedDeviceId)
-              return
-
+        this.deviceWebsocketService.GetFrameData().subscribe({
+          next : (frameData) => {
             this.lastframeData = frameData
-            this.dataSource.data = this.lastframeData.tracks
+            this.tracksDataSource.data = this.lastframeData.tracks
             this.numberOfPoints = this.lastframeData.points.length
             // update the scene with the latest frame data
             this.updateScene()
           }
         })
 
+        this.deviceWebsocketService.GetGateIdPredictions().subscribe({
+          next : (predictions) => {
+            this.gateIdPredictionsSource.data = predictions
+          }
+        })
+        
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
@@ -185,7 +205,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
           let boxGeometry = new THREE.BoxGeometry(boundingBoxSizeX,boundingBoxSizeY,boundingBoxSizeZ)
           let boxEdges = new THREE.EdgesGeometry(boxGeometry)
           let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xff00ff } ) )
-          box.position.set(0,0,boundingBoxZoffset + (boundingBoxSizeZ/2))
+          box.position.set(0,(boundingBoxSizeY/2),boundingBoxZoffset + (boundingBoxSizeZ/2))
           scene.add(box)   
         }
     }
@@ -201,7 +221,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       let staticBoxGeometry = new THREE.BoxGeometry(staticBoundingBoxSizeX,staticBoundingBoxSizeY,staticBoundingBoxSizeZ)
       let staticBoxEdges = new THREE.EdgesGeometry(staticBoxGeometry)
       let staticBox = new THREE.LineSegments(staticBoxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-      staticBox.position.set(0,0,staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
+      staticBox.position.set(0,(staticBoundingBoxSizeY/2),staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
       scene.add(staticBox)         
     }
 
@@ -216,21 +236,50 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       scene.add(radar)  
 
       // draw tracks
-      this.lastframeData.tracks.forEach(function (track) 
+      if (this.showTracksFC.value)
       {
-        /*
-        let boxGeometry = new THREE.BoxGeometry(1,2,1)
-        let boxEdges = new THREE.EdgesGeometry(boxGeometry)
-        let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-        box.position.set(-track.position_x, track.position_z, track.position_y)
-        scene.add(box)
-        */
-        let trackGeometry = new THREE.SphereGeometry(0.25)
-        let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
-        trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
-        scene.add(trackMesh)
+        this.lastframeData.tracks.forEach((track) => 
+        {
+          /*
+          let boxGeometry = new THREE.BoxGeometry(1,2,1)
+          let boxEdges = new THREE.EdgesGeometry(boxGeometry)
+          let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
+          box.position.set(-track.position_x, track.position_z, track.position_y)
+          scene.add(box)
+          */
+          let trackGeometry = new THREE.SphereGeometry(0.25)
+          let trackMesh = new THREE.Mesh(trackGeometry, new MeshStandardMaterial({color: 0xffea00, metalness:0.5, roughness: 0}))
+          trackMesh.position.set(-track.position_x, track.position_z, track.position_y)
+          scene.add(trackMesh)
+  
+  
+          // Draw Track number text
+  
+          // Create a text geometry with the desired text and font
+          const textGeometry = new TextGeometry(`Track-${track.track_id}`, {
+            font: this.threeJsFont,
+            size: 0.2,
+            height: 0.02,
+            curveSegments: 12
+          });
+  
+          // Center the text geometry
+          textGeometry.center();
+  
+          // Create a material for the text
+          const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffea00 } );
+  
+          // Create a mesh for the text using the geometry and material
+          const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+          textMesh.rotateY(Math.PI);
+          textMesh.position.set(-track.position_x, track.position_z + 0.5, track.position_y)
+          scene.add(textMesh)
+  
+        });
 
-      });
+      }
+
+      
 
       // draw points 
       if (this.showPointCloudFC.value)
@@ -250,6 +299,20 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
     }
 
     this.scene = scene
+  }
+
+  private loadThreeJsFonts()
+  {
+    const loader = new FontLoader()
+
+    loader.load('assets/threejs-fonts/roboto/normal-400.json', (font) => {
+      this.threeJsFont = font
+    });
+  }
+
+  private clearScene()
+  {
+    this.scene = new THREE.Scene()
   }
 
 

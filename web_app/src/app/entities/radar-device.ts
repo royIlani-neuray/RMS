@@ -30,6 +30,7 @@ export interface RadarDevice {
 
     device_mapping: DeviceMapping
     radar_settings: RadarSettings
+    linked_services: LinkedService[]
 }
 
 export interface DeviceMapping {
@@ -44,3 +45,7 @@ export interface DeviceMapping {
     fw_version: string
 }
 
+export interface LinkedService {
+    service_id: string
+    service_options: Map<string, string>
+}
