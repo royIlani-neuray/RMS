@@ -26,9 +26,10 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     public GateIdContext(RadarDevice device, string modelName, int requiredWindowSize) : base("GateIdContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
-        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize);
+        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize, device.radarSettings!.SensorPosition!.HeightMeters);
         predictions = new GateIdPredictions(device.DeviceWebSocket);
         this.modelName = modelName;
+        
     }
 
     public void HandleFrame(FrameData frameData)

@@ -73,7 +73,6 @@ export class RecordingsPageComponent implements OnInit {
 
   public getLocalDateString(timestamp : string)
   {
-    console.log(timestamp)
     const matches = timestamp.match(/(\d+)_(\d+)_(\d+)T(\d+)_(\d+)_(\d+)/)!;
 
     const year = parseInt(matches[1], 10);

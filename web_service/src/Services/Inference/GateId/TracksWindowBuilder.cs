@@ -33,12 +33,14 @@ public class TracksWindowBuilder
     private FrameData? lastFrame;
 
     private int requiredWindowSize;
+    private float radarHeightMeters;    // radar height is appended to points Z. we remove that for the inference.
 
-    public TracksWindowBuilder(int requiredWindowSize)
+    public TracksWindowBuilder(int requiredWindowSize, float radarHeightMeters)
     {
         tracksWindows = new Dictionary<byte, TrackWindow>(); // Key: track Id , Value: window data
         lastFrame = null;
         this.requiredWindowSize = requiredWindowSize;
+        this.radarHeightMeters = radarHeightMeters;
     }
 
     private void CreateNewWindows(List<byte> targetIndexList)
@@ -170,7 +172,7 @@ public class TracksWindowBuilder
             {
                 frameInput.xAxis.Add(point.PositionX);
                 frameInput.yAxis.Add(point.PositionY);
-                frameInput.zAxis.Add(point.PositionZ);
+                frameInput.zAxis.Add(point.PositionZ - this.radarHeightMeters);
                 frameInput.Velocity.Add(point.Doppler);
                 frameInput.Intensity.Add(point.SNR);
             }
