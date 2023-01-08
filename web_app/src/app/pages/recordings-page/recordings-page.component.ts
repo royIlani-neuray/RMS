@@ -73,6 +73,7 @@ export class RecordingsPageComponent implements OnInit {
 
   public getLocalDateString(timestamp : string)
   {
+    console.log(timestamp)
     const matches = timestamp.match(/(\d+)_(\d+)_(\d+)T(\d+)_(\d+)_(\d+)/)!;
 
     const year = parseInt(matches[1], 10);
@@ -83,7 +84,7 @@ export class RecordingsPageComponent implements OnInit {
     const second = parseInt(matches[6], 10);
 
     const utcDate = new Date(year, month, day, hour, minute, second);
-    const timezoneOffset = utcDate.getTimezoneOffset();
+    const timezoneOffset = utcDate.getTimezoneOffset() * -1;
     const localDate = new Date(utcDate.getTime() + timezoneOffset * 60 * 1000);
 
     return localDate.toLocaleDateString() + ' ' + localDate.toLocaleTimeString()

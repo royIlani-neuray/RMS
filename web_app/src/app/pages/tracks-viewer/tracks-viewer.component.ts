@@ -191,6 +191,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         let boundingBoxSizeY = Math.abs(this.radarDevice.radar_settings.boundary_box.z_max - this.radarDevice.radar_settings.boundary_box.z_min)
         let boundingBoxSizeZ = Math.abs(this.radarDevice.radar_settings.boundary_box.y_max - this.radarDevice.radar_settings.boundary_box.y_min)
         let boundingBoxZoffset = this.radarDevice.radar_settings.boundary_box.y_min
+        let boundingBoxYoffset = this.radarDevice.radar_settings.boundary_box.z_min
 
         // draw the floor (plane grid)
         let planeGridSize = Math.max(this.radarDevice.radar_settings.boundary_box.y_max, boundingBoxSizeX)
@@ -205,7 +206,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
           let boxGeometry = new THREE.BoxGeometry(boundingBoxSizeX,boundingBoxSizeY,boundingBoxSizeZ)
           let boxEdges = new THREE.EdgesGeometry(boxGeometry)
           let box = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xff00ff } ) )
-          box.position.set(0,(boundingBoxSizeY/2),boundingBoxZoffset + (boundingBoxSizeZ/2))
+          box.position.set(0, boundingBoxYoffset + (boundingBoxSizeY/2), boundingBoxZoffset + (boundingBoxSizeZ/2))
           scene.add(box)   
         }
     }
@@ -216,12 +217,13 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       let staticBoundingBoxSizeY = Math.abs(this.radarDevice.radar_settings.static_boundary_box.z_max - this.radarDevice.radar_settings.static_boundary_box.z_min)
       let staticBoundingBoxSizeZ = Math.abs(this.radarDevice.radar_settings.static_boundary_box.y_max - this.radarDevice.radar_settings.static_boundary_box.y_min)
       let staticBoundingBoxZoffset = this.radarDevice.radar_settings.static_boundary_box.y_min
+      let staticBoundingBoxYoffset = this.radarDevice.radar_settings.static_boundary_box.z_min
 
       // draw the static bounding box
       let staticBoxGeometry = new THREE.BoxGeometry(staticBoundingBoxSizeX,staticBoundingBoxSizeY,staticBoundingBoxSizeZ)
       let staticBoxEdges = new THREE.EdgesGeometry(staticBoxGeometry)
       let staticBox = new THREE.LineSegments(staticBoxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-      staticBox.position.set(0,(staticBoundingBoxSizeY/2),staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
+      staticBox.position.set(0, staticBoundingBoxYoffset + (staticBoundingBoxSizeY/2), staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
       scene.add(staticBox)         
     }
 

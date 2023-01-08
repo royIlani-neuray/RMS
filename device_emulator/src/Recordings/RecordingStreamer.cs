@@ -55,10 +55,8 @@ public class RecordingStreamer {
 
     private object readerLock = new Object();
 
-    public void SetRecordingSource(string fileName, bool loopForeaver)
-    {
-        string filePath = System.IO.Path.Combine(RecordingPath, fileName);
-
+    public void SetRecordingSource(string filePath, bool loopForeaver)
+    {        
         lock (readerLock)
         {
             reader = new RecordingDataReader(filePath);

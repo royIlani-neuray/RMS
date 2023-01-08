@@ -102,7 +102,9 @@ public class Emulator {
         System.Console.WriteLine($"** Loop forever: {playbackArgs.LoopForever}");
         System.Console.WriteLine();
 
-        RecordingStreamer.Instance.SetRecordingSource(playbackArgs.PlaybackFile, playbackArgs.LoopForever);
+        string playbackFilePath = System.IO.Path.Combine(RecordingsFolderPath, playbackArgs.PlaybackFile);
+
+        RecordingStreamer.Instance.SetRecordingSource(playbackFilePath, playbackArgs.LoopForever);
 
         playback = playbackArgs;
         
