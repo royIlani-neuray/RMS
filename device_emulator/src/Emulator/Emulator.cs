@@ -80,7 +80,7 @@ public class Emulator {
     }
 
     public string RecordingsFolderPath = "./data/recordings";
-    public const string RecordingDataFileExtention = ".bin";
+    public const string RecordingDataFileExtention = ".rrec";
     public const string RecordingSettingFileExtention = ".json";
 
     private Task? emulatorTask;

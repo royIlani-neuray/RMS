@@ -18,6 +18,8 @@ public class RecordingService : IRadarService
 
     public static readonly string StoragePath = "./data/recordings";
 
+    public const string RecordingDataFileExtention = ".rrec";
+
     public string ServiceId => SERVICE_ID;
 
     public RadarServiceSettings? Settings { get; set; }
@@ -36,7 +38,7 @@ public class RecordingService : IRadarService
         float frameRate = device.radarSettings!.DetectionParams!.FrameRate;
 
         string filename = $"{device.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
-        string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}.bin");
+        string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingDataFileExtention}");
 
         string deviceString = JsonSerializer.Serialize(device);
         string configPath = System.IO.Path.Combine(StoragePath, $"{filename}.json");
