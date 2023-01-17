@@ -2,7 +2,7 @@
     "template_id": "00000000-0000-0000-0000-000000000003",
     "name": "People tracking - 6 Meters - Static Retention (ISK)",
     "description": "Track people up to 6 meters with fine motion detection",
-    "model": "IWR6843ISK",
+    "model": "RAY1I",
     "application": "PEOPLE_TRACKING",
     "config_script": [
         "% Reference - ISK_6m_staticRetention.cfg",

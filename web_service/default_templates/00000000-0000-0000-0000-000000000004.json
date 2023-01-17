@@ -2,7 +2,7 @@
     "template_id": "00000000-0000-0000-0000-000000000004",
     "name": "People tracking - 14 Meters (ISK)",
     "description": "Track people up to 14 meters",
-    "model": "IWR6843ISK",
+    "model": "RAY1I",
     "application": "PEOPLE_TRACKING",
     "config_script": [
         "% Reference - ISK_14m_extended.cfg",
