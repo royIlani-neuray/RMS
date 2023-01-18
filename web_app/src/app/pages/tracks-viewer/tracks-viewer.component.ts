@@ -131,7 +131,7 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       45,
       aspectRatio,
       0.1,
-      1000
+      100
     );
 
     this.camera.position.set(0,2,-17)
