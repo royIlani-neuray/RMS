@@ -266,6 +266,42 @@ public class IPRadarClient
         }
     }
 
+    public static void SendResetBroadcast(string deviceId)
+    {
+        List<IPAddress> broadcastSources = GetBroadcastAddresses();
+
+        Console.WriteLine("");
+        Console.WriteLine($"** Sending Device-Reset broadcast to: {deviceId}");
+        Console.WriteLine("");
+
+        // create the broadcast packet
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarClient.PROTOCOL_REVISION);
+        writer.Write(IPRadarClient.RESET_RADAR_KEY);
+
+        Guid guid = new Guid(deviceId);
+        writer.Write(guid.ToByteArray());
+
+        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES];
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(packet, 0, packet.Length);
+
+        // broadcast for each address
+        foreach (var address in broadcastSources)
+        {
+            IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
+
+            UdpClient sendClient = new UdpClient(sourceEndpoint);
+            sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+            sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontRoute, 1);
+            sendClient.Send(packet, targetEndpoint);
+        }
+    }
+
+
     public void SetDeviceId(string deviceId, string newDeviceId)
     {
         var stream = new MemoryStream();
