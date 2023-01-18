@@ -125,6 +125,13 @@ public class DeviceController : ControllerBase
         action.Run();
     }
 
+    [HttpPost("{deviceId}/reset-device-broadcast")]
+    public void SendRestBroadcast(string deviceId)
+    {
+        ValidateDeviceId(deviceId); 
+        Radar.IPRadarClient.SendResetBroadcast(deviceId);
+    }
+
     [HttpGet("{deviceId}/tracks")]
     public HttpTracksReport GetDeviceTracks(string deviceId)
     {
