@@ -2,7 +2,7 @@
     "template_id": "00000000-0000-0000-0000-000000000001",
     "name": "People tracking - 6 Meters (AOP)",
     "description": "Track people up to 6 meters",
-    "model": "IWR6843AOP",
+    "model": "RAY1A",
     "application": "PEOPLE_TRACKING",
     "config_script": [
         "% Reference - AOP_6m_default.cfg",
