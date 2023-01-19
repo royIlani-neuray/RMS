@@ -73,6 +73,9 @@ public class IPRadarClient
         {
             Console.WriteLine($"Connecting to radar control port at ({ipAddress}:{IP_RADAR_CONTROL_PORT})...");
             controlStream = new TcpClient(ipAddress, IP_RADAR_CONTROL_PORT);
+            
+            // Setting timeout to 20 seconds since FW update has long commands that takes time
+            controlStream.ReceiveTimeout = 20000;
         }
         catch (Exception ex)
         {
@@ -84,7 +87,9 @@ public class IPRadarClient
         {
             Console.WriteLine($"Connecting to radar data port at ({ipAddress}:{IP_RADAR_DATA_PORT})...");
             dataStream = new TcpClient(ipAddress, IP_RADAR_DATA_PORT);
-            dataStream.ReceiveTimeout = 1000;
+            
+            // setting to 2 sec so that we can operate even at a slow frame rate of 1 fps
+            dataStream.ReceiveTimeout = 2000;
         }
         catch (Exception ex)
         {
