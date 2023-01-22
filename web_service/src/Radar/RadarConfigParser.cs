@@ -27,6 +27,7 @@ public class RadarConfigParser
             ("presenceBoundaryBox", ParsePresenseBoundryBox),
             ("allocationParam", ParseAllocationParams),
             ("gatingParam", ParseGatingParams),
+            ("compRangeBiasAndRxChanPhase", ParseRadarCalibration)
         };
 
         ParseConfig(configScript);
@@ -68,6 +69,11 @@ public class RadarConfigParser
             AzimuthTiltDegrees = configParams[1],
             ElevationTiltDegrees = configParams[2],
         };
+    }
+
+    private void ParseRadarCalibration(List<float> configParams)
+    {
+        this.radarSettings!.RadarCalibration = String.Join(" ", configParams);
     }
 
     private void ParseBoundaryBox(List<float> configParams)

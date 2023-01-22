@@ -127,6 +127,9 @@ public class RadarSettings
     [JsonPropertyName("sensor_position")]
     public SensorPositionParams? SensorPosition {get; set;} = null;
 
+    [JsonPropertyName("radar_calibration")]
+    public string RadarCalibration {get; set;} = String.Empty;
+
     [JsonPropertyName("allocation_params")]
     public AllocationParameters? AllocationParams {get; set;} = null;
 

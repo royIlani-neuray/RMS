@@ -26,6 +26,36 @@ public sealed class ConfigScriptUtils {
         }
     }
 
+    public static void UpdateRadarCalibration(List<string> configScript, string? calibrationSettings)
+    {
+        if (String.IsNullOrWhiteSpace(calibrationSettings))
+        {
+            calibrationSettings = "0.0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0"; // default
+        }
+
+        try
+        {
+            // basic validation
+            List<string> splitValues = calibrationSettings.Trim().Replace("  "," ").Split(' ').ToList();
+            splitValues.ConvertAll<float>(val => float.Parse(val));
+        }
+        catch 
+        {
+            throw new BadRequestException("Invalid radar calibration values.");
+        }
+
+        string command = $"compRangeBiasAndRxChanPhase {calibrationSettings}";
+
+        for (int i = 0; i < configScript.Count; i++)
+        {
+            if (configScript[i].StartsWith("compRangeBiasAndRxChanPhase"))
+            {
+                configScript[i] = command;
+                break;
+            }
+        }
+    }
+
     private static void UpdateBoundaryBox(List<string> configScript, string boxType, RadarSettings.BoundaryBoxParams box)
     {
         string command = $"{boxType} {box.X_Min_Meters} {box.X_Max_Meters} {box.Y_Min_Meters} {box.Y_Max_Meters} {box.Z_Min_Meters} {box.Z_Max_Meters}";

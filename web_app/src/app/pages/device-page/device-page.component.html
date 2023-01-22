@@ -37,6 +37,10 @@
                 <td>{{isRadarRecordingEnabled()}}</td>
             </tr>
             <tr>
+                <td>Radar Calibrated:</td>
+                <td>{{isRadarCalibrated()}}</td>
+            </tr>
+            <tr>
                 <td>Device ID: </td>
                 <td>{{radarDevice.device_id}}</td>
             </tr>
@@ -89,7 +93,7 @@
 
     <!-- Control buttons -->
     <div>
-        <br><br>
+        <br><br><br><br><br>
         <button mat-raised-button (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
 
         <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>

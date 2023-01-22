@@ -32,20 +32,30 @@
 
     <mat-divider></mat-divider>
     <br><mat-label>Radar Position:</mat-label><br><br>
+    
     <mat-form-field class="position-input"  appearance="fill">
       <mat-label>Height</mat-label>
       <input matInput placeholder="Height in meters" type="number" [formControl]="heightInputFC">
     </mat-form-field>
+    
     <mat-form-field class="position-input"  appearance="fill">
       <mat-label>Azimuth Tilt</mat-label>
       <input matInput placeholder="Azimuth in degrees" type="number" [formControl]="azimuthInputFC">
     </mat-form-field>
+    
     <mat-form-field class="position-input"  appearance="fill">
       <mat-label>Elevation Tilt</mat-label>
       <input matInput placeholder="Elevation in degrees" type="number" [formControl]="elevationInputFC">
     </mat-form-field>
+    
     <mat-divider></mat-divider>
+    <br>
+    <mat-form-field class="full-width-500" appearance="fill">
+      <mat-label>Sensor Calibration</mat-label>
+      <input matInput #radarCalibrationInput maxlength="400" placeholder="Provide calibration values for the sensor (optional)" [formControl]="calibrationInputFC">
+    </mat-form-field>
 
+    <mat-divider></mat-divider>
     <br>
     <mat-slide-toggle color="primary" checked="true" style="margin-right: 40px;">Radar enabled</mat-slide-toggle>
     <mat-slide-toggle color="primary">Send tracks reports</mat-slide-toggle>
