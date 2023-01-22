@@ -157,6 +157,11 @@ export class DevicePageComponent implements OnInit {
     return recordService != null;
   }
 
+  public isRadarCalibrated()
+  {
+    return (this.radarDevice.radar_settings.radar_calibration != "0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0")
+  }
+
   public enableRadarRecording()
   {
     this.devicesService.enableRadarRecording(this.deviceId).subscribe({

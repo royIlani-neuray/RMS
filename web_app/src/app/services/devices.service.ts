@@ -79,7 +79,7 @@ export class DevicesService {
   }
 
   public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
-    height : number, azimuthTilt : number, elevationTilt : number)
+    height : number, azimuthTilt : number, elevationTilt : number, calibration : string)
   {
     return this.http.post("/api/devices", {
       name : name,
@@ -92,19 +92,21 @@ export class DevicesService {
         height : height,
         azimuth_tilt : azimuthTilt,
         elevation_tilt : elevationTilt
-      }
+      },
+      radar_calibration: calibration
     })
   }
 
   public setDeviceConfiguration(deviceId : string, templateId : string, sensorPosition : SensorPositionParams, 
-                                boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams)
+                                boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams, calibration : string)
   {
     return this.http.post("/api/devices/" + deviceId + "/config", 
     {
       template_id: templateId,
       sensor_position: sensorPosition,
       boundary_box: boundaryBox,
-      static_boundary_box: staticBoundaryBox
+      static_boundary_box: staticBoundaryBox,
+      radar_calibration : calibration
     })    
   }
 

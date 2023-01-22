@@ -60,6 +60,10 @@ export class SetDeviceConfigDialogComponent implements OnInit {
     zMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
   });
 
+  calibrationFormGroup = this.formBuilder.group({
+    calibrationInputFC: ['', []]
+  });
+
   constructor(public dialogRef: MatDialogRef<SetDeviceConfigDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData, private cd : ChangeDetectorRef,
               private formBuilder: FormBuilder,
@@ -88,6 +92,8 @@ export class SetDeviceConfigDialogComponent implements OnInit {
     this.staticBoundaryBoxFormGroup.controls.xMax.setValue(this.radarDevice.radar_settings.static_boundary_box.x_max.toString())
     this.staticBoundaryBoxFormGroup.controls.yMax.setValue(this.radarDevice.radar_settings.static_boundary_box.y_max.toString())
     this.staticBoundaryBoxFormGroup.controls.zMax.setValue(this.radarDevice.radar_settings.static_boundary_box.z_max.toString())
+
+    this.calibrationFormGroup.controls.calibrationInputFC.setValue(this.radarDevice.radar_settings.radar_calibration)
 
     this.getTemplates()
   }
@@ -143,7 +149,9 @@ export class SetDeviceConfigDialogComponent implements OnInit {
       z_max: +this.staticBoundaryBoxFormGroup.controls.zMax.value!,
     }
 
-    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox).subscribe({
+    let calibration = this.calibrationFormGroup.controls.calibrationInputFC.value!
+
+    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox, calibration).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })

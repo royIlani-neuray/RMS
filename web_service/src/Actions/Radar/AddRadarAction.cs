@@ -37,6 +37,9 @@ public class AddRadarDeviceArgs
     [JsonPropertyName("radar_position")]
     public RadarSettings.SensorPositionParams? RadarPosition { get; set; }
 
+    [JsonPropertyName("radar_calibration")]
+    public string RadarCalibration { get; set; } = String.Empty;
+
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Name))
@@ -78,6 +81,7 @@ public class AddRadarAction : IAction
             var template = TemplateContext.Instance.GetTemplate(args.TemplateId);          
             device.ConfigScript = new List<string>(template.ConfigScript);
             ConfigScriptUtils.UpdateSensorPosition(device.ConfigScript, args.RadarPosition!);
+            ConfigScriptUtils.UpdateRadarCalibration(device.ConfigScript, args.RadarCalibration);
             RadarConfigParser configParser = new RadarConfigParser(device.ConfigScript);
             device.radarSettings = configParser.GetRadarSettings();  
         }

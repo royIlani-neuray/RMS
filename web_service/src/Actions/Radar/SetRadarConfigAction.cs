@@ -26,6 +26,9 @@ public class SetRadarConfigArgs
     [JsonPropertyName("sensor_position")]
     public RadarSettings.SensorPositionParams? SensorPosition {get; set;} = null;
 
+    [JsonPropertyName("radar_calibration")]
+    public string RadarCalibration { get; set; } = String.Empty;
+
     [JsonPropertyName("boundary_box")]
     public RadarSettings.BoundaryBoxParams? BoundaryBox {get; set;} = null;
 
@@ -71,6 +74,7 @@ public class SetRadarConfigAction : RadarDeviceAction
             var template = TemplateContext.Instance.GetTemplate(args.TemplateId);
             configScript = new List<string>(template.ConfigScript);
             ConfigScriptUtils.UpdateSensorPosition(configScript, args.SensorPosition!);
+            ConfigScriptUtils.UpdateRadarCalibration(configScript, args.RadarCalibration);
             ConfigScriptUtils.UpdateBoundaryBox(configScript,args.BoundaryBox!);
             ConfigScriptUtils.UpdateStaticBoundaryBox(configScript,args.StaticBoundaryBox!);
         }

@@ -38,6 +38,7 @@ export class NewDevicePageComponent implements OnInit {
   heightInputFC = new FormControl('', [Validators.required])
   azimuthInputFC = new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)])
   elevationInputFC = new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)])
+  calibrationInputFC = new FormControl('', [])
 
   constructor(private devicesService : DevicesService,
               private templatesService : TemplatesService, 
@@ -112,8 +113,10 @@ export class NewDevicePageComponent implements OnInit {
     let azimuthTilt : number = +this.azimuthInputFC.value!
     let elevationTilt : number = +this.elevationInputFC.value!
 
+    let calibration = this.calibrationInputFC.value!
+
     this.devicesService.registerRadarDevice(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
-      height, azimuthTilt, elevationTilt).subscribe({
+      height, azimuthTilt, elevationTilt, calibration).subscribe({
       next : (response) => this.router.navigate(['/device', deviceId]),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not register the device", "Close", { duration : 4000 })
     })

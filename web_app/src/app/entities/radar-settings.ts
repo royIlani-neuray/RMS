@@ -14,7 +14,8 @@ export interface RadarSettings {
     sensor_position: SensorPositionParams,
     allocation_params: AllocationParams,
     gating_params: GatingParams,
-    detection_params: DetectionParams
+    detection_params: DetectionParams,
+    radar_calibration : string
 }
 
 export interface BoundaryBoxParams {

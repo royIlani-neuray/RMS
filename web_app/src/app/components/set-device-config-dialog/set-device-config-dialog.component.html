@@ -100,6 +100,20 @@
                 <input matInput placeholder="Value in meters" type="number" formControlName="zMax">
             </mat-form-field>
         </form>
+        <div>
+            <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="calibrationFormGroup">
+        <br>
+        <form [formGroup]="calibrationFormGroup">
+            <ng-template matStepLabel>Radar Calibration</ng-template>
+            <mat-form-field class="full-width-500" appearance="fill">
+                <mat-label>Sensor Calibration Values</mat-label>
+                <input matInput maxlength="400" placeholder="Provide calibration values for the sensor (optional)" formControlName="calibrationInputFC">
+            </mat-form-field>
+        </form>
     </mat-step>
 
 </mat-stepper>
