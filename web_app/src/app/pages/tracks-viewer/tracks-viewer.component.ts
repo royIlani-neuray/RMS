@@ -235,6 +235,8 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
       let radarGeometery = new THREE.BoxGeometry(0.4,0.4,0.05)
       let radar = new THREE.Mesh(radarGeometery, new THREE.MeshStandardMaterial({ color: 0xffffff, metalness:0.5, roughness: 0 }))
       radar.position.set(0,radarHeight,0)
+      radar.rotateX(this.radarDevice.radar_settings.sensor_position.elevation_tilt * (Math.PI / 180))
+      radar.rotateY((-this.radarDevice.radar_settings.sensor_position.azimuth_tilt) * (Math.PI / 180))
       scene.add(radar)  
 
       // draw tracks
