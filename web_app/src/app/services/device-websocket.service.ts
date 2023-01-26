@@ -13,7 +13,6 @@ import { FrameData } from '../entities/frame-data';
 export interface GateIdPrediction {
   track_id: number
   identity: string
-  confidence: number
 }
 
 @Injectable()
