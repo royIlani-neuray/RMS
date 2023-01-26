@@ -25,21 +25,21 @@ import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.compo
 const routes: Routes = [
   { path: '', component: DevicesPageComponent },
 
-  { path: 'device/:device_id', component: DevicePageComponent },
-  { path: 'devices', component: DevicesPageComponent },
-  { path: 'device-mapping', component: DeviceMappingPageComponent },
-  { path: 'new-device', component: NewDevicePageComponent },
+  { path: 'device/:device_id', title: 'Devices - RMS | neuRay Labs', component: DevicePageComponent },
+  { path: 'devices', title: 'Devices - RMS | neuRay Labs', component: DevicesPageComponent },
+  { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent },
+  { path: 'new-device', title: 'Register Device - RMS | neuRay Labs', component: NewDevicePageComponent },
 
-  { path: 'templates', component: TemplatesPageComponent},
-  { path: 'template/:template_id', component: TemplatePageComponent },
+  { path: 'templates', title: 'Templates - RMS | neuRay Labs', component: TemplatesPageComponent},
+  { path: 'template/:template_id', title: 'Templates - RMS | neuRay Labs', component: TemplatePageComponent },
 
-  { path: 'recordings', component: RecordingsPageComponent},
-  { path: 'tracks-viewer', component: TracksViewerComponent},
-  { path: 'settings', component: SettingsPageComponent },
+  { path: 'recordings', title: 'Recordings - RMS | neuRay Labs', component: RecordingsPageComponent},
+  { path: 'tracks-viewer', title: 'Tracks Viewer - RMS | neuRay Labs', component: TracksViewerComponent},
+  { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent },
   { path: 'no-service', component: ErrorPageNoServiceComponent },
   
   //Wild Card Route for 404 request
-  { path: '**', pathMatch: 'full', component: ErrorPageNotFoundComponent },
+  { path: '**', pathMatch: 'full', title: '404 - RMS | neuRay Labs', component: ErrorPageNotFoundComponent },
 ];
 
 @NgModule({
