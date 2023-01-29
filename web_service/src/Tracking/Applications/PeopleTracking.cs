@@ -19,10 +19,12 @@ public class PeopleTracking : ITrackingApplication
     public const int TRACK_OBJECT_TLV_SIZE = 112;
     public const int POINT_CLOUD_UNIT_SIZE = 20;
     public const int POINT_CLOUD_INFO_SIZE = 8;
+    public const int TARGET_HEIGHT_INFO_SIZE = 9;
 
     public const int TLV_TYPE_POINT_CLOUD = 1020;
     public const int TLV_TYPE_TRACKS_LIST = 1010;
     public const int TLV_TYPE_TARGETS_INDEX = 1011;
+    public const int TLV_TYPE_TARGETS_HEIGHT = 1012;
     public const int TLV_TYPE_PRESENCE_INDICATION = 1021;
 
     private RadarSettings.SensorPositionParams radarPosition;
@@ -91,8 +93,16 @@ public class PeopleTracking : ITrackingApplication
             public float ConfidenceLevel;
         }
 
+        public class TargetHeight
+        {
+            public byte targetId;
+            public float maxZ;
+            public float minZ;
+        }
+
         public FrameHeader? frameHeader;
         public List<Point> pointCloudList = new List<Point>();
+        public List<TargetHeight> targetsHeightList = new List<TargetHeight>();
         public List<byte> targetsIndexList = new List<byte>();
         public List<Track> tracksList = new List<Track>();
 
@@ -214,6 +224,18 @@ public class PeopleTracking : ITrackingApplication
                 // Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
             }
 
+            if (tlvType == TLV_TYPE_TARGETS_HEIGHT)
+            {
+                var targetsCount = tlvLength / TARGET_HEIGHT_INFO_SIZE;
+                for (int targetIndex = 0; targetIndex < targetsCount; targetIndex++)
+                {
+                    PeopleTrackingFrameData.TargetHeight target = new PeopleTrackingFrameData.TargetHeight();
+                    target.targetId = reader.ReadByte();
+                    target.maxZ = reader.ReadSingle();
+                    target.minZ = reader.ReadSingle();
+                    frameData.targetsHeightList.Add(target);
+                }
+            }
         }
 
         return frameData;

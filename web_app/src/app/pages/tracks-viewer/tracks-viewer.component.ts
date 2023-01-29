@@ -194,11 +194,14 @@ export class TracksViewerComponent implements OnInit, AfterViewInit {
         let boundingBoxYoffset = this.radarDevice.radar_settings.boundary_box.z_min
 
         // draw the floor (plane grid)
-        let planeGridSize = Math.max(this.radarDevice.radar_settings.boundary_box.y_max, boundingBoxSizeX)
+        let planeGridSize = Math.max(boundingBoxSizeZ, boundingBoxSizeX)
         let planeGridDivisions = planeGridSize
         let planeGrid = new THREE.GridHelper(planeGridSize,planeGridDivisions, 0x303030, 0x303030)
-        planeGrid.position.z += (planeGridSize / 2)
+        planeGrid.position.z += (planeGridSize / 2) + this.radarDevice.radar_settings.boundary_box.y_min
         scene.add(planeGrid)
+
+        // TODO: this should be set only once 
+        //this.controls.target.set(0,5, planeGrid.position.z) // change orbit center from [0,0,0] to plane center
 
         if (this.showBoundryBoxFC.value)
         {
