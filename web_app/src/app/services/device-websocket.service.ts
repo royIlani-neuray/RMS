@@ -72,6 +72,9 @@ export class DeviceWebsocketService {
 
   public Disconnect()
   { 
+    if (!this.connected)
+      return
+
     // Close the connection, if open.
     if (this.socket.readyState === WebSocket.OPEN) 
     {

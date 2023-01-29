@@ -1,323 +1,39 @@
-<div *ngIf="!radarDevice" style="display: flex; justify-content: center; align-items: center; background: white;">
-    <mat-spinner [diameter]="60"></mat-spinner>
-</div>
-
-<div *ngIf="radarDevice">
-    <div style="margin-bottom: 10px;">
-        <h2 style="display: inline">{{radarDevice.name}} </h2> <h4 style="display: inline; color: rgb(77, 77, 77);"> ({{radarDevice.state}})</h4>
-    </div>
+<div style="margin: -20px;">
     
-    <!-- Radar Info card -->
-    <div style="float: left; margin-right: 50px;">
-        <table class="radar-info-table">
-            <tr>
-                <td><mat-label mat-basic-chip>Radar Info:</mat-label></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Enabled: </td>
-                <td>{{radarDevice.enabled}}</td>
-            </tr>
-            <!--
-            <tr>
-                <td>State: </td>
-                <td>{{radarDevice.state}}</td>
-            </tr>
-            -->
-            <tr>
-                <td>Status: </td>
-                <td>{{radarDevice.status}}</td>
-            </tr>
-            <tr>
-                <td>Send Tracks Reports: </td>
-                <td>{{radarDevice.send_tracks_report}}</td>
-            </tr>
-            <tr>
-                <td>Record Radar Data:</td>
-                <td>{{isRadarRecordingEnabled()}}</td>
-            </tr>
-            <tr>
-                <td>Radar Calibrated:</td>
-                <td>{{isRadarCalibrated()}}</td>
-            </tr>
-            <tr>
-                <td>Device ID: </td>
-                <td>{{radarDevice.device_id}}</td>
-            </tr>
-            <tr>
-                <td>Description: </td>
-                <td><div style="max-width: 500px;">{{radarDevice.description}}</div></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><div align="end"><button mat-button (click)="editInfoClicked()" color="primary">Edit Info</button></div></td>
-            </tr>
-        </table>
+    <div *ngIf="!radarDevice" style="display: flex; justify-content: center; align-items: center; background: white;">
+        <mat-spinner [diameter]="60"></mat-spinner>
     </div>
 
-    <!-- Device Info card -->
-    <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
-        <tr>
-            <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>IP Address:</td>
-            <td>{{radarDevice.device_mapping.ip}}</td>
-        </tr>
-        <tr>
-            <td>Subnet Mask:</td>
-            <td>{{radarDevice.device_mapping.subnet}}</td>
-        </tr>
-        <tr>
-            <td>Gateway:</td>
-            <td>{{radarDevice.device_mapping.gateway}}</td>
-        </tr>
-        <tr>
-            <td>Static IP:</td>
-            <td>{{radarDevice.device_mapping.static_ip}}</td>
-        </tr>
-        <tr>
-            <td>Model:</td>
-            <td>{{radarDevice.device_mapping.model}}</td>
-        </tr>
-        <tr>
-            <td>Application:</td>
-            <td>{{radarDevice.device_mapping.application}}</td>
-        </tr>
-        <tr>
-            <td>FW Version:</td>
-            <td>{{radarDevice.device_mapping.fw_version}}</td>
-        </tr>
-    </table>
-
-    <!-- Control buttons -->
-    <div>
-        <br><br><br><br><br>
-        <button mat-raised-button (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
-
-        <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
-        <button mat-raised-button *ngIf="radarDevice.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
-
-        <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
-        <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
-
-        <button mat-raised-button *ngIf="!isRadarRecordingEnabled()" (click)="enableRadarRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
-        <button mat-raised-button *ngIf="isRadarRecordingEnabled()" (click)="disableRadarRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
-
-        <button mat-raised-button (click)="deleteRadarDevice()" color="primary" style="margin-left: 10px;">Delete Radar</button>
+    <div *ngIf="radarDevice" class="device-page-header">
+        <span style="font-size: 25px;">{{radarDevice.name}}</span><span style="padding-left: 10px; font-size: 15px;">({{radarDevice.state}})</span>
     </div>
+    <mat-sidenav-container *ngIf="radarDevice">
+        <mat-sidenav #sidenav mode="side" [class.mat-elevation-z4]="true" class="device-sidenav" opened>
+            <mat-nav-list>
+                <!--
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        AAAAAA
+                    </mat-expansion-panel-header>
+                    <mat-nav-list>
+                        BBBBBBB
+                    </mat-nav-list>
+                </mat-expansion-panel>
+                -->
+                <a mat-list-item [routerLink]="['/device/', radarDevice.device_id, 'device-info']" routerLinkActive="route-active" class="nav-list-item">Device Info</a>
+                <a mat-list-item [routerLink]="['/device/', radarDevice.device_id, 'radar-settings']" routerLinkActive="route-active" class="nav-list-item">Radar Settings</a>
 
-    <br>
+                <!--
+                <a mat-list-item [routerLink]="['/device/', radarDevice.device_id, 'recordings']" routerLinkActive="route-active" class="nav-list-item">Recordings</a>
+                <a mat-list-item [routerLink]="['/device/', radarDevice.device_id, 'services']" routerLinkActive="route-active" class="nav-list-item">Services</a>
+                <a mat-list-item [routerLink]="['/device/', radarDevice.device_id, 'firmware-update']" routerLinkActive="route-active" class="nav-list-item">Firmware Update</a>
+                -->
 
-    <!-- Linked Services card -->
-    <div class="radar-info-card">
-        <p><mat-label mat-basic-chip>Linked Services:</mat-label></p>
-        <mat-divider></mat-divider>
-        <ul>
-            <li *ngFor="let service of radarDevice.linked_services">{{service.service_id}}</li>
-            <li *ngIf="radarDevice.linked_services.length == 0">No services linked to this device.</li>
-        </ul>
-    </div>
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content class="device-sidenav-content">
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>    
 
-    <br>
-
-    <!-- Radar Settings card -->
-    <div class="radar-info-card" *ngIf="radarDevice.radar_settings != null">
-        <p><mat-label mat-basic-chip>Radar Settings</mat-label></p>
-        <mat-divider></mat-divider>
-        <div *ngIf="radarDevice.radar_settings.sensor_position != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Sensor Position</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>Height</th>
-                        <th>Azimuth Tilt</th>
-                        <th>Elevation Tilt</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.sensor_position.height}}m</td>
-                        <td>{{radarDevice.radar_settings.sensor_position.azimuth_tilt}} deg</td>
-                        <td>{{radarDevice.radar_settings.sensor_position.elevation_tilt}} deg</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div *ngIf="radarDevice.radar_settings.boundary_box != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Boundary Box</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>X Min</th>
-                        <th>X Max</th>
-                        <th>Y Min</th>
-                        <th>Y Max</th>
-                        <th>Z Min</th>
-                        <th>Z Max</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.boundary_box.x_min}}m</td>
-                        <td>{{radarDevice.radar_settings.boundary_box.x_max}}m</td>
-                        <td>{{radarDevice.radar_settings.boundary_box.y_min}}m</td>
-                        <td>{{radarDevice.radar_settings.boundary_box.y_max}}m</td>
-                        <td>{{radarDevice.radar_settings.boundary_box.z_min}}m</td>
-                        <td>{{radarDevice.radar_settings.boundary_box.z_max}}m</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div *ngIf="radarDevice.radar_settings.static_boundary_box != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Static Boundary Box</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>X Min</th>
-                        <th>X Max</th>
-                        <th>Y Min</th>
-                        <th>Y Max</th>
-                        <th>Z Min</th>
-                        <th>Z Max</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.x_min}}m</td>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.x_max}}m</td>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.y_min}}m</td>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.y_max}}m</td>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.z_min}}m</td>
-                        <td>{{radarDevice.radar_settings.static_boundary_box.z_max}}m</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- No need to display presence_boundary_box
-        <div *ngIf="radarDevice.radar_settings.presence_boundary_box != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Presence Boundary Box</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>X Min</th>
-                        <th>X Max</th>
-                        <th>Y Min</th>
-                        <th>Y Max</th>
-                        <th>Z Min</th>
-                        <th>Z Max</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.x_min}}m</td>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.x_max}}m</td>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.y_min}}m</td>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.y_max}}m</td>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.z_min}}m</td>
-                        <td>{{radarDevice.radar_settings.presence_boundary_box.z_max}}m</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        -->
-        <div *ngIf="radarDevice.radar_settings.allocation_params != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Allocation Parameters</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>SNR Threshold</th>
-                        <th>SNR Threshold Obscured</th>
-                        <th>Velocity Threshold</th>
-                        <th>Points Threshold</th>
-                        <th>Max Distance Threshold</th>
-                        <th>Max Velocity Threshold</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.allocation_params.snr_threshold}}</td>
-                        <td>{{radarDevice.radar_settings.allocation_params.snr_threshold_obscured}}</td>
-                        <td>{{radarDevice.radar_settings.allocation_params.velocity_threshold}} m/s</td>
-                        <td>{{radarDevice.radar_settings.allocation_params.points_threshold}} points</td>
-                        <td>{{radarDevice.radar_settings.allocation_params.max_distance_threshold}} m²</td>
-                        <td>{{radarDevice.radar_settings.allocation_params.max_velocity_threshold}} m/s</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div *ngIf="radarDevice.radar_settings.gating_params != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Gating Parameters</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>Gain</th>
-                        <th>Limit Width</th>
-                        <th>Limit Depth</th>
-                        <th>Limit Height</th>
-                        <th>Limit Velocity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{radarDevice.radar_settings.gating_params.gain}}</td>
-                        <td>{{radarDevice.radar_settings.gating_params.limit_width}}m</td>
-                        <td>{{radarDevice.radar_settings.gating_params.limit_depth}}m</td>
-                        <td>{{radarDevice.radar_settings.gating_params.limit_height}}m</td>
-                        <td>{{radarDevice.radar_settings.gating_params.limit_velocity}} m/s</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div *ngIf="radarDevice.radar_settings.detection_params != null" class="radar-setting-div">
-            <p><mat-label mat-basic-chip>Detection Parameters</mat-label></p>
-            <table class="radar-setting-table">
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Max Range</td>
-                        <td>{{radarDevice.radar_settings.detection_params.max_range | number:'1.0-2'}}m</td>
-                    </tr>
-                    <tr>
-                        <td>Range Resolution</td>
-                        <td>{{radarDevice.radar_settings.detection_params.range_resolution| number:'1.0-3'}}m</td>
-                    </tr>
-                    <tr>
-                        <td>Max Velocity</td>
-                        <td>{{radarDevice.radar_settings.detection_params.max_velocity | number:'1.0-2'}} m/s</td>
-                    </tr>
-                    <tr>
-                        <td>Velocity Resolution</td>
-                        <td>{{radarDevice.radar_settings.detection_params.velocity_resolution | number:'1.0-3'}} m/s</td>
-                    </tr>
-                    <tr>
-                        <td>Frame Rate</td>
-                        <td>{{radarDevice.radar_settings.detection_params.frame_rate | number:'1.0-2'}} fps</td>
-                    </tr>
-                    <tr>
-                        <td>Frame Size</td>
-                        <td>{{radarDevice.radar_settings.detection_params.frame_size}} bytes</td>
-                    </tr>
-                    <tr>
-                        <td>TX antennas count</td>
-                        <td>{{radarDevice.radar_settings.detection_params.tx_count}}</td>
-                    </tr>
-                    <tr>
-                        <td>RX antennas count</td>
-                        <td>{{radarDevice.radar_settings.detection_params.rx_count}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>        
-        <br>
-    </div>
-    <br>
 </div>
-
-
