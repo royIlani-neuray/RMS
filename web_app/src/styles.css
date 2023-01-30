@@ -4,3 +4,7 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.page-margin {
+    margin-left: 20px;
+    margin-right: 20px;
+}
