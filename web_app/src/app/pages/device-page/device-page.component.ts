@@ -10,16 +10,18 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
 import { DevicesService } from '../../services/devices.service';
-
+import { DevicePageDataService } from './device-page-data.service';
 
 @Component({
   selector: 'app-device-page',
   templateUrl: './device-page.component.html',
-  styleUrls: ['./device-page.component.css']
+  styleUrls: ['./device-page.component.css'],
+  providers: [DevicePageDataService]
 })
 export class DevicePageComponent implements OnInit {
 
   constructor(private devicesService : DevicesService, 
+              private devicePageData : DevicePageDataService,
               private router : Router, 
               private activatedRoute:ActivatedRoute) { }
 
@@ -38,11 +40,17 @@ export class DevicePageComponent implements OnInit {
 
     this.deviceId = deviceId
 
-    this.getDevice(this.deviceId)
+    this.devicePageData.radarDeviceSubject.subscribe({
+      next : (radarDevice) => {
+        this.radarDevice = radarDevice
+      }
+    })
+
+    this.devicePageData.getDevice(this.deviceId)
 
     this.updateTimer = setInterval(() => 
     {
-      this.getDevice(this.deviceId)
+      this.devicePageData.getDevice(this.deviceId)
     }, 3000)
     
   }
@@ -55,14 +63,4 @@ export class DevicePageComponent implements OnInit {
     }
   }
   
-  public getDevice(deviceId : string)
-  {
-    this.devicesService.getRadarDevice(deviceId).subscribe({
-      next : (device) => this.radarDevice = device,
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
-    })
-  }
-
-
-
 }

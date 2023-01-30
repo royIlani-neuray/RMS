@@ -1,69 +1,74 @@
-<h3>Device Mapping</h3>
+<div class="page-margin">
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 device-mapping-table">
+    <h3>Device Mapping</h3>
 
-    <ng-container matColumnDef="device_id">
-        <th mat-header-cell *matHeaderCellDef> <b>Device ID</b> </th>
-        <td mat-cell *matCellDef="let element"> 
-            <a *ngIf="element.registered" [routerLink]="['/device', element.device_id]">{{element.device_id}}</a>
-            <span *ngIf="!element.registered">{{element.device_id}}</span> 
-        </td>
-    </ng-container>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 device-mapping-table">
 
-    <ng-container matColumnDef="registered">
-        <th mat-header-cell *matHeaderCellDef> <b>Device Registered</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.registered}} </td>
-    </ng-container>
+        <ng-container matColumnDef="device_id">
+            <th mat-header-cell *matHeaderCellDef> <b>Device ID</b> </th>
+            <td mat-cell *matCellDef="let element"> 
+                <a *ngIf="element.registered" [routerLink]="['/device', element.device_id]">{{element.device_id}}</a>
+                <span *ngIf="!element.registered">{{element.device_id}}</span> 
+            </td>
+        </ng-container>
 
-    <ng-container matColumnDef="ip">
-        <th mat-header-cell *matHeaderCellDef> <b>IP Address</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.ip}} </td>
-    </ng-container>
+        <ng-container matColumnDef="registered">
+            <th mat-header-cell *matHeaderCellDef> <b>Device Registered</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.registered}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="subnet">
-        <th mat-header-cell *matHeaderCellDef> <b>Subnet Mask</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.subnet}} </td>
-    </ng-container>
+        <ng-container matColumnDef="ip">
+            <th mat-header-cell *matHeaderCellDef> <b>IP Address</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.ip}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="gateway">
-        <th mat-header-cell *matHeaderCellDef> <b>Gateway</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.gateway}} </td>
-    </ng-container>
+        <ng-container matColumnDef="subnet">
+            <th mat-header-cell *matHeaderCellDef> <b>Subnet Mask</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.subnet}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef> <b>Model</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.model}} </td>
-    </ng-container>
+        <ng-container matColumnDef="gateway">
+            <th mat-header-cell *matHeaderCellDef> <b>Gateway</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.gateway}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="application">
-        <th mat-header-cell *matHeaderCellDef> <b>Application</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.application}} </td>
-    </ng-container>
+        <ng-container matColumnDef="model">
+            <th mat-header-cell *matHeaderCellDef> <b>Model</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="fw_version">
-        <th mat-header-cell *matHeaderCellDef> <b>FW Version</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.fw_version}} </td>
-    </ng-container>
+        <ng-container matColumnDef="application">
+            <th mat-header-cell *matHeaderCellDef> <b>Application</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.application}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="static_ip">
-        <th mat-header-cell *matHeaderCellDef> <b>Static IP</b> </th>
-        <td mat-cell *matCellDef="let element"> {{element.static_ip}} </td>
-    </ng-container>
+        <ng-container matColumnDef="fw_version">
+            <th mat-header-cell *matHeaderCellDef> <b>FW Version</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.fw_version}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="set_network">
-        <th mat-header-cell *matHeaderCellDef> <b>Network</b></th>
-        <td mat-cell *matCellDef="let element"><button mat-raised-button (click)="setNetworkClicked(element)" color="primary">Set Network</button></td>
-    </ng-container>
+        <ng-container matColumnDef="static_ip">
+            <th mat-header-cell *matHeaderCellDef> <b>Static IP</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.static_ip}} </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+        <ng-container matColumnDef="set_network">
+            <th mat-header-cell *matHeaderCellDef> <b>Network</b></th>
+            <td mat-cell *matCellDef="let element"><button mat-raised-button (click)="setNetworkClicked(element)" color="primary">Set Network</button></td>
+        </ng-container>
 
-<div *ngIf="!(deviceListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
-    <mat-spinner [diameter]="40"></mat-spinner>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="!(deviceListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
+        <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+
+    <label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>No devices found.<br></label>
+
+    <br>
+    <button mat-raised-button *ngIf="(deviceListLoaded | async)" (click)="triggerDeviceMapping()" color="primary">Trigger Mapping</button>
+
 </div>
 
-<label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>No devices found.<br></label>
-
-<br>
-<button mat-raised-button *ngIf="(deviceListLoaded | async)" (click)="triggerDeviceMapping()" color="primary">Trigger Mapping</button>
