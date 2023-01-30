@@ -13,7 +13,8 @@ import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
-import { DevicesService } from '../../services/devices.service';
+import { DevicesService } from 'src/app/services/devices.service';
+
 
 export interface DialogData {
   radarDevice: RadarDevice

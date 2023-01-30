@@ -45,7 +45,6 @@ import { DevicesPageComponent } from './pages/devices-page/devices-page.componen
 import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
 import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
 import { SetNetworkDialogComponent } from './components/set-network-dialog/set-network-dialog.component';
-import { EditRadarInfoDialogComponent } from './components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
 import { ErrorPageNotFoundComponent } from './pages/error-page-not-found/error-page-not-found.component';
@@ -57,7 +56,7 @@ import { TemplatePageComponent } from './pages/template-page/template-page.compo
 import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
 import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
 import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
-
+import { EditRadarInfoDialogComponent } from './pages/device-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 
 @NgModule({
   declarations: [
