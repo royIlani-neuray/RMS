@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EditRadarInfoDialogComponent } from '../../../../components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { ConfirmDialogComponent } from '../../../../components/confirm-dialog/confirm-dialog.component';
-import { SetDeviceConfigDialogComponent } from 'src/app/components/set-device-config-dialog/set-device-config-dialog.component';
+import { SetDeviceConfigDialogComponent } from 'src/app/pages/device-page/components/set-device-config-dialog/set-device-config-dialog.component';
 
 @Component({
   selector: 'app-device-info',
