@@ -9,11 +9,15 @@
 using System.Text.Json.Serialization;
 using WebService.Tracking;
 using WebService.WebSockets;
+using WebService.Services.Inference.Utils;
 
 namespace WebService.Services.Inference.GateId;
 
 public class GateIdPredictions 
 {
+    public const string InvalidGateIdPrediction = "Unknown";
+    public const float DEFAULT_CONFIDENCE_THRESHOLD = 0.50F;
+
     private class Prediction
     {
         [JsonPropertyName("track_id")]
@@ -22,23 +26,31 @@ public class GateIdPredictions
         [JsonPropertyName("identity")]
         public String Identity {get; set;}
 
-        [JsonPropertyName("confidence")]
-        public float Confidence {get; set;}
+        public LabelHitMissPredictor hitMissPredictor;
 
-        public Prediction(uint trackId)
+        public Prediction(uint trackId, int requiredHitCount, int requiredMissCount)
         {
             TrackId = trackId;
             Identity = String.Empty;
+            hitMissPredictor = new LabelHitMissPredictor(requiredHitCount, requiredMissCount, GateIdPredictions.InvalidGateIdPrediction);
         }
     }
 
     private Dictionary<uint, Prediction> predictions;
     private DeviceWebSocketServer deviceWebSocketsServer;
 
-    public GateIdPredictions(DeviceWebSocketServer deviceWebSocketsServer)
+    private int requiredHitCount;
+    private int requiredMissCount;
+    
+    public float ConfidenceThreshold {get; set;}
+
+    public GateIdPredictions(DeviceWebSocketServer deviceWebSocketsServer, int requiredHitCount, int requiredMissCount)
     {
         predictions = new Dictionary<uint, Prediction>();
         this.deviceWebSocketsServer = deviceWebSocketsServer;
+        this.requiredHitCount = requiredHitCount;
+        this.requiredMissCount = requiredMissCount;
+        ConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
     }
 
     public void RemoveLostTracks(FrameData frame)
@@ -59,13 +71,16 @@ public class GateIdPredictions
 
     public void UpdateTrackPrediction(byte trackId, string identity, float confidence)
     {
+        if (confidence < ConfidenceThreshold)
+            return;
+
         if (!predictions.ContainsKey(trackId))
         {
-            predictions.Add(trackId, new Prediction(trackId));
+            predictions.Add(trackId, new Prediction(trackId, requiredHitCount, requiredMissCount));
         }
 
-        predictions[trackId].Identity = identity;
-        predictions[trackId].Confidence = confidence;
+        predictions[trackId].hitMissPredictor.UpdatePrediction(identity);
+        predictions[trackId].Identity = predictions[trackId].hitMissPredictor.GetPrediction();
     }
 
     public void PublishPredictions()

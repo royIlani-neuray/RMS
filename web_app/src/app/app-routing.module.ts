@@ -21,11 +21,33 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
+import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
+import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
 
 const routes: Routes = [
   { path: '', component: DevicesPageComponent },
 
-  { path: 'device/:device_id', title: 'Devices - RMS | neuRay Labs', component: DevicePageComponent },
+  { 
+    path: 'device/:device_id', 
+    title: 'Devices - RMS | neuRay Labs', 
+    component: DevicePageComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'device-info',
+        pathMatch: 'full'
+      },
+      {
+        path: 'device-info',
+        component: DeviceInfoComponent
+      },
+      {
+        path: 'radar-settings',
+        component: RadarSettingsComponent
+      }
+    ] 
+  },
+
   { path: 'devices', title: 'Devices - RMS | neuRay Labs', component: DevicesPageComponent },
   { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent },
   { path: 'new-device', title: 'Register Device - RMS | neuRay Labs', component: NewDevicePageComponent },

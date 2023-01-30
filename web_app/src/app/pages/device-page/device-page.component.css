@@ -1,55 +1,29 @@
-.radar-info-table {
-    box-shadow: 0 5px 5px 4px lightblue;
-    border-radius:6px;
-    padding: 10px;
-}
 
-.radar-info-table td {
-    padding: 10px;
-}
-
-.radar-info-card {
-    box-shadow: 0 5px 5px 4px lightblue;
-    border-radius:6px;
-    padding: 10px;
-}
-
-.radar-setting-div {
-    padding-left: 20px;
-}
-
-.radar-setting-table {
-    border-collapse: collapse;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-.radar-setting-table thead tr {
+.device-page-header {
+    padding: 20px;
+    width: 100%;
     background-color: #3f51b5;
-    color: #ffffff;
-    text-align: left;
+    color: white;
 }
 
-.radar-setting-table th,
-.radar-setting-table td {
-    padding: 12px 15px;
+.device-sidenav {
+    width: 204px;
+    margin: 0;
+    height: 100%;
+    background-color: #f2f2f2;
 }
 
-.radar-setting-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+.device-sidenav-content {
+    height: 100%;
+    padding: 20px;
 }
 
-.radar-setting-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+.route-active {
+    color: #3f51b5;
+    background-color: #dbdbdb;
 }
 
-.radar-setting-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-.radar-setting-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
+.nav-list-item:hover {
+    background-color: #dbdbdb;
+    color:#1976d2;
 }

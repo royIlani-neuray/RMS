@@ -13,7 +13,6 @@ import { FrameData } from '../entities/frame-data';
 export interface GateIdPrediction {
   track_id: number
   identity: string
-  confidence: number
 }
 
 @Injectable()
@@ -73,6 +72,9 @@ export class DeviceWebsocketService {
 
   public Disconnect()
   { 
+    if (!this.connected)
+      return
+
     // Close the connection, if open.
     if (this.socket.readyState === WebSocket.OPEN) 
     {

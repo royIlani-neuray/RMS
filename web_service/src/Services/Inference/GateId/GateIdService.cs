@@ -16,6 +16,10 @@ public class GateIdService : IRadarService
 {
     private const string SERVICE_ID = "GATE_ID_CLOSED_SET";
     private const int REQUIRED_WINDOW_SIZE = 30;
+
+    private const int PREDICTION_REQUIRED_HIT_COUNT = 3;
+    private const int PREDICTION_REQUIRED_MISS_COUNT = 2;
+
     private const string SERVICE_OPTION_MODEL_NAME = "gate_id_model";
 
     public string ServiceId => SERVICE_ID;
@@ -33,7 +37,7 @@ public class GateIdService : IRadarService
     public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string, string> serviceOptions)
     {
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(device, modelName, REQUIRED_WINDOW_SIZE);
+        GateIdContext gateIdContext = new GateIdContext(device, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;

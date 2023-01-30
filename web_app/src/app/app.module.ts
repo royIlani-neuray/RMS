@@ -29,6 +29,8 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatListModule} from '@angular/material/list';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
@@ -53,6 +55,8 @@ import { TemplatesPageComponent } from './pages/templates-page/templates-page.co
 import { SetDeviceConfigDialogComponent } from './components/set-device-config-dialog/set-device-config-dialog.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
 import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
+import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
+import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
 
 
 @NgModule({
@@ -72,7 +76,9 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
     TemplatesPageComponent,
     SetDeviceConfigDialogComponent,
     TemplatePageComponent,
-    RecordingsPageComponent
+    RecordingsPageComponent,
+    DeviceInfoComponent,
+    RadarSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -92,6 +98,8 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
     MatInputModule,
     MatFormFieldModule,
     MatSidenavModule,
+    MatExpansionModule,
+    MatListModule,
     MatDialogModule,
     MatRadioModule,
     MatSlideToggleModule,
