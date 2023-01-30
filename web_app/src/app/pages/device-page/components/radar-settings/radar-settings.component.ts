@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
-import { DevicesService } from 'src/app/services/devices.service';
 import { DevicePageDataService } from '../../device-page-data.service';
 
 @Component({
@@ -11,14 +9,9 @@ import { DevicePageDataService } from '../../device-page-data.service';
 })
 export class RadarSettingsComponent implements OnInit {
 
-  constructor(private devicesService : DevicesService, 
-              private devicePageData : DevicePageDataService,
-              private router : Router, 
-              private activatedRoute:ActivatedRoute) { }
+  constructor(private devicePageData : DevicePageDataService) { }
 
   radarDevice : RadarDevice
-  deviceId : string
-  updateTimer : any
 
   ngOnInit(): void {
     this.radarDevice = this.devicePageData.radarDevice
