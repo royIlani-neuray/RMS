@@ -47,7 +47,6 @@ import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-m
 import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
 import { SetNetworkDialogComponent } from './components/set-network-dialog/set-network-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
 import { ErrorPageNotFoundComponent } from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
@@ -72,7 +71,6 @@ import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components
     DevicePageComponent,
     DeviceMappingPageComponent,
     NewDevicePageComponent,
-    TracksViewerComponent,
     SetNetworkDialogComponent,
     EditRadarInfoDialogComponent,
     ConfirmDialogComponent,

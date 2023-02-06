@@ -21,7 +21,7 @@ import { TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-vie
 
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
-import { TracksViewerComponent } from './pages/tracks-viewer/tracks-viewer.component';
+
 import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
 import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
 
