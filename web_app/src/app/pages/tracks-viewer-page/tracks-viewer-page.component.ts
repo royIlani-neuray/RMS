@@ -1,6 +1,13 @@
-import { NgComponentOutlet } from '@angular/common';
-import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, ComponentFactoryResolver, Directive, AfterViewInit } from '@angular/core';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+/***
+** Copyright (C) 2020-2023 neuRay Labs. All rights reserved.
+**
+** The information and source code contained herein is the exclusive 
+** property of neuRay Labs and may not be disclosed, examined, reproduced, redistributed, used in source and binary forms, in whole or in part  
+** without explicit written authorization from the company.
+**
+***/
+import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { MatGridList } from '@angular/material/grid-list';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDrawer } from '@angular/material/sidenav';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
