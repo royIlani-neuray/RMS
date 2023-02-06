@@ -1,0 +1,11 @@
+<div #canvas 
+    class="window-canvas"
+    (window:resize)="onResize()"
+    (click)="onClick()"
+    [ngClass]="{'selected-window' : windowSelected}">
+</div>
+
+<div class="selected-device-lable" *ngIf="radarDevice != null; else noDeviceSelected">{{radarDevice.name}}</div>
+<ng-template #noDeviceSelected><div class="selected-device-lable">No device selected.</div></ng-template>
+
+<button type="button" class="details-button" mat-raised-button color="primary" (click)="detailsButtonClicked()">Details...</button>
