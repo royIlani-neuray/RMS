@@ -13,12 +13,12 @@ import { Router } from '@angular/router';
 import { FrameData, PointData, TrackData } from 'src/app/entities/frame-data';
 import { RadarDevice, RadarDeviceBrief } from 'src/app/entities/radar-device';
 import { MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DevicesService } from '../../services/devices.service';
 import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
 import * as THREE from "three";
 import { FontLoader, Font } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 @Component({
   selector: 'app-page-tracks-viewer',

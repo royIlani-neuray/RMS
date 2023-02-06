@@ -38,7 +38,8 @@ import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
-
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatMenuModule} from '@angular/material/menu';
 
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
@@ -57,6 +58,9 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
 import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
 import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
 import { EditRadarInfoDialogComponent } from './pages/device-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
+import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
+import { RadarViewWindowComponent } from './pages/tracks-viewer-page/components/radar-view-window/radar-view-window.component';
+import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components/radar-details-info/radar-details-info.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +81,11 @@ import { EditRadarInfoDialogComponent } from './pages/device-page/components/edi
     TemplatePageComponent,
     RecordingsPageComponent,
     DeviceInfoComponent,
-    RadarSettingsComponent
+    RadarSettingsComponent,
+    TracksViewerPageComponent,
+    RadarViewWindowComponent,
+    DynamicWindow,
+    RadarDetailsInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -106,6 +114,8 @@ import { EditRadarInfoDialogComponent } from './pages/device-page/components/edi
     MatCheckboxModule,
     MatStepperModule,
     MatTabsModule,
+    MatGridListModule,
+    MatMenuModule,
 
     HttpClientModule,
     RouterModule,

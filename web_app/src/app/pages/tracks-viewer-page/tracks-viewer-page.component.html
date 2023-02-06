@@ -1,0 +1,38 @@
+
+<mat-drawer-container autosize>
+    <mat-drawer #drawer mode="side" position="end">
+        <app-radar-details-info></app-radar-details-info>
+    </mat-drawer>
+    <mat-drawer-content>
+        <div class="grid-list-wrapper">
+            <mat-grid-list cols="1" rowHeight="fit">
+                <mat-grid-tile *ngFor="let _ of [].constructor(windowsCount); let windowIndex = index" class="grid-tile" (contextmenu)="onRightClick($event, windowIndex)">
+                    <dynamic-window [attr.id]="'window_'+ windowIndex"></dynamic-window>                  
+                </mat-grid-tile>
+            </mat-grid-list> 
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>
+
+<div style="visibility: hidden; position: fixed"
+    [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y"
+    [matMenuTriggerFor]="contextMenu">
+</div>
+
+<mat-menu #contextMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="selectRadarDeviceMenu">Select Radar Device</button>
+    <button mat-menu-item [matMenuTriggerFor]="setWindowsLayoutMenu">Set Windows Layout</button>
+</mat-menu>
+
+<mat-menu #selectRadarDeviceMenu="matMenu">
+    <button *ngFor="let device of this.tracksViewerData.deviceList" [disabled]="!device.enabled" (click)="setRadarDevice(device.device_id)" mat-menu-item>{{device.name}}</button>
+</mat-menu>
+
+<mat-menu #setWindowsLayoutMenu="matMenu">
+    <button mat-menu-item (click)="this.tracksViewerData.setWindowsViewLayout('1x1')">1x1</button>
+    <button mat-menu-item (click)="this.tracksViewerData.setWindowsViewLayout('1x2')">1x2</button>
+    <button mat-menu-item (click)="this.tracksViewerData.setWindowsViewLayout('2x2')">2x2</button>
+    <button mat-menu-item (click)="this.tracksViewerData.setWindowsViewLayout('2x3')">2x3</button>
+    <button mat-menu-item (click)="this.tracksViewerData.setWindowsViewLayout('3x3')">3x3</button>
+</mat-menu>

@@ -1,0 +1,85 @@
+
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    
+    <mat-tab label="Tracker">
+        <table mat-table [dataSource]="tracksDataSource" class="tracks-list-table">
+            <ng-container matColumnDef="track_id">
+                <th mat-header-cell *matHeaderCellDef> Track ID </th>
+                <td mat-cell *matCellDef="let element"> Track-{{element.track_id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="range">
+                <th mat-header-cell *matHeaderCellDef> Range</th>
+                <td mat-cell *matCellDef="let element">{{ getTrackRange(element) | number:'1.0-2' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="position_x">
+                <th mat-header-cell *matHeaderCellDef> Pos X </th>
+                <td mat-cell *matCellDef="let element"> {{element.position_x  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="position_y">
+                <th mat-header-cell *matHeaderCellDef> Pos Y </th>
+                <td mat-cell *matCellDef="let element"> {{element.position_y  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="position_z">
+                <th mat-header-cell *matHeaderCellDef> Pos Z </th>
+                <td mat-cell *matCellDef="let element"> {{element.position_z  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="velocity_x">
+                <th mat-header-cell *matHeaderCellDef> Vel X </th>
+                <td mat-cell *matCellDef="let element"> {{element.velocity_x  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="velocity_y">
+                <th mat-header-cell *matHeaderCellDef> Vel Y </th>
+                <td mat-cell *matCellDef="let element"> {{element.velocity_y  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="velocity_z">
+                <th mat-header-cell *matHeaderCellDef> Vel Z </th>
+                <td mat-cell *matCellDef="let element"> {{element.velocity_z  | number:'1.0-2'}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="tracksTableDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: tracksTableDisplayedColumns;"></tr>
+        </table>
+        <br>
+        <div style="padding-left: 10px;">
+            <label>Total number of points: {{numberOfPoints}}</label>
+        </div>
+        <br><br>
+    </mat-tab>
+
+    <mat-tab label="Gate ID">
+        <table mat-table [dataSource]="gateIdPredictionsSource" class="tracks-list-table">
+            <ng-container matColumnDef="track_id">
+                <th mat-header-cell *matHeaderCellDef> Track ID </th>
+                <td mat-cell *matCellDef="let element"> Track-{{element.track_id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="identity">
+                <th mat-header-cell *matHeaderCellDef> Identity </th>
+                <td mat-cell *matCellDef="let element">{{element.identity}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="gateIdDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: gateIdDisplayedColumns;"></tr>
+        </table>
+    </mat-tab>
+    
+    <mat-tab label="Display Options">
+        <div style="padding-left: 10px;">
+            <h4>Display Options:</h4>
+            <mat-checkbox [formControl]="showTracksFC" (change)="updateViewFilters()">Show Tracks</mat-checkbox><br>
+            <mat-checkbox [formControl]="showBoundryBoxFC" (change)="updateViewFilters()">Show boundry box</mat-checkbox><br>
+            <mat-checkbox [formControl]="showStaticBoundryBoxFC" (change)="updateViewFilters()">Show static boundry box</mat-checkbox><br>
+            <mat-checkbox [formControl]="showPointCloudFC" (change)="updateViewFilters()">Show point cloud</mat-checkbox><br>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
+<button type="button" class="close-button" mat-raised-button color="primary" (click)="closeButtonClicked()">Close Details</button>

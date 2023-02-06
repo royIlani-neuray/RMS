@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
 import { DevicesService } from '../../services/devices.service';
@@ -18,7 +18,7 @@ import { DevicePageDataService } from './device-page-data.service';
   styleUrls: ['./device-page.component.css'],
   providers: [DevicePageDataService]
 })
-export class DevicePageComponent implements OnInit {
+export class DevicePageComponent implements OnInit, OnDestroy {
 
   constructor(private devicesService : DevicesService, 
               private devicePageData : DevicePageDataService,
@@ -55,12 +55,11 @@ export class DevicePageComponent implements OnInit {
     
   }
 
-  ngOnDestroy() 
+  ngOnDestroy(): void 
   {
     if (this.updateTimer) 
     {
       clearInterval(this.updateTimer);
     }
   }
-  
 }
