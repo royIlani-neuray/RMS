@@ -62,4 +62,16 @@ export class DevicePageComponent implements OnInit, OnDestroy {
       clearInterval(this.updateTimer);
     }
   }
+
+  getDeviceStatus()
+  {
+    if (!this.radarDevice.enabled)
+    {
+      return "Disabled"
+    }
+    else
+    {
+      return this.radarDevice.state
+    }
+  }
 }
