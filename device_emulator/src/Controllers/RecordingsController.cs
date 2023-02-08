@@ -43,4 +43,23 @@ public class RecordingsController : ControllerBase
         string zipFileName = Path.Combine(Path.GetFileNameWithoutExtension(recordingFile), ".zip");
         return File(fileData, "application/zip", zipFileName);
     }
+
+    [HttpPost()]
+    [DisableRequestSizeLimit]
+    public async Task UploadRecording()
+    {
+        if (Request.Form.Files.Count != 1)
+        {
+            throw new BadRequestException("Only one file allowed to upload.");
+        }
+
+        var stream = Request.Form.Files[0].OpenReadStream();
+
+        using (var ms = new MemoryStream())
+        {
+            await stream.CopyToAsync(ms);
+            ms.Seek(0, SeekOrigin.Begin);
+            RecordingsManager.Instance.UploadRecording(ms);
+        }
+    }   
 }

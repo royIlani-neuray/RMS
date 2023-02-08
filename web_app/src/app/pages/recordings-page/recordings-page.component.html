@@ -46,5 +46,13 @@
         <mat-spinner [diameter]="40"></mat-spinner>
     </div>
     
+    <div>
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+        <input #fileUpload type="file" style="display: none;" (change)="onUploadFile($event)" accept=".zip">
+        <button mat-raised-button (click)="fileUpload.click()" color="primary">Upload Recording...</button>    
+    </div>
+    <br><br><br>
 </div>
 

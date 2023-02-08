@@ -191,4 +191,36 @@ public class RecordingsManager
             return outStream.ToArray();
         }
     }
+
+    public void UploadRecording(Stream fileStream)
+    {
+        using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Read, true))
+        {
+            if (archive.Entries.Count != 2)
+            {
+                throw new BadRequestException("Invalid zip file provided.");
+            }
+
+            if (!archive.Entries.ToList().Exists(entry => entry.Name.EndsWith(RecordingDataFileExtention)))
+            {
+                throw new BadRequestException("Missing recording file in zip.");
+            }
+
+            if (!archive.Entries.ToList().Exists(entry => entry.Name.EndsWith(RecordingSettingFileExtention)))
+            {
+                throw new BadRequestException("Missing recording meta file in zip.");
+            }
+            
+            foreach (var fileEntry in archive.Entries)
+            {
+                using (var entryStream = fileEntry.Open())
+                {
+                    System.Console.WriteLine($"Extracting {fileEntry.Name} to recording library...");
+                    var targetPath = Path.Combine(RecordingsFolderPath, fileEntry.Name);
+                    fileEntry.ExtractToFile(targetPath, true);
+                }
+            }
+        }        
+
+    }
 }
