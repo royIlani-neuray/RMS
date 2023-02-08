@@ -13,14 +13,14 @@ using InferenceService.Entities;
 
 namespace InferenceService.Models;
 
-public class GateIdModel : IModelImplementation
+public class HumanDetectionModel : IModelImplementation
 {
     private Model model;
 
     private const int POINTS_PER_FRAME = 128;
     private int framesPerWindow;
 
-    public GateIdModel(Model model)
+    public HumanDetectionModel(Model model)
     {
         this.model = model;
         framesPerWindow = int.Parse(this.model.Settings["FRAMES_PER_WINDOW"]);
@@ -104,40 +104,23 @@ public class GateIdModel : IModelImplementation
         var output = model.Session!.Run(inputs).ToList();
         DenseTensor<float> outTensor = (DenseTensor<float>) output[0].Value;
 
-        var softmax = Softmax(outTensor.ToArray());
         
-        float confidence = -1;
-        string label = String.Empty;
-
-        for (int lableIndex=0; lableIndex < softmax.Length; lableIndex++)
+        bool isPerson = false;
+        if (outTensor.ToArray()[0] > 0.5)
         {
-            System.Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]}");
-
-            if (confidence < softmax[lableIndex])
-            {
-                confidence = softmax[lableIndex];
-                label = this.model.Labels[lableIndex];
-            }
+            isPerson = true;
         }
 
-        System.Console.WriteLine($"Selected label: {label}");
+        System.Console.WriteLine($"Person Detected: {isPerson}. Confidence: {outTensor.ToArray()[0]}");
 
         GateIdResponse response = new GateIdResponse() 
         {
-            Label = label,
-            Confidence = confidence
+            Label = (isPerson ? "Person" : "Noise"),
+            Confidence = outTensor.ToArray()[0]
         };
 
         return response;
     }
 
-    private float[] Softmax(float[] values)
-    {
-        var maxVal = values.Max();
-        var exp = values.Select(v => Math.Exp(v - maxVal));
-        var sumExp = exp.Sum();
-
-        return exp.Select(v => (float)(v / sumExp)).ToArray();
-    }
     
 }
