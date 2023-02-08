@@ -41,7 +41,7 @@ export class TracksViewerDataService {
 
   public setSelectedWindow(window : RadarViewWindowComponent)
   {
-    console.log("window clicked!")
+    //console.log("window selected.")
     this.selectedWindow = window
     this.selectedWindowSubject.next(this.selectedWindow)
   }
