@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using System.Text.Json;
+
 using System.Text.Json.Serialization;
 using DeviceEmulator.Recordings;
 using DeviceEmulator.RMS;
@@ -40,14 +40,6 @@ public class Emulator {
     {
         deviceId = EmulatorSettings.Instance.DeviceId.ToString();
         playback = new PlaybackArgs();
-
-        var recordingPath = Environment.GetEnvironmentVariable("RMS_RECORDING_PATH");
-
-        if (recordingPath != null)
-        {
-            System.Console.WriteLine($"Override recording path to: {recordingPath}");
-            RecordingsFolderPath = recordingPath;
-        }
     }
 
     #endregion
@@ -67,22 +59,6 @@ public class Emulator {
         }
     }
 
-    public class DeviceSettings 
-    {
-        [JsonPropertyName("name")]
-        public String Name { get; set; } = String.Empty;
-
-        [JsonPropertyName("device_id")]
-        public String Id { get; set; } = String.Empty;
-
-        [JsonPropertyName("config_script")]
-        public List<string> ConfigScript { get; set; } = new List<string>();
-    }
-
-    public string RecordingsFolderPath = "./data/recordings";
-    public const string RecordingDataFileExtention = ".rrec";
-    public const string RecordingSettingFileExtention = ".json";
-
     private Task? emulatorTask;
     private RMSClient? rmsClient;
     private string deviceId;
@@ -93,7 +69,7 @@ public class Emulator {
     public async Task SetPlaybackAsync(PlaybackArgs playbackArgs)
     {
         playbackArgs.Validate();
-        var deviceSettings = GetDeviceSettings(playbackArgs.PlaybackFile);
+        var deviceSettings = RecordingsManager.Instance.GetDeviceSettings(playbackArgs.PlaybackFile);
         
         System.Console.WriteLine();
         System.Console.WriteLine("** Loading playback file **");
@@ -102,7 +78,7 @@ public class Emulator {
         System.Console.WriteLine($"** Loop forever: {playbackArgs.LoopForever}");
         System.Console.WriteLine();
 
-        string playbackFilePath = System.IO.Path.Combine(RecordingsFolderPath, playbackArgs.PlaybackFile);
+        string playbackFilePath = System.IO.Path.Combine(RecordingsManager.Instance.RecordingsFolderPath, playbackArgs.PlaybackFile);
 
         RecordingStreamer.Instance.SetRecordingSource(playbackFilePath, playbackArgs.LoopForever);
 
@@ -115,14 +91,6 @@ public class Emulator {
 
         System.Console.WriteLine("Sending device info broadcast");
         rmsClient!.SendDeviceDiscoveryMessage(deviceId);
-    }
-
-    private DeviceSettings GetDeviceSettings(string playbackFileName)
-    {
-        string deviceFileName = $"{System.IO.Path.GetFileNameWithoutExtension(playbackFileName)}{RecordingSettingFileExtention}";
-        string deviceFilePath = System.IO.Path.Combine(RecordingsFolderPath, deviceFileName);
-        string jsonString = File.ReadAllText(deviceFilePath);
-        return JsonSerializer.Deserialize<DeviceSettings>(jsonString)!;
     }
 
     public PlaybackArgs GetPlayback()
@@ -176,89 +144,4 @@ public class Emulator {
         
     }
 
-    public class RecordingInfo 
-    {
-        [JsonPropertyName("device_name")]
-        public String Name { get; set; } = String.Empty;
-
-        [JsonPropertyName("device_id")]
-        public String Id { get; set; } = String.Empty;
-
-        [JsonPropertyName("file_name")]
-        public String Filename { get; set; } = String.Empty;
-
-        [JsonPropertyName("file_size_bytes")]
-        public float FileSizeBytes { get; set; }
-
-        [JsonPropertyName("timestamp")]
-        public string Timestamp { get; set; } = String.Empty;
-
-    }
-
-    public List<RecordingInfo> GetRecordingsList()
-    {
-        List<RecordingInfo> recordings = new List<RecordingInfo>();
-
-        var files = System.IO.Directory.GetFiles(RecordingsFolderPath, "*" + RecordingDataFileExtention);
-
-        foreach (string filePath in files)
-        {
-            string filename = System.IO.Path.GetFileName(filePath);
-
-            var deviceSettings = GetDeviceSettings(filename);
-
-            float fileSizeBytes = (new FileInfo(filePath).Length);
-            string timestamp = System.IO.Path.GetFileNameWithoutExtension(filename).Substring(filename.IndexOf('_') + 1);
-
-            recordings.Add(new RecordingInfo() 
-            {
-                Name = deviceSettings.Name,
-                Id = deviceSettings.Id,
-                Filename = filename,
-                FileSizeBytes = fileSizeBytes,
-                Timestamp = timestamp
-            });
-        }
-
-        return recordings;
-    }
-
-    public void DeleteRecording(string recordingFile)
-    {
-        if (String.IsNullOrWhiteSpace(recordingFile))
-        {
-            throw new BadRequestException("Recording file not provided");
-        }
-
-        if (System.IO.Path.GetExtension(recordingFile) != RecordingDataFileExtention)
-        {
-            throw new BadRequestException("Invalid recording file");
-        }
-
-        var dataFilePath = System.IO.Path.Combine(RecordingsFolderPath, recordingFile);
-        
-        if (!File.Exists(dataFilePath))
-        {
-            throw new BadRequestException($"Cannot find the given recording file: {recordingFile}");
-        }
-
-        string fileBaseName = System.IO.Path.GetFileNameWithoutExtension(recordingFile);
-
-        string metaFilePath = System.IO.Path.Combine(RecordingsFolderPath, $"{fileBaseName}{RecordingSettingFileExtention}");
-
-        try
-        {
-            File.Delete(dataFilePath);
-
-            if (File.Exists(metaFilePath))
-            {
-                File.Delete(metaFilePath);
-            }
-        }
-        catch
-        {
-            throw new Exception("Cannot delete the given recording file. Recording/Playback might be in progress.");
-        }
-
-    }
 }

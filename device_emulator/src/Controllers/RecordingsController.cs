@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using DeviceEmulator.Recordings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeviceEmulator.Controllers;
@@ -23,15 +24,20 @@ public class RecordingsController : ControllerBase
     }
 
     [HttpGet]
-    public List<Emulator.RecordingInfo> GetRecordings()
+    public List<RecordingsManager.RecordingInfo> GetRecordings()
     {
-        return Emulator.Instance.GetRecordingsList();
+        return RecordingsManager.Instance.GetRecordingsList();
     }
 
     [HttpDelete("{recordingFile}")]
     public void DeleteRecording(string recordingFile)
     {        
-        Emulator.Instance.DeleteRecording(recordingFile);
+        RecordingsManager.Instance.DeleteRecording(recordingFile);
     }
 
+    [HttpGet("{recordingFile}/download")]
+    public Task<IActionResult> DownloadRecording(string recordingFile)
+    {
+        throw new NotImplementedException();
+    }
 }
