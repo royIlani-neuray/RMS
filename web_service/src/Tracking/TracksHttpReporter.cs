@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Utils;
 using System.Text;
 using System.Text.Json;
 using WebService.Utils;
@@ -17,12 +18,10 @@ public class TracksHttpReporter : WorkerThread<FrameData>
     private const int MAX_QUEUE_CAPACITY = 5;
 
     private DateTime LastReportTime;
-    private HttpClient httpClient;
 
     public TracksHttpReporter() : base("TracksHttpReporter", MAX_QUEUE_CAPACITY)
     {
         LastReportTime = DateTime.Now;
-        httpClient = new HttpClient();
     }
 
     public void SendReport(FrameData frameData)
@@ -71,6 +70,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
                 Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
             };
 
+            var httpClient = HttpClientFactory.Instance.CreateClient();
             httpClient.Send(httpRequest);
 
         }
