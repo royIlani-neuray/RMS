@@ -36,8 +36,11 @@ public class RecordingsController : ControllerBase
     }
 
     [HttpGet("{recordingFile}/download")]
-    public Task<IActionResult> DownloadRecording(string recordingFile)
+    public async Task<IActionResult> DownloadRecording(string recordingFile)
     {
-        throw new NotImplementedException();
+        var fileData = await RecordingsManager.Instance.DownloadRecording(recordingFile);
+
+        string zipFileName = Path.Combine(Path.GetFileNameWithoutExtension(recordingFile), ".zip");
+        return File(fileData, "application/zip", zipFileName);
     }
 }

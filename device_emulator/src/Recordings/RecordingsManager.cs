@@ -8,6 +8,8 @@
 ***/
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.IO.Compression;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DeviceEmulator.Recordings;
 
@@ -118,7 +120,7 @@ public class RecordingsManager
         return recordings;
     }
 
-    public void DeleteRecording(string recordingFile)
+    private void GetRecordingFilePaths(string recordingFile, out string dataFilePath, out string metaFilePath)
     {
         if (String.IsNullOrWhiteSpace(recordingFile))
         {
@@ -130,8 +132,8 @@ public class RecordingsManager
             throw new BadRequestException("Invalid recording file");
         }
 
-        var dataFilePath = System.IO.Path.Combine(RecordingsFolderPath, recordingFile);
-        
+        dataFilePath = System.IO.Path.Combine(RecordingsFolderPath, recordingFile);
+
         if (!File.Exists(dataFilePath))
         {
             throw new BadRequestException($"Cannot find the given recording file: {recordingFile}");
@@ -139,7 +141,12 @@ public class RecordingsManager
 
         string fileBaseName = System.IO.Path.GetFileNameWithoutExtension(recordingFile);
 
-        string metaFilePath = System.IO.Path.Combine(RecordingsFolderPath, $"{fileBaseName}{RecordingSettingFileExtention}");
+        metaFilePath = System.IO.Path.Combine(RecordingsFolderPath, $"{fileBaseName}{RecordingSettingFileExtention}");
+    }
+
+    public void DeleteRecording(string recordingFile)
+    {
+        GetRecordingFilePaths(recordingFile, out string dataFilePath, out string metaFilePath);
 
         try
         {
@@ -157,4 +164,31 @@ public class RecordingsManager
 
     }
 
+    public async Task<byte[]> DownloadRecording(string recordingFile)
+    {
+        GetRecordingFilePaths(recordingFile, out string dataFilePath, out string metaFilePath);
+
+        List<string> zipFiles = new List<string>() { dataFilePath, metaFilePath };
+
+        using (var outStream = new MemoryStream())
+        {
+            using (var archive = new ZipArchive(outStream, ZipArchiveMode.Create, true))
+            {
+                foreach (var filePath in zipFiles)
+                {
+                    var fileInArchive = archive.CreateEntry(Path.GetFileName(filePath), CompressionLevel.Optimal);
+                    using (var entryStream = fileInArchive.Open())
+                    {
+                        using (var fileCompressionStream = new MemoryStream(await System.IO.File.ReadAllBytesAsync(filePath)))
+                        {
+                            await fileCompressionStream.CopyToAsync(entryStream);
+                        }
+                    }
+                }
+            }
+
+            outStream.Position = 0;
+            return outStream.ToArray();
+        }
+    }
 }
