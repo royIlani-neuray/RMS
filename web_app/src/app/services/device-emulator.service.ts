@@ -42,4 +42,9 @@ export class DeviceEmulatorService {
   {
     return this.http.delete("/device-emulator/emulator/recordings/" + recording.file_name)
   }
+
+  public uploadRecording(recordingFile : any)
+  {
+    return this.http.post("/device-emulator/emulator/recordings", recordingFile)
+  }
 }

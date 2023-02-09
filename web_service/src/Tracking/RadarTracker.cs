@@ -130,9 +130,10 @@ public class RadarTracker
             {
                 ServiceManager.Instance.InitServiceContext(radarDevice, linkedService);
             }
-            catch
+            catch (Exception ex)
             {
                 System.Console.WriteLine($"[{radarDevice.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
+                System.Console.WriteLine($"[{radarDevice.Id}] Error: {ex.Message}");
                 throw;
             }
         }

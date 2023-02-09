@@ -47,6 +47,8 @@ export class RadarDetailsInfoComponent implements OnInit {
     this.tracksViewerData.selectedWindowSubject.subscribe({
       next : (selectedWindow) => 
       {
+        if (selectedWindow === this.selectedRadarWindow)
+          return;
 
         this.numberOfPoints = 0
         this.tracksDataSource.data = []
@@ -54,7 +56,7 @@ export class RadarDetailsInfoComponent implements OnInit {
 
         if (this.frameDataSubscription != null)
         {
-          console.log("Unsubscribe from frame data!")
+          //console.log("Unsubscribe from frame data!")
           this.frameDataSubscription.unsubscribe()
           this.frameDataSubscription = null
         }
@@ -75,7 +77,7 @@ export class RadarDetailsInfoComponent implements OnInit {
         this.frameDataSubscription = this.selectedRadarWindow.frameDataSubject.subscribe({
           next: (frameData) => 
           {
-            console.log("Got Frame data!!!")
+            //console.log("Got Frame data!!!")
             this.tracksDataSource.data = frameData.tracks
             this.numberOfPoints = frameData.points.length
           }

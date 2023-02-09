@@ -9,23 +9,21 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Utils;
 
 namespace DeviceEmulator.RMS;
 
 public class RMSClient 
 {
-    private HttpClient httpClient;
-    private string baseUrl;
-
     public RMSClient()
     {
-        httpClient = new HttpClient();
-        baseUrl = "localhost:16500";
     }
 
     public async Task<List<RadarDeviceBrief>> GetRegisteredDevicesAsync()
     {
-        var devices = await httpClient.GetFromJsonAsync<List<RadarDeviceBrief>>($"http://{baseUrl}/devices");
+        var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
+
+        var devices = await httpClient.GetFromJsonAsync<List<RadarDeviceBrief>>($"devices");
 
         if (devices == null)
             throw new Exception("Failed to get device list from RMS");
@@ -41,12 +39,14 @@ public class RMSClient
 
     public async Task<bool> SetDeviceConfig(string deviceId, List<string> config)
     {
+        var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
+        
         var requestBody = new 
         {
             config
         };
 
-        var response = await httpClient.PostAsJsonAsync($"http://{baseUrl}/devices/{deviceId}/config", requestBody);
+        var response = await httpClient.PostAsJsonAsync($"devices/{deviceId}/config", requestBody);
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
@@ -60,6 +60,8 @@ public class RMSClient
 
     public async Task<bool> RegisterDeviceAsync(string deviceId)
     {
+        var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
+
         var requestBody = new 
         {
             name = "Device Emulator",
@@ -78,7 +80,7 @@ public class RMSClient
             }
         };
 
-        var response = await httpClient.PostAsJsonAsync($"http://{baseUrl}/devices", requestBody);
+        var response = await httpClient.PostAsJsonAsync($"devices", requestBody);
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {

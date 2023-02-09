@@ -190,7 +190,17 @@ public class IPRadarClient
             throw new Exception("ReadTIData failed - radar not connected.");
 
         //System.Console.WriteLine($"Debug: Trying to Read from data stream... size: {size}"); 
-        return dataStream!.GetStream().Read(dataArray, 0, size);
+
+        int bytesRead = 0;
+        var stream = dataStream!.GetStream();
+
+        while (bytesRead < size)
+        {
+            bytesRead += stream.Read(dataArray, bytesRead, size - bytesRead);
+            //System.Console.WriteLine($"Debug: Read {bytesRead} out of {size}");
+        }
+
+        return bytesRead;
     }
 
     public static List<IPAddress> GetBroadcastAddresses()

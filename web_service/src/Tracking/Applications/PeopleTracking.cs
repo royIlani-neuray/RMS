@@ -156,9 +156,11 @@ public class PeopleTracking : ITrackingApplication
             var tlvLength = reader.ReadUInt32();
 
             byte [] tlvDataBytes = new byte[tlvLength];
-            if (readTIDataFunction(tlvDataBytes, tlvDataBytes.Length) != tlvLength)
+            
+            int bytesRead = readTIDataFunction(tlvDataBytes, tlvDataBytes.Length);
+            if (bytesRead != tlvLength)
             {
-                throw new Exception("failed reading TLV data!");
+                throw new Exception($"failed reading TLV data! expected: {tlvLength}, got {bytesRead} bytes");
             }
 
             reader = new BinaryReader(new MemoryStream(tlvDataBytes));

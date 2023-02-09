@@ -18,6 +18,7 @@ public class ModelFactory {
         {
             case Model.ModelTypes.GateId: return new GateIdModel(model);
             case Model.ModelTypes.PoseEstimation: return new PoseEstimationModel(model);
+            case Model.ModelTypes.HumanDetection: return new HumanDetectionModel(model);
 
             default:
                 throw new Exception("missing implementation for the given model type!");

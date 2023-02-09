@@ -18,7 +18,8 @@ public class Model
     {
         Unknown,
         GateId,
-        PoseEstimation
+        PoseEstimation,
+        HumanDetection
     }
 
     [JsonPropertyName("name")]

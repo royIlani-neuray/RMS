@@ -10,6 +10,7 @@ using WebService.Entites;
 using WebService.Tracking;
 using WebService.Services.Recording;
 using WebService.Services.Inference.GateId;
+using WebService.Services.Inference.HumanDetection;
 
 namespace WebService.Services;
 
@@ -59,6 +60,7 @@ public sealed class ServiceManager {
 
         services.Add(new RecordingService());
         services.Add(new GateIdService());
+        services.Add(new HumanDetectionService());
 
         foreach (var service in services)
         {

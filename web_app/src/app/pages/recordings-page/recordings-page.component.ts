@@ -93,7 +93,7 @@ export class RecordingsPageComponent implements OnInit {
   {
     this.deviceEmulatorService.setPlaybackSettings(recording).subscribe({
       next : (response) => this.notification.open("Device emulator playback set", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could set playback")
+      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not set playback")
     })
   }
 
@@ -121,5 +121,22 @@ export class RecordingsPageComponent implements OnInit {
   {
     this.notification.open(message, "Close", { duration : 4000 })
   }
+
+  onUploadFile(event : any) {
+
+    const file:File = event.target.files[0];
+
+    if (file) 
+    {
+        const formData = new FormData();
+
+        formData.append("thumbnail", file);
+
+        this.deviceEmulatorService.uploadRecording(formData).subscribe({
+          next : (response) => this.notification.open("Recording uploaded.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
+          error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: upload recording failed!")
+        })
+    }
+}
 
 }

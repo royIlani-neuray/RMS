@@ -1,5 +1,5 @@
 
-using System.Net;
+using Utils;
 
 namespace WebService.Services.Inference;
 
@@ -28,16 +28,13 @@ public class InferenceServiceClient
 
     private InferenceServiceClient() 
     {
-        httpClient = new HttpClient();
-        httpClient.BaseAddress = GetServiceBaseAddress();
     }
 
     #endregion
 
+    private const string HTTP_CLIENT_NAME = "INFERENCE_SERVICE";
     private const string ENV_VARIABLE_SERVICE_HOST = "INFERENCE_SERVICE_HOST";
     private const string ENV_VARIABLE_SERVICE_PORT = "INFERENCE_SERVICE_PORT";
-
-    private HttpClient httpClient;
 
     private System.Uri GetServiceBaseAddress()
     {
@@ -63,8 +60,16 @@ public class InferenceServiceClient
         return builder.Uri;
     }
 
+    public void GetHttpClientDetails(out string name, out Uri baseAddress)
+    {
+        name = HTTP_CLIENT_NAME;
+        baseAddress = GetServiceBaseAddress();
+    }
+
     public async Task<string> Predict(string modelName, string requestInput)
     {
+        var httpClient = HttpClientFactory.Instance.CreateClient(HTTP_CLIENT_NAME);
+        
         var predictRequestArgs = new {
             prediction_input = requestInput
         };
