@@ -60,6 +60,7 @@ import { EditRadarInfoDialogComponent } from './pages/device-page/components/edi
 import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
 import { RadarViewWindowComponent } from './pages/tracks-viewer-page/components/radar-view-window/radar-view-window.component';
 import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components/radar-details-info/radar-details-info.component';
+import { ConfigScriptDialogComponent } from './pages/device-page/components/config-script-dialog/config-script-dialog.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components
     TracksViewerPageComponent,
     RadarViewWindowComponent,
     DynamicWindow,
-    RadarDetailsInfoComponent
+    RadarDetailsInfoComponent,
+    ConfigScriptDialogComponent
   ],
   imports: [
     BrowserModule,

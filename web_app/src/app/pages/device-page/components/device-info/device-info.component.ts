@@ -78,13 +78,6 @@ export class DeviceInfoComponent implements OnInit {
       height: '390px',
       data: { radarDevice: this.radarDevice }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result)
-      {
-        this.devicePageData.getDevice(this.radarDevice.device_id)
-      }
-    });
   }
 
   public setDeviceConfiguration()
@@ -98,8 +91,7 @@ export class DeviceInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result)
       {
-        this.notification.open("Radar configuration updated.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
-        this.devicePageData.getDevice(this.radarDevice.device_id)
+        this.notification.open("Radar configuration updated.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' })
       }
     });    
   }
