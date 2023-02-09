@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { RadarDeviceBrief } from 'src/app/entities/radar-device';
 import { DevicesService } from 'src/app/services/devices.service';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 
 @Injectable()
@@ -23,12 +24,23 @@ export class TracksViewerDataService {
 
   public deviceList: RadarDeviceBrief[] = [];
 
+  public radarWindowsList: RadarViewWindowComponent[] = []; 
+
   public drawer: MatDrawer
 
   constructor (private devicesService : DevicesService,
+               private rmsEventsService : RmsEventsService,
                private router : Router) 
   {
     this.getDeviceList()
+
+    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        this.getDeviceList()
+      }
+    })
+    
   }
   
   private getDeviceList()

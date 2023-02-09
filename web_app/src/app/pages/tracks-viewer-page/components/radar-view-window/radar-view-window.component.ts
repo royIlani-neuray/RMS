@@ -55,6 +55,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
       }
     })
 
+    this.tracksViewerData.radarWindowsList.push(this)
   }
 
   ngOnDestroy(): void 
@@ -65,6 +66,8 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     {
       clearInterval(this.windowRefreshInterval);
     }
+
+    this.tracksViewerData.radarWindowsList = this.tracksViewerData.radarWindowsList.filter(window => {return window !== this})
   }
 
   ngAfterViewInit(): void 
