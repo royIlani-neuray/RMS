@@ -19,7 +19,12 @@ export class RmsEventsService
   public deviceUpdatedEvent: Subject<string> = new Subject<string>()
   public deviceAddedEvent: Subject<string> = new Subject<string>()
   public deviceDeletedEvent: Subject<string> = new Subject<string>()
-  public DeviceMappingUpdatedEvent: Subject<null> = new Subject()
+
+  public deviceMappingUpdatedEvent: Subject<null> = new Subject()
+
+  public templateAddedEvent: Subject<string> = new Subject<string>()
+  public templateDeletedEvent: Subject<string> = new Subject<string>()
+
 
   constructor() 
   { 
@@ -55,7 +60,15 @@ export class RmsEventsService
       }
       else if (message['type'] == 'DEVICE_MAPPING_UPDATED')
       {
-        this.DeviceMappingUpdatedEvent.next(null)
+        this.deviceMappingUpdatedEvent.next(null)
+      }
+      else if (message['type'] == 'TEMPLATE_ADDED')
+      {
+        this.templateAddedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'TEMPLATE_DELETED')
+      {
+        this.templateDeletedEvent.next(message['data'])
       }
 
     }

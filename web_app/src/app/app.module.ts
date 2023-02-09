@@ -61,6 +61,7 @@ import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-
 import { RadarViewWindowComponent } from './pages/tracks-viewer-page/components/radar-view-window/radar-view-window.component';
 import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components/radar-details-info/radar-details-info.component';
 import { ConfigScriptDialogComponent } from './pages/device-page/components/config-script-dialog/config-script-dialog.component';
+import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { ConfigScriptDialogComponent } from './pages/device-page/components/conf
     RadarViewWindowComponent,
     DynamicWindow,
     RadarDetailsInfoComponent,
-    ConfigScriptDialogComponent
+    ConfigScriptDialogComponent,
+    CreateTemplateDialogComponent
   ],
   imports: [
     BrowserModule,

@@ -71,5 +71,14 @@ public class RMSEvents : WebSocketServer
         SendEvent("DEVICE_MAPPING_UPDATED", new Object());
     }
 
+    public void TemplateAddedEvent(string templateId)
+    {
+        SendEvent("TEMPLATE_ADDED", templateId);
+    }
+
+    public void TemplateDeletedEvent(string templateId)
+    {
+        SendEvent("TEMPLATE_DELETED", templateId);
+    }
 
 }

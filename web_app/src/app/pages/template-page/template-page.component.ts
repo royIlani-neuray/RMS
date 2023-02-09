@@ -7,7 +7,10 @@
 **
 ***/
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { RadarTemplate } from 'src/app/entities/radar-template';
 import { TemplatesService } from 'src/app/services/templates.service';
 
@@ -23,6 +26,8 @@ export class TemplatePageComponent implements OnInit {
 
   constructor(private templatesService : TemplatesService, 
               private router : Router, 
+              private dialog: MatDialog,
+              private notification: MatSnackBar,
               private activatedRoute:ActivatedRoute) { }
 
   ngOnInit(): void 
@@ -48,4 +53,28 @@ export class TemplatePageComponent implements OnInit {
     })
   }
 
+  deleteTemplateClicked()
+  {
+    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      height: '140px',
+      data: { message : "Are you sure you want to delete the template?" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result)
+      {
+        this.templatesService.deleteRadarTemplate(this.templateId).subscribe({
+          next : (response) => this.router.navigate(['/templates']),
+          error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
+        })
+      }
+    });
+  }
+
+  private showNotification(message : string)
+  {
+    this.notification.open(message, "Close", { duration : 4000 })
+  }
 }

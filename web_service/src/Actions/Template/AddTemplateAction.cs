@@ -9,6 +9,7 @@
 using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
+using WebService.Events;
 using WebService.Radar;
 
 namespace WebService.Actions.Template;
@@ -78,5 +79,7 @@ public class AddTemplateAction : IAction
         TemplateContext.Instance.AddTemplate(template);
 
         System.Console.WriteLine($"Radar template added.");
+
+        RMSEvents.Instance.TemplateAddedEvent(template.Id);
     }
 }

@@ -37,7 +37,7 @@ public class TemplateController : ControllerBase
     }
 
     [HttpGet("{templateId}")]
-    public RadarTemplate GetRadarDevice(string templateId)
+    public RadarTemplate GetRadarTemplate(string templateId)
     {
         ValidateTemplateId(templateId);        
         if (!TemplateContext.Instance.IsRadarTemplateExist(templateId))
@@ -47,7 +47,7 @@ public class TemplateController : ControllerBase
     }
 
     [HttpPost]
-    public void AddRadarDevice([FromBody] AddTemplateArgs args)
+    public void AddRadarTemplate([FromBody] AddTemplateArgs args)
     {
         AddTemplateAction action = new AddTemplateAction(args);
         action.Run();

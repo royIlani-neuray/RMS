@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
+using WebService.Events;
 
 namespace WebService.Actions.Template;
 
@@ -19,5 +20,7 @@ public class DeleteTemplateAction : RadarTemplateAction
     {
         System.Console.WriteLine($"Deleting radar template - {templateId}");
         TemplateContext.Instance.DeleteTemplate(radarTemplate);
+
+        RMSEvents.Instance.TemplateDeletedEvent(templateId);
     }
 }
