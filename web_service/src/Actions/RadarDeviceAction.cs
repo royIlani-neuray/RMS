@@ -8,6 +8,7 @@
 ***/
 using WebService.Context;
 using WebService.Entites;
+using WebService.Events;
 
 public abstract class RadarDeviceAction : IAction
 {
@@ -42,6 +43,8 @@ public abstract class RadarDeviceAction : IAction
                 
             radarDevice.deviceLock.ExitWriteLock();
             radarDevice.deviceLock.ExitUpgradeableReadLock();
+
+            RMSEvents.Instance.RadarDeviceUpdatedEvent(deviceId);
         }
     }
 }

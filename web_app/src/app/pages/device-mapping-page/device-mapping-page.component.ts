@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SetNetworkDialogComponent } from '../../components/set-network-dialog/set-network-dialog.component';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 
 @Component({
   selector: 'app-device-mapping-page',
@@ -27,10 +28,12 @@ export class DeviceMappingPageComponent implements OnInit {
   deviceList: DeviceMapping[] = [];
   dataSource = new MatTableDataSource<DeviceMapping>()
   displayedColumns: string[] = ['device_id', 'registered', 'ip', 'subnet', 'gateway', 'model', 'application', 'fw_version', 'static_ip', 'set_network'];
-  updateTimer : any
 
-  constructor(private devicesService : DevicesService, private router : Router, 
-              private notification: MatSnackBar, public dialog: MatDialog) { }
+  constructor(private rmsEventsService : RmsEventsService, 
+              private devicesService : DevicesService, 
+              private router : Router, 
+              private notification: MatSnackBar, 
+              public dialog: MatDialog) { }
 
   ngOnInit(): void 
   {
@@ -38,19 +41,13 @@ export class DeviceMappingPageComponent implements OnInit {
     
     this.getDeviceMapping()
 
-    // trigger periodic update
-    this.updateTimer = setInterval(() => 
-    {
-      this.getDeviceMapping()
-    }, 3000)
-  }
+    this.rmsEventsService.DeviceMappingUpdatedEvent.subscribe({
+      next: () => 
+      {
+        this.getDeviceMapping()
+      }
+    })
 
-  ngOnDestroy() 
-  {
-    if (this.updateTimer) 
-    {
-      clearInterval(this.updateTimer);
-    }
   }
 
   public getDeviceMapping()

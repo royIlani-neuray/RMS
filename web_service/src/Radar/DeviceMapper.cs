@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json.Serialization;
 using WebService.Context;
+using WebService.Events;
 
 namespace WebService.Radar;
 
@@ -100,6 +101,8 @@ public class DeviceMapper
         System.Console.WriteLine($"Sending device mapping broadcast...");
 
         mappedDevices.Clear();
+        
+        RMSEvents.Instance.DeviceMappingUpdatedEvent();
         
         List<IPAddress> broadcastSources = IPRadarClient.GetBroadcastAddresses();
 
@@ -221,6 +224,8 @@ public class DeviceMapper
             Console.WriteLine();
             
             AddOrUpdateMappedDevice(deviceInfo);
+
+            RMSEvents.Instance.DeviceMappingUpdatedEvent();
         }
     }
 

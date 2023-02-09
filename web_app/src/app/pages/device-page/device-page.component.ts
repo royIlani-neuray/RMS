@@ -9,6 +9,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { DevicesService } from '../../services/devices.service';
 import { DevicePageDataService } from './device-page-data.service';
 
@@ -18,16 +19,15 @@ import { DevicePageDataService } from './device-page-data.service';
   styleUrls: ['./device-page.component.css'],
   providers: [DevicePageDataService]
 })
-export class DevicePageComponent implements OnInit, OnDestroy {
+export class DevicePageComponent implements OnInit {
 
-  constructor(private devicesService : DevicesService, 
+  constructor(private rmsEventsService : RmsEventsService, 
               private devicePageData : DevicePageDataService,
               private router : Router, 
               private activatedRoute:ActivatedRoute) { }
 
   radarDevice : RadarDevice
   deviceId : string
-  updateTimer : any
 
   ngOnInit(): void {
     let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
@@ -48,19 +48,16 @@ export class DevicePageComponent implements OnInit, OnDestroy {
 
     this.devicePageData.getDevice(this.deviceId)
 
-    this.updateTimer = setInterval(() => 
-    {
-      this.devicePageData.getDevice(this.deviceId)
-    }, 3000)
+    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        if (deviceId == this.deviceId)
+        {
+          this.devicePageData.getDevice(this.deviceId)
+        }
+      }
+    })
     
-  }
-
-  ngOnDestroy(): void 
-  {
-    if (this.updateTimer) 
-    {
-      clearInterval(this.updateTimer);
-    }
   }
 
   getDeviceStatus()
