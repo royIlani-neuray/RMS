@@ -45,6 +45,9 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
   public frameDataSubject: Subject<FrameData> = new Subject<FrameData>()
   public gateIdPredictionsSubject: Subject<GateIdPrediction[]> = new Subject<GateIdPrediction[]>()
 
+  frameDataSubscription! : any
+  predictionsSubscription! : any
+
   ngOnInit(): void 
   {
     this.threeJsView.loadThreeJsFonts()
@@ -55,6 +58,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
       }
     })
 
+    this.tracksViewerData.radarWindowsList.push(this)
   }
 
   ngOnDestroy(): void 
@@ -65,6 +69,8 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     {
       clearInterval(this.windowRefreshInterval);
     }
+
+    this.tracksViewerData.radarWindowsList = this.tracksViewerData.radarWindowsList.filter(window => {return window !== this})
   }
 
   ngAfterViewInit(): void 
@@ -106,6 +112,18 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
 
   setRadarDevice(deviceId : string)
   {
+    if (this.frameDataSubscription != null)
+    {
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
+    }
+
+    if (this.predictionsSubscription != null)
+    {
+      this.predictionsSubscription.unsubscribe()
+      this.predictionsSubscription = null
+    }
+
     // request the radar device info based on the given device id
     this.devicesService.getRadarDevice(deviceId).subscribe({
       next : (device) => {
@@ -116,7 +134,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
         this.deviceWebsocketService.Connect(deviceId)
 
         // we have the radar info, now subscribe for tracks streaming
-        this.deviceWebsocketService.GetFrameData().subscribe({
+        this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
           next : (frameData) => 
           {
             // update the scene with the latest frame data
@@ -126,7 +144,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
           }
         })
 
-        this.deviceWebsocketService.GetGateIdPredictions().subscribe({
+        this.predictionsSubscription = this.deviceWebsocketService.GetGateIdPredictions().subscribe({
           next : (predictions) => 
           {
             this.gateIdPredictionsSubject.next(predictions)

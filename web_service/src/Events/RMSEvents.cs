@@ -35,10 +35,41 @@ public class RMSEvents : WebSocketServer
 
     private RMSEvents()
     {
-
+        StartWorker();
     }
 
     #endregion
 
+    private void SendEvent(string eventName, object eventData)
+    {
+        var message = new WebSocketMessage() 
+        {
+            MessageType = eventName,
+            MessageData = eventData
+        };
+
+        Enqueue(message);
+    }
     
+    public void RadarDeviceUpdatedEvent(string deviceId)
+    {
+        SendEvent("RADAR_DEVICE_UPDATED", deviceId);
+    }
+
+    public void RadarDeviceAddedEvent(string deviceId)
+    {
+        SendEvent("RADAR_DEVICE_ADDED", deviceId);
+    }
+
+    public void RadarDeviceDeletedEvent(string deviceId)
+    {
+        SendEvent("RADAR_DEVICE_DELETED", deviceId);
+    }
+
+    public void DeviceMappingUpdatedEvent()
+    {
+        SendEvent("DEVICE_MAPPING_UPDATED", new Object());
+    }
+
+
 }

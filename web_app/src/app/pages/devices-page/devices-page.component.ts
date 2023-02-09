@@ -12,6 +12,7 @@ import { RadarDeviceBrief } from 'src/app/entities/radar-device';
 import { DevicesService } from '../../services/devices.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 
 @Component({
   selector: 'app-devices-page',
@@ -23,28 +24,38 @@ export class DevicesPageComponent implements OnInit {
   deviceListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarDeviceBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'send_tracks_report', 'device_id', 'description'];
-  updateTimer : any
 
-  constructor(private devicesService : DevicesService, private router : Router) { }
+  constructor(private devicesService : DevicesService, 
+              private rmsEventsService : RmsEventsService,
+              private router : Router) { }
 
   ngOnInit(): void 
   {
     this.deviceListLoaded.next(false);
     
     this.getDeviceList()
-    // trigger periodic update
-    this.updateTimer = setInterval(() => 
-    {
-      this.getDeviceList()
-    }, 3000)
-  }
 
-  ngOnDestroy() 
-  {
-    if (this.updateTimer) 
-    {
-      clearInterval(this.updateTimer);
-    }
+    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        this.getDeviceList()
+      }
+    })
+
+    this.rmsEventsService.deviceAddedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        this.getDeviceList()
+      }
+    })
+
+    this.rmsEventsService.deviceDeletedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        this.getDeviceList()
+      }
+    })
+
   }
 
   public getDeviceList()

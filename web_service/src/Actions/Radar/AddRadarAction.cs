@@ -9,6 +9,7 @@
 using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
+using WebService.Events;
 using WebService.Radar;
 using WebService.Utils;
 
@@ -95,6 +96,8 @@ public class AddRadarAction : IAction
         DeviceContext.Instance.AddDevice(device);
 
         System.Console.WriteLine($"Radar device registered.");
+        
+        RMSEvents.Instance.RadarDeviceAddedEvent(device.Id);
 
         if (args.Enabled)
         {

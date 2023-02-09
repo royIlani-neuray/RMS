@@ -7,7 +7,7 @@
 **
 ***/
 import { Injectable } from '@angular/core';
-import { Observable, Subject, Subscriber } from 'rxjs';
+import { Subject } from 'rxjs';
 import { FrameData } from '../entities/frame-data';
 
 export interface GateIdPrediction {

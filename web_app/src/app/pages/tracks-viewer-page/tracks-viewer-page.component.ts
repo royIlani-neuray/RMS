@@ -6,10 +6,11 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatGridList } from '@angular/material/grid-list';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDrawer } from '@angular/material/sidenav';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 import { TracksViewerDataService } from './tracks-viewer-data.service';
 
@@ -28,28 +29,40 @@ export class DynamicWindow {
   providers: [TracksViewerDataService]
 })
 export class TracksViewerPageComponent implements OnInit, AfterViewInit {
+  
   @ViewChild(MatDrawer) drawer : MatDrawer;
   @ViewChild(MatGridList) windowsGrid: MatGridList;
-
   @ViewChildren(DynamicWindow) gridWindows: QueryList<DynamicWindow>;
-
-
-  @ViewChildren(RadarViewWindowComponent) radarWindows: QueryList<RadarViewWindowComponent>;
-
   @ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
+
   contextMenuPosition = { x: '0px', y: '0px' };
 
   viewLayout = "1x1"
   windowsCount = 1
   selectedWindowIndex = 0
 
-  constructor(public tracksViewerData : TracksViewerDataService) { }
+  constructor(public tracksViewerData : TracksViewerDataService,
+              private rmsEventsService : RmsEventsService) { }
 
   ngOnInit(): void 
   {
     this.tracksViewerData.windowsLayoutSubject.subscribe({
       next: (layout) => { this.ViewLayoutChanged(layout) }
     })
+
+    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+      next: (deviceId) => 
+      {
+        this.tracksViewerData.radarWindowsList.forEach((radarWindow) => 
+        {
+          if ((radarWindow.radarDevice != null) && (radarWindow.radarDevice.device_id == deviceId))
+          {
+            radarWindow.setRadarDevice(deviceId)
+          }
+        })
+      }
+    })
+
   }
 
   ngAfterViewInit(): void {

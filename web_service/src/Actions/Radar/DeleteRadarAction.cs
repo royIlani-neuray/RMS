@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
+using WebService.Events;
 
 namespace WebService.Actions.Radar;
 
@@ -27,5 +28,7 @@ public class DeleteRadarAction : RadarDeviceAction
         radarDevice.DeviceWebSocket.CloseServer();
 
         radarDevice.SetStatus("Device deleted.");
+
+        RMSEvents.Instance.RadarDeviceDeletedEvent(deviceId);
     }
 }
