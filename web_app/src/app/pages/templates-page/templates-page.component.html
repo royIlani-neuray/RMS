@@ -32,5 +32,7 @@
     <div *ngIf="!(templateListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
         <mat-spinner [diameter]="40"></mat-spinner>
     </div>
-    
+    <br>
+    <button mat-raised-button (click)="addTemplateClicked()" color="primary">Add Template</button>
+    <br><br><br>
 </div>

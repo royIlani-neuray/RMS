@@ -41,7 +41,7 @@ export class DeviceMappingPageComponent implements OnInit {
     
     this.getDeviceMapping()
 
-    this.rmsEventsService.DeviceMappingUpdatedEvent.subscribe({
+    this.rmsEventsService.deviceMappingUpdatedEvent.subscribe({
       next: () => 
       {
         this.getDeviceMapping()

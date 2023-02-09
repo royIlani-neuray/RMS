@@ -1,3 +1,11 @@
+/***
+** Copyright (C) 2020-2023 neuRay Labs. All rights reserved.
+**
+** The information and source code contained herein is the exclusive 
+** property of neuRay Labs and may not be disclosed, examined, reproduced, redistributed, used in source and binary forms, in whole or in part  
+** without explicit written authorization from the company.
+**
+***/
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RadarDevice } from 'src/app/entities/radar-device';
@@ -78,13 +86,6 @@ export class DeviceInfoComponent implements OnInit {
       height: '390px',
       data: { radarDevice: this.radarDevice }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result)
-      {
-        this.devicePageData.getDevice(this.radarDevice.device_id)
-      }
-    });
   }
 
   public setDeviceConfiguration()
@@ -98,8 +99,7 @@ export class DeviceInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result)
       {
-        this.notification.open("Radar configuration updated.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
-        this.devicePageData.getDevice(this.radarDevice.device_id)
+        this.notification.open("Radar configuration updated.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' })
       }
     });    
   }

@@ -110,6 +110,14 @@ export class DevicesService {
     })    
   }
 
+  public setDeviceConfigScript(deviceId : string, configScript: string[])
+  {
+    return this.http.post("/api/devices/" + deviceId + "/config", 
+    {
+      config: configScript
+    })  
+  }
+
   public enableRadarRecording(deviceId : string)
   {
     return this.http.post("/api/devices/" + deviceId + "/services", 

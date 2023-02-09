@@ -32,4 +32,15 @@ export class TemplatesService {
     return this.http.delete("/api/templates/" + templateId)
   }
   
+  public addRadarTemplate(templateName : string, model : string, application : string, description : string, configScript : string[])
+  {
+    return this.http.post("/api/templates", 
+    {
+      name : templateName,
+      description : description,
+      model : model,
+      application : application,
+      config_script : configScript
+    })
+  }
 }

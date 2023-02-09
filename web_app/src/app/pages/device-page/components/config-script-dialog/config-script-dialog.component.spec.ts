@@ -8,19 +8,19 @@
 ***/
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RadarSettingsComponent } from './radar-settings.component';
+import { ConfigScriptDialogComponent } from './config-script-dialog.component';
 
-describe('RadarSettingsComponent', () => {
-  let component: RadarSettingsComponent;
-  let fixture: ComponentFixture<RadarSettingsComponent>;
+describe('ConfigScriptDialogComponent', () => {
+  let component: ConfigScriptDialogComponent;
+  let fixture: ComponentFixture<ConfigScriptDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RadarSettingsComponent ]
+      declarations: [ ConfigScriptDialogComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RadarSettingsComponent);
+    fixture = TestBed.createComponent(ConfigScriptDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -12,6 +12,9 @@ import { RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { TemplatesService } from '../../services/templates.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
+import { CreateTemplateDialogComponent } from './components/create-template-dialog/create-template-dialog.component';
 
 @Component({
   selector: 'app-templates-page',
@@ -23,31 +26,35 @@ export class TemplatesPageComponent implements OnInit {
   templateListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarTemplateBrief>()
   displayedColumns: string[] = ['name', 'description', 'model', 'application'];
-  updateTimer : any
 
-  constructor(private templatesService : TemplatesService, private router : Router) { }
+  constructor(private templatesService : TemplatesService, 
+              private rmsEventsService : RmsEventsService, 
+              private dialog: MatDialog,
+              private router : Router) { }
 
   ngOnInit(): void 
   {
     this.templateListLoaded.next(false);
     
-    this.getDeviceList()
-    // trigger periodic update
-    this.updateTimer = setInterval(() => 
-    {
-      this.getDeviceList()
-    }, 3000)
+    this.getTemplatesList()
+
+    this.rmsEventsService.templateAddedEvent.subscribe({
+      next: (templateId) => 
+      {
+        this.getTemplatesList()
+      }
+    })
+
+    this.rmsEventsService.templateDeletedEvent.subscribe({
+      next: (templateId) => 
+      {
+        this.getTemplatesList()
+      }
+    })
+
   }
 
-  ngOnDestroy() 
-  {
-    if (this.updateTimer) 
-    {
-      clearInterval(this.updateTimer);
-    }
-  }
-
-  public getDeviceList()
+  public getTemplatesList()
   {
     this.templatesService.getRadarTemplates().subscribe({
       next : (templates) => 
@@ -57,6 +64,14 @@ export class TemplatesPageComponent implements OnInit {
       },
       error : (err) => this.router.navigate(['/no-service'])
     })
+  }
+
+  addTemplateClicked()
+  {
+    let dialogRef = this.dialog.open(CreateTemplateDialogComponent, {
+      width: '850px',
+      height: '690px'
+    });   
   }
 
 }
