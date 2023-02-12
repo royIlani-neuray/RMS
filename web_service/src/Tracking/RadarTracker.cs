@@ -141,20 +141,20 @@ public class RadarTracker
 
     private void ConfigureRadar()
     {
-        radarDevice.SetStatus("Configuring the device...");
+        radarDevice.SetStatus($"Configuring the device...");
 
         foreach (string tiCommand in radarDevice.ConfigScript)
         {
-            if (tiCommand.StartsWith("%"))
+            if (string.IsNullOrWhiteSpace(tiCommand) || tiCommand.StartsWith("%"))
                 continue;
             
-            Console.WriteLine($"Sending command - {tiCommand}");
+            Console.WriteLine($"[{radarDevice.Id}] Sending command - {tiCommand}");
             var response = radarDevice.ipRadarClient!.SendTICommand(tiCommand);
-            Console.WriteLine(response);
+            Console.WriteLine($"[{radarDevice.Id}] {response}");
 
             if (response != "Done")
             {
-                Console.WriteLine($"The command '{tiCommand}' failed - got: {response}");
+                Console.WriteLine($"[{radarDevice.Id}] The command '{tiCommand}' failed - got: {response}");
                 throw new Exception("Error: failed to configure the device!");
             }
         }
@@ -175,7 +175,7 @@ public class RadarTracker
             }
             catch (System.Exception ex)
             {
-                System.Console.WriteLine($"Error: failed getting frame: {ex.Message}");
+                System.Console.WriteLine($"[{radarDevice.Id}] Error: failed getting frame: {ex.Message}");
                 throw;
             }
             
