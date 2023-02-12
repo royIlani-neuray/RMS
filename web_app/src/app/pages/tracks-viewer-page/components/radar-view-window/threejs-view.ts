@@ -63,9 +63,11 @@ export class ThreeJsView {
 
     public resizeView(height : number, width : number)
     {
-      this.renderer.setSize(width, height)
       let aspectRatio = (width / height)
       this.camera.aspect = aspectRatio
+      this.camera.updateProjectionMatrix();
+
+      this.renderer.setSize(width, height)
     }
 
     public startRenderingLoop()
