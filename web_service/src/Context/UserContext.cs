@@ -11,9 +11,7 @@ using WebService.Entites;
 
 namespace WebService.Context;
 
-public sealed class UserContext {
-
-    private static Dictionary<string, User> users = new Dictionary<string, User>();
+public sealed class UserContext : EntityContext<User> {
 
     #region Singleton
     
@@ -36,21 +34,18 @@ public sealed class UserContext {
         }
     }
 
-    private UserContext() {}
+    private UserContext() : base(IEntity.EntityTypes.User) {}
 
     #endregion
 
     public void LoadUsersFromStorage()
     {
-        users = new Dictionary<string, User>(UserStorage.LoadAllUsers());
+        LoadEntitiesFromStorage(StorageDatabase.UserStoragePath);
     }
 
     public bool IsUserExist(string userId)
     {
-        if (users.Keys.Contains(userId))
-            return true;
-        
-        return false;
+        return IsEntityExist(userId);
     }
 
     public bool IsEmployeeIdExist(string employeeId)
@@ -58,7 +53,7 @@ public sealed class UserContext {
         if (String.IsNullOrWhiteSpace(employeeId))
             return false;
 
-        if (users.Values.ToList().Exists(user => user.EmployeeId == employeeId))
+        if (entities.Values.ToList().Exists(user => user.EmployeeId == employeeId))
             return true;
         
         return false;
@@ -69,7 +64,7 @@ public sealed class UserContext {
         if (String.IsNullOrWhiteSpace(email))
             return false;
 
-        if (users.Values.ToList().Exists(user => user.Email == email))
+        if (entities.Values.ToList().Exists(user => user.Email == email))
             return true;
         
         return false;
@@ -77,10 +72,7 @@ public sealed class UserContext {
 
     public User GetUser(string userId)
     {
-        if (!IsUserExist(userId))
-            throw new NotFoundException($"Could not find user in context with id - {userId}");
-
-        return users[userId];
+        return GetEntity(userId);
     }
 
     public void AddUser(User user)
@@ -94,28 +86,21 @@ public sealed class UserContext {
         if (IsEmailExist(user.Id))
             throw new Exception("Cannot add user. Another user with the given email already exist.");
 
-        UserStorage.SaveUser(user);
-        users.Add(user.Id, user);
+        AddEntity(user);
     }
 
     public void UpdateUser(User user)
     {
-        if (!IsUserExist(user.Id))
-            throw new NotFoundException($"Could not find user in context with id - {user.Id}");
-
-        UserStorage.SaveUser(user);
+        UpdateEntity(user);
     }
 
     public void DeleteUser(User user)
     {
-        GetUser(user.Id); // make sure user enlisted
-
-        UserStorage.DeleteUser(user);
-        users.Remove(user.Id);
+        DeleteEntity(user);
     }
 
     public List<User.UserBrief> GetUsersBrief()
     {
-        return users.Values.ToList().ConvertAll<User.UserBrief>(user => new User.UserBrief(user));
+        return entities.Values.ToList().ConvertAll<User.UserBrief>(user => new User.UserBrief(user));
     }
 }

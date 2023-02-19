@@ -11,9 +11,7 @@ using WebService.Entites;
 
 namespace WebService.Context;
 
-public sealed class DeviceContext {
-
-    private static Dictionary<string, RadarDevice> devices = new Dictionary<string, RadarDevice>();
+public sealed class DeviceContext : EntityContext<RadarDevice> {
 
     #region Singleton
     
@@ -36,15 +34,15 @@ public sealed class DeviceContext {
         }
     }
 
-    private DeviceContext() {}
+    private DeviceContext() : base(IEntity.EntityTypes.Radar) {}
 
     #endregion
 
     public void LoadDevicesFromStorage()
     {
-        devices = new Dictionary<string, RadarDevice>(RadarDeviceStorage.LoadAllDevices());
+        LoadEntitiesFromStorage(StorageDatabase.RadarStoragePath);
 
-        foreach (var device in devices.Values)
+        foreach (var device in entities.Values)
         {
             device.State = RadarDevice.DeviceState.Disconnected;
             device.Status = device.Enabled ? "The device is disconnected." : "The device is disabled.";
@@ -53,47 +51,31 @@ public sealed class DeviceContext {
 
     public bool IsRadarDeviceExist(string deviceId)
     {
-        if (devices.Keys.Contains(deviceId))
-            return true;
-        
-        return false;
+        return IsEntityExist(deviceId);
     }
 
     public RadarDevice GetDevice(string deviceId)
     {
-        if (!IsRadarDeviceExist(deviceId))
-            throw new NotFoundException($"Could not find device in context with id - {deviceId}");
-
-        return devices[deviceId];
+        return GetEntity(deviceId);
     }
 
     public void AddDevice(RadarDevice device)
     {
-        if (IsRadarDeviceExist(device.Id))
-            throw new Exception("Cannot add device. Another device with the same ID already exist.");
-
-        RadarDeviceStorage.SaveDevice(device);
-        devices.Add(device.Id, device);
+        AddEntity(device);
     }
 
     public void UpdateDevice(RadarDevice device)
     {
-        if (!IsRadarDeviceExist(device.Id))
-            throw new NotFoundException($"Could not find device in context with id - {device.Id}");
-
-        RadarDeviceStorage.SaveDevice(device);
+        UpdateEntity(device);
     }
 
     public void DeleteDevice(RadarDevice device)
     {
-        GetDevice(device.Id); // make sure device enlisted
-
-        RadarDeviceStorage.DeleteDevice(device);
-        devices.Remove(device.Id);
+        DeleteEntity(device);
     }
 
     public List<RadarDevice.RadarDeviceBrief> GetDevicesBrief()
     {
-        return devices.Values.ToList().ConvertAll<RadarDevice.RadarDeviceBrief>(device => new RadarDevice.RadarDeviceBrief(device));
+        return entities.Values.ToList().ConvertAll<RadarDevice.RadarDeviceBrief>(device => new RadarDevice.RadarDeviceBrief(device));
     }
 }

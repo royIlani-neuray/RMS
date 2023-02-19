@@ -7,11 +7,18 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.Database;
 
 namespace WebService.Entites;
 
-public class User 
+public class User : IEntity, IEntityStorage
 {
+    [JsonIgnore]
+    public IEntity.EntityTypes EntityType => IEntity.EntityTypes.User;
+
+    [JsonIgnore]
+    public string StoragePath => StorageDatabase.UserStoragePath;
+
     [JsonPropertyName("user_id")]
     public String Id { get; set; }
 

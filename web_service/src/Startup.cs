@@ -41,7 +41,7 @@ public class Startup
         ServiceSettings.Instance.RMSVersion = version;
 
         Console.WriteLine("Initializing DB...");
-        Database.DatabaseInit();
+        StorageDatabase.DatabaseInit();
 
         Console.WriteLine("Loading users from storage...");
         UserContext.Instance.LoadUsersFromStorage();

@@ -7,11 +7,18 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.Database;
 
 namespace WebService.Entites;
 
-public class RadarTemplate 
+public class RadarTemplate : IEntity, IEntityStorage
 {
+    [JsonIgnore]
+    public IEntity.EntityTypes EntityType => IEntity.EntityTypes.RadarTemplate;
+
+    [JsonIgnore]
+    public string StoragePath => StorageDatabase.TemplateStoragePath;
+
     [JsonPropertyName("template_id")]
     public String Id { get; set; }
 
