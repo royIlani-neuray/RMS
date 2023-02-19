@@ -14,10 +14,10 @@ public class Database
     {
         // create storage folders for entities
 
-        if (!System.IO.Directory.Exists(DeviceStorage.StoragePath))
+        if (!System.IO.Directory.Exists(RadarDeviceStorage.StoragePath))
         {
             System.Console.WriteLine("Creating devices storage folder.");
-            System.IO.Directory.CreateDirectory(DeviceStorage.StoragePath);
+            System.IO.Directory.CreateDirectory(RadarDeviceStorage.StoragePath);
         }
 
         if (!System.IO.Directory.Exists(UserStorage.StoragePath))

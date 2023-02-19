@@ -11,8 +11,8 @@ using System.Text.Json;
 
 namespace WebService.Database;
 
-public class DeviceStorage {
-    public static readonly string StoragePath = "./data/devices";
+public class RadarDeviceStorage {
+    public static readonly string StoragePath = "./data/radar_devices";
     public static readonly string DeviceFileExtention = ".json";
     
     public static void SaveDevice(RadarDevice device)

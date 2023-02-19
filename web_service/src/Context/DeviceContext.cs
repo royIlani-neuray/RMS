@@ -42,7 +42,7 @@ public sealed class DeviceContext {
 
     public void LoadDevicesFromStorage()
     {
-        devices = new Dictionary<string, RadarDevice>(DeviceStorage.LoadAllDevices());
+        devices = new Dictionary<string, RadarDevice>(RadarDeviceStorage.LoadAllDevices());
 
         foreach (var device in devices.Values)
         {
@@ -72,7 +72,7 @@ public sealed class DeviceContext {
         if (IsRadarDeviceExist(device.Id))
             throw new Exception("Cannot add device. Another device with the same ID already exist.");
 
-        DeviceStorage.SaveDevice(device);
+        RadarDeviceStorage.SaveDevice(device);
         devices.Add(device.Id, device);
     }
 
@@ -81,14 +81,14 @@ public sealed class DeviceContext {
         if (!IsRadarDeviceExist(device.Id))
             throw new NotFoundException($"Could not find device in context with id - {device.Id}");
 
-        DeviceStorage.SaveDevice(device);
+        RadarDeviceStorage.SaveDevice(device);
     }
 
     public void DeleteDevice(RadarDevice device)
     {
         GetDevice(device.Id); // make sure device enlisted
 
-        DeviceStorage.DeleteDevice(device);
+        RadarDeviceStorage.DeleteDevice(device);
         devices.Remove(device.Id);
     }
 
