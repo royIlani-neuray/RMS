@@ -144,7 +144,11 @@ public class RecordingStreamer {
                 DateTime end = DateTime.Now;
                 TimeSpan ts = end - start;
                 int timeSlice = (int) ((1000 / streamRate) - ts.TotalMilliseconds);
-                Thread.Sleep(timeSlice);
+
+                if (timeSlice > 0)
+                {
+                    Thread.Sleep(timeSlice);
+                }
             }
             catch (Exception ex)
             {
