@@ -11,7 +11,7 @@ using WebService.Services;
 
 namespace WebService.Actions.Services;
 
-public class UnlinkServiceAction : RadarDeviceAction 
+public class UnlinkServiceAction : RadarAction 
 {
     private string serviceId;
 
@@ -20,7 +20,7 @@ public class UnlinkServiceAction : RadarDeviceAction
         this.serviceId = serviceId;
     }
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
         var linkedService = radarDevice.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
 

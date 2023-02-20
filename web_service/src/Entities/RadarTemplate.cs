@@ -7,11 +7,18 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.Database;
 
 namespace WebService.Entites;
 
-public class RadarTemplate 
+public class RadarTemplate : IEntity
 {
+    [JsonIgnore]
+    public IEntity.EntityTypes EntityType => IEntity.EntityTypes.RadarTemplate;
+
+    [JsonIgnore]
+    public string StoragePath => StorageDatabase.TemplateStoragePath;
+
     [JsonPropertyName("template_id")]
     public String Id { get; set; }
 
@@ -34,7 +41,7 @@ public class RadarTemplate
     public RadarSettings? radarSettings { get; set;}
 
     [JsonIgnore]
-    public ReaderWriterLockSlim templateLock;
+    public ReaderWriterLockSlim EntityLock { get; set; }
 
     public class RadarTemplateBrief 
     {
@@ -71,7 +78,7 @@ public class RadarTemplate
         Model = String.Empty;
         Application = String.Empty;
         ConfigScript = new List<string>();
-        templateLock = new ReaderWriterLockSlim();
+        EntityLock = new ReaderWriterLockSlim();
     }
 
 }

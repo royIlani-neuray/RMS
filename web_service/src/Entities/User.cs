@@ -7,11 +7,18 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.Database;
 
 namespace WebService.Entites;
 
-public class User 
+public class User : IEntity
 {
+    [JsonIgnore]
+    public IEntity.EntityTypes EntityType => IEntity.EntityTypes.User;
+
+    [JsonIgnore]
+    public string StoragePath => StorageDatabase.UserStoragePath;
+
     [JsonPropertyName("user_id")]
     public String Id { get; set; }
 
@@ -31,7 +38,7 @@ public class User
     public DateTime RegisteredAt { get; set; }
 
     [JsonIgnore]
-    public ReaderWriterLockSlim userLock;
+    public ReaderWriterLockSlim EntityLock { get; set; }
 
     public class UserBrief 
     {
@@ -54,7 +61,7 @@ public class User
 
     public User()
     {
-        userLock = new ReaderWriterLockSlim();
+        EntityLock = new ReaderWriterLockSlim();
         Id = Guid.NewGuid().ToString();
         FirstName = String.Empty;
         LastName = String.Empty;

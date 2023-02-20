@@ -12,9 +12,7 @@ using WebService.Radar;
 
 namespace WebService.Context;
 
-public sealed class TemplateContext {
-
-    private static Dictionary<string, RadarTemplate> templates = new Dictionary<string, RadarTemplate>();
+public sealed class TemplateContext : EntityContext<RadarTemplate> {
 
     #region Singleton
     
@@ -37,16 +35,16 @@ public sealed class TemplateContext {
         }
     }
 
-    private TemplateContext() {}
+    private TemplateContext() : base(IEntity.EntityTypes.RadarTemplate) {}
 
     #endregion
 
     public void LoadTemplatesFromStorage()
     {
-        templates = new Dictionary<string, RadarTemplate>(TemplateStorage.LoadAllTemplates());
+        LoadEntitiesFromStorage(StorageDatabase.TemplateStoragePath);
 
         // default templates doesn't have thier radar setting serialized
-        foreach (var template in templates.Values)
+        foreach (var template in entities.Values)
         {
             if (template.radarSettings != null)
                 continue;
@@ -65,47 +63,31 @@ public sealed class TemplateContext {
 
     public bool IsRadarTemplateExist(string templateId)
     {
-        if (templates.Keys.Contains(templateId))
-            return true;
-        
-        return false;
+        return IsEntityExist(templateId);
     }
 
     public RadarTemplate GetTemplate(string templateId)
     {
-        if (!IsRadarTemplateExist(templateId))
-            throw new NotFoundException($"Could not find template in context with id - {templateId}");
-
-        return templates[templateId];
+        return GetEntity(templateId);
     }
 
     public void AddTemplate(RadarTemplate template)
     {
-        if (IsRadarTemplateExist(template.Id))
-            throw new Exception("Cannot add template. Another template with the same ID already exist.");
-
-        TemplateStorage.SaveTemplate(template);
-        templates.Add(template.Id, template);
+        AddEntity(template);
     }
 
     public void UpdateTemplate(RadarTemplate template)
     {
-        if (!IsRadarTemplateExist(template.Id))
-            throw new NotFoundException($"Could not find template in context with id - {template.Id}");
-
-        TemplateStorage.SaveTemplate(template);
+        UpdateEntity(template);
     }
 
     public void DeleteTemplate(RadarTemplate template)
     {
-        GetTemplate(template.Id); // make sure template enlisted
-
-        TemplateStorage.DeleteTemplate(template);
-        templates.Remove(template.Id);
+        DeleteEntity(template);
     }
 
     public List<RadarTemplate.RadarTemplateBrief> GetTemplatesBrief()
     {
-        return templates.Values.ToList().ConvertAll<RadarTemplate.RadarTemplateBrief>(template => new RadarTemplate.RadarTemplateBrief(template));
+        return entities.Values.ToList().ConvertAll<RadarTemplate.RadarTemplateBrief>(template => new RadarTemplate.RadarTemplateBrief(template));
     }
 }

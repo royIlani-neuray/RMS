@@ -11,17 +11,11 @@ using WebService.Radar;
 using WebService.Tracking;
 using WebService.WebSockets;
 using WebService.Services;
+using WebService.Database;
 
 namespace WebService.Entites;
 
-
-public class RadarDevice {
-
-    public enum DeviceState {
-        Disconnected,
-        Connected,
-        Active
-    };
+public class RadarDevice : DeviceEntity {
 
     public class LinkedService
     {
@@ -35,25 +29,11 @@ public class RadarDevice {
         public IServiceContext? ServiceContext;
     }
 
-    [JsonPropertyName("state")]
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public DeviceState State { get; set; }
-
-    [JsonPropertyName("status")]
-    public String Status { get; set; }
-
-    [JsonPropertyName("name")]
-    public String Name { get; set; }
-
-    [JsonPropertyName("description")]
-    public String Description { get; set; }
-
-    [JsonPropertyName("device_id")]
-    public String Id { get; set; }
+    [JsonIgnore]
+    public override IEntity.EntityTypes EntityType => IEntity.EntityTypes.Radar;
     
-    [JsonPropertyName("enabled")]
-    public bool Enabled { get; set; }
+    [JsonIgnore]
+    public override string StoragePath => StorageDatabase.RadarStoragePath;
 
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }
@@ -71,9 +51,6 @@ public class RadarDevice {
     public List<LinkedService> LinkedServices { get; set; }
 
     [JsonIgnore]
-    public ReaderWriterLockSlim deviceLock;
-
-    [JsonIgnore]
     public IPRadarClient? ipRadarClient;
 
     [JsonIgnore]
@@ -82,47 +59,19 @@ public class RadarDevice {
     [JsonIgnore]
     public DeviceWebSocketServer DeviceWebSocket;
 
-    public class RadarDeviceBrief 
+    public class RadarDeviceBrief : DeviceBrief
     {
-        [JsonPropertyName("state")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public DeviceState State { get; set; }
-
-        [JsonPropertyName("name")]
-        public String Name { get; set; }
-
-        [JsonPropertyName("description")]
-        public String Description { get; set; }
-
-        [JsonPropertyName("device_id")]
-        public String Id { get; set; }
-
-        [JsonPropertyName("enabled")]
-        public bool Enabled {get; set; }
-
         [JsonPropertyName("send_tracks_report")]
         public bool SendTracksReport { get; set; }
 
-        public RadarDeviceBrief(RadarDevice device)
+        public RadarDeviceBrief(RadarDevice device) : base(device)
         {
-            State = device.State;
-            Name = device.Name;
-            Description = device.Description;
-            Id = device.Id;
-            Enabled = device.Enabled;
             SendTracksReport = device.SendTracksReport;
         }
     }
 
-    public RadarDevice()
+    public RadarDevice() : base(DeviceTypes.Radar)
     {
-        deviceLock = new ReaderWriterLockSlim();
-        Name = String.Empty;
-        Description = String.Empty;
-        Id = String.Empty;
-        Enabled = false;
-        State = DeviceState.Disconnected;
-        Status = String.Empty;
         ConfigScript = new List<string>();
         LinkedServices = new List<LinkedService>();
         DeviceWebSocket = new DeviceWebSocketServer();

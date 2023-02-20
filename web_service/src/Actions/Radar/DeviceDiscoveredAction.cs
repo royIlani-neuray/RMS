@@ -11,11 +11,11 @@ using WebService.Radar;
 
 namespace WebService.Actions.Radar;
 
-public class DeviceDiscoveredAction : RadarDeviceAction {
+public class DeviceDiscoveredAction : RadarAction {
 
     public DeviceDiscoveredAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
         // first, update current known info in the radar device entity
         var mappedDevice = DeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 

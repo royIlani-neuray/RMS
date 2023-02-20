@@ -251,7 +251,7 @@ public class DeviceMapper
 
     private void UpdateRegisteredStatus(MappedDevice mappedDevice)
     {
-        mappedDevice.registered = DeviceContext.Instance.IsRadarDeviceExist(mappedDevice.deviceId);
+        mappedDevice.registered = RadarContext.Instance.IsRadarDeviceExist(mappedDevice.deviceId);
     }
     
     public List<MappedDevice> GetMappedDevices()

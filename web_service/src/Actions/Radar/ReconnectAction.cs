@@ -11,11 +11,11 @@ using WebService.Radar;
 
 namespace WebService.Actions.Radar;
 
-public class ReconnectAction : RadarDeviceAction 
+public class ReconnectAction : RadarAction 
 {
     public ReconnectAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
         if (!radarDevice.Enabled)
             return;

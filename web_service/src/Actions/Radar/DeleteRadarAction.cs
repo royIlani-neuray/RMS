@@ -12,23 +12,23 @@ using WebService.Events;
 
 namespace WebService.Actions.Radar;
 
-public class DeleteRadarAction : RadarDeviceAction 
+public class DeleteRadarAction : RadarAction 
 {
     public DeleteRadarAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Deleting radar device - {deviceId}");
+        System.Console.WriteLine($"Deleting radar device - {radarDevice.Id}");
 
         var disconnectAction = new DisconnectRadarAction(radarDevice);
         disconnectAction.Run();
 
-        DeviceContext.Instance.DeleteDevice(radarDevice);
+        RadarContext.Instance.DeleteDevice(radarDevice);
 
         radarDevice.DeviceWebSocket.CloseServer();
 
         radarDevice.SetStatus("Device deleted.");
 
-        RMSEvents.Instance.RadarDeviceDeletedEvent(deviceId);
+        RMSEvents.Instance.RadarDeviceDeletedEvent(radarDevice.Id);
     }
 }

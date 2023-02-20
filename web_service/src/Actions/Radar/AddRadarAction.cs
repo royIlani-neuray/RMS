@@ -93,7 +93,7 @@ public class AddRadarAction : IAction
         }
         catch {}
         
-        DeviceContext.Instance.AddDevice(device);
+        RadarContext.Instance.AddDevice(device);
 
         System.Console.WriteLine($"Radar device registered.");
         

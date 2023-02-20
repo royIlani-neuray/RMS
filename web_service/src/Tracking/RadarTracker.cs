@@ -33,7 +33,7 @@ public class RadarTracker
     {
         Task disconnectTask = new Task(() =>
         {
-            radarDevice.deviceLock.EnterWriteLock();
+            radarDevice.EntityLock.EnterWriteLock();
             try
             {
                 var disconnectAction = new DisconnectRadarAction(radarDevice);
@@ -41,7 +41,7 @@ public class RadarTracker
             }
             finally
             {
-                radarDevice.deviceLock.ExitWriteLock();
+                radarDevice.EntityLock.ExitWriteLock();
             }
         });
 

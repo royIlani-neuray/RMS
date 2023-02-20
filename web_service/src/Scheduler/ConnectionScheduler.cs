@@ -42,7 +42,7 @@ public class ConnectionScheduler : TaskScheduler{
 
     public override void RunTask()
     {
-        var devicesList = DeviceContext.Instance.GetDevicesBrief();
+        var devicesList = RadarContext.Instance.GetDevicesBrief();
 
         foreach (var deviceInfo in devicesList)
         {

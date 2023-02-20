@@ -41,7 +41,7 @@ public class Startup
         ServiceSettings.Instance.RMSVersion = version;
 
         Console.WriteLine("Initializing DB...");
-        Database.DatabaseInit();
+        StorageDatabase.DatabaseInit();
 
         Console.WriteLine("Loading users from storage...");
         UserContext.Instance.LoadUsersFromStorage();
@@ -55,7 +55,7 @@ public class Startup
         ServiceManager.Instance.InitServices(servicesSettings);
 
         Console.WriteLine("Loading devices from storage...");
-        DeviceContext.Instance.LoadDevicesFromStorage();
+        RadarContext.Instance.LoadDevicesFromStorage();
 
         Console.WriteLine("Starting Device Mapper...");
         DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);

@@ -27,7 +27,7 @@ public class UpdateRadarInfoArgs
     }
 }
 
-public class UpdateRadarInfoAction : RadarDeviceAction 
+public class UpdateRadarInfoAction : RadarAction 
 {
     private UpdateRadarInfoArgs args;
 
@@ -36,9 +36,9 @@ public class UpdateRadarInfoAction : RadarDeviceAction
         this.args = args;
     }
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Updating radar info - {deviceId}");
+        System.Console.WriteLine($"Updating radar info - {radarDevice.Id}");
 
         radarDevice.Name = args.Name;
         radarDevice.Description = args.Description;

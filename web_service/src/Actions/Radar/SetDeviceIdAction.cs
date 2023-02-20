@@ -43,7 +43,7 @@ public class SetDeviceIdAction : IAction {
         if (DeviceMapper.Instance.IsDeviceHasMapping(args.NewDeviceId))
             throw new Exception("The new device id provided is already exist for another device in the network.");
 
-        if (DeviceContext.Instance.IsRadarDeviceExist(args.NewDeviceId))
+        if (RadarContext.Instance.IsRadarDeviceExist(args.NewDeviceId))
             throw new Exception("The new device id provided is already registerd in RMS by another device.");
 
         var mappedDevice = DeviceMapper.Instance.GetMappedDevice(deviceId); 
