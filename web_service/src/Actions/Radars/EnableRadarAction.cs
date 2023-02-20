@@ -8,21 +8,21 @@
 ***/
 using WebService.Entites;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class EnableRadarAction : RadarAction 
 {
     public EnableRadarAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        if (radarDevice.Enabled)
+        if (radar.Enabled)
             return; // nothing to do.
         
-        radarDevice.SetStatus("Enabling radar device...");
-        radarDevice.Enabled = true;
+        radar.SetStatus("Enabling radar device...");
+        radar.Enabled = true;
 
-        var connectAction = new ConnectRadarAction(radarDevice);
+        var connectAction = new ConnectRadarAction(radar);
         connectAction.Run();
     }
 }

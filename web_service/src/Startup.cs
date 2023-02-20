@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 using WebService.Database;
 using WebService.Context;
-using WebService.Radar;
-using WebService.Actions.Radar;
+using WebService.RadarLogic;
+using WebService.Actions.Radars;
 using WebService.Scheduler;
 using WebService.Services;
 using WebService.Events;
@@ -54,12 +54,15 @@ public class Startup
 
         ServiceManager.Instance.InitServices(servicesSettings);
 
-        Console.WriteLine("Loading devices from storage...");
-        RadarContext.Instance.LoadDevicesFromStorage();
+        Console.WriteLine("Loading cameras from storage...");
+        CameraContext.Instance.LoadCamerasFromStorage();
 
-        Console.WriteLine("Starting Device Mapper...");
-        DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
-        DeviceMapper.Instance.Start();
+        Console.WriteLine("Loading radars from storage...");
+        RadarContext.Instance.LoadRadarsFromStorage();
+
+        Console.WriteLine("Starting Radar Device Mapper...");
+        RadarDeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
+        RadarDeviceMapper.Instance.Start();
 
         Console.WriteLine("Starting Events WebSocket...");
         RMSEvents.Instance.StartWorker();   

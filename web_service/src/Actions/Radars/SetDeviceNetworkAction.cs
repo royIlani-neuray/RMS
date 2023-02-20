@@ -6,11 +6,11 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.Radar;
+using WebService.RadarLogic;
 using System.Text.Json.Serialization;
 using System.Net;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 
 public class SetDeviceNetworkArgs

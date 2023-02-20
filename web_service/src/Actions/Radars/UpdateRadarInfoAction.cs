@@ -8,9 +8,9 @@
 ***/
 using System.Text.Json.Serialization;
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class UpdateRadarInfoArgs
 {
@@ -36,11 +36,11 @@ public class UpdateRadarInfoAction : RadarAction
         this.args = args;
     }
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        System.Console.WriteLine($"Updating radar info - {radarDevice.Id}");
+        System.Console.WriteLine($"Updating radar info - {radar.Id}");
 
-        radarDevice.Name = args.Name;
-        radarDevice.Description = args.Description;
+        radar.Name = args.Name;
+        radar.Description = args.Description;
     }
 }

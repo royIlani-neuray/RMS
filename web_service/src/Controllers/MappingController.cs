@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Radar;
+using WebService.RadarLogic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebService.Controllers;
@@ -25,15 +25,15 @@ public class DeviceMappingController : ControllerBase
     }
 
     [HttpGet]
-    public List<DeviceMapper.MappedDevice> GetMappedDevices()
+    public List<RadarDeviceMapper.MappedDevice> GetMappedDevices()
     {
-        return DeviceMapper.Instance.GetMappedDevices();
+        return RadarDeviceMapper.Instance.GetMappedDevices();
     }
 
     [HttpPost]
     public void TriggerDeviceMapping()
     {
-        DeviceMapper.Instance.MapDevices();
+        RadarDeviceMapper.Instance.MapDevices();
     }
 
 }

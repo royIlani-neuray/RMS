@@ -8,7 +8,7 @@
 ***/
 using WebService.Context;
 using WebService.Actions;
-using WebService.Radar;
+using WebService.RadarLogic;
 
 namespace WebService.Scheduler;
 
@@ -46,7 +46,7 @@ public class DeviceMappingScheduler : TaskScheduler {
         // Trigger device mapping
         System.Console.WriteLine("Mapping Scheduler: Triggering device mapping.");
 
-        DeviceMapper.Instance.MapDevices();
+        RadarDeviceMapper.Instance.MapDevices();
     }
 
 }

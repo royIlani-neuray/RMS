@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Actions.Radar;
+using WebService.Actions.Radars;
 using WebService.Tracking;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
@@ -33,13 +33,13 @@ public class DeviceController : ControllerBase
     }
 
     [HttpGet]
-    public List<RadarDevice.RadarDeviceBrief> GetDevices()
+    public List<Radar.RadarDeviceBrief> GetDevices()
     {
         return RadarContext.Instance.GetDevicesBrief();
     }
 
     [HttpGet("{deviceId}")]
-    public RadarDevice GetRadarDevice(string deviceId)
+    public Radar GetRadarDevice(string deviceId)
     {
         ValidateDeviceId(deviceId);        
         if (!RadarContext.Instance.IsRadarDeviceExist(deviceId))
@@ -129,7 +129,7 @@ public class DeviceController : ControllerBase
     public void SendRestBroadcast(string deviceId)
     {
         ValidateDeviceId(deviceId); 
-        Radar.IPRadarClient.SendResetBroadcast(deviceId);
+        RadarLogic.IPRadarClient.SendResetBroadcast(deviceId);
     }
 
     [HttpGet("{deviceId}/tracks")]

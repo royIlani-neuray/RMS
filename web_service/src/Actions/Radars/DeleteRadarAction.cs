@@ -10,25 +10,25 @@ using WebService.Entites;
 using WebService.Context;
 using WebService.Events;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class DeleteRadarAction : RadarAction 
 {
     public DeleteRadarAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        System.Console.WriteLine($"Deleting radar device - {radarDevice.Id}");
+        System.Console.WriteLine($"Deleting radar device - {radar.Id}");
 
-        var disconnectAction = new DisconnectRadarAction(radarDevice);
+        var disconnectAction = new DisconnectRadarAction(radar);
         disconnectAction.Run();
 
-        RadarContext.Instance.DeleteDevice(radarDevice);
+        RadarContext.Instance.DeleteDevice(radar);
 
-        radarDevice.DeviceWebSocket.CloseServer();
+        radar.DeviceWebSocket.CloseServer();
 
-        radarDevice.SetStatus("Device deleted.");
+        radar.SetStatus("Device deleted.");
 
-        RMSEvents.Instance.RadarDeviceDeletedEvent(radarDevice.Id);
+        RMSEvents.Instance.RadarDeviceDeletedEvent(radar.Id);
     }
 }

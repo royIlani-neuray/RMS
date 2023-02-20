@@ -12,18 +12,18 @@ using WebService.Events;
 
 namespace WebService.Actions;
 
-public abstract class RadarAction : EntityAction<RadarDevice>
+public abstract class RadarAction : EntityAction<Radar>
 {
     public RadarAction(string deviceId) : base(RadarContext.Instance, deviceId) {}
 
-    protected abstract void RunRadarAction(RadarDevice radarDevice);
+    protected abstract void RunRadarAction(Radar radarDevice);
 
-    protected override void RunAction(RadarDevice radarDevice)
+    protected override void RunAction(Radar radarDevice)
     {
         RunRadarAction(radarDevice);
     }
 
-    protected override void RunPostActionTask(RadarDevice radarDevice)
+    protected override void RunPostActionTask(Radar radarDevice)
     {
         RMSEvents.Instance.RadarDeviceUpdatedEvent(radarDevice.Id);
     }

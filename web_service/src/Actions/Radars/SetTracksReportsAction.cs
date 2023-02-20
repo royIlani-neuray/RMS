@@ -9,7 +9,7 @@
 using WebService.Entites;
 using System.Text.Json.Serialization;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class SetTracksReportsArgs
 {
@@ -32,9 +32,9 @@ public class SetTracksReportsAction : RadarAction
         this.args = args;
     }
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        radarDevice.SendTracksReport = args.SendTracksReport!.Value;
+        radar.SendTracksReport = args.SendTracksReport!.Value;
     }
 
 } 

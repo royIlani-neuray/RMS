@@ -6,11 +6,11 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Context;
 using System.Text.Json.Serialization;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class SetDeviceIdArgs
 {
@@ -40,13 +40,13 @@ public class SetDeviceIdAction : IAction {
 
     public void Run()
     {
-        if (DeviceMapper.Instance.IsDeviceHasMapping(args.NewDeviceId))
+        if (RadarDeviceMapper.Instance.IsDeviceHasMapping(args.NewDeviceId))
             throw new Exception("The new device id provided is already exist for another device in the network.");
 
         if (RadarContext.Instance.IsRadarDeviceExist(args.NewDeviceId))
             throw new Exception("The new device id provided is already registerd in RMS by another device.");
 
-        var mappedDevice = DeviceMapper.Instance.GetMappedDevice(deviceId); 
+        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(deviceId); 
 
         System.Console.WriteLine($"Updating device id. Current id: [{deviceId}], New id: [{args.NewDeviceId}] ...");    
         IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);

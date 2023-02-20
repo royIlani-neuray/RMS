@@ -10,10 +10,10 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Utils;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class AddRadarDeviceArgs 
 {
@@ -71,33 +71,33 @@ public class AddRadarAction : IAction
 
         System.Console.WriteLine($"Registering radar device - {args.Id}");
 
-        RadarDevice device = new RadarDevice();
-        device.Id = args.Id;
-        device.Name = args.Name;
-        device.Description = args.Description;
-        device.SendTracksReport = args.SendTracksReport;
+        Radar radar = new Radar();
+        radar.Id = args.Id;
+        radar.Name = args.Name;
+        radar.Description = args.Description;
+        radar.SendTracksReport = args.SendTracksReport;
 
         if (!String.IsNullOrEmpty(args.TemplateId))
         {
             var template = TemplateContext.Instance.GetTemplate(args.TemplateId);          
-            device.ConfigScript = new List<string>(template.ConfigScript);
-            ConfigScriptUtils.UpdateSensorPosition(device.ConfigScript, args.RadarPosition!);
-            ConfigScriptUtils.UpdateRadarCalibration(device.ConfigScript, args.RadarCalibration);
-            RadarConfigParser configParser = new RadarConfigParser(device.ConfigScript);
-            device.radarSettings = configParser.GetRadarSettings();  
+            radar.ConfigScript = new List<string>(template.ConfigScript);
+            ConfigScriptUtils.UpdateSensorPosition(radar.ConfigScript, args.RadarPosition!);
+            ConfigScriptUtils.UpdateRadarCalibration(radar.ConfigScript, args.RadarCalibration);
+            RadarConfigParser configParser = new RadarConfigParser(radar.ConfigScript);
+            radar.radarSettings = configParser.GetRadarSettings();  
         }
 
         try
         {
-            device.deviceMapping = DeviceMapper.Instance.GetMappedDevice(device.Id);
+            radar.deviceMapping = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id);
         }
         catch {}
         
-        RadarContext.Instance.AddDevice(device);
+        RadarContext.Instance.AddDevice(radar);
 
         System.Console.WriteLine($"Radar device registered.");
         
-        RMSEvents.Instance.RadarDeviceAddedEvent(device.Id);
+        RMSEvents.Instance.RadarDeviceAddedEvent(radar.Id);
 
         if (args.Enabled)
         {
@@ -105,7 +105,7 @@ public class AddRadarAction : IAction
             {
                 try
                 {
-                    var action = new EnableRadarAction(device.Id);
+                    var action = new EnableRadarAction(radar.Id);
                     action.Run();
                 }
                 catch (Exception ex)

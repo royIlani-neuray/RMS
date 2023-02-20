@@ -7,13 +7,13 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Context;
 using WebService.Utils;
 using System.Text.Json.Serialization;
 
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class SetRadarConfigArgs
 {
@@ -64,10 +64,10 @@ public class SetRadarConfigAction : RadarAction
         this.args = args;
     }
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
         List<string> configScript;
-        Console.WriteLine($"Setting radar config for device - {radarDevice.Id}");
+        Console.WriteLine($"Setting radar config for device - {radar.Id}");
 
         if (!string.IsNullOrWhiteSpace(args.TemplateId))
         {
@@ -86,19 +86,19 @@ public class SetRadarConfigAction : RadarAction
         try
         {
             RadarConfigParser configParser = new RadarConfigParser(configScript);
-            radarDevice.radarSettings = configParser.GetRadarSettings();
+            radar.radarSettings = configParser.GetRadarSettings();
         }
         catch
         {
-            throw new Exception($"Error: could not parse config script for device - {radarDevice.Id}. make sure the config is valid.");
+            throw new Exception($"Error: could not parse config script for device - {radar.Id}. make sure the config is valid.");
         }
 
-        radarDevice.ConfigScript = configScript;
+        radar.ConfigScript = configScript;
 
-        var disconnectAction = new DisconnectRadarAction(radarDevice);
+        var disconnectAction = new DisconnectRadarAction(radar);
         disconnectAction.Run();
 
-        var connectAction = new ConnectRadarAction(radarDevice);
+        var connectAction = new ConnectRadarAction(radar);
         connectAction.Run(); 
     }
 }

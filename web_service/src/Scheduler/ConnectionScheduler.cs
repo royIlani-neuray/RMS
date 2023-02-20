@@ -7,7 +7,7 @@
 **
 ***/
 using WebService.Context;
-using WebService.Actions.Radar;
+using WebService.Actions.Radars;
 
 namespace WebService.Scheduler;
 
@@ -46,7 +46,7 @@ public class ConnectionScheduler : TaskScheduler{
 
         foreach (var deviceInfo in devicesList)
         {
-            if (deviceInfo.State == Entites.RadarDevice.DeviceState.Disconnected)
+            if (deviceInfo.State == Entites.Radar.DeviceState.Disconnected)
             {
                 try
                 {

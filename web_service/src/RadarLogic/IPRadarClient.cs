@@ -10,7 +10,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace WebService.Radar;
+namespace WebService.RadarLogic;
 
 public class IPRadarClient 
 {

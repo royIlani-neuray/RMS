@@ -9,12 +9,13 @@
 using WebService.Entites;
 using WebService.Services;
 using WebService.Tracking.Applications;
+using WebService.Actions.Radars;
 
 namespace WebService.Tracking;
 
 public class RadarTracker 
 {
-    private RadarDevice radarDevice;
+    private Radar radarDevice;
     private Task? trackerTask;
     private ITrackingApplication? trackingApp;
     private bool runTracker;
@@ -22,7 +23,7 @@ public class RadarTracker
     
     public FrameData? LastFrameData;
 
-    public RadarTracker(RadarDevice radarDevice)
+    public RadarTracker(Radar radarDevice)
     {
         this.radarDevice = radarDevice;
         runTracker = false;

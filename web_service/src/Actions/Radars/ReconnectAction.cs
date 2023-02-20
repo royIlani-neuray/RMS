@@ -7,23 +7,22 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class ReconnectAction : RadarAction 
 {
     public ReconnectAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        if (!radarDevice.Enabled)
+        if (!radar.Enabled)
             return;
 
-        if (radarDevice.State != RadarDevice.DeviceState.Disconnected)
+        if (radar.State != Radar.DeviceState.Disconnected)
             return;
 
-        var connectAction = new ConnectRadarAction(radarDevice);
+        var connectAction = new ConnectRadarAction(radar);
         connectAction.Run();
     }
 }

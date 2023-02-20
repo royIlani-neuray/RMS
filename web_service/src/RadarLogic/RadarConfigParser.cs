@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 
-namespace WebService.Radar;
+namespace WebService.RadarLogic;
 
 public class RadarConfigParser
 {

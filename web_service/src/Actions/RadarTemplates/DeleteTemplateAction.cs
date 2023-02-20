@@ -10,7 +10,7 @@ using WebService.Entites;
 using WebService.Context;
 using WebService.Events;
 
-namespace WebService.Actions.Template;
+namespace WebService.Actions.RadarTemplates;
 
 public class DeleteTemplateAction : RadarTemplateAction 
 {
