@@ -44,7 +44,7 @@ public class WebSocketController : ControllerBase
 
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
-            RadarDevice device = DeviceContext.Instance.GetDevice(deviceId);
+            RadarDevice device = RadarContext.Instance.GetDevice(deviceId);
 
             using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             var socketFinishedTcs = new TaskCompletionSource<object>();

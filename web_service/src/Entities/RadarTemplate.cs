@@ -11,7 +11,7 @@ using WebService.Database;
 
 namespace WebService.Entites;
 
-public class RadarTemplate : IEntity, IEntityStorage
+public class RadarTemplate : IEntity
 {
     [JsonIgnore]
     public IEntity.EntityTypes EntityType => IEntity.EntityTypes.RadarTemplate;
@@ -41,7 +41,7 @@ public class RadarTemplate : IEntity, IEntityStorage
     public RadarSettings? radarSettings { get; set;}
 
     [JsonIgnore]
-    public ReaderWriterLockSlim templateLock;
+    public ReaderWriterLockSlim EntityLock { get; set; }
 
     public class RadarTemplateBrief 
     {
@@ -78,7 +78,7 @@ public class RadarTemplate : IEntity, IEntityStorage
         Model = String.Empty;
         Application = String.Empty;
         ConfigScript = new List<string>();
-        templateLock = new ReaderWriterLockSlim();
+        EntityLock = new ReaderWriterLockSlim();
     }
 
 }

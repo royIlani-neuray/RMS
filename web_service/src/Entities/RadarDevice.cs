@@ -15,7 +15,7 @@ using WebService.Database;
 
 namespace WebService.Entites;
 
-public class RadarDevice : DeviceEntity, IEntityStorage {
+public class RadarDevice : DeviceEntity {
 
     public class LinkedService
     {
@@ -33,7 +33,7 @@ public class RadarDevice : DeviceEntity, IEntityStorage {
     public override IEntity.EntityTypes EntityType => IEntity.EntityTypes.Radar;
     
     [JsonIgnore]
-    public string StoragePath => StorageDatabase.RadarStoragePath;
+    public override string StoragePath => StorageDatabase.RadarStoragePath;
 
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }

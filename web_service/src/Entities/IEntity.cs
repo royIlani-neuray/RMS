@@ -20,4 +20,12 @@ public interface IEntity {
 
     public EntityTypes EntityType { get; }
 
+    // each entity has a unique id.
+    public string Id { get; }
+
+    // all entities are stored in file system based db.
+    public string StoragePath { get; }
+
+    // lock that is used for entity sync
+    public ReaderWriterLockSlim EntityLock { get; set; }
 }

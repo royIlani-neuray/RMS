@@ -11,14 +11,14 @@ using WebService.Entites;
 
 namespace WebService.Context;
 
-public sealed class DeviceContext : EntityContext<RadarDevice> {
+public sealed class RadarContext : EntityContext<RadarDevice> {
 
     #region Singleton
     
     private static object singletonLock = new object();
-    private static volatile DeviceContext? instance; 
+    private static volatile RadarContext? instance; 
 
-    public static DeviceContext Instance {
+    public static RadarContext Instance {
         get 
         {
             if (instance == null)
@@ -26,7 +26,7 @@ public sealed class DeviceContext : EntityContext<RadarDevice> {
                 lock (singletonLock)
                 {
                     if (instance == null)
-                        instance = new DeviceContext();
+                        instance = new RadarContext();
                 }
             }
 
@@ -34,7 +34,7 @@ public sealed class DeviceContext : EntityContext<RadarDevice> {
         }
     }
 
-    private DeviceContext() : base(IEntity.EntityTypes.Radar) {}
+    private RadarContext() : base(IEntity.EntityTypes.Radar) {}
 
     #endregion
 

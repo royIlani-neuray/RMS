@@ -9,39 +9,21 @@
 using WebService.Context;
 using WebService.Entites;
 
-public abstract class RadarTemplateAction : IAction
+namespace WebService.Actions;
+
+public abstract class RadarTemplateAction : EntityAction<RadarTemplate>
 {
-    protected readonly string templateId;
-    public RadarTemplateAction(string templateId)
+    public RadarTemplateAction(string templateId) : base(TemplateContext.Instance, templateId) {}
+
+    protected abstract void RunTemplateAction(RadarTemplate template);
+
+    protected override void RunAction(RadarTemplate template)
     {
-        this.templateId = templateId;
+        RunTemplateAction(template);
     }
 
-    protected abstract void RunTemplateAction(RadarTemplate radarTemplate);
-
-    public void Run()
+    protected override void RunPostActionTask(RadarTemplate template)
     {
-        var radarTemplate = TemplateContext.Instance.GetTemplate(templateId);
-        radarTemplate.templateLock.EnterUpgradeableReadLock();
-
-        if (!TemplateContext.Instance.IsRadarTemplateExist(templateId))
-        {
-            radarTemplate.templateLock.ExitUpgradeableReadLock();
-            throw new NotFoundException($"Cannot find template with id '{templateId}' in context. action failed.");
-        }
-
-        try
-        {
-            radarTemplate.templateLock.EnterWriteLock();
-            RunTemplateAction(radarTemplate);
-        }
-        finally
-        {
-            if (TemplateContext.Instance.IsRadarTemplateExist(templateId))
-                TemplateContext.Instance.UpdateTemplate(radarTemplate);
-                
-            radarTemplate.templateLock.ExitWriteLock();
-            radarTemplate.templateLock.ExitUpgradeableReadLock();
-        }
     }
+    
 }

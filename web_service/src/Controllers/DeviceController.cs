@@ -35,17 +35,17 @@ public class DeviceController : ControllerBase
     [HttpGet]
     public List<RadarDevice.RadarDeviceBrief> GetDevices()
     {
-        return DeviceContext.Instance.GetDevicesBrief();
+        return RadarContext.Instance.GetDevicesBrief();
     }
 
     [HttpGet("{deviceId}")]
     public RadarDevice GetRadarDevice(string deviceId)
     {
         ValidateDeviceId(deviceId);        
-        if (!DeviceContext.Instance.IsRadarDeviceExist(deviceId))
+        if (!RadarContext.Instance.IsRadarDeviceExist(deviceId))
             throw new NotFoundException("There is no device with the provided id");
 
-        return DeviceContext.Instance.GetDevice(deviceId);
+        return RadarContext.Instance.GetDevice(deviceId);
     }
 
     [HttpPost]
@@ -136,7 +136,7 @@ public class DeviceController : ControllerBase
     public HttpTracksReport GetDeviceTracks(string deviceId)
     {
         ValidateDeviceId(deviceId); 
-        var radarDevice = DeviceContext.Instance.GetDevice(deviceId);
+        var radarDevice = RadarContext.Instance.GetDevice(deviceId);
 
         if ((radarDevice.radarTracker != null) && (radarDevice.radarTracker.LastFrameData != null))
         {

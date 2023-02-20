@@ -27,7 +27,7 @@ public class LinkServiceArgs
     }
 }
 
-public class LinkServiceAction : RadarDeviceAction 
+public class LinkServiceAction : RadarAction 
 {
     private LinkServiceArgs args;
 
@@ -36,7 +36,7 @@ public class LinkServiceAction : RadarDeviceAction
         this.args = args;
     }
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
         var alreadyLinked = radarDevice.LinkedServices.Exists(linkedService => linkedService.ServiceId == args.ServiceId);
 

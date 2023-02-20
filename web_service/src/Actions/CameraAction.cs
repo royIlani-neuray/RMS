@@ -6,23 +6,23 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.Context;
 using WebService.Entites;
+using WebService.Context;
 
 namespace WebService.Actions;
 
-public abstract class UserAction : EntityAction<User>
-{
-    public UserAction(string userId) : base(UserContext.Instance, userId) {}
+public abstract class CameraAction : EntityAction<Camera> {
 
-    protected abstract void RunUserAction(User user);
+    public CameraAction(string cameraId) : base(CameraContext.Instance, cameraId) {}
 
-    protected override void RunAction(User user)
+    protected abstract void RunCameraAction(Camera camera);
+    protected override void RunAction(Camera camera)
     {
-        RunUserAction(user);
+        RunCameraAction(camera);
     }
 
-    protected override void RunPostActionTask(User user)
+    protected override void RunPostActionTask(Camera camera)
     {
+        // TODO send event...
     }
 }

@@ -56,7 +56,7 @@ public class SetRadarConfigArgs
     }
 }
 
-public class SetRadarConfigAction : RadarDeviceAction 
+public class SetRadarConfigAction : RadarAction 
 {
     private SetRadarConfigArgs args;
     public SetRadarConfigAction(string deviceId, SetRadarConfigArgs args) : base(deviceId) 
@@ -64,10 +64,10 @@ public class SetRadarConfigAction : RadarDeviceAction
         this.args = args;
     }
 
-    protected override void RunDeviceAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(RadarDevice radarDevice)
     {
         List<string> configScript;
-        Console.WriteLine($"Setting radar config for device - {deviceId}");
+        Console.WriteLine($"Setting radar config for device - {radarDevice.Id}");
 
         if (!string.IsNullOrWhiteSpace(args.TemplateId))
         {
@@ -90,7 +90,7 @@ public class SetRadarConfigAction : RadarDeviceAction
         }
         catch
         {
-            throw new Exception($"Error: could not parse config script for device - {deviceId}. make sure the config is valid.");
+            throw new Exception($"Error: could not parse config script for device - {radarDevice.Id}. make sure the config is valid.");
         }
 
         radarDevice.ConfigScript = configScript;

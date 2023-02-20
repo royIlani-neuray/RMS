@@ -11,7 +11,7 @@ using WebService.Entites;
 
 namespace WebService.Context;
 
-public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
+public class EntityContext<Entity> where Entity : IEntity {
 
     private IEntity.EntityTypes entityType;
 
@@ -27,7 +27,7 @@ public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
         entities = new Dictionary<string, Entity>(EntityStorage<Entity>.LoadAllEntitys(StoragePath));
     }
 
-    protected bool IsEntityExist(string entityId)
+    public bool IsEntityExist(string entityId)
     {
         if (entities.Keys.Contains(entityId))
             return true;
@@ -35,7 +35,7 @@ public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
         return false;
     }
 
-    protected Entity GetEntity(string entityId)
+    public Entity GetEntity(string entityId)
     {
         if (!IsEntityExist(entityId))
             throw new NotFoundException($"Could not find {entityType} in context with id - {entityId}");
@@ -43,7 +43,7 @@ public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
         return entities[entityId];
     }
 
-    protected void AddEntity(Entity entity)
+    public void AddEntity(Entity entity)
     {
         if (IsEntityExist(entity.Id))
             throw new Exception($"Cannot add {entityType} entity. Another {entityType} with the same ID already exist.");
@@ -52,7 +52,7 @@ public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
         entities.Add(entity.Id, entity);
     }
 
-    protected void UpdateEntity(Entity entity)
+    public void UpdateEntity(Entity entity)
     {
         if (!IsEntityExist(entity.Id))
             throw new NotFoundException($"Could not find {entityType} entity in context with id - {entity.Id}");
@@ -60,7 +60,7 @@ public class EntityContext<Entity> where Entity : IEntity, IEntityStorage {
         EntityStorage<Entity>.SaveEntity(entity);
     }
 
-    protected void DeleteEntity(Entity entity)
+    public void DeleteEntity(Entity entity)
     {
         GetEntity(entity.Id); // make sure entity enlisted
 

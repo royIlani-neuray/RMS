@@ -11,13 +11,13 @@ using WebService.Database;
 
 namespace WebService.Entites;
 
-public class Camera : DeviceEntity, IEntityStorage {
+public class Camera : DeviceEntity {
     
     [JsonIgnore]
     public override IEntity.EntityTypes EntityType => IEntity.EntityTypes.Camera;
 
     [JsonIgnore]
-    public string StoragePath => StorageDatabase.CameraStoragePath;
+    public override string StoragePath => StorageDatabase.CameraStoragePath;
 
     public class CameraBrief : DeviceBrief
     {

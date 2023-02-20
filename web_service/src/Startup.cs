@@ -55,7 +55,7 @@ public class Startup
         ServiceManager.Instance.InitServices(servicesSettings);
 
         Console.WriteLine("Loading devices from storage...");
-        DeviceContext.Instance.LoadDevicesFromStorage();
+        RadarContext.Instance.LoadDevicesFromStorage();
 
         Console.WriteLine("Starting Device Mapper...");
         DeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);

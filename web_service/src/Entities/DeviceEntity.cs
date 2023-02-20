@@ -13,6 +13,7 @@ namespace WebService.Entites;
 public abstract class DeviceEntity : IEntity {
 
     public abstract IEntity.EntityTypes EntityType { get; }
+    public abstract string StoragePath { get; }
 
     public enum DeviceTypes {
         Radar,
@@ -51,7 +52,7 @@ public abstract class DeviceEntity : IEntity {
     public bool Enabled { get; set; }
 
     [JsonIgnore]
-    public ReaderWriterLockSlim deviceLock;
+    public ReaderWriterLockSlim EntityLock { get; set; }
 
     public abstract class DeviceBrief 
     {
@@ -90,6 +91,6 @@ public abstract class DeviceEntity : IEntity {
         Id = String.Empty;
         Status = String.Empty;
         Enabled = false;
-        deviceLock = new ReaderWriterLockSlim();
+        EntityLock = new ReaderWriterLockSlim();
     }
 }

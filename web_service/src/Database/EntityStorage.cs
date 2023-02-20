@@ -11,17 +11,17 @@ using System.Text.Json;
 
 namespace WebService.Database;
 
-public class EntityStorage<T> where T : IEntity, IEntityStorage {
+public class EntityStorage<Entity> where Entity : IEntity {
 
     public static readonly string StorageFileExtention = ".json";
 
-    public static void SaveEntity(T entity)
+    public static void SaveEntity(Entity entity)
     {
         string jsonString = JsonSerializer.Serialize(entity);
         File.WriteAllText(System.IO.Path.Combine(entity.StoragePath, entity.Id + StorageFileExtention), jsonString);
     } 
 
-    public static void DeleteEntity(T entity)
+    public static void DeleteEntity(Entity entity)
     {
         string filePath = System.IO.Path.Combine(entity.StoragePath, entity.Id + StorageFileExtention);
 
@@ -35,16 +35,16 @@ public class EntityStorage<T> where T : IEntity, IEntityStorage {
         }
     }
 
-    public static Dictionary<string, T> LoadAllEntitys(string storagePath)
+    public static Dictionary<string, Entity> LoadAllEntitys(string storagePath)
     {
-        Dictionary<string, T> entities = new Dictionary<string, T>();
+        Dictionary<string, Entity> entities = new Dictionary<string, Entity>();
 
         var files = System.IO.Directory.GetFiles(storagePath, "*" + StorageFileExtention);
         foreach (string filePath in files)
         {
             string jsonString = File.ReadAllText(filePath);
             
-            T? entity = JsonSerializer.Deserialize<T>(jsonString);
+            Entity? entity = JsonSerializer.Deserialize<Entity>(jsonString);
 
             if (entity == null)
                 throw new Exception("deserialze entity failed!");

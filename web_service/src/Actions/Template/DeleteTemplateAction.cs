@@ -16,11 +16,11 @@ public class DeleteTemplateAction : RadarTemplateAction
 {
     public DeleteTemplateAction(string templateId) : base(templateId) {}
 
-    protected override void RunTemplateAction(RadarTemplate radarTemplate)
+    protected override void RunTemplateAction(RadarTemplate template)
     {
-        System.Console.WriteLine($"Deleting radar template - {templateId}");
-        TemplateContext.Instance.DeleteTemplate(radarTemplate);
+        System.Console.WriteLine($"Deleting radar template - {template.Id}");
+        TemplateContext.Instance.DeleteTemplate(template);
 
-        RMSEvents.Instance.TemplateDeletedEvent(templateId);
+        RMSEvents.Instance.TemplateDeletedEvent(template.Id);
     }
 }

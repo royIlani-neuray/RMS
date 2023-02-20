@@ -28,9 +28,9 @@ public class FWUpdateAction : IAction {
     {
         bool enableDevice = false;
 
-        if (DeviceContext.Instance.IsRadarDeviceExist(deviceId))
+        if (RadarContext.Instance.IsRadarDeviceExist(deviceId))
         {
-            var device = DeviceContext.Instance.GetDevice(deviceId);
+            var device = RadarContext.Instance.GetDevice(deviceId);
 
             if (device.Enabled)
             {
