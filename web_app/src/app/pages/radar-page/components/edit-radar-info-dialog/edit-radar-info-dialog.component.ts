@@ -16,7 +16,7 @@ import { RadarsService } from 'src/app/services/radars.service';
 
 
 export interface DialogData {
-  radarDevice: Radar
+  radar: Radar
 }
 
 @Component({
@@ -39,7 +39,7 @@ export class EditRadarInfoDialogComponent implements OnInit {
 
   ngOnInit(): void 
   {
-    this.radar = this.data.radarDevice
+    this.radar = this.data.radar
     this.radarNameFC = new FormControl(this.radar.name, [Validators.required])
   }
 
