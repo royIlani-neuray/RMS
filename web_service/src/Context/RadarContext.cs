@@ -49,33 +49,33 @@ public sealed class RadarContext : EntityContext<Radar> {
         }
     }
 
-    public bool IsRadarDeviceExist(string deviceId)
+    public bool IsRadarExist(string radarId)
     {
-        return IsEntityExist(deviceId);
+        return IsEntityExist(radarId);
     }
 
-    public Radar GetDevice(string deviceId)
+    public Radar GetRadar(string radarId)
     {
-        return GetEntity(deviceId);
+        return GetEntity(radarId);
     }
 
-    public void AddDevice(Radar device)
+    public void AddRadar(Radar device)
     {
         AddEntity(device);
     }
 
-    public void UpdateDevice(Radar device)
+    public void UpdateRadar(Radar device)
     {
         UpdateEntity(device);
     }
 
-    public void DeleteDevice(Radar device)
+    public void DeleteRadar(Radar device)
     {
         DeleteEntity(device);
     }
 
-    public List<Radar.RadarDeviceBrief> GetDevicesBrief()
+    public List<Radar.RadarBrief> GetRadarsBrief()
     {
-        return entities.Values.ToList().ConvertAll<Radar.RadarDeviceBrief>(device => new Radar.RadarDeviceBrief(device));
+        return entities.Values.ToList().ConvertAll<Radar.RadarBrief>(device => new Radar.RadarBrief(device));
     }
 }

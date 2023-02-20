@@ -13,7 +13,7 @@ namespace WebService.Actions.Radars;
 
 public class DeviceDiscoveredAction : RadarAction {
 
-    public DeviceDiscoveredAction(string deviceId) : base(deviceId) {}
+    public DeviceDiscoveredAction(string radarId) : base(radarId) {}
 
     protected override void RunRadarAction(Radar radar)
     {

@@ -6,8 +6,6 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.Entites;
-using WebService.Context;
 using WebService.RadarLogic;
 using Microsoft.AspNetCore.Mvc;
 

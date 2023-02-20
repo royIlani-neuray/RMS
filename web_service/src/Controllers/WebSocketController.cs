@@ -37,14 +37,14 @@ public class WebSocketController : ControllerBase
         }
     }    
 
-    [HttpGet("devices/{deviceId}")]
-    public async Task GetDeviceWebsocket(string deviceId)
+    [HttpGet("radars/{radarId}")]
+    public async Task GetDeviceWebsocket(string radarId)
     {
-        //System.Console.WriteLine($"In get device websocket - device id: {deviceId}");
+        //System.Console.WriteLine($"In get radar device websocket - radar id: {radarId}");
 
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
-            Radar device = RadarContext.Instance.GetDevice(deviceId);
+            Radar device = RadarContext.Instance.GetRadar(radarId);
 
             using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             var socketFinishedTcs = new TaskCompletionSource<object>();
@@ -55,7 +55,7 @@ public class WebSocketController : ControllerBase
             // from this function, otherwise the socket connection will close
             await socketFinishedTcs.Task;
 
-            //System.Console.WriteLine($"Websocket connection closed - device id: {deviceId}");
+            //System.Console.WriteLine($"Websocket connection closed - radar device id: {radarId}");
         }
         else
         {

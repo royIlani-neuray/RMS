@@ -48,17 +48,17 @@ public class SetDeviceNetworkArgs
 public class SetDeviceNetworkAction : IAction {
 
     private SetDeviceNetworkArgs args;
-    private string deviceId;
+    private string radarId;
 
-    public SetDeviceNetworkAction(string deviceId, SetDeviceNetworkArgs args)
+    public SetDeviceNetworkAction(string radarId, SetDeviceNetworkArgs args)
     {
         this.args = args;
-        this.deviceId = deviceId;
+        this.radarId = radarId;
     }
 
     public void Run()
     {
-        IPRadarClient.SetDeviceNetwork(deviceId, args.ipAddress, args.subnetMask, args.gwAddress, args.staticIP!.Value);
+        IPRadarClient.SetDeviceNetwork(radarId, args.ipAddress, args.subnetMask, args.gwAddress, args.staticIP!.Value);
     }
 
 }

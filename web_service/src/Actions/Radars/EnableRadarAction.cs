@@ -12,7 +12,7 @@ namespace WebService.Actions.Radars;
 
 public class EnableRadarAction : RadarAction 
 {
-    public EnableRadarAction(string deviceId) : base(deviceId) {}
+    public EnableRadarAction(string radarId) : base(radarId) {}
 
     protected override void RunRadarAction(Radar radar)
     {

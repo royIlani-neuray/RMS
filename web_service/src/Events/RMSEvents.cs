@@ -51,19 +51,19 @@ public class RMSEvents : WebSocketServer
         Enqueue(message);
     }
     
-    public void RadarDeviceUpdatedEvent(string deviceId)
+    public void RadarUpdatedEvent(string radarId)
     {
-        SendEvent("RADAR_DEVICE_UPDATED", deviceId);
+        SendEvent("RADAR_DEVICE_UPDATED", radarId);
     }
 
-    public void RadarDeviceAddedEvent(string deviceId)
+    public void RadarAddedEvent(string radarId)
     {
-        SendEvent("RADAR_DEVICE_ADDED", deviceId);
+        SendEvent("RADAR_DEVICE_ADDED", radarId);
     }
 
-    public void RadarDeviceDeletedEvent(string deviceId)
+    public void RadarDeletedEvent(string radarId)
     {
-        SendEvent("RADAR_DEVICE_DELETED", deviceId);
+        SendEvent("RADAR_DEVICE_DELETED", radarId);
     }
 
     public void DeviceMappingUpdatedEvent()

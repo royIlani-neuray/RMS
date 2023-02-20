@@ -1,0 +1,119 @@
+
+<div *ngIf="radar">
+                
+    <!-- Radar Info card -->
+    <div style="float: left; margin-right: 50px;">
+        <table class="radar-info-table">
+            <tr>
+                <td><mat-label mat-basic-chip>Radar Info:</mat-label></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Enabled: </td>
+                <td>{{radar.enabled}}</td>
+            </tr>
+            <!--
+            <tr>
+                <td>State: </td>
+                <td>{{radar.state}}</td>
+            </tr>
+            -->
+            <tr>
+                <td>Status: </td>
+                <td>{{radar.status}}</td>
+            </tr>
+            <tr>
+                <td>Send Tracks Reports: </td>
+                <td>{{radar.send_tracks_report}}</td>
+            </tr>
+            <tr>
+                <td>Record Radar Data:</td>
+                <td>{{isRadarRecordingEnabled()}}</td>
+            </tr>
+            <tr>
+                <td>Radar Calibrated:</td>
+                <td>{{isRadarCalibrated()}}</td>
+            </tr>
+            <tr>
+                <td>Device ID: </td>
+                <td>{{radar.device_id}}</td>
+            </tr>
+            <tr>
+                <td>Description: </td>
+                <td><div style="max-width: 500px;">{{radar.description}}</div></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><div align="end"><button mat-button (click)="editInfoClicked()" color="primary">Edit Info</button></div></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Device Info card -->
+    <table class="radar-info-table" *ngIf="radar.device_mapping != null">
+        <tr>
+            <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>IP Address:</td>
+            <td>{{radar.device_mapping.ip}}</td>
+        </tr>
+        <tr>
+            <td>Subnet Mask:</td>
+            <td>{{radar.device_mapping.subnet}}</td>
+        </tr>
+        <tr>
+            <td>Gateway:</td>
+            <td>{{radar.device_mapping.gateway}}</td>
+        </tr>
+        <tr>
+            <td>Static IP:</td>
+            <td>{{radar.device_mapping.static_ip}}</td>
+        </tr>
+        <tr>
+            <td>Model:</td>
+            <td>{{radar.device_mapping.model}}</td>
+        </tr>
+        <tr>
+            <td>Application:</td>
+            <td>{{radar.device_mapping.application}}</td>
+        </tr>
+        <tr>
+            <td>FW Version:</td>
+            <td>{{radar.device_mapping.fw_version}}</td>
+        </tr>
+    </table>
+
+    <!-- Control buttons -->
+    <div>
+        <br><br><br><br><br>
+        <button mat-raised-button (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
+
+        <button mat-raised-button *ngIf="!radar.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
+        <button mat-raised-button *ngIf="radar.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
+
+        <button mat-raised-button *ngIf="!radar.enabled" (click)="enableRadar()" color="primary" style="margin-left: 10px;">Enable Radar</button>
+        <button mat-raised-button *ngIf="radar.enabled" (click)="disableRadar()" color="primary" style="margin-left: 10px;">Disable Radar</button>
+
+        <button mat-raised-button *ngIf="!isRadarRecordingEnabled()" (click)="enableRadarRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
+        <button mat-raised-button *ngIf="isRadarRecordingEnabled()" (click)="disableRadarRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
+
+        <button mat-raised-button (click)="deleteRadar()" color="primary" style="margin-left: 10px;">Delete Radar</button>
+    </div>
+
+    <br>
+
+    <!-- Linked Services card -->
+    <div class="radar-info-card">
+        <p><mat-label mat-basic-chip>Linked Services:</mat-label></p>
+        <mat-divider></mat-divider>
+        <ul>
+            <li *ngFor="let service of radar.linked_services">{{service.service_id}}</li>
+            <li *ngIf="radar.linked_services.length == 0">No services linked to this device.</li>
+        </ul>
+    </div>
+
+</div>
+
+<br><br><br><br><br><br><br><br>

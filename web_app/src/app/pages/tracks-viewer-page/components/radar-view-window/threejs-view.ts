@@ -12,7 +12,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Material, MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
 import { ElementRef } from "@angular/core";
-import { RadarDevice } from "src/app/entities/radar-device";
+import { Radar } from "src/app/entities/radar";
 import { PointData, TrackData } from "src/app/entities/frame-data";
 
 export class ThreeJsView {
@@ -117,7 +117,7 @@ export class ThreeJsView {
 
 
 
-    public initScene(radarDevice : RadarDevice)
+    public initScene(radar : Radar)
     {
       this.disposeScene()
       this.scene.add(this.directionalLight)
@@ -125,19 +125,19 @@ export class ThreeJsView {
       this.scene.add(this.tracksGroup)
       this.scene.add(this.pointsCloudGroup)
       
-      if (radarDevice.radar_settings.boundary_box != null)
+      if (radar.radar_settings.boundary_box != null)
       {
-        let boundingBoxSizeX = Math.abs(radarDevice.radar_settings.boundary_box.x_max - radarDevice.radar_settings.boundary_box.x_min)
-        let boundingBoxSizeY = Math.abs(radarDevice.radar_settings.boundary_box.z_max - radarDevice.radar_settings.boundary_box.z_min)
-        let boundingBoxSizeZ = Math.abs(radarDevice.radar_settings.boundary_box.y_max - radarDevice.radar_settings.boundary_box.y_min)
-        let boundingBoxZoffset = radarDevice.radar_settings.boundary_box.y_min
-        let boundingBoxYoffset = radarDevice.radar_settings.boundary_box.z_min
+        let boundingBoxSizeX = Math.abs(radar.radar_settings.boundary_box.x_max - radar.radar_settings.boundary_box.x_min)
+        let boundingBoxSizeY = Math.abs(radar.radar_settings.boundary_box.z_max - radar.radar_settings.boundary_box.z_min)
+        let boundingBoxSizeZ = Math.abs(radar.radar_settings.boundary_box.y_max - radar.radar_settings.boundary_box.y_min)
+        let boundingBoxZoffset = radar.radar_settings.boundary_box.y_min
+        let boundingBoxYoffset = radar.radar_settings.boundary_box.z_min
 
         // draw the floor (plane grid)
         let planeGridSize = Math.max(boundingBoxSizeZ, boundingBoxSizeX)
         let planeGridDivisions = planeGridSize
         this.floor = new THREE.GridHelper(planeGridSize,planeGridDivisions, 0x303030, 0x303030)
-        this.floor.position.z += (planeGridSize / 2) + radarDevice.radar_settings.boundary_box.y_min
+        this.floor.position.z += (planeGridSize / 2) + radar.radar_settings.boundary_box.y_min
           
         this.scene.add(this.floor)
 
@@ -159,13 +159,13 @@ export class ThreeJsView {
         this.scene.add(this.boundingBox)   
       }
 
-      if (radarDevice.radar_settings.static_boundary_box != null)
+      if (radar.radar_settings.static_boundary_box != null)
       {
-        let staticBoundingBoxSizeX = Math.abs(radarDevice.radar_settings.static_boundary_box.x_max - radarDevice.radar_settings.static_boundary_box.x_min)
-        let staticBoundingBoxSizeY = Math.abs(radarDevice.radar_settings.static_boundary_box.z_max - radarDevice.radar_settings.static_boundary_box.z_min)
-        let staticBoundingBoxSizeZ = Math.abs(radarDevice.radar_settings.static_boundary_box.y_max - radarDevice.radar_settings.static_boundary_box.y_min)
-        let staticBoundingBoxZoffset = radarDevice.radar_settings.static_boundary_box.y_min
-        let staticBoundingBoxYoffset = radarDevice.radar_settings.static_boundary_box.z_min
+        let staticBoundingBoxSizeX = Math.abs(radar.radar_settings.static_boundary_box.x_max - radar.radar_settings.static_boundary_box.x_min)
+        let staticBoundingBoxSizeY = Math.abs(radar.radar_settings.static_boundary_box.z_max - radar.radar_settings.static_boundary_box.z_min)
+        let staticBoundingBoxSizeZ = Math.abs(radar.radar_settings.static_boundary_box.y_max - radar.radar_settings.static_boundary_box.y_min)
+        let staticBoundingBoxZoffset = radar.radar_settings.static_boundary_box.y_min
+        let staticBoundingBoxYoffset = radar.radar_settings.static_boundary_box.z_min
 
         // draw the static bounding box
         let staticBoxGeometry = new THREE.BoxGeometry(staticBoundingBoxSizeX,staticBoundingBoxSizeY,staticBoundingBoxSizeZ)
@@ -181,16 +181,16 @@ export class ThreeJsView {
         this.scene.add(this.staticBoundingBox)         
       }
 
-      if (radarDevice.radar_settings.sensor_position != null)
+      if (radar.radar_settings.sensor_position != null)
       {
-        let radarHeight = radarDevice.radar_settings.sensor_position.height
+        let radarHeight = radar.radar_settings.sensor_position.height
   
         // draw the radar
         let radarGeometery = new THREE.BoxGeometry(0.4,0.4,0.05)
         this.radar = new THREE.Mesh(radarGeometery, new THREE.MeshStandardMaterial({ color: 0xffffff, metalness:0.5, roughness: 0 }))
         this.radar.position.set(0,radarHeight,0)
-        this.radar.rotateX(radarDevice.radar_settings.sensor_position.elevation_tilt * (Math.PI / 180))
-        this.radar.rotateY((-radarDevice.radar_settings.sensor_position.azimuth_tilt) * (Math.PI / 180))
+        this.radar.rotateX(radar.radar_settings.sensor_position.elevation_tilt * (Math.PI / 180))
+        this.radar.rotateY((-radar.radar_settings.sensor_position.azimuth_tilt) * (Math.PI / 180))
         this.scene.add(this.radar)  
       }
 

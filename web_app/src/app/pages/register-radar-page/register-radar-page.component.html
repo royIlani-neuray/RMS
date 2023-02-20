@@ -1,0 +1,68 @@
+<div class="page-margin">
+
+  <h3>Register Radar Device</h3>
+  <p>
+      Register a new radar device.<br> 
+      Make sure that the radar is connected to the network and listed in the <a routerLink="/device-mapping">Device Mapping</a> page.<br>
+  </p>
+  <br>
+  <form class="new-device-form">
+      <mat-form-field class="full-width-500"  hintLabel="Max 30 characters" appearance="fill">
+        <mat-label>Radar Name</mat-label>
+        <input matInput #radarNameInput maxlength="30" placeholder="Name this device" [formControl]="radarNameFC">
+        <mat-hint align="end">{{radarNameInput.value!.length || 0}}/30</mat-hint>
+      </mat-form-field>
+    
+      <mat-form-field class="full-width-500" appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="Add optional description" [formControl]="descriptionFC"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field class="full-width-500" appearance="fill">
+          <mat-label>Select Radar Device</mat-label>
+          <mat-select [formControl]="selectedDeviceFC" (selectionChange)="onDeviceSelected($event)">
+              <mat-option *ngFor="let device of deviceList" [value]="device.device_id">{{device.device_id}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field class="full-width-500" appearance="fill">
+        <mat-label>Select Radar Template</mat-label>
+        <mat-select [formControl]="selectedTemplateFC">
+            <mat-option *ngFor="let template of validTemplatesList" [value]="template.template_id">{{template.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-divider></mat-divider>
+      <br><mat-label>Radar Position:</mat-label><br><br>
+      
+      <mat-form-field class="position-input"  appearance="fill">
+        <mat-label>Height</mat-label>
+        <input matInput placeholder="Height in meters" type="number" [formControl]="heightInputFC">
+      </mat-form-field>
+      
+      <mat-form-field class="position-input"  appearance="fill">
+        <mat-label>Azimuth Tilt</mat-label>
+        <input matInput placeholder="Azimuth in degrees" type="number" [formControl]="azimuthInputFC">
+      </mat-form-field>
+      
+      <mat-form-field class="position-input"  appearance="fill">
+        <mat-label>Elevation Tilt</mat-label>
+        <input matInput placeholder="Elevation in degrees" type="number" [formControl]="elevationInputFC">
+      </mat-form-field>
+      
+      <mat-divider></mat-divider>
+      <br>
+      <mat-form-field class="full-width-500" appearance="fill">
+        <mat-label>Sensor Calibration</mat-label>
+        <input matInput #radarCalibrationInput maxlength="400" placeholder="Provide calibration values for the sensor (optional)" [formControl]="calibrationInputFC">
+      </mat-form-field>
+  
+      <mat-divider></mat-divider>
+      <br>
+      <mat-slide-toggle color="primary" checked="true" style="margin-right: 40px;">Radar enabled</mat-slide-toggle>
+      <mat-slide-toggle color="primary">Send tracks reports</mat-slide-toggle>
+  </form>
+  <br>
+  <button mat-raised-button (click)="onRegisterClicked()" color="primary">Register Device</button>
+  
+</div>

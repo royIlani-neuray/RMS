@@ -19,25 +19,25 @@ public class RMSClient
     {
     }
 
-    public async Task<List<RadarDeviceBrief>> GetRegisteredDevicesAsync()
+    public async Task<List<RadarBrief>> GetRegisteredDevicesAsync()
     {
         var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
 
-        var devices = await httpClient.GetFromJsonAsync<List<RadarDeviceBrief>>($"devices");
+        var radars = await httpClient.GetFromJsonAsync<List<RadarBrief>>($"radars");
 
-        if (devices == null)
-            throw new Exception("Failed to get device list from RMS");
+        if (radars == null)
+            throw new Exception("Failed to get radar list from RMS");
 
-        return devices!;
+        return radars!;
     }
 
-    public async Task<bool> IsDeviceRegisterdAsync(string deviceId)
+    public async Task<bool> IsDeviceRegisterdAsync(string radarId)
     {
-        var devices = await GetRegisteredDevicesAsync();
-        return devices.Exists(device => device.Id == deviceId);
+        var radars = await GetRegisteredDevicesAsync();
+        return radars.Exists(radar => radar.Id == radarId);
     }
 
-    public async Task<bool> SetDeviceConfig(string deviceId, List<string> config)
+    public async Task<bool> SetDeviceConfig(string radarId, List<string> config)
     {
         var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
         
@@ -46,7 +46,7 @@ public class RMSClient
             config
         };
 
-        var response = await httpClient.PostAsJsonAsync($"devices/{deviceId}/config", requestBody);
+        var response = await httpClient.PostAsJsonAsync($"radars/{radarId}/config", requestBody);
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
@@ -58,7 +58,7 @@ public class RMSClient
         return true;
     }
 
-    public async Task<bool> RegisterDeviceAsync(string deviceId)
+    public async Task<bool> RegisterDeviceAsync(string radarId)
     {
         var httpClient = HttpClientFactory.Instance.CreateClient(HttpClientFactory.HTTP_CLIENT_RMS);
 
@@ -66,7 +66,7 @@ public class RMSClient
         {
             name = "Device Emulator",
             description = "An app for streaming pre-recorded radar data.",
-            device_id = deviceId,
+            radar_id = radarId,
 
             template_id = "",
 
@@ -80,7 +80,7 @@ public class RMSClient
             }
         };
 
-        var response = await httpClient.PostAsJsonAsync($"devices", requestBody);
+        var response = await httpClient.PostAsJsonAsync($"radars", requestBody);
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
@@ -133,7 +133,7 @@ public class RMSClient
         throw new Exception("No network adapters with an IPv4 address in the system!");
     }
 
-    public void SendDeviceDiscoveryMessage(string deviceId)
+    public void SendDeviceDiscoveryMessage(string radarId)
     {
         List<IPAddress> broadcastSources = GetBroadcastAddresses();
         
@@ -145,7 +145,7 @@ public class RMSClient
         writer.Write(EmulatorDevice.PROTOCOL_REVISION);
         writer.Write(EmulatorDevice.DEVICE_INFO_KEY);
 
-        Guid guid = Guid.Parse(deviceId);
+        Guid guid = Guid.Parse(radarId);
         writer.Write(guid.ToByteArray());
 
         IPAddress ip = IPAddress.Parse(GetLocalIPAddress());

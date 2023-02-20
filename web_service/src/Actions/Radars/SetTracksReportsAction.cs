@@ -27,7 +27,7 @@ public class SetTracksReportsAction : RadarAction
 {
     private SetTracksReportsArgs args;
 
-    public SetTracksReportsAction(string deviceId, SetTracksReportsArgs args) : base(deviceId) 
+    public SetTracksReportsAction(string radarId, SetTracksReportsArgs args) : base(radarId) 
     {
         this.args = args;
     }

@@ -50,14 +50,14 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
       next: (layout) => { this.ViewLayoutChanged(layout) }
     })
 
-    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+    this.rmsEventsService.radarUpdatedEvent.subscribe({
       next: (deviceId) => 
       {
         this.tracksViewerData.radarWindowsList.forEach((radarWindow) => 
         {
-          if ((radarWindow.radarDevice != null) && (radarWindow.radarDevice.device_id == deviceId))
+          if ((radarWindow.radar != null) && (radarWindow.radar.device_id == deviceId))
           {
-            radarWindow.setRadarDevice(deviceId)
+            radarWindow.setRadar(deviceId)
           }
         })
       }
@@ -89,11 +89,11 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     //return false; // avoid default browser action on click
   }
 
-  setRadarDevice(deviceId : string)
+  setRadar(radarId : string)
   {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarViewWindowComponent)
-    component?.instance.setRadarDevice(deviceId)
+    component?.instance.setRadar(radarId)
   }
 
 }
