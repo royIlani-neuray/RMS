@@ -11,7 +11,7 @@ using WebService.Entites;
 
 namespace WebService.Context;
 
-public sealed class RadarContext : EntityContext<RadarDevice> {
+public sealed class RadarContext : EntityContext<Radar> {
 
     #region Singleton
     
@@ -44,7 +44,7 @@ public sealed class RadarContext : EntityContext<RadarDevice> {
 
         foreach (var device in entities.Values)
         {
-            device.State = RadarDevice.DeviceState.Disconnected;
+            device.State = Radar.DeviceState.Disconnected;
             device.Status = device.Enabled ? "The device is disconnected." : "The device is disabled.";
         }
     }
@@ -54,28 +54,28 @@ public sealed class RadarContext : EntityContext<RadarDevice> {
         return IsEntityExist(deviceId);
     }
 
-    public RadarDevice GetDevice(string deviceId)
+    public Radar GetDevice(string deviceId)
     {
         return GetEntity(deviceId);
     }
 
-    public void AddDevice(RadarDevice device)
+    public void AddDevice(Radar device)
     {
         AddEntity(device);
     }
 
-    public void UpdateDevice(RadarDevice device)
+    public void UpdateDevice(Radar device)
     {
         UpdateEntity(device);
     }
 
-    public void DeleteDevice(RadarDevice device)
+    public void DeleteDevice(Radar device)
     {
         DeleteEntity(device);
     }
 
-    public List<RadarDevice.RadarDeviceBrief> GetDevicesBrief()
+    public List<Radar.RadarDeviceBrief> GetDevicesBrief()
     {
-        return entities.Values.ToList().ConvertAll<RadarDevice.RadarDeviceBrief>(device => new RadarDevice.RadarDeviceBrief(device));
+        return entities.Values.ToList().ConvertAll<Radar.RadarDeviceBrief>(device => new Radar.RadarDeviceBrief(device));
     }
 }

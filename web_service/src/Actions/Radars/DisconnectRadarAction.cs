@@ -13,37 +13,37 @@ namespace WebService.Actions.Radars;
 
 public class DisconnectRadarAction : IAction 
 {
-    private RadarDevice radarDevice;
+    private Radar radar;
 
-    public DisconnectRadarAction(RadarDevice radarDevice)
+    public DisconnectRadarAction(Radar radar)
     {
-        this.radarDevice = radarDevice;
+        this.radar = radar;
     }
 
     public void Run()
     {
-        //System.Console.WriteLine($"Debug: DisconnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
+        //System.Console.WriteLine($"Debug: DisconnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
 
-        if (radarDevice.State == RadarDevice.DeviceState.Active)
+        if (radar.State == Radar.DeviceState.Active)
         {
-            radarDevice.SetStatus("Stopping tracker...");
-            radarDevice.radarTracker!.Stop();
-            radarDevice.radarTracker = null;
-            radarDevice.SetStatus("Tracker stopped.");
-            radarDevice.State = RadarDevice.DeviceState.Connected;
+            radar.SetStatus("Stopping tracker...");
+            radar.radarTracker!.Stop();
+            radar.radarTracker = null;
+            radar.SetStatus("Tracker stopped.");
+            radar.State = Radar.DeviceState.Connected;
         }   
 
-        if (radarDevice.State == RadarDevice.DeviceState.Connected)
+        if (radar.State == Radar.DeviceState.Connected)
         {
-            radarDevice.SetStatus("Disconnecting from the radar device...");
-            if (radarDevice.ipRadarClient!.IsConnected())
+            radar.SetStatus("Disconnecting from the radar device...");
+            if (radar.ipRadarClient!.IsConnected())
             {
-                radarDevice.ipRadarClient!.Disconnect();
-                radarDevice.ipRadarClient = null;
+                radar.ipRadarClient!.Disconnect();
+                radar.ipRadarClient = null;
             }
 
-            radarDevice.State = RadarDevice.DeviceState.Disconnected;
-            radarDevice.SetStatus("The device is disconnected.");
+            radar.State = Radar.DeviceState.Disconnected;
+            radar.SetStatus("The device is disconnected.");
         }    
     }
 

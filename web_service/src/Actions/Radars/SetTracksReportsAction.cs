@@ -32,9 +32,9 @@ public class SetTracksReportsAction : RadarAction
         this.args = args;
     }
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        radarDevice.SendTracksReport = args.SendTracksReport!.Value;
+        radar.SendTracksReport = args.SendTracksReport!.Value;
     }
 
 } 

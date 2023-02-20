@@ -35,7 +35,7 @@ public class HumanDetectionService : IRadarService
         modelName = serviceOptions[SERVICE_OPTION_MODEL_NAME];
     }
 
-    public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string, string> serviceOptions)
+    public IServiceContext CreateServiceContext(Radar device, Dictionary<string, string> serviceOptions)
     {
         GetServiceSettings(serviceOptions, out string modelName);
         GateIdContext gateIdContext = new GateIdContext(device, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);

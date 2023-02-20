@@ -20,7 +20,7 @@ public class UnlinkServiceAction : RadarAction
         this.serviceId = serviceId;
     }
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radarDevice)
     {
         var linkedService = radarDevice.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
 

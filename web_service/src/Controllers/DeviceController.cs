@@ -33,13 +33,13 @@ public class DeviceController : ControllerBase
     }
 
     [HttpGet]
-    public List<RadarDevice.RadarDeviceBrief> GetDevices()
+    public List<Radar.RadarDeviceBrief> GetDevices()
     {
         return RadarContext.Instance.GetDevicesBrief();
     }
 
     [HttpGet("{deviceId}")]
-    public RadarDevice GetRadarDevice(string deviceId)
+    public Radar GetRadarDevice(string deviceId)
     {
         ValidateDeviceId(deviceId);        
         if (!RadarContext.Instance.IsRadarDeviceExist(deviceId))

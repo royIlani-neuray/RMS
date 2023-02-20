@@ -76,7 +76,7 @@ public sealed class ServiceManager {
         return services.Exists(service => service.ServiceId == serviceId);
     }
 
-    public void InitServiceContext(RadarDevice device, RadarDevice.LinkedService linkedService)
+    public void InitServiceContext(Radar device, Radar.LinkedService linkedService)
     {
         IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
 
@@ -91,7 +91,7 @@ public sealed class ServiceManager {
         }
     }
 
-    public void DisposeServiceContext(string deviceId, RadarDevice.LinkedService linkedService)
+    public void DisposeServiceContext(string deviceId, Radar.LinkedService linkedService)
     {
         if (linkedService.ServiceContext == null)
             return;
@@ -101,7 +101,7 @@ public sealed class ServiceManager {
         service.DisposeServiceContext(linkedService.ServiceContext!);
     }
 
-    public void HandleFrame(FrameData frame, List<RadarDevice.LinkedService> linkedServices)
+    public void HandleFrame(FrameData frame, List<Radar.LinkedService> linkedServices)
     {
         foreach (var linkedService in linkedServices)
         {

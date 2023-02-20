@@ -33,7 +33,7 @@ public class RecordingService : IRadarService
         }
     }
 
-    public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string,string> serviceOptions)
+    public IServiceContext CreateServiceContext(Radar device, Dictionary<string,string> serviceOptions)
     {
         float frameRate = device.radarSettings!.DetectionParams!.FrameRate;
 

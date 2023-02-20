@@ -16,7 +16,7 @@ public interface IRadarService
     public string ServiceId { get; }
 
     public RadarServiceSettings? Settings {get; set; }
-    public IServiceContext CreateServiceContext(RadarDevice device, Dictionary<string,string> serviceOptions);
+    public IServiceContext CreateServiceContext(Radar device, Dictionary<string,string> serviceOptions);
 
     public void DisposeServiceContext(IServiceContext serviceContext);
 

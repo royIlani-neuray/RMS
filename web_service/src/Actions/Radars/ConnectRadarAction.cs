@@ -14,67 +14,67 @@ namespace WebService.Actions.Radars;
 
 public class ConnectRadarAction : IAction 
 {
-    private RadarDevice radarDevice;
+    private Radar radar;
 
-    public ConnectRadarAction(RadarDevice radarDevice)
+    public ConnectRadarAction(Radar radar)
     {
-        this.radarDevice = radarDevice;
+        this.radar = radar;
     }
 
     public void Run()
     {
-        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radarDevice.State}, enabled: {radarDevice.Enabled}");
+        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
 
-        if (!radarDevice.Enabled)
+        if (!radar.Enabled)
         {
-            Console.WriteLine($"[{radarDevice.Id}] device is disabled - ignore connect action.");
+            Console.WriteLine($"[{radar.Id}] device is disabled - ignore connect action.");
             return;
         }
 
-        if (radarDevice.State == RadarDevice.DeviceState.Disconnected)
+        if (radar.State == Radar.DeviceState.Disconnected)
         {
-            radarDevice.SetStatus("Connecting to the radar device...");
+            radar.SetStatus("Connecting to the radar device...");
 
             try
             {
                 RadarDeviceMapper.MappedDevice mappedDevice;
 
                 // Note: radar must be mapped before connection attempt, unless it has static IP.
-                if ((radarDevice.deviceMapping != null) && radarDevice.deviceMapping.staticIP)
+                if ((radar.deviceMapping != null) && radar.deviceMapping.staticIP)
                 {
-                    mappedDevice = radarDevice.deviceMapping;
+                    mappedDevice = radar.deviceMapping;
                 }
                 else
                 {
-                    mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
+                    mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id); 
                 }
 
-                radarDevice.ipRadarClient = new IPRadarClient(mappedDevice.ipAddress);
-                radarDevice.ipRadarClient.Connect();
+                radar.ipRadarClient = new IPRadarClient(mappedDevice.ipAddress);
+                radar.ipRadarClient.Connect();
             }
             catch
             {
-                radarDevice.SetStatus("Error: connection attempt to the device failed.");
+                radar.SetStatus("Error: connection attempt to the device failed.");
                 return;
             }
 
-            radarDevice.State = RadarDevice.DeviceState.Connected;
-            radarDevice.SetStatus("The device is connected.");
+            radar.State = Radar.DeviceState.Connected;
+            radar.SetStatus("The device is connected.");
         }
 
-        if (radarDevice.State == RadarDevice.DeviceState.Connected)
+        if (radar.State == Radar.DeviceState.Connected)
         {
-            if (radarDevice.ConfigScript.Count == 0)
+            if (radar.ConfigScript.Count == 0)
             {
-                radarDevice.SetStatus("Error: no connection script is assigned to this device.");
+                radar.SetStatus("Error: no connection script is assigned to this device.");
                 return;
             }
 
-            radarDevice.SetStatus("Starting radar tracker...");
-            radarDevice.radarTracker = new RadarTracker(radarDevice);
-            radarDevice.radarTracker.Start();
+            radar.SetStatus("Starting radar tracker...");
+            radar.radarTracker = new RadarTracker(radar);
+            radar.radarTracker.Start();
 
-            radarDevice.State = RadarDevice.DeviceState.Active;
+            radar.State = Radar.DeviceState.Active;
         }
 
 

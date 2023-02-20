@@ -15,7 +15,7 @@ using WebService.Database;
 
 namespace WebService.Entites;
 
-public class RadarDevice : DeviceEntity {
+public class Radar : DeviceEntity {
 
     public class LinkedService
     {
@@ -64,13 +64,13 @@ public class RadarDevice : DeviceEntity {
         [JsonPropertyName("send_tracks_report")]
         public bool SendTracksReport { get; set; }
 
-        public RadarDeviceBrief(RadarDevice device) : base(device)
+        public RadarDeviceBrief(Radar device) : base(device)
         {
             SendTracksReport = device.SendTracksReport;
         }
     }
 
-    public RadarDevice() : base(DeviceTypes.Radar)
+    public Radar() : base(DeviceTypes.Radar)
     {
         ConfigScript = new List<string>();
         LinkedServices = new List<LinkedService>();

@@ -15,13 +15,13 @@ public class DeviceDiscoveredAction : RadarAction {
 
     public DeviceDiscoveredAction(string deviceId) : base(deviceId) {}
 
-    protected override void RunRadarAction(RadarDevice radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        // first, update current known info in the radar device entity
-        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
-        radarDevice.deviceMapping = mappedDevice;
+        // first, update current known info in the radar entity
+        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id); 
+        radar.deviceMapping = mappedDevice;
 
-        var action = new ConnectRadarAction(radarDevice);
+        var action = new ConnectRadarAction(radar);
         action.Run();
     }
 
