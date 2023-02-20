@@ -26,7 +26,7 @@
 </mat-menu>
 
 <mat-menu #selectRadarDeviceMenu="matMenu">
-    <button *ngFor="let device of this.tracksViewerData.deviceList" [disabled]="!device.enabled" (click)="setRadarDevice(device.device_id)" mat-menu-item>{{device.name}}</button>
+    <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setRadarDevice(radar.device_id)" mat-menu-item>{{radar.name}}</button>
 </mat-menu>
 
 <mat-menu #setWindowsLayoutMenu="matMenu">

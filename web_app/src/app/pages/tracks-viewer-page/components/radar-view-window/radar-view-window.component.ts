@@ -8,10 +8,10 @@
 ***/
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TracksViewerDataService } from '../../tracks-viewer-data.service';
-import { DevicesService } from 'src/app/services/devices.service';
-import { Radar } from 'src/app/entities/radar-device';
+import { RadarsService } from 'src/app/services/radars.service';
+import { Radar } from 'src/app/entities/radar';
 import { Router } from '@angular/router';
-import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
+import { RadarWebsocketService, GateIdPrediction } from 'src/app/services/radar-websocket.service';
 import { ThreeJsView } from './threejs-view';
 import { FrameData } from 'src/app/entities/frame-data';
 import { Subject } from 'rxjs';
@@ -21,7 +21,7 @@ import { Subject } from 'rxjs';
   selector: 'radar-view-window',
   templateUrl: './radar-view-window.component.html',
   styleUrls: ['./radar-view-window.component.css'],
-  providers: [DeviceWebsocketService]
+  providers: [RadarWebsocketService]
 })
 export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -30,8 +30,8 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
   private threeJsView: ThreeJsView = new ThreeJsView()
   
   constructor(public tracksViewerData : TracksViewerDataService,
-              private devicesService : DevicesService,
-              private deviceWebsocketService : DeviceWebsocketService,
+              private radarsService : RadarsService,
+              private deviceWebsocketService : RadarWebsocketService,
               private router : Router) { }
 
 
@@ -40,7 +40,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
   private windowRefreshInterval : any
   @Input() windowSelected : boolean = false
 
-  radarDevice : Radar | null
+  radar : Radar | null
 
   public frameDataSubject: Subject<FrameData> = new Subject<FrameData>()
   public gateIdPredictionsSubject: Subject<GateIdPrediction[]> = new Subject<GateIdPrediction[]>()
@@ -110,7 +110,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     this.tracksViewerData.drawer.open()
   }
 
-  setRadarDevice(deviceId : string)
+  setRadarDevice(radarId : string)
   {
     if (this.frameDataSubscription != null)
     {
@@ -125,13 +125,13 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     // request the radar device info based on the given device id
-    this.devicesService.getRadarDevice(deviceId).subscribe({
-      next : (device) => {
-        this.radarDevice = device
+    this.radarsService.getRadarDevice(radarId).subscribe({
+      next : (radar) => {
+        this.radar = radar
         
-        this.threeJsView.initScene(this.radarDevice)
+        this.threeJsView.initScene(this.radar)
 
-        this.deviceWebsocketService.Connect(deviceId)
+        this.deviceWebsocketService.Connect(radarId)
 
         // we have the radar info, now subscribe for tracks streaming
         this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({

@@ -9,21 +9,21 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { Radar } from 'src/app/entities/radar-device';
-import { DevicesService } from 'src/app/services/devices.service';
+import { Radar } from 'src/app/entities/radar';
+import { RadarsService } from 'src/app/services/radars.service';
 
 @Injectable()
-export class DevicePageDataService {
+export class RadarPageDataService {
 
   public radarDeviceSubject: Subject<Radar> = new Subject<Radar>()
   public radarDevice : Radar;
 
-  constructor (private devicesService : DevicesService,
+  constructor (private radarsService : RadarsService,
                private router : Router) {}
   
   public getDevice(deviceId : string)
   {
-    this.devicesService.getRadarDevice(deviceId).subscribe({
+    this.radarsService.getRadarDevice(deviceId).subscribe({
       next : (device) => 
       {
         this.radarDevice = device

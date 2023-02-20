@@ -8,14 +8,14 @@
 ***/
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Radar } from 'src/app/entities/radar-device';
-import { DevicesService } from 'src/app/services/devices.service';
+import { Radar } from 'src/app/entities/radar';
+import { RadarsService } from 'src/app/services/radars.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../components/confirm-dialog/confirm-dialog.component';
-import { SetDeviceConfigDialogComponent } from 'src/app/pages/device-page/components/set-device-config-dialog/set-device-config-dialog.component';
-import { EditRadarInfoDialogComponent } from 'src/app/pages/device-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
-import { DevicePageDataService } from '../../device-page-data.service';
+import { SetDeviceConfigDialogComponent } from 'src/app/pages/radar-page/components/set-device-config-dialog/set-device-config-dialog.component';
+import { EditRadarInfoDialogComponent } from 'src/app/pages/radar-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
+import { RadarPageDataService } from '../../radar-page-data.service';
 
 @Component({
   selector: 'app-device-info',
@@ -24,8 +24,8 @@ import { DevicePageDataService } from '../../device-page-data.service';
 })
 export class DeviceInfoComponent implements OnInit {
 
-  constructor(private devicesService : DevicesService, 
-              private devicePageData : DevicePageDataService,
+  constructor(private radarsService : RadarsService, 
+              private radarPageData : RadarPageDataService,
               private router : Router, 
               private notification: MatSnackBar,
               public dialog: MatDialog) { }
@@ -34,8 +34,8 @@ export class DeviceInfoComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.radarDevice = this.devicePageData.radarDevice
-    this.devicePageData.radarDeviceSubject.subscribe({
+    this.radarDevice = this.radarPageData.radarDevice
+    this.radarPageData.radarDeviceSubject.subscribe({
       next : (radarDevice) => {
         this.radarDevice = radarDevice
       }
@@ -45,16 +45,16 @@ export class DeviceInfoComponent implements OnInit {
 
   public enableRadarDevice()
   {
-    this.devicesService.enableRadarDevice(this.radarDevice.device_id).subscribe({
-      next : (response) => this.devicePageData.getDevice(this.radarDevice.device_id),
+    this.radarsService.enableRadarDevice(this.radarDevice.device_id).subscribe({
+      next : (response) => this.radarPageData.getDevice(this.radarDevice.device_id),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar device")
     })
   }
 
   public disableRadarDevice()
   {
-    this.devicesService.disableRadarDevice(this.radarDevice.device_id).subscribe({
-      next : (response) => this.devicePageData.getDevice(this.radarDevice.device_id),
+    this.radarsService.disableRadarDevice(this.radarDevice.device_id).subscribe({
+      next : (response) => this.radarPageData.getDevice(this.radarDevice.device_id),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable radar device")
     })
   }
@@ -71,8 +71,8 @@ export class DeviceInfoComponent implements OnInit {
 
       if (result)
       {
-        this.devicesService.deleteRadarDevice(this.radarDevice.device_id).subscribe({
-          next : (response) => this.router.navigate(['/devices']),
+        this.radarsService.deleteRadarDevice(this.radarDevice.device_id).subscribe({
+          next : (response) => this.router.navigate(['/radars']),
           error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
         })
       }
@@ -106,8 +106,8 @@ export class DeviceInfoComponent implements OnInit {
 
   public setTracksReports(sendReports : boolean)
   {
-    this.devicesService.setTracksReports(this.radarDevice.device_id, sendReports).subscribe({
-      next : (response) => this.devicePageData.getDevice(this.radarDevice.device_id),
+    this.radarsService.setTracksReports(this.radarDevice.device_id, sendReports).subscribe({
+      next : (response) => this.radarPageData.getDevice(this.radarDevice.device_id),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar device")
     })    
   }
@@ -130,16 +130,16 @@ export class DeviceInfoComponent implements OnInit {
 
   public enableRadarRecording()
   {
-    this.devicesService.enableRadarRecording(this.radarDevice.device_id).subscribe({
-      next : (response) => this.devicePageData.getDevice(this.radarDevice.device_id),
+    this.radarsService.enableRadarRecording(this.radarDevice.device_id).subscribe({
+      next : (response) => this.radarPageData.getDevice(this.radarDevice.device_id),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar recording")
     })
   }
 
   public disableRadarRecording()
   {
-    this.devicesService.disableRadarRecording(this.radarDevice.device_id).subscribe({
-      next : (response) => this.devicePageData.getDevice(this.radarDevice.device_id),
+    this.radarsService.disableRadarRecording(this.radarDevice.device_id).subscribe({
+      next : (response) => this.radarPageData.getDevice(this.radarDevice.device_id),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable radar recording")
     })
   }

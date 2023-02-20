@@ -16,7 +16,7 @@ export interface GateIdPrediction {
 }
 
 @Injectable()
-export class DeviceWebsocketService {
+export class RadarWebsocketService {
 
   private connected : boolean
   private socket : WebSocket  

@@ -11,7 +11,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton } from '@angular/material/radio';
-import { DeviceMapping } from 'src/app/entities/radar-device';
+import { DeviceMapping } from 'src/app/entities/radar';
 
 export interface DialogData {
   targetDevice: DeviceMapping

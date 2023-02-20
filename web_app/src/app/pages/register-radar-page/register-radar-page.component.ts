@@ -12,17 +12,17 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
-import { DeviceMapping } from 'src/app/entities/radar-device';
+import { DeviceMapping } from 'src/app/entities/radar';
 import { RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { TemplatesService } from 'src/app/services/templates.service';
-import { DevicesService } from '../../services/devices.service';
+import { RadarsService } from '../../services/radars.service';
 
 @Component({
-  selector: 'app-new-device-page',
-  templateUrl: './new-device-page.component.html',
-  styleUrls: ['./new-device-page.component.css']
+  selector: 'app-register-radar-page',
+  templateUrl: './register-radar-page.component.html',
+  styleUrls: ['./register-radar-page.component.css']
 })
-export class NewDevicePageComponent implements OnInit {
+export class RegisterRadarPageComponent implements OnInit {
 
   @ViewChildren(MatSlideToggle) slideToggleComponents: QueryList<MatSlideToggle>;
 
@@ -40,7 +40,7 @@ export class NewDevicePageComponent implements OnInit {
   elevationInputFC = new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)])
   calibrationInputFC = new FormControl('', [])
 
-  constructor(private devicesService : DevicesService,
+  constructor(private radarsService : RadarsService,
               private templatesService : TemplatesService, 
               private router : Router, 
               private notification: MatSnackBar) { }
@@ -64,7 +64,7 @@ export class NewDevicePageComponent implements OnInit {
 
   public getDeviceMapping()
   {
-    this.devicesService.getDeviceMapping().subscribe({
+    this.radarsService.getDeviceMapping().subscribe({
       next : (response) => 
       {
         let mappedDevices = response as DeviceMapping[]
@@ -115,9 +115,9 @@ export class NewDevicePageComponent implements OnInit {
 
     let calibration = this.calibrationInputFC.value!
 
-    this.devicesService.registerRadarDevice(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
+    this.radarsService.registerRadarDevice(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
       height, azimuthTilt, elevationTilt, calibration).subscribe({
-      next : (response) => this.router.navigate(['/device', deviceId]),
+      next : (response) => this.router.navigate(['/radar', deviceId]),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not register the device", "Close", { duration : 4000 })
     })
   }

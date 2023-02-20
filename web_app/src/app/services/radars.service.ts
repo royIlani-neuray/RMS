@@ -8,13 +8,13 @@
 ***/
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DeviceMapping, Radar, RadarBrief } from '../entities/radar-device';
+import { DeviceMapping, Radar, RadarBrief } from '../entities/radar';
 import { BoundaryBoxParams, SensorPositionParams } from '../entities/radar-settings';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DevicesService {
+export class RadarsService {
 
   constructor(private http:HttpClient) { }
 
@@ -23,24 +23,24 @@ export class DevicesService {
     return this.http.get<RadarBrief[]>("/api/radars")
   }
 
-  public getRadarDevice(deviceId : string)
+  public getRadarDevice(radarId : string)
   {
-    return this.http.get<Radar>("/api/radars/" + deviceId)
+    return this.http.get<Radar>("/api/radars/" + radarId)
   }
 
-  public enableRadarDevice(deviceId : string)
+  public enableRadarDevice(radarId : string)
   {
-    return this.http.post("/api/radars/" + deviceId + "/enable", "")
+    return this.http.post("/api/radars/" + radarId + "/enable", "")
   }
 
-  public disableRadarDevice(deviceId : string)
+  public disableRadarDevice(radarId : string)
   {
-    return this.http.post("/api/radars/" + deviceId + "/disable", "")
+    return this.http.post("/api/radars/" + radarId + "/disable", "")
   }
 
-  public deleteRadarDevice(deviceId : string)
+  public deleteRadarDevice(radarId : string)
   {
-    return this.http.delete("/api/radars/" + deviceId)
+    return this.http.delete("/api/radars/" + radarId)
   }
 
   public getDeviceMapping()
@@ -53,9 +53,9 @@ export class DevicesService {
     return this.http.post("/api/device-mapping", "")
   }
 
-  public setNetwork(deviceId : string, ip : string, subnet : string, gateway : string, staticIP : boolean)
+  public setNetwork(radarId : string, ip : string, subnet : string, gateway : string, staticIP : boolean)
   {
-    return this.http.put("/api/radars/" + deviceId + "/network", {
+    return this.http.put("/api/radars/" + radarId + "/network", {
       ip : ip,
       subnet: subnet,
       gateway : gateway,
@@ -63,28 +63,28 @@ export class DevicesService {
     })
   }
 
-  public updateRadarInfo(deviceId : string, name : string, description : string)
+  public updateRadarInfo(radarId : string, name : string, description : string)
   {
-    return this.http.put("/api/radars/" + deviceId + "/radar-info", {
+    return this.http.put("/api/radars/" + radarId + "/radar-info", {
       name : name,
       description: description
     })
   }
 
-  public setTracksReports(deviceId : string, sendTracksReport : boolean)
+  public setTracksReports(radarId : string, sendTracksReport : boolean)
   {
-    return this.http.put("/api/radars/" + deviceId + "/tracks-reports", {
+    return this.http.put("/api/radars/" + radarId + "/tracks-reports", {
       send_tracks_report: sendTracksReport
     })
   }
 
-  public registerRadarDevice(deviceId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
+  public registerRadarDevice(radarId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
     height : number, azimuthTilt : number, elevationTilt : number, calibration : string)
   {
     return this.http.post("/api/radars", {
       name : name,
       description: description,
-      radar_id: deviceId,
+      radar_id: radarId,
       template_id: templateId,
       enabled: enabled,
       send_tracks_report : sendTracksReport,
@@ -97,10 +97,10 @@ export class DevicesService {
     })
   }
 
-  public setDeviceConfiguration(deviceId : string, templateId : string, sensorPosition : SensorPositionParams, 
+  public setDeviceConfiguration(radarId : string, templateId : string, sensorPosition : SensorPositionParams, 
                                 boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams, calibration : string)
   {
-    return this.http.post("/api/radars/" + deviceId + "/config", 
+    return this.http.post("/api/radars/" + radarId + "/config", 
     {
       template_id: templateId,
       sensor_position: sensorPosition,
@@ -110,26 +110,26 @@ export class DevicesService {
     })    
   }
 
-  public setDeviceConfigScript(deviceId : string, configScript: string[])
+  public setDeviceConfigScript(radarId : string, configScript: string[])
   {
-    return this.http.post("/api/radars/" + deviceId + "/config", 
+    return this.http.post("/api/radars/" + radarId + "/config", 
     {
       config: configScript
     })  
   }
 
-  public enableRadarRecording(deviceId : string)
+  public enableRadarRecording(radarId : string)
   {
-    return this.http.post("/api/radars/" + deviceId + "/services", 
+    return this.http.post("/api/radars/" + radarId + "/services", 
     {
       service_id : "RADAR_RECORDER",
       service_options : {}
     })
   }
 
-  public disableRadarRecording(deviceId : string)
+  public disableRadarRecording(radarId : string)
   {
-    return this.http.delete("/api/radars/" + deviceId + "/services/RADAR_RECORDER")
+    return this.http.delete("/api/radars/" + radarId + "/services/RADAR_RECORDER")
   }
 
 }

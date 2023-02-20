@@ -16,9 +16,9 @@ export class RmsEventsService
 {
   private socket : WebSocket
 
-  public deviceUpdatedEvent: Subject<string> = new Subject<string>()
-  public deviceAddedEvent: Subject<string> = new Subject<string>()
-  public deviceDeletedEvent: Subject<string> = new Subject<string>()
+  public radarUpdatedEvent: Subject<string> = new Subject<string>()
+  public radarAddedEvent: Subject<string> = new Subject<string>()
+  public radarDeletedEvent: Subject<string> = new Subject<string>()
 
   public deviceMappingUpdatedEvent: Subject<null> = new Subject()
 
@@ -48,15 +48,15 @@ export class RmsEventsService
       
       if (message['type'] == 'RADAR_DEVICE_UPDATED')
       {
-        this.deviceUpdatedEvent.next(message['data'])
+        this.radarUpdatedEvent.next(message['data'])
       }
       else if (message['type'] == 'RADAR_DEVICE_ADDED')
       {
-        this.deviceAddedEvent.next(message['data'])
+        this.radarAddedEvent.next(message['data'])
       }
       else if (message['type'] == 'RADAR_DEVICE_DELETED')
       {
-        this.deviceDeletedEvent.next(message['data'])
+        this.radarDeletedEvent.next(message['data'])
       }
       else if (message['type'] == 'DEVICE_MAPPING_UPDATED')
       {

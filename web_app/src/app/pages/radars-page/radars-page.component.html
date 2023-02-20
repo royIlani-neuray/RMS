@@ -1,6 +1,6 @@
 <div class="page-margin">
 
-    <h3>Registered Devices</h3>
+    <h3>Registered Radar Devices</h3>
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 devices-table">
         <!-- Name Column -->
@@ -25,7 +25,7 @@
 
         <ng-container matColumnDef="device_id">
             <th mat-header-cell *matHeaderCellDef> <b>Device ID</b> </th>
-            <td mat-cell *matCellDef="let element"> <a [routerLink]="['/device', element.device_id]">{{element.device_id}}</a> </td>
+            <td mat-cell *matCellDef="let element"> <a [routerLink]="['/radar', element.device_id]">{{element.device_id}}</a> </td>
         </ng-container>
 
         <ng-container matColumnDef="enabled">
@@ -49,7 +49,7 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/device', row.device_id]"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/radar', row.device_id]"></tr>
         <!--
         <tr *ngIf="!deviceListLoaded"><td>Loading device list...</td><td></td><td></td><td></td><td></td></tr>
         <tr mat-row *ngIf="deviceListLoaded && (deviceList.length == 0)"><td>There are no Registered devices</td></tr>
@@ -61,8 +61,8 @@
         <mat-spinner [diameter]="40"></mat-spinner>
     </div>
 
-    <label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>There are no registered devices.<br></label>
+    <label *ngIf="deviceListLoaded && (dataSource.data.length == 0)"><br>There are no registered radar devices.<br></label>
     <br>
-    <button mat-raised-button *ngIf="(deviceListLoaded | async)" [routerLink]="['/new-device']" color="primary">Add Device</button>
+    <button mat-raised-button *ngIf="(deviceListLoaded | async)" [routerLink]="['/register-radar']" color="primary">Register Radar Device</button>
 
 </div>

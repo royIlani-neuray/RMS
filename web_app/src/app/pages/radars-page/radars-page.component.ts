@@ -8,24 +8,24 @@
 ***/
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { RadarBrief } from 'src/app/entities/radar-device';
-import { DevicesService } from '../../services/devices.service';
+import { RadarBrief } from 'src/app/entities/radar';
+import { RadarsService } from '../../services/radars.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 
 @Component({
-  selector: 'app-devices-page',
-  templateUrl: './devices-page.component.html',
-  styleUrls: ['./devices-page.component.css']
+  selector: 'app-radars-page',
+  templateUrl: './radars-page.component.html',
+  styleUrls: ['./radars-page.component.css']
 })
-export class DevicesPageComponent implements OnInit {
+export class RadarsPageComponent implements OnInit {
 
   deviceListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'send_tracks_report', 'device_id', 'description'];
 
-  constructor(private devicesService : DevicesService, 
+  constructor(private radarsService : RadarsService, 
               private rmsEventsService : RmsEventsService,
               private router : Router) { }
 
@@ -35,21 +35,21 @@ export class DevicesPageComponent implements OnInit {
     
     this.getDeviceList()
 
-    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+    this.rmsEventsService.radarUpdatedEvent.subscribe({
       next: (deviceId) => 
       {
         this.getDeviceList()
       }
     })
 
-    this.rmsEventsService.deviceAddedEvent.subscribe({
+    this.rmsEventsService.radarAddedEvent.subscribe({
       next: (deviceId) => 
       {
         this.getDeviceList()
       }
     })
 
-    this.rmsEventsService.deviceDeletedEvent.subscribe({
+    this.rmsEventsService.radarDeletedEvent.subscribe({
       next: (deviceId) => 
       {
         this.getDeviceList()
@@ -60,7 +60,7 @@ export class DevicesPageComponent implements OnInit {
 
   public getDeviceList()
   {
-    this.devicesService.getRadarDevices().subscribe({
+    this.radarsService.getRadarDevices().subscribe({
       next : (devices) => 
       {
         this.dataSource.data = devices

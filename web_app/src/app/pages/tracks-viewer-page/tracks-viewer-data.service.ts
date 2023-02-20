@@ -10,8 +10,8 @@ import { Injectable } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { RadarBrief } from 'src/app/entities/radar-device';
-import { DevicesService } from 'src/app/services/devices.service';
+import { RadarBrief } from 'src/app/entities/radar';
+import { RadarsService } from 'src/app/services/radars.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 
@@ -22,19 +22,19 @@ export class TracksViewerDataService {
   public selectedWindowSubject: Subject<RadarViewWindowComponent> = new Subject<RadarViewWindowComponent>()
   public windowsLayoutSubject: Subject<string> = new Subject<string>()
 
-  public deviceList: RadarBrief[] = [];
+  public radarsList: RadarBrief[] = [];
 
   public radarWindowsList: RadarViewWindowComponent[] = []; 
 
   public drawer: MatDrawer
 
-  constructor (private devicesService : DevicesService,
+  constructor (private radarsService : RadarsService,
                private rmsEventsService : RmsEventsService,
                private router : Router) 
   {
     this.getDeviceList()
 
-    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+    this.rmsEventsService.radarUpdatedEvent.subscribe({
       next: (deviceId) => 
       {
         this.getDeviceList()
@@ -45,8 +45,8 @@ export class TracksViewerDataService {
   
   private getDeviceList()
   {
-    this.devicesService.getRadarDevices().subscribe({
-      next : (response) => this.deviceList = response as RadarBrief[],
+    this.radarsService.getRadarDevices().subscribe({
+      next : (response) => this.radarsList = response as RadarBrief[],
       error : (err) => this.router.navigate(['/no-service'])
     })
   }

@@ -9,10 +9,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DevicePageComponent } from './pages/device-page/device-page.component';
-import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
+import { RadarPageComponent } from './pages/radar-page/radar-page.component';
+import { RadarsPageComponent } from './pages/radars-page/radars-page.component';
 import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
-import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
+import { RegisterRadarPageComponent } from './pages/register-radar-page/register-radar-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
@@ -22,16 +22,16 @@ import { TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-vie
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 
-import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
-import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
+import { DeviceInfoComponent } from './pages/radar-page/components/device-info/device-info.component';
+import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
 
 const routes: Routes = [
-  { path: '', component: DevicesPageComponent },
+  { path: '', component: RadarsPageComponent },
 
   { 
-    path: 'device/:device_id', 
+    path: 'radar/:device_id', 
     title: 'Devices - RMS | neuRay Labs', 
-    component: DevicePageComponent,
+    component: RadarPageComponent,
     children: [
       {
         path: '',
@@ -49,9 +49,9 @@ const routes: Routes = [
     ] 
   },
 
-  { path: 'devices', title: 'Devices - RMS | neuRay Labs', component: DevicesPageComponent },
+  { path: 'radars', title: 'Radars - RMS | neuRay Labs', component: RadarsPageComponent },
   { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent },
-  { path: 'new-device', title: 'Register Device - RMS | neuRay Labs', component: NewDevicePageComponent },
+  { path: 'register-radar', title: 'Register Radar Device - RMS | neuRay Labs', component: RegisterRadarPageComponent },
 
   { path: 'templates', title: 'Templates - RMS | neuRay Labs', component: TemplatesPageComponent},
   { path: 'template/:template_id', title: 'Templates - RMS | neuRay Labs', component: TemplatePageComponent },

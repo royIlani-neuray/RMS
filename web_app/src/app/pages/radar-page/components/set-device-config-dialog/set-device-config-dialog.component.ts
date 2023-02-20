@@ -9,12 +9,11 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { Radar } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar';
 import { BoundaryBoxParams, SensorPositionParams } from 'src/app/entities/radar-settings';
 import { RadarTemplate, RadarTemplateBrief } from 'src/app/entities/radar-template';
-import { DevicesService } from 'src/app/services/devices.service';
+import { RadarsService } from 'src/app/services/radars.service';
 import { TemplatesService } from 'src/app/services/templates.service';
 
 export interface DialogData {
@@ -68,7 +67,7 @@ export class SetDeviceConfigDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: DialogData, private cd : ChangeDetectorRef,
               private formBuilder: FormBuilder,
               private router : Router,
-              private devicesService : DevicesService,
+              private radarsService : RadarsService,
               private templatesService : TemplatesService) { }
 
   ngOnInit(): void 
@@ -151,7 +150,7 @@ export class SetDeviceConfigDialogComponent implements OnInit {
 
     let calibration = this.calibrationFormGroup.controls.calibrationInputFC.value!
 
-    this.devicesService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox, calibration).subscribe({
+    this.radarsService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox, calibration).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })

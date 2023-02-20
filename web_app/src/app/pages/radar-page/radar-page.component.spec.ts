@@ -8,19 +8,19 @@
 ***/
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewDevicePageComponent } from './new-device-page.component';
+import { RadarPageComponent } from './radar-page.component';
 
-describe('NewDevicePageComponent', () => {
-  let component: NewDevicePageComponent;
-  let fixture: ComponentFixture<NewDevicePageComponent>;
+describe('RadarPageComponent', () => {
+  let component: RadarPageComponent;
+  let fixture: ComponentFixture<RadarPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NewDevicePageComponent ]
+      declarations: [ RadarPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NewDevicePageComponent);
+    fixture = TestBed.createComponent(RadarPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

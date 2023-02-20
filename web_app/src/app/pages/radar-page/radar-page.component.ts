@@ -8,21 +8,21 @@
 ***/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Radar } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
-import { DevicesService } from '../../services/devices.service';
-import { DevicePageDataService } from './device-page-data.service';
+import { RadarsService } from '../../services/radars.service';
+import { RadarPageDataService } from './radar-page-data.service';
 
 @Component({
-  selector: 'app-device-page',
-  templateUrl: './device-page.component.html',
-  styleUrls: ['./device-page.component.css'],
-  providers: [DevicePageDataService]
+  selector: 'app-radar-page',
+  templateUrl: './radar-page.component.html',
+  styleUrls: ['./radar-page.component.css'],
+  providers: [RadarPageDataService]
 })
-export class DevicePageComponent implements OnInit {
+export class RadarPageComponent implements OnInit {
 
   constructor(private rmsEventsService : RmsEventsService, 
-              private devicePageData : DevicePageDataService,
+              private radarPageData : RadarPageDataService,
               private router : Router, 
               private activatedRoute:ActivatedRoute) { }
 
@@ -40,20 +40,20 @@ export class DevicePageComponent implements OnInit {
 
     this.deviceId = deviceId
 
-    this.devicePageData.radarDeviceSubject.subscribe({
+    this.radarPageData.radarDeviceSubject.subscribe({
       next : (radarDevice) => {
         this.radarDevice = radarDevice
       }
     })
 
-    this.devicePageData.getDevice(this.deviceId)
+    this.radarPageData.getDevice(this.deviceId)
 
-    this.rmsEventsService.deviceUpdatedEvent.subscribe({
+    this.rmsEventsService.radarUpdatedEvent.subscribe({
       next: (deviceId) => 
       {
         if (deviceId == this.deviceId)
         {
-          this.devicePageData.getDevice(this.deviceId)
+          this.radarPageData.getDevice(this.deviceId)
         }
       }
     })

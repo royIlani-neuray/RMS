@@ -10,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { TrackData } from 'src/app/entities/frame-data';
-import { GateIdPrediction } from 'src/app/services/device-websocket.service';
+import { GateIdPrediction } from 'src/app/services/radar-websocket.service';
 import { TracksViewerDataService } from '../../tracks-viewer-data.service';
 import { RadarViewWindowComponent } from '../radar-view-window/radar-view-window.component';
 
@@ -69,7 +69,7 @@ export class RadarDetailsInfoComponent implements OnInit {
 
         this.selectedRadarWindow = selectedWindow
         
-        if (this.selectedRadarWindow.radarDevice != null)
+        if (this.selectedRadarWindow.radar != null)
         {
           this.initViewFilters()
         }
@@ -111,7 +111,7 @@ export class RadarDetailsInfoComponent implements OnInit {
 
   public getTrackRange(track : TrackData)
   {
-    let radarHeight = this.selectedRadarWindow.radarDevice!.radar_settings.sensor_position.height
+    let radarHeight = this.selectedRadarWindow.radar!.radar_settings.sensor_position.height
 
     // track x,y,z is in reference to the floor which is the origin (0,0,0).
     // in order to get the range from the radar and not from the floor we reduce the radar height.

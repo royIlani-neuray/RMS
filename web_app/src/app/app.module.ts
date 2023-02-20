@@ -41,26 +41,26 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatMenuModule} from '@angular/material/menu';
 
-import { DevicePageComponent } from './pages/device-page/device-page.component';
-import { DevicesPageComponent } from './pages/devices-page/devices-page.component';
+import { RadarPageComponent } from './pages/radar-page/radar-page.component';
+import { RadarsPageComponent } from './pages/radars-page/radars-page.component';
 import { DeviceMappingPageComponent } from './pages/device-mapping-page/device-mapping-page.component';
-import { NewDevicePageComponent } from './pages/new-device-page/new-device-page.component';
+import { RegisterRadarPageComponent } from './pages/register-radar-page/register-radar-page.component';
 import { SetNetworkDialogComponent } from './components/set-network-dialog/set-network-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ErrorPageNotFoundComponent } from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
-import { SetDeviceConfigDialogComponent } from './pages/device-page/components/set-device-config-dialog/set-device-config-dialog.component';
+import { SetDeviceConfigDialogComponent } from './pages/radar-page/components/set-device-config-dialog/set-device-config-dialog.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
 import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
-import { DeviceInfoComponent } from './pages/device-page/components/device-info/device-info.component';
-import { RadarSettingsComponent } from './pages/device-page/components/radar-settings/radar-settings.component';
-import { EditRadarInfoDialogComponent } from './pages/device-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
+import { DeviceInfoComponent } from './pages/radar-page/components/device-info/device-info.component';
+import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
+import { EditRadarInfoDialogComponent } from './pages/radar-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
 import { RadarViewWindowComponent } from './pages/tracks-viewer-page/components/radar-view-window/radar-view-window.component';
 import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components/radar-details-info/radar-details-info.component';
-import { ConfigScriptDialogComponent } from './pages/device-page/components/config-script-dialog/config-script-dialog.component';
+import { ConfigScriptDialogComponent } from './pages/radar-page/components/config-script-dialog/config-script-dialog.component';
 import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
 
 @NgModule({
@@ -69,10 +69,10 @@ import { CreateTemplateDialogComponent } from './pages/templates-page/components
     ErrorPageNotFoundComponent,
     ErrorPageNoServiceComponent,
     SettingsPageComponent,
-    DevicesPageComponent,
-    DevicePageComponent,
+    RadarsPageComponent,
+    RadarPageComponent,
     DeviceMappingPageComponent,
-    NewDevicePageComponent,
+    RegisterRadarPageComponent,
     SetNetworkDialogComponent,
     EditRadarInfoDialogComponent,
     ConfirmDialogComponent,

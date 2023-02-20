@@ -8,14 +8,14 @@
 ***/
 import { TestBed } from '@angular/core/testing';
 
-import { DeviceWebsocketService } from './device-websocket.service';
+import { RadarsService } from './radars.service';
 
-describe('DeviceWebsocketService', () => {
-  let service: DeviceWebsocketService;
+describe('DevicesService', () => {
+  let service: RadarsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DeviceWebsocketService);
+    service = TestBed.inject(RadarsService);
   });
 
   it('should be created', () => {

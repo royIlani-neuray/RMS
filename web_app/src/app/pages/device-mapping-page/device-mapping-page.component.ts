@@ -8,8 +8,8 @@
 ***/
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { DeviceMapping } from 'src/app/entities/radar-device';
-import { DevicesService } from '../../services/devices.service';
+import { DeviceMapping } from 'src/app/entities/radar';
+import { RadarsService } from '../../services/radars.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -30,7 +30,7 @@ export class DeviceMappingPageComponent implements OnInit {
   displayedColumns: string[] = ['device_id', 'registered', 'ip', 'subnet', 'gateway', 'model', 'application', 'fw_version', 'static_ip', 'set_network'];
 
   constructor(private rmsEventsService : RmsEventsService, 
-              private devicesService : DevicesService, 
+              private radarsService : RadarsService, 
               private router : Router, 
               private notification: MatSnackBar, 
               public dialog: MatDialog) { }
@@ -52,7 +52,7 @@ export class DeviceMappingPageComponent implements OnInit {
 
   public getDeviceMapping()
   {
-    this.devicesService.getDeviceMapping().subscribe({
+    this.radarsService.getDeviceMapping().subscribe({
       next : (mappedDevices) => 
       {
         this.deviceList = mappedDevices
@@ -65,7 +65,7 @@ export class DeviceMappingPageComponent implements OnInit {
 
   public triggerDeviceMapping()
   {
-    this.devicesService.triggerDeviceMapping().subscribe({
+    this.radarsService.triggerDeviceMapping().subscribe({
       next : (response) => this.notification.open("Device mapping triggered!", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not trigger device mappping.", "Close", { duration : 4000 })
     })
@@ -84,7 +84,7 @@ export class DeviceMappingPageComponent implements OnInit {
         return
 
       let resultData = result as DeviceMapping
-      this.devicesService.setNetwork(deviceMapping.device_id, resultData.ip, resultData.subnet, resultData.gateway, resultData.static_ip).subscribe({
+      this.radarsService.setNetwork(deviceMapping.device_id, resultData.ip, resultData.subnet, resultData.gateway, resultData.static_ip).subscribe({
         next : (resp) => this.notification.open("Set-Network request sent!", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
         error: (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: Set-Network failed", "Close", { duration : 4000 })
       })
