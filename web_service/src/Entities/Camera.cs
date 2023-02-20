@@ -29,6 +29,6 @@ public class Camera : DeviceEntity {
 
     public Camera() : base(DeviceTypes.Camera)
     {
-
+        Id = Guid.NewGuid().ToString();
     }
 }

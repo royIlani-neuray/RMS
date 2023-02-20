@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
+using WebService.Events;
 
 namespace WebService.Actions;
 
@@ -23,6 +24,6 @@ public abstract class CameraAction : EntityAction<Camera> {
 
     protected override void RunPostActionTask(Camera camera)
     {
-        // TODO send event...
+        RMSEvents.Instance.CameraUpdatedEvent(camera.Id);
     }
 }

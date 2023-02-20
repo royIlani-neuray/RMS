@@ -13,35 +13,35 @@ using WebService.Entites;
 namespace WebService.Actions.Users;
 
 public class AddUserArgs 
+{
+    [JsonPropertyName("first_name")]
+    public String FirstName { get; set; }
+
+    [JsonPropertyName("last_name")]
+    public String LastName { get; set; }
+
+    [JsonPropertyName("employee_id")]
+    public String EmployeeId { get; set; }
+
+    [JsonPropertyName("email")]
+    public String Email { get; set; }
+
+    public AddUserArgs()
     {
-        [JsonPropertyName("first_name")]
-        public String FirstName { get; set; }
-
-        [JsonPropertyName("last_name")]
-        public String LastName { get; set; }
-
-        [JsonPropertyName("employee_id")]
-        public String EmployeeId { get; set; }
-
-        [JsonPropertyName("email")]
-        public String Email { get; set; }
-
-        public AddUserArgs()
-        {
-            FirstName = String.Empty;
-            LastName = String.Empty;
-            EmployeeId = String.Empty;
-            Email = String.Empty;
-        }
-
-        public void Validate()
-        {
-            if (string.IsNullOrWhiteSpace(FirstName))
-                throw new HttpRequestException("User first name not defined");
-            if (string.IsNullOrWhiteSpace(LastName))
-                throw new HttpRequestException("User last name not defined");
-        }
+        FirstName = String.Empty;
+        LastName = String.Empty;
+        EmployeeId = String.Empty;
+        Email = String.Empty;
     }
+
+    public void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(FirstName))
+            throw new HttpRequestException("User first name not defined");
+        if (string.IsNullOrWhiteSpace(LastName))
+            throw new HttpRequestException("User last name not defined");
+    }
+}
 
 public class AddUserAction : IAction 
 {

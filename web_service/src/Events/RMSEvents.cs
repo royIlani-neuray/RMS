@@ -81,4 +81,20 @@ public class RMSEvents : WebSocketServer
         SendEvent("TEMPLATE_DELETED", templateId);
     }
 
+    public void CameraUpdatedEvent(string cameraId)
+    {
+        SendEvent("CAMERA_DEVICE_UPDATED", cameraId);
+    }
+
+    public void CameraAddedEvent(string cameraId)
+    {
+        SendEvent("CAMERA_DEVICE_ADDED", cameraId);
+    }
+
+    public void CameraDeletedEvent(string cameraId)
+    {
+        SendEvent("CAMERA_DEVICE_DELETED", cameraId);
+    }
+
+
 }
