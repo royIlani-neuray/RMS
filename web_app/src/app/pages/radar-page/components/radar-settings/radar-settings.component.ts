@@ -25,13 +25,13 @@ export class RadarSettingsComponent implements OnInit {
               private notification: MatSnackBar,
               private dialog: MatDialog) { }
 
-  radarDevice : Radar
+  radar : Radar
 
   ngOnInit(): void {
-    this.radarDevice = this.radarPageData.radarDevice
-    this.radarPageData.radarDeviceSubject.subscribe({
+    this.radar = this.radarPageData.radar
+    this.radarPageData.radarSubject.subscribe({
       next : (radarDevice) => {
-        this.radarDevice = radarDevice
+        this.radar = radarDevice
       }
     })
   }
@@ -49,7 +49,7 @@ export class RadarSettingsComponent implements OnInit {
     let dialogRef = this.dialog.open(ConfigScriptDialogComponent, {
       width: '850px',
       height: '690px',
-      data: { radarDevice: this.radarDevice }
+      data: { radarDevice: this.radar }
     });
 
     dialogRef.afterClosed().subscribe(result => {

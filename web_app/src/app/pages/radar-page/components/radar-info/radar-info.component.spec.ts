@@ -8,19 +8,19 @@
 ***/
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeviceInfoComponent } from './device-info.component';
+import { RadarInfoComponent } from './radar-info.component';
 
 describe('DeviceInfoComponent', () => {
-  let component: DeviceInfoComponent;
-  let fixture: ComponentFixture<DeviceInfoComponent>;
+  let component: RadarInfoComponent;
+  let fixture: ComponentFixture<RadarInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeviceInfoComponent ]
+      declarations: [ RadarInfoComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeviceInfoComponent);
+    fixture = TestBed.createComponent(RadarInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

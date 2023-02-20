@@ -54,7 +54,7 @@ import { TemplatesPageComponent } from './pages/templates-page/templates-page.co
 import { SetDeviceConfigDialogComponent } from './pages/radar-page/components/set-device-config-dialog/set-device-config-dialog.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
 import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
-import { DeviceInfoComponent } from './pages/radar-page/components/device-info/device-info.component';
+import { RadarInfoComponent } from './pages/radar-page/components/radar-info/radar-info.component';
 import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
 import { EditRadarInfoDialogComponent } from './pages/radar-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
 import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
@@ -80,7 +80,7 @@ import { CreateTemplateDialogComponent } from './pages/templates-page/components
     SetDeviceConfigDialogComponent,
     TemplatePageComponent,
     RecordingsPageComponent,
-    DeviceInfoComponent,
+    RadarInfoComponent,
     RadarSettingsComponent,
     TracksViewerPageComponent,
     RadarViewWindowComponent,

@@ -17,7 +17,7 @@ import { RadarsService } from 'src/app/services/radars.service';
 import { TemplatesService } from 'src/app/services/templates.service';
 
 export interface DialogData {
-  radarDevice: Radar
+  radar: Radar
 }
 
 @Component({
@@ -27,7 +27,7 @@ export interface DialogData {
 })
 export class SetDeviceConfigDialogComponent implements OnInit {
 
-  radarDevice: Radar
+  radar: Radar
   templatesList: RadarTemplateBrief[] = [];
   validTemplatesList: RadarTemplateBrief[] = [];
   
@@ -72,27 +72,27 @@ export class SetDeviceConfigDialogComponent implements OnInit {
 
   ngOnInit(): void 
   {
-    this.radarDevice = this.data.radarDevice
+    this.radar = this.data.radar
 
-    this.radarPositionFormGroup.controls.heightInputFC.setValue(this.radarDevice.radar_settings.sensor_position.height.toString())
-    this.radarPositionFormGroup.controls.azimuthInputFC.setValue(this.radarDevice.radar_settings.sensor_position.azimuth_tilt.toString())
-    this.radarPositionFormGroup.controls.elevationInputFC.setValue(this.radarDevice.radar_settings.sensor_position.elevation_tilt.toString())
+    this.radarPositionFormGroup.controls.heightInputFC.setValue(this.radar.radar_settings.sensor_position.height.toString())
+    this.radarPositionFormGroup.controls.azimuthInputFC.setValue(this.radar.radar_settings.sensor_position.azimuth_tilt.toString())
+    this.radarPositionFormGroup.controls.elevationInputFC.setValue(this.radar.radar_settings.sensor_position.elevation_tilt.toString())
 
-    this.boundaryBoxFormGroup.controls.xMin.setValue(this.radarDevice.radar_settings.boundary_box.x_min.toString())
-    this.boundaryBoxFormGroup.controls.yMin.setValue(this.radarDevice.radar_settings.boundary_box.y_min.toString())
-    this.boundaryBoxFormGroup.controls.zMin.setValue(this.radarDevice.radar_settings.boundary_box.z_min.toString())
-    this.boundaryBoxFormGroup.controls.xMax.setValue(this.radarDevice.radar_settings.boundary_box.x_max.toString())
-    this.boundaryBoxFormGroup.controls.yMax.setValue(this.radarDevice.radar_settings.boundary_box.y_max.toString())
-    this.boundaryBoxFormGroup.controls.zMax.setValue(this.radarDevice.radar_settings.boundary_box.z_max.toString())
+    this.boundaryBoxFormGroup.controls.xMin.setValue(this.radar.radar_settings.boundary_box.x_min.toString())
+    this.boundaryBoxFormGroup.controls.yMin.setValue(this.radar.radar_settings.boundary_box.y_min.toString())
+    this.boundaryBoxFormGroup.controls.zMin.setValue(this.radar.radar_settings.boundary_box.z_min.toString())
+    this.boundaryBoxFormGroup.controls.xMax.setValue(this.radar.radar_settings.boundary_box.x_max.toString())
+    this.boundaryBoxFormGroup.controls.yMax.setValue(this.radar.radar_settings.boundary_box.y_max.toString())
+    this.boundaryBoxFormGroup.controls.zMax.setValue(this.radar.radar_settings.boundary_box.z_max.toString())
 
-    this.staticBoundaryBoxFormGroup.controls.xMin.setValue(this.radarDevice.radar_settings.static_boundary_box.x_min.toString())
-    this.staticBoundaryBoxFormGroup.controls.yMin.setValue(this.radarDevice.radar_settings.static_boundary_box.y_min.toString())
-    this.staticBoundaryBoxFormGroup.controls.zMin.setValue(this.radarDevice.radar_settings.static_boundary_box.z_min.toString())
-    this.staticBoundaryBoxFormGroup.controls.xMax.setValue(this.radarDevice.radar_settings.static_boundary_box.x_max.toString())
-    this.staticBoundaryBoxFormGroup.controls.yMax.setValue(this.radarDevice.radar_settings.static_boundary_box.y_max.toString())
-    this.staticBoundaryBoxFormGroup.controls.zMax.setValue(this.radarDevice.radar_settings.static_boundary_box.z_max.toString())
+    this.staticBoundaryBoxFormGroup.controls.xMin.setValue(this.radar.radar_settings.static_boundary_box.x_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.yMin.setValue(this.radar.radar_settings.static_boundary_box.y_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.zMin.setValue(this.radar.radar_settings.static_boundary_box.z_min.toString())
+    this.staticBoundaryBoxFormGroup.controls.xMax.setValue(this.radar.radar_settings.static_boundary_box.x_max.toString())
+    this.staticBoundaryBoxFormGroup.controls.yMax.setValue(this.radar.radar_settings.static_boundary_box.y_max.toString())
+    this.staticBoundaryBoxFormGroup.controls.zMax.setValue(this.radar.radar_settings.static_boundary_box.z_max.toString())
 
-    this.calibrationFormGroup.controls.calibrationInputFC.setValue(this.radarDevice.radar_settings.radar_calibration)
+    this.calibrationFormGroup.controls.calibrationInputFC.setValue(this.radar.radar_settings.radar_calibration)
 
     this.getTemplates()
   }
@@ -104,11 +104,11 @@ export class SetDeviceConfigDialogComponent implements OnInit {
       {
         this.templatesList = response as RadarTemplateBrief[]
 
-        if (this.radarDevice.device_mapping == null)
+        if (this.radar.device_mapping == null)
           return
 
         this.validTemplatesList = this.templatesList.filter((template) => {
-          return (this.radarDevice.device_mapping.model.startsWith(template.model)) && (template.application == this.radarDevice.device_mapping.application)
+          return (this.radar.device_mapping.model.startsWith(template.model)) && (template.application == this.radar.device_mapping.application)
         })
 
       },
@@ -150,7 +150,7 @@ export class SetDeviceConfigDialogComponent implements OnInit {
 
     let calibration = this.calibrationFormGroup.controls.calibrationInputFC.value!
 
-    this.radarsService.setDeviceConfiguration(this.radarDevice.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox, calibration).subscribe({
+    this.radarsService.setRadarConfiguration(this.radar.device_id, templateId, sensorPosition, boundaryBox, staticBoundaryBox, calibration).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })

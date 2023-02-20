@@ -60,7 +60,7 @@ export class RadarsPageComponent implements OnInit {
 
   public getDeviceList()
   {
-    this.radarsService.getRadarDevices().subscribe({
+    this.radarsService.getRadars().subscribe({
       next : (devices) => 
       {
         this.dataSource.data = devices

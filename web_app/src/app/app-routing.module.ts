@@ -22,7 +22,7 @@ import { TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-vie
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
 
-import { DeviceInfoComponent } from './pages/radar-page/components/device-info/device-info.component';
+import { RadarInfoComponent } from './pages/radar-page/components/radar-info/radar-info.component';
 import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
 
 const routes: Routes = [
@@ -35,12 +35,12 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'device-info',
+        redirectTo: 'radar-info',
         pathMatch: 'full'
       },
       {
-        path: 'device-info',
-        component: DeviceInfoComponent
+        path: 'radar-info',
+        component: RadarInfoComponent
       },
       {
         path: 'radar-settings',

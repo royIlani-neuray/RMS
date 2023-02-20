@@ -13,7 +13,7 @@ import { Radar } from 'src/app/entities/radar';
 import { RadarsService } from 'src/app/services/radars.service';
 
 export interface DialogData {
-  radarDevice: Radar
+  radar: Radar
 }
 
 @Component({
@@ -25,7 +25,7 @@ export class ConfigScriptDialogComponent implements OnInit , AfterViewInit{
 
   @ViewChild(MatInput) textInput: MatInput;
 
-  radarDevice: Radar
+  radar: Radar
 
   constructor(public dialogRef: MatDialogRef<ConfigScriptDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -35,13 +35,13 @@ export class ConfigScriptDialogComponent implements OnInit , AfterViewInit{
 
   ngOnInit(): void 
   {
-    this.radarDevice = this.data.radarDevice
+    this.radar = this.data.radar
   }
 
   ngAfterViewInit(): void 
   {
     let config = ""
-    this.radarDevice.config_script.forEach((line) => { config += line + "\n" })
+    this.radar.config_script.forEach((line) => { config += line + "\n" })
     this.textInput.value = config
     this.cd.detectChanges()
   }
@@ -50,7 +50,7 @@ export class ConfigScriptDialogComponent implements OnInit , AfterViewInit{
   {
     let configScript = this.textInput.value.split("\n")
 
-    this.radarsService.setDeviceConfigScript(this.radarDevice.device_id, configScript).subscribe({
+    this.radarsService.setRadarConfigScript(this.radar.device_id, configScript).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => this.dialogRef.close(false)
     })

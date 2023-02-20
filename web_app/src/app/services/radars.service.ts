@@ -18,27 +18,27 @@ export class RadarsService {
 
   constructor(private http:HttpClient) { }
 
-  public getRadarDevices()
+  public getRadars()
   {
     return this.http.get<RadarBrief[]>("/api/radars")
   }
 
-  public getRadarDevice(radarId : string)
+  public getRadar(radarId : string)
   {
     return this.http.get<Radar>("/api/radars/" + radarId)
   }
 
-  public enableRadarDevice(radarId : string)
+  public enableRadar(radarId : string)
   {
     return this.http.post("/api/radars/" + radarId + "/enable", "")
   }
 
-  public disableRadarDevice(radarId : string)
+  public disableRadar(radarId : string)
   {
     return this.http.post("/api/radars/" + radarId + "/disable", "")
   }
 
-  public deleteRadarDevice(radarId : string)
+  public deleteRadar(radarId : string)
   {
     return this.http.delete("/api/radars/" + radarId)
   }
@@ -78,7 +78,7 @@ export class RadarsService {
     })
   }
 
-  public registerRadarDevice(radarId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
+  public registerRadar(radarId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
     height : number, azimuthTilt : number, elevationTilt : number, calibration : string)
   {
     return this.http.post("/api/radars", {
@@ -97,7 +97,7 @@ export class RadarsService {
     })
   }
 
-  public setDeviceConfiguration(radarId : string, templateId : string, sensorPosition : SensorPositionParams, 
+  public setRadarConfiguration(radarId : string, templateId : string, sensorPosition : SensorPositionParams, 
                                 boundaryBox : BoundaryBoxParams, staticBoundaryBox : BoundaryBoxParams, calibration : string)
   {
     return this.http.post("/api/radars/" + radarId + "/config", 
@@ -110,7 +110,7 @@ export class RadarsService {
     })    
   }
 
-  public setDeviceConfigScript(radarId : string, configScript: string[])
+  public setRadarConfigScript(radarId : string, configScript: string[])
   {
     return this.http.post("/api/radars/" + radarId + "/config", 
     {

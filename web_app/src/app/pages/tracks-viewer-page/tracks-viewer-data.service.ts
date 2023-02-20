@@ -45,7 +45,7 @@ export class TracksViewerDataService {
   
   private getDeviceList()
   {
-    this.radarsService.getRadarDevices().subscribe({
+    this.radarsService.getRadars().subscribe({
       next : (response) => this.radarsList = response as RadarBrief[],
       error : (err) => this.router.navigate(['/no-service'])
     })

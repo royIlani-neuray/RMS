@@ -15,19 +15,19 @@ import { RadarsService } from 'src/app/services/radars.service';
 @Injectable()
 export class RadarPageDataService {
 
-  public radarDeviceSubject: Subject<Radar> = new Subject<Radar>()
-  public radarDevice : Radar;
+  public radarSubject: Subject<Radar> = new Subject<Radar>()
+  public radar : Radar;
 
   constructor (private radarsService : RadarsService,
                private router : Router) {}
   
-  public getDevice(deviceId : string)
+  public getRadar(radarId : string)
   {
-    this.radarsService.getRadarDevice(deviceId).subscribe({
+    this.radarsService.getRadar(radarId).subscribe({
       next : (device) => 
       {
-        this.radarDevice = device
-        this.radarDeviceSubject.next(this.radarDevice)
+        this.radar = device
+        this.radarSubject.next(this.radar)
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })

@@ -1,5 +1,5 @@
 
-<div *ngIf="radarDevice">
+<div *ngIf="radar">
                 
     <!-- Radar Info card -->
     <div style="float: left; margin-right: 50px;">
@@ -10,21 +10,21 @@
             </tr>
             <tr>
                 <td>Enabled: </td>
-                <td>{{radarDevice.enabled}}</td>
+                <td>{{radar.enabled}}</td>
             </tr>
             <!--
             <tr>
                 <td>State: </td>
-                <td>{{radarDevice.state}}</td>
+                <td>{{radar.state}}</td>
             </tr>
             -->
             <tr>
                 <td>Status: </td>
-                <td>{{radarDevice.status}}</td>
+                <td>{{radar.status}}</td>
             </tr>
             <tr>
                 <td>Send Tracks Reports: </td>
-                <td>{{radarDevice.send_tracks_report}}</td>
+                <td>{{radar.send_tracks_report}}</td>
             </tr>
             <tr>
                 <td>Record Radar Data:</td>
@@ -36,11 +36,11 @@
             </tr>
             <tr>
                 <td>Device ID: </td>
-                <td>{{radarDevice.device_id}}</td>
+                <td>{{radar.device_id}}</td>
             </tr>
             <tr>
                 <td>Description: </td>
-                <td><div style="max-width: 500px;">{{radarDevice.description}}</div></td>
+                <td><div style="max-width: 500px;">{{radar.description}}</div></td>
             </tr>
             <tr>
                 <td></td>
@@ -50,38 +50,38 @@
     </div>
 
     <!-- Device Info card -->
-    <table class="radar-info-table" *ngIf="radarDevice.device_mapping != null">
+    <table class="radar-info-table" *ngIf="radar.device_mapping != null">
         <tr>
             <td><mat-label mat-basic-chip>Device Info:</mat-label></td>
             <td></td>
         </tr>
         <tr>
             <td>IP Address:</td>
-            <td>{{radarDevice.device_mapping.ip}}</td>
+            <td>{{radar.device_mapping.ip}}</td>
         </tr>
         <tr>
             <td>Subnet Mask:</td>
-            <td>{{radarDevice.device_mapping.subnet}}</td>
+            <td>{{radar.device_mapping.subnet}}</td>
         </tr>
         <tr>
             <td>Gateway:</td>
-            <td>{{radarDevice.device_mapping.gateway}}</td>
+            <td>{{radar.device_mapping.gateway}}</td>
         </tr>
         <tr>
             <td>Static IP:</td>
-            <td>{{radarDevice.device_mapping.static_ip}}</td>
+            <td>{{radar.device_mapping.static_ip}}</td>
         </tr>
         <tr>
             <td>Model:</td>
-            <td>{{radarDevice.device_mapping.model}}</td>
+            <td>{{radar.device_mapping.model}}</td>
         </tr>
         <tr>
             <td>Application:</td>
-            <td>{{radarDevice.device_mapping.application}}</td>
+            <td>{{radar.device_mapping.application}}</td>
         </tr>
         <tr>
             <td>FW Version:</td>
-            <td>{{radarDevice.device_mapping.fw_version}}</td>
+            <td>{{radar.device_mapping.fw_version}}</td>
         </tr>
     </table>
 
@@ -90,11 +90,11 @@
         <br><br><br><br><br>
         <button mat-raised-button (click)="setDeviceConfiguration()" color="primary">Set Configuration</button>
 
-        <button mat-raised-button *ngIf="!radarDevice.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
-        <button mat-raised-button *ngIf="radarDevice.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
+        <button mat-raised-button *ngIf="!radar.send_tracks_report" (click)="setTracksReports(true)" color="primary" style="margin-left: 10px;">Enable Reports</button>
+        <button mat-raised-button *ngIf="radar.send_tracks_report" (click)="setTracksReports(false)" color="primary" style="margin-left: 10px;">Disable Reports</button>
 
-        <button mat-raised-button *ngIf="!radarDevice.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
-        <button mat-raised-button *ngIf="radarDevice.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
+        <button mat-raised-button *ngIf="!radar.enabled" (click)="enableRadarDevice()" color="primary" style="margin-left: 10px;">Enable Radar</button>
+        <button mat-raised-button *ngIf="radar.enabled" (click)="disableRadarDevice()" color="primary" style="margin-left: 10px;">Disable Radar</button>
 
         <button mat-raised-button *ngIf="!isRadarRecordingEnabled()" (click)="enableRadarRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
         <button mat-raised-button *ngIf="isRadarRecordingEnabled()" (click)="disableRadarRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
@@ -109,8 +109,8 @@
         <p><mat-label mat-basic-chip>Linked Services:</mat-label></p>
         <mat-divider></mat-divider>
         <ul>
-            <li *ngFor="let service of radarDevice.linked_services">{{service.service_id}}</li>
-            <li *ngIf="radarDevice.linked_services.length == 0">No services linked to this device.</li>
+            <li *ngFor="let service of radar.linked_services">{{service.service_id}}</li>
+            <li *ngIf="radar.linked_services.length == 0">No services linked to this device.</li>
         </ul>
     </div>
 

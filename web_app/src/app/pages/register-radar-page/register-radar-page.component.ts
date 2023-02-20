@@ -115,7 +115,7 @@ export class RegisterRadarPageComponent implements OnInit {
 
     let calibration = this.calibrationInputFC.value!
 
-    this.radarsService.registerRadarDevice(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
+    this.radarsService.registerRadar(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
       height, azimuthTilt, elevationTilt, calibration).subscribe({
       next : (response) => this.router.navigate(['/radar', deviceId]),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not register the device", "Close", { duration : 4000 })

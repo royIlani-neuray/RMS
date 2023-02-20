@@ -125,7 +125,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     // request the radar device info based on the given device id
-    this.radarsService.getRadarDevice(radarId).subscribe({
+    this.radarsService.getRadar(radarId).subscribe({
       next : (radar) => {
         this.radar = radar
         

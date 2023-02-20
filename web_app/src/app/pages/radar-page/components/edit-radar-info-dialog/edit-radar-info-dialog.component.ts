@@ -28,7 +28,7 @@ export class EditRadarInfoDialogComponent implements OnInit {
 
   @ViewChildren(MatInput) inputComponents: QueryList<MatInput>;
   
-  radarDevice: Radar
+  radar: Radar
 
   radarNameFC: FormControl
   
@@ -39,8 +39,8 @@ export class EditRadarInfoDialogComponent implements OnInit {
 
   ngOnInit(): void 
   {
-    this.radarDevice = this.data.radarDevice
-    this.radarNameFC = new FormControl(this.radarDevice.name, [Validators.required])
+    this.radar = this.data.radarDevice
+    this.radarNameFC = new FormControl(this.radar.name, [Validators.required])
   }
 
   private getNameInput() {
@@ -60,7 +60,7 @@ export class EditRadarInfoDialogComponent implements OnInit {
     let name = this.getNameInput().value
     let description = this.getDescriptionInput().value
 
-    this.radarsService.updateRadarInfo(this.radarDevice.device_id, name, description).subscribe({
+    this.radarsService.updateRadarInfo(this.radar.device_id, name, description).subscribe({
       next : (response) => this.dialogRef.close(true),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
