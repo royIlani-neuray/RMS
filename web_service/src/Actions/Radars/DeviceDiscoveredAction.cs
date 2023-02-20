@@ -7,9 +7,9 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class DeviceDiscoveredAction : RadarAction {
 

@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Radar;
+using WebService.RadarLogic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebService.Controllers;

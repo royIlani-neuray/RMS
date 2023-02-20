@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Actions.Radar;
+using WebService.Actions.Radars;
 using WebService.Tracking;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
@@ -129,7 +129,7 @@ public class DeviceController : ControllerBase
     public void SendRestBroadcast(string deviceId)
     {
         ValidateDeviceId(deviceId); 
-        Radar.IPRadarClient.SendResetBroadcast(deviceId);
+        RadarLogic.IPRadarClient.SendResetBroadcast(deviceId);
     }
 
     [HttpGet("{deviceId}/tracks")]

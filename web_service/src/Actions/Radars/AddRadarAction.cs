@@ -10,10 +10,10 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Utils;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class AddRadarDeviceArgs 
 {

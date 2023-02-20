@@ -7,28 +7,25 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Context;
-using WebService.Events;
+using WebService.RadarLogic;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
-public class DeleteRadarAction : RadarAction 
+public class DisableRadarAction : RadarAction 
 {
-    public DeleteRadarAction(string deviceId) : base(deviceId) {}
+    public DisableRadarAction(string deviceId) : base(deviceId) {}
 
     protected override void RunRadarAction(RadarDevice radarDevice)
     {
-        System.Console.WriteLine($"Deleting radar device - {radarDevice.Id}");
+        if (!radarDevice.Enabled)
+            return; // nothing to do.
+
+        radarDevice.SetStatus("Disabling radar device...");
 
         var disconnectAction = new DisconnectRadarAction(radarDevice);
         disconnectAction.Run();
 
-        RadarContext.Instance.DeleteDevice(radarDevice);
-
-        radarDevice.DeviceWebSocket.CloseServer();
-
-        radarDevice.SetStatus("Device deleted.");
-
-        RMSEvents.Instance.RadarDeviceDeletedEvent(radarDevice.Id);
+        radarDevice.Enabled = false;
+        radarDevice.SetStatus("The device is disabled.");
     }
 }

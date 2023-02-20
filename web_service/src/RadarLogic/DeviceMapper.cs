@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Events;
 
-namespace WebService.Radar;
+namespace WebService.RadarLogic;
 
 public class DeviceMapper 
 {

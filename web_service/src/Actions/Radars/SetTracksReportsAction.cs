@@ -9,7 +9,7 @@
 using WebService.Entites;
 using System.Text.Json.Serialization;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class SetTracksReportsArgs
 {

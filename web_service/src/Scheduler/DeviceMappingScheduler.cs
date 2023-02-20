@@ -8,7 +8,7 @@
 ***/
 using WebService.Context;
 using WebService.Actions;
-using WebService.Radar;
+using WebService.RadarLogic;
 
 namespace WebService.Scheduler;
 

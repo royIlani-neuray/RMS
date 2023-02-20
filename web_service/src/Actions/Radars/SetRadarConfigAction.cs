@@ -7,13 +7,13 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Context;
 using WebService.Utils;
 using System.Text.Json.Serialization;
 
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class SetRadarConfigArgs
 {

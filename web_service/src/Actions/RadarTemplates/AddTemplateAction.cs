@@ -10,9 +10,9 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.Radar;
+using WebService.RadarLogic;
 
-namespace WebService.Actions.Template;
+namespace WebService.Actions.RadarTemplates;
 
 public class AddTemplateArgs 
     {

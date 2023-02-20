@@ -7,7 +7,9 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
+
+namespace WebService.Actions.Radars;
 
 public class DisconnectRadarAction : IAction 
 {

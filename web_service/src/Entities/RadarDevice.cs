@@ -7,7 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Tracking;
 using WebService.WebSockets;
 using WebService.Services;

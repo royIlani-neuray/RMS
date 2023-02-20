@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 using WebService.Database;
 using WebService.Context;
-using WebService.Radar;
-using WebService.Actions.Radar;
+using WebService.RadarLogic;
+using WebService.Actions.Radars;
 using WebService.Scheduler;
 using WebService.Services;
 using WebService.Events;

@@ -7,8 +7,10 @@
 **
 ***/
 using WebService.Entites;
-using WebService.Radar;
+using WebService.RadarLogic;
 using WebService.Tracking;
+
+namespace WebService.Actions.Radars;
 
 public class ConnectRadarAction : IAction 
 {

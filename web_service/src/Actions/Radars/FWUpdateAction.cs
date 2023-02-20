@@ -8,9 +8,9 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Radar;
+using WebService.RadarLogic;
 
-namespace WebService.Actions.Radar;
+namespace WebService.Actions.Radars;
 
 public class FWUpdateAction : IAction {
 
