@@ -8,7 +8,6 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.Actions.Users;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Cameras;
 

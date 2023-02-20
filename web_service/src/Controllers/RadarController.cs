@@ -43,7 +43,7 @@ public class RadarController : ControllerBase
     {
         ValidateRadarId(radarId);        
         if (!RadarContext.Instance.IsRadarExist(radarId))
-            throw new NotFoundException("There is no device with the provided id");
+            throw new NotFoundException("There is no radar with the provided id");
 
         return RadarContext.Instance.GetRadar(radarId);
     }
