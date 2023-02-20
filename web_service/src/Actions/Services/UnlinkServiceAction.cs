@@ -15,19 +15,19 @@ public class UnlinkServiceAction : RadarAction
 {
     private string serviceId;
 
-    public UnlinkServiceAction(string deviceId, string serviceId) : base(deviceId) 
+    public UnlinkServiceAction(string radarId, string serviceId) : base(radarId) 
     {
         this.serviceId = serviceId;
     }
 
-    protected override void RunRadarAction(Radar radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        var linkedService = radarDevice.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
+        var linkedService = radar.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
 
         if (linkedService == null)
             throw new Exception($"Could not find linked service with id - {serviceId}");
         
-        ServiceManager.Instance.DisposeServiceContext(radarDevice.Id, linkedService);
-        radarDevice.LinkedServices.Remove(linkedService);
+        ServiceManager.Instance.DisposeServiceContext(radar.Id, linkedService);
+        radar.LinkedServices.Remove(linkedService);
     }
 }

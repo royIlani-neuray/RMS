@@ -14,7 +14,7 @@ namespace WebService.Actions.Radars;
 
 public class DeleteRadarAction : RadarAction 
 {
-    public DeleteRadarAction(string deviceId) : base(deviceId) {}
+    public DeleteRadarAction(string radarId) : base(radarId) {}
 
     protected override void RunRadarAction(Radar radar)
     {
@@ -23,7 +23,7 @@ public class DeleteRadarAction : RadarAction
         var disconnectAction = new DisconnectRadarAction(radar);
         disconnectAction.Run();
 
-        RadarContext.Instance.DeleteDevice(radar);
+        RadarContext.Instance.DeleteRadar(radar);
 
         radar.DeviceWebSocket.CloseServer();
 

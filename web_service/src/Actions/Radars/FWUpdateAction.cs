@@ -15,12 +15,12 @@ namespace WebService.Actions.Radars;
 public class FWUpdateAction : IAction {
 
     private const int DEVICE_BOOT_WAIT_TIME_MS = 20 * 1000;
-    private string deviceId;
+    private string radarId;
     private byte [] image;
 
-    public FWUpdateAction(string deviceId, byte [] image)
+    public FWUpdateAction(string radarId, byte [] image)
     {
-        this.deviceId = deviceId;
+        this.radarId = radarId;
         this.image = image;
     }
 
@@ -28,13 +28,13 @@ public class FWUpdateAction : IAction {
     {
         bool enableDevice = false;
 
-        if (RadarContext.Instance.IsRadarDeviceExist(deviceId))
+        if (RadarContext.Instance.IsRadarExist(radarId))
         {
-            var device = RadarContext.Instance.GetDevice(deviceId);
+            var device = RadarContext.Instance.GetRadar(radarId);
 
             if (device.Enabled)
             {
-                var disableRadarAction = new DisableRadarAction(deviceId);
+                var disableRadarAction = new DisableRadarAction(radarId);
                 disableRadarAction.Run();
                 enableDevice = true;
                 Thread.Sleep(DEVICE_BOOT_WAIT_TIME_MS); // wait in order to make sure the device reset is done.
@@ -43,10 +43,10 @@ public class FWUpdateAction : IAction {
 
         try
         {
-            if (!RadarDeviceMapper.Instance.IsDeviceHasMapping(deviceId))
+            if (!RadarDeviceMapper.Instance.IsDeviceHasMapping(radarId))
                 throw new BadRequestException("The provided device id does not appear in the mapped devices list.");
 
-            var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(deviceId); 
+            var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarId); 
             
             IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);
             client.Connect();
@@ -63,7 +63,7 @@ public class FWUpdateAction : IAction {
         {
             if (enableDevice)
             {
-                var enableRadarAction = new EnableRadarAction(deviceId);
+                var enableRadarAction = new EnableRadarAction(radarId);
                 enableRadarAction.Run();
             }
         }

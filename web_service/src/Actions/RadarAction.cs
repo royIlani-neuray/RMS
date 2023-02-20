@@ -14,7 +14,7 @@ namespace WebService.Actions;
 
 public abstract class RadarAction : EntityAction<Radar>
 {
-    public RadarAction(string deviceId) : base(RadarContext.Instance, deviceId) {}
+    public RadarAction(string radarId) : base(RadarContext.Instance, radarId) {}
 
     protected abstract void RunRadarAction(Radar radarDevice);
 

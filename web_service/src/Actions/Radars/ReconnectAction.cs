@@ -12,7 +12,7 @@ namespace WebService.Actions.Radars;
 
 public class ReconnectAction : RadarAction 
 {
-    public ReconnectAction(string deviceId) : base(deviceId) {}
+    public ReconnectAction(string radarId) : base(radarId) {}
 
     protected override void RunRadarAction(Radar radar)
     {

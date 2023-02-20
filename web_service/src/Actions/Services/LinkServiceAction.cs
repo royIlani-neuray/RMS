@@ -31,17 +31,17 @@ public class LinkServiceAction : RadarAction
 {
     private LinkServiceArgs args;
 
-    public LinkServiceAction(string deviceId, LinkServiceArgs args) : base(deviceId) 
+    public LinkServiceAction(string radarId, LinkServiceArgs args) : base(radarId) 
     {
         this.args = args;
     }
 
-    protected override void RunRadarAction(Radar radarDevice)
+    protected override void RunRadarAction(Radar radar)
     {
-        var alreadyLinked = radarDevice.LinkedServices.Exists(linkedService => linkedService.ServiceId == args.ServiceId);
+        var alreadyLinked = radar.LinkedServices.Exists(linkedService => linkedService.ServiceId == args.ServiceId);
 
         if (alreadyLinked)
-            throw new Exception($"The service is already linked to this device.");        
+            throw new Exception($"The service is already linked to this radar device.");        
 
         if (!ServiceManager.Instance.ServiceExist(args.ServiceId))
             throw new Exception($"Cannot find service with the provided id.");
@@ -52,11 +52,11 @@ public class LinkServiceAction : RadarAction
             ServiceOptions = args.ServiceOptions
         };
 
-        if (radarDevice.State == Radar.DeviceState.Active)
+        if (radar.State == Radar.DeviceState.Active)
         {
-            ServiceManager.Instance.InitServiceContext(radarDevice, linkedService);
+            ServiceManager.Instance.InitServiceContext(radar, linkedService);
         }
 
-        radarDevice.LinkedServices.Add(linkedService);
+        radar.LinkedServices.Add(linkedService);
     }
 }

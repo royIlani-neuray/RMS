@@ -31,7 +31,7 @@ public class UpdateRadarInfoAction : RadarAction
 {
     private UpdateRadarInfoArgs args;
 
-    public UpdateRadarInfoAction(string deviceId, UpdateRadarInfoArgs args) : base(deviceId) 
+    public UpdateRadarInfoAction(string radarId, UpdateRadarInfoArgs args) : base(radarId) 
     {
         this.args = args;
     }
