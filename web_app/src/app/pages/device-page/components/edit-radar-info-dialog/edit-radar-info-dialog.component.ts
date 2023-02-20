@@ -12,12 +12,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { DevicesService } from 'src/app/services/devices.service';
 
 
 export interface DialogData {
-  radarDevice: RadarDevice
+  radarDevice: Radar
 }
 
 @Component({
@@ -29,7 +29,7 @@ export class EditRadarInfoDialogComponent implements OnInit {
 
   @ViewChildren(MatInput) inputComponents: QueryList<MatInput>;
   
-  radarDevice: RadarDevice
+  radarDevice: Radar
 
   radarNameFC: FormControl
   

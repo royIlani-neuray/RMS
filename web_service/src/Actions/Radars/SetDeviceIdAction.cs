@@ -12,47 +12,47 @@ using System.Text.Json.Serialization;
 
 namespace WebService.Actions.Radars;
 
-public class SetDeviceIdArgs
+public class SetRadarIdArgs
 {
-    [JsonPropertyName("new_device_id")]
-    public string NewDeviceId { get; set; } = String.Empty;
+    [JsonPropertyName("new_radar_id")]
+    public string NewRadarId { get; set; } = String.Empty;
 
     public void Validate()
     {
-        if (string.IsNullOrWhiteSpace(NewDeviceId))
-            throw new BadRequestException("new_device_id wasn't provided.");
+        if (string.IsNullOrWhiteSpace(NewRadarId))
+            throw new BadRequestException("new_radar_id wasn't provided.");
 
-        if (!Guid.TryParse(NewDeviceId, out _))
-            throw new BadRequestException("new_device_id must be a valid Guid format.");
+        if (!Guid.TryParse(NewRadarId, out _))
+            throw new BadRequestException("new_radar_id must be a valid Guid format.");
     }
 }
 
-public class SetDeviceIdAction : IAction {
+public class SetRadarIdAction : IAction {
 
-    private SetDeviceIdArgs args;
-    private string deviceId;
+    private SetRadarIdArgs args;
+    private string radarId;
 
-    public SetDeviceIdAction(string deviceId, SetDeviceIdArgs args)
+    public SetRadarIdAction(string radarId, SetRadarIdArgs args)
     {
         this.args = args;
-        this.deviceId = deviceId;
+        this.radarId = radarId;
     }
 
     public void Run()
     {
-        if (RadarDeviceMapper.Instance.IsDeviceHasMapping(args.NewDeviceId))
+        if (RadarDeviceMapper.Instance.IsDeviceHasMapping(args.NewRadarId))
             throw new Exception("The new device id provided is already exist for another device in the network.");
 
-        if (RadarContext.Instance.IsRadarDeviceExist(args.NewDeviceId))
+        if (RadarContext.Instance.IsRadarExist(args.NewRadarId))
             throw new Exception("The new device id provided is already registerd in RMS by another device.");
 
-        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(deviceId); 
+        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarId); 
 
-        System.Console.WriteLine($"Updating device id. Current id: [{deviceId}], New id: [{args.NewDeviceId}] ...");    
+        System.Console.WriteLine($"Updating device id. Current id: [{radarId}], New id: [{args.NewRadarId}] ...");    
         IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);
         client.Connect();
 
-        client.SetDeviceId(deviceId, args.NewDeviceId);
+        client.SetDeviceId(radarId, args.NewRadarId);
     
         client.Disconnect();
     }

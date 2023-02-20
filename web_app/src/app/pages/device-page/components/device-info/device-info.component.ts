@@ -8,7 +8,7 @@
 ***/
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { DevicesService } from 'src/app/services/devices.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ export class DeviceInfoComponent implements OnInit {
               private notification: MatSnackBar,
               public dialog: MatDialog) { }
 
-  radarDevice : RadarDevice
+  radarDevice : Radar
 
   ngOnInit(): void {
 

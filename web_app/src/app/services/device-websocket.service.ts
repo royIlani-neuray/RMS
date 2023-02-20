@@ -36,7 +36,7 @@ export class DeviceWebsocketService {
     }
     
     console.log(`connecting to device: ${deviceId}`)
-    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/devices/" + deviceId);
+    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/radars/" + deviceId);
     
     this.socket.onopen = function (event) {
       console.log('Websockets connection state: [Open]')

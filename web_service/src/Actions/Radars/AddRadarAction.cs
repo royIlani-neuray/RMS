@@ -17,7 +17,7 @@ namespace WebService.Actions.Radars;
 
 public class AddRadarDeviceArgs 
 {
-    [JsonPropertyName("device_id")]
+    [JsonPropertyName("radar_id")]
     public string Id { get; set; } = String.Empty;
 
     [JsonPropertyName("name")]
@@ -93,7 +93,7 @@ public class AddRadarAction : IAction
         }
         catch {}
         
-        RadarContext.Instance.AddDevice(radar);
+        RadarContext.Instance.AddRadar(radar);
 
         System.Console.WriteLine($"Radar device registered.");
         

@@ -9,11 +9,11 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { DevicesService } from 'src/app/services/devices.service';
 
 export interface DialogData {
-  radarDevice: RadarDevice
+  radarDevice: Radar
 }
 
 @Component({
@@ -25,7 +25,7 @@ export class ConfigScriptDialogComponent implements OnInit , AfterViewInit{
 
   @ViewChild(MatInput) textInput: MatInput;
 
-  radarDevice: RadarDevice
+  radarDevice: Radar
 
   constructor(public dialogRef: MatDialogRef<ConfigScriptDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,

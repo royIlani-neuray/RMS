@@ -8,7 +8,7 @@
 ***/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { DevicesService } from '../../services/devices.service';
 import { DevicePageDataService } from './device-page-data.service';
@@ -26,7 +26,7 @@ export class DevicePageComponent implements OnInit {
               private router : Router, 
               private activatedRoute:ActivatedRoute) { }
 
-  radarDevice : RadarDevice
+  radarDevice : Radar
   deviceId : string
 
   ngOnInit(): void {

@@ -7,7 +7,7 @@
 **
 ***/
 import { Component, OnInit } from '@angular/core';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { DevicePageDataService } from '../../device-page-data.service';
 import { HostListener } from '@angular/core';
 import { ConfigScriptDialogComponent } from '../config-script-dialog/config-script-dialog.component';
@@ -25,7 +25,7 @@ export class RadarSettingsComponent implements OnInit {
               private notification: MatSnackBar,
               private dialog: MatDialog) { }
 
-  radarDevice : RadarDevice
+  radarDevice : Radar
 
   ngOnInit(): void {
     this.radarDevice = this.devicePageData.radarDevice

@@ -8,7 +8,7 @@
 ***/
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { RadarDeviceBrief } from 'src/app/entities/radar-device';
+import { RadarBrief } from 'src/app/entities/radar-device';
 import { DevicesService } from '../../services/devices.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -22,7 +22,7 @@ import { RmsEventsService } from 'src/app/services/rms-events.service';
 export class DevicesPageComponent implements OnInit {
 
   deviceListLoaded = new Subject<boolean>();
-  dataSource = new MatTableDataSource<RadarDeviceBrief>()
+  dataSource = new MatTableDataSource<RadarBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'send_tracks_report', 'device_id', 'description'];
 
   constructor(private devicesService : DevicesService, 

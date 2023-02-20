@@ -9,7 +9,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TracksViewerDataService } from '../../tracks-viewer-data.service';
 import { DevicesService } from 'src/app/services/devices.service';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { Router } from '@angular/router';
 import { DeviceWebsocketService, GateIdPrediction } from 'src/app/services/device-websocket.service';
 import { ThreeJsView } from './threejs-view';
@@ -40,7 +40,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
   private windowRefreshInterval : any
   @Input() windowSelected : boolean = false
 
-  radarDevice : RadarDevice | null
+  radarDevice : Radar | null
 
   public frameDataSubject: Subject<FrameData> = new Subject<FrameData>()
   public gateIdPredictionsSubject: Subject<GateIdPrediction[]> = new Subject<GateIdPrediction[]>()

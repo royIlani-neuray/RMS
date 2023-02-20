@@ -8,7 +8,7 @@
 ***/
 import { RadarSettings } from "./radar-settings"
 
-export interface RadarDeviceBrief {
+export interface RadarBrief {
     name: string
     state: string
     description: string
@@ -17,7 +17,7 @@ export interface RadarDeviceBrief {
     send_tracks_report: boolean
 }
 
-export interface RadarDevice {
+export interface Radar {
     name: string
     state: string
     status: string

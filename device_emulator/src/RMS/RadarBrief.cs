@@ -8,7 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 
-public class RadarDeviceBrief 
+public class RadarBrief 
 {
     public enum DeviceState {
         Disconnected,
@@ -35,7 +35,7 @@ public class RadarDeviceBrief
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }
 
-    public RadarDeviceBrief()
+    public RadarBrief()
     {
         Name = String.Empty;
         Description = String.Empty;

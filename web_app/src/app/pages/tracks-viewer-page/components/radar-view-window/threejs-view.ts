@@ -12,7 +12,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Material, MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera } from 'three';
 import { ElementRef } from "@angular/core";
-import { RadarDevice } from "src/app/entities/radar-device";
+import { Radar } from "src/app/entities/radar-device";
 import { PointData, TrackData } from "src/app/entities/frame-data";
 
 export class ThreeJsView {
@@ -117,7 +117,7 @@ export class ThreeJsView {
 
 
 
-    public initScene(radarDevice : RadarDevice)
+    public initScene(radarDevice : Radar)
     {
       this.disposeScene()
       this.scene.add(this.directionalLight)

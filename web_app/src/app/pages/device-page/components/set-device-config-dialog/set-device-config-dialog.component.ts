@@ -11,14 +11,14 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { RadarDevice } from 'src/app/entities/radar-device';
+import { Radar } from 'src/app/entities/radar-device';
 import { BoundaryBoxParams, SensorPositionParams } from 'src/app/entities/radar-settings';
 import { RadarTemplate, RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { DevicesService } from 'src/app/services/devices.service';
 import { TemplatesService } from 'src/app/services/templates.service';
 
 export interface DialogData {
-  radarDevice: RadarDevice
+  radarDevice: Radar
 }
 
 @Component({
@@ -28,7 +28,7 @@ export interface DialogData {
 })
 export class SetDeviceConfigDialogComponent implements OnInit {
 
-  radarDevice: RadarDevice
+  radarDevice: Radar
   templatesList: RadarTemplateBrief[] = [];
   validTemplatesList: RadarTemplateBrief[] = [];
   

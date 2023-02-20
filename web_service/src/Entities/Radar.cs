@@ -59,12 +59,12 @@ public class Radar : DeviceEntity {
     [JsonIgnore]
     public DeviceWebSocketServer DeviceWebSocket;
 
-    public class RadarDeviceBrief : DeviceBrief
+    public class RadarBrief : DeviceBrief
     {
         [JsonPropertyName("send_tracks_report")]
         public bool SendTracksReport { get; set; }
 
-        public RadarDeviceBrief(Radar device) : base(device)
+        public RadarBrief(Radar device) : base(device)
         {
             SendTracksReport = device.SendTracksReport;
         }
