@@ -110,7 +110,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
     this.tracksViewerData.drawer.open()
   }
 
-  setRadarDevice(radarId : string)
+  setRadar(radarId : string)
   {
     if (this.frameDataSubscription != null)
     {

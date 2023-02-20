@@ -15,7 +15,7 @@ using WebService.Utils;
 
 namespace WebService.Actions.Radars;
 
-public class AddRadarDeviceArgs 
+public class AddRadarArgs 
 {
     [JsonPropertyName("radar_id")]
     public string Id { get; set; } = String.Empty;
@@ -58,9 +58,9 @@ public class AddRadarDeviceArgs
 
 public class AddRadarAction : IAction 
 {
-    AddRadarDeviceArgs args;
+    AddRadarArgs args;
 
-    public AddRadarAction(AddRadarDeviceArgs args)
+    public AddRadarAction(AddRadarArgs args)
     {
         this.args = args;
     }
@@ -97,7 +97,7 @@ public class AddRadarAction : IAction
 
         System.Console.WriteLine($"Radar device registered.");
         
-        RMSEvents.Instance.RadarDeviceAddedEvent(radar.Id);
+        RMSEvents.Instance.RadarAddedEvent(radar.Id);
 
         if (args.Enabled)
         {

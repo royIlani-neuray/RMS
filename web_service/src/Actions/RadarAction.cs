@@ -16,16 +16,16 @@ public abstract class RadarAction : EntityAction<Radar>
 {
     public RadarAction(string radarId) : base(RadarContext.Instance, radarId) {}
 
-    protected abstract void RunRadarAction(Radar radarDevice);
+    protected abstract void RunRadarAction(Radar radar);
 
-    protected override void RunAction(Radar radarDevice)
+    protected override void RunAction(Radar radar)
     {
-        RunRadarAction(radarDevice);
+        RunRadarAction(radar);
     }
 
-    protected override void RunPostActionTask(Radar radarDevice)
+    protected override void RunPostActionTask(Radar radar)
     {
-        RMSEvents.Instance.RadarDeviceUpdatedEvent(radarDevice.Id);
+        RMSEvents.Instance.RadarUpdatedEvent(radar.Id);
     }
 
 }

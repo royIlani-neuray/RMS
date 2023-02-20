@@ -36,14 +36,14 @@ export class RadarInfoComponent implements OnInit {
 
     this.radar = this.radarPageData.radar
     this.radarPageData.radarSubject.subscribe({
-      next : (radarDevice) => {
-        this.radar = radarDevice
+      next : (radar) => {
+        this.radar = radar
       }
     })
 
   }
 
-  public enableRadarDevice()
+  public enableRadar()
   {
     this.radarsService.enableRadar(this.radar.device_id).subscribe({
       next : (response) => this.radarPageData.getRadar(this.radar.device_id),
@@ -51,7 +51,7 @@ export class RadarInfoComponent implements OnInit {
     })
   }
 
-  public disableRadarDevice()
+  public disableRadar()
   {
     this.radarsService.disableRadar(this.radar.device_id).subscribe({
       next : (response) => this.radarPageData.getRadar(this.radar.device_id),
@@ -59,7 +59,7 @@ export class RadarInfoComponent implements OnInit {
     })
   }
 
-  public deleteRadarDevice()
+  public deleteRadar()
   {
     let dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '360px',
@@ -84,7 +84,7 @@ export class RadarInfoComponent implements OnInit {
     let dialogRef = this.dialog.open(EditRadarInfoDialogComponent, {
       width: '550px',
       height: '390px',
-      data: { radarDevice: this.radar }
+      data: { radar: this.radar }
     });
   }
 
@@ -93,7 +93,7 @@ export class RadarInfoComponent implements OnInit {
     let dialogRef = this.dialog.open(SetDeviceConfigDialogComponent, {
       width: '850px',
       height: '690px',
-      data: { radarDevice: this.radar }
+      data: { radar: this.radar }
     });
 
     dialogRef.afterClosed().subscribe(result => {

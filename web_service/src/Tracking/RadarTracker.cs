@@ -15,7 +15,7 @@ namespace WebService.Tracking;
 
 public class RadarTracker 
 {
-    private Radar radarDevice;
+    private Radar radar;
     private Task? trackerTask;
     private ITrackingApplication? trackingApp;
     private bool runTracker;
@@ -23,9 +23,9 @@ public class RadarTracker
     
     public FrameData? LastFrameData;
 
-    public RadarTracker(Radar radarDevice)
+    public RadarTracker(Radar radar)
     {
-        this.radarDevice = radarDevice;
+        this.radar = radar;
         runTracker = false;
         tracksHttpReporter = new TracksHttpReporter();
     }
@@ -34,15 +34,15 @@ public class RadarTracker
     {
         Task disconnectTask = new Task(() =>
         {
-            radarDevice.EntityLock.EnterWriteLock();
+            radar.EntityLock.EnterWriteLock();
             try
             {
-                var disconnectAction = new DisconnectRadarAction(radarDevice);
+                var disconnectAction = new DisconnectRadarAction(radar);
                 disconnectAction.Run();
             }
             finally
             {
-                radarDevice.EntityLock.ExitWriteLock();
+                radar.EntityLock.ExitWriteLock();
             }
         });
 
@@ -51,19 +51,19 @@ public class RadarTracker
 
     private void InitTrackingApp()
     {
-        if (radarDevice.deviceMapping == null)
+        if (radar.deviceMapping == null)
             throw new Exception("Error: cannot get device application.");
 
-        string appName = radarDevice.deviceMapping.appName;
+        string appName = radar.deviceMapping.appName;
 
         if (appName.StartsWith("PEOPLE_TRACKING"))
         {
-            if ((radarDevice.radarSettings == null) || (radarDevice.radarSettings.SensorPosition == null))
+            if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {
                 throw new Exception($"Error: cannot create tracker app - missing radar position.");
             }
 
-            trackingApp = new PeopleTracking(radarDevice.radarSettings.SensorPosition);
+            trackingApp = new PeopleTracking(radar.radarSettings.SensorPosition);
         }
         else if (appName == "TRAFFIC_MONITORING")
         {
@@ -71,7 +71,7 @@ public class RadarTracker
         }
         else if (appName == "EMULATOR_APPLICATION")
         {
-            trackingApp = new EmulatorStream(radarDevice.Name, radarDevice.Id);
+            trackingApp = new EmulatorStream(radar.Name, radar.Id);
         }
         else throw new Exception($"Error: no tracker exist for application: {appName}");
     }
@@ -125,16 +125,16 @@ public class RadarTracker
 
     private void InitServices()
     {
-        foreach (var linkedService in radarDevice.LinkedServices)
+        foreach (var linkedService in radar.LinkedServices)
         {
             try
             {
-                ServiceManager.Instance.InitServiceContext(radarDevice, linkedService);
+                ServiceManager.Instance.InitServiceContext(radar, linkedService);
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"[{radarDevice.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
-                System.Console.WriteLine($"[{radarDevice.Id}] Error: {ex.Message}");
+                System.Console.WriteLine($"[{radar.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
+                System.Console.WriteLine($"[{radar.Id}] Error: {ex.Message}");
                 throw;
             }
         }
@@ -142,20 +142,20 @@ public class RadarTracker
 
     private void ConfigureRadar()
     {
-        radarDevice.SetStatus($"Configuring the device...");
+        radar.SetStatus($"Configuring the device...");
 
-        foreach (string tiCommand in radarDevice.ConfigScript)
+        foreach (string tiCommand in radar.ConfigScript)
         {
             if (string.IsNullOrWhiteSpace(tiCommand) || tiCommand.StartsWith("%"))
                 continue;
             
-            Console.WriteLine($"[{radarDevice.Id}] Sending command - {tiCommand}");
-            var response = radarDevice.ipRadarClient!.SendTICommand(tiCommand);
-            Console.WriteLine($"[{radarDevice.Id}] {response}");
+            Console.WriteLine($"[{radar.Id}] Sending command - {tiCommand}");
+            var response = radar.ipRadarClient!.SendTICommand(tiCommand);
+            Console.WriteLine($"[{radar.Id}] {response}");
 
             if (response != "Done")
             {
-                Console.WriteLine($"[{radarDevice.Id}] The command '{tiCommand}' failed - got: {response}");
+                Console.WriteLine($"[{radar.Id}] The command '{tiCommand}' failed - got: {response}");
                 throw new Exception("Error: failed to configure the device!");
             }
         }
@@ -163,7 +163,7 @@ public class RadarTracker
 
     private void TreakingLoop()
     {
-        radarDevice.SetStatus("The device is active.");
+        radar.SetStatus("The device is active.");
 
         while (runTracker)
         {
@@ -172,29 +172,29 @@ public class RadarTracker
             
             try
             {
-                nextFrame = trackingApp!.GetNextFrame(radarDevice.ipRadarClient!.ReadTIData);
+                nextFrame = trackingApp!.GetNextFrame(radar.ipRadarClient!.ReadTIData);
             }
             catch (System.Exception ex)
             {
-                System.Console.WriteLine($"[{radarDevice.Id}] Error: failed getting frame: {ex.Message}");
+                System.Console.WriteLine($"[{radar.Id}] Error: failed getting frame: {ex.Message}");
                 throw;
             }
             
-            nextFrame.DeviceId = radarDevice.Id;
-            nextFrame.DeviceName = radarDevice.Name;
+            nextFrame.DeviceId = radar.Id;
+            nextFrame.DeviceName = radar.Name;
             LastFrameData = nextFrame;
 
             // send tracks report over HTTP and Websockets
 
-            if (radarDevice.SendTracksReport)
+            if (radar.SendTracksReport)
             {
                 tracksHttpReporter.SendReport(LastFrameData);
             }
 
-            radarDevice.DeviceWebSocket.SendFrameData(LastFrameData);
+            radar.DeviceWebSocket.SendFrameData(LastFrameData);
 
             // pass the frame to linked services
-            ServiceManager.Instance.HandleFrame(LastFrameData, radarDevice.LinkedServices);
+            ServiceManager.Instance.HandleFrame(LastFrameData, radar.LinkedServices);
         }
 
         // System.Console.WriteLine("Debug: Tracking loop exited.");

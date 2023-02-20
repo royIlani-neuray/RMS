@@ -29,6 +29,6 @@ public class DeleteRadarAction : RadarAction
 
         radar.SetStatus("Device deleted.");
 
-        RMSEvents.Instance.RadarDeviceDeletedEvent(radar.Id);
+        RMSEvents.Instance.RadarDeletedEvent(radar.Id);
     }
 }

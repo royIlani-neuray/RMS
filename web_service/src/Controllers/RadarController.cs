@@ -33,13 +33,13 @@ public class RadarController : ControllerBase
     }
 
     [HttpGet]
-    public List<Radar.RadarBrief> GetDevices()
+    public List<Radar.RadarBrief> GetRadars()
     {
         return RadarContext.Instance.GetRadarsBrief();
     }
 
     [HttpGet("{radarId}")]
-    public Radar GetRadarDevice(string radarId)
+    public Radar GetRadar(string radarId)
     {
         ValidateRadarId(radarId);        
         if (!RadarContext.Instance.IsRadarExist(radarId))
@@ -49,7 +49,7 @@ public class RadarController : ControllerBase
     }
 
     [HttpPost]
-    public void AddRadarDevice([FromBody] AddRadarDeviceArgs args)
+    public void AddRadar([FromBody] AddRadarArgs args)
     {
         AddRadarAction action = new AddRadarAction(args);
         action.Run();
@@ -57,7 +57,7 @@ public class RadarController : ControllerBase
     }
 
     [HttpDelete("{radarId}")]
-    public void DeleteRadarDevice(string radarId)
+    public void DeleteRadar(string radarId)
     {        
         ValidateRadarId(radarId); 
         var action = new DeleteRadarAction(radarId);
@@ -65,7 +65,7 @@ public class RadarController : ControllerBase
     }
 
     [HttpPost("{radarId}/enable")]
-    public void EnableRadarDevice(string radarId)
+    public void EnableRadar(string radarId)
     {
         ValidateRadarId(radarId);
         var action = new EnableRadarAction(radarId);
@@ -73,7 +73,7 @@ public class RadarController : ControllerBase
     }
 
     [HttpPost("{radarId}/disable")]
-    public void DisableRadarDevice(string radarId)
+    public void DisableRadar(string radarId)
     {
         ValidateRadarId(radarId);
         var action = new DisableRadarAction(radarId);
@@ -136,17 +136,17 @@ public class RadarController : ControllerBase
     public HttpTracksReport GetDeviceTracks(string radarId)
     {
         ValidateRadarId(radarId); 
-        var radarDevice = RadarContext.Instance.GetRadar(radarId);
+        var radar = RadarContext.Instance.GetRadar(radarId);
 
-        if ((radarDevice.radarTracker != null) && (radarDevice.radarTracker.LastFrameData != null))
+        if ((radar.radarTracker != null) && (radar.radarTracker.LastFrameData != null))
         {
-            return new HttpTracksReport(radarDevice.radarTracker.LastFrameData);
+            return new HttpTracksReport(radar.radarTracker.LastFrameData);
         }
         else
         {
             return new HttpTracksReport() {
-                DeviceId = radarDevice.Id,
-                DeviceName = radarDevice.Name
+                DeviceId = radar.Id,
+                DeviceName = radar.Name
             };
         }
     }
