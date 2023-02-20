@@ -89,7 +89,7 @@ public class AddRadarAction : IAction
 
         try
         {
-            device.deviceMapping = DeviceMapper.Instance.GetMappedDevice(device.Id);
+            device.deviceMapping = RadarDeviceMapper.Instance.GetMappedDevice(device.Id);
         }
         catch {}
         

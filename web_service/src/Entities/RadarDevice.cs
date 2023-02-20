@@ -42,7 +42,7 @@ public class RadarDevice : DeviceEntity {
     public List<string> ConfigScript { get; set; }
 
     [JsonPropertyName("device_mapping")]
-    public DeviceMapper.MappedDevice? deviceMapping { get; set;}
+    public RadarDeviceMapper.MappedDevice? deviceMapping { get; set;}
 
     [JsonPropertyName("radar_settings")]
     public RadarSettings? radarSettings { get; set;}

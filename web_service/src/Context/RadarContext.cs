@@ -38,7 +38,7 @@ public sealed class RadarContext : EntityContext<RadarDevice> {
 
     #endregion
 
-    public void LoadDevicesFromStorage()
+    public void LoadRadarsFromStorage()
     {
         LoadEntitiesFromStorage(StorageDatabase.RadarStoragePath);
 

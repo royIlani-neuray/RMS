@@ -25,15 +25,15 @@ public class DeviceMappingController : ControllerBase
     }
 
     [HttpGet]
-    public List<DeviceMapper.MappedDevice> GetMappedDevices()
+    public List<RadarDeviceMapper.MappedDevice> GetMappedDevices()
     {
-        return DeviceMapper.Instance.GetMappedDevices();
+        return RadarDeviceMapper.Instance.GetMappedDevices();
     }
 
     [HttpPost]
     public void TriggerDeviceMapping()
     {
-        DeviceMapper.Instance.MapDevices();
+        RadarDeviceMapper.Instance.MapDevices();
     }
 
 }

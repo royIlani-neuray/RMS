@@ -18,7 +18,7 @@ public class DeviceDiscoveredAction : RadarAction {
     protected override void RunRadarAction(RadarDevice radarDevice)
     {
         // first, update current known info in the radar device entity
-        var mappedDevice = DeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
+        var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarDevice.Id); 
         radarDevice.deviceMapping = mappedDevice;
 
         var action = new ConnectRadarAction(radarDevice);

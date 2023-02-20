@@ -43,10 +43,10 @@ public class FWUpdateAction : IAction {
 
         try
         {
-            if (!DeviceMapper.Instance.IsDeviceHasMapping(deviceId))
+            if (!RadarDeviceMapper.Instance.IsDeviceHasMapping(deviceId))
                 throw new BadRequestException("The provided device id does not appear in the mapped devices list.");
 
-            var mappedDevice = DeviceMapper.Instance.GetMappedDevice(deviceId); 
+            var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(deviceId); 
             
             IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);
             client.Connect();

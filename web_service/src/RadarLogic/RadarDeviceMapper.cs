@@ -14,7 +14,7 @@ using WebService.Events;
 
 namespace WebService.RadarLogic;
 
-public class DeviceMapper 
+public class RadarDeviceMapper 
 {
     private Task? broadcastListenerTask;
     private UdpClient? udpClient;
@@ -57,9 +57,9 @@ public class DeviceMapper
     #region Singleton
     
     private static object singletonLock = new object();
-    private static volatile DeviceMapper? instance; 
+    private static volatile RadarDeviceMapper? instance; 
 
-    public static DeviceMapper Instance {
+    public static RadarDeviceMapper Instance {
         get 
         {
             if (instance == null)
@@ -67,7 +67,7 @@ public class DeviceMapper
                 lock (singletonLock)
                 {
                     if (instance == null)
-                        instance = new DeviceMapper();
+                        instance = new RadarDeviceMapper();
                 }
             }
 
@@ -75,7 +75,7 @@ public class DeviceMapper
         }
     }
 
-    private DeviceMapper() 
+    private RadarDeviceMapper() 
     {
         mappedDevices = new Dictionary<string, MappedDevice>();
         deviceDiscoveredCallback = null;

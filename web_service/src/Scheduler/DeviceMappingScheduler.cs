@@ -46,7 +46,7 @@ public class DeviceMappingScheduler : TaskScheduler {
         // Trigger device mapping
         System.Console.WriteLine("Mapping Scheduler: Triggering device mapping.");
 
-        DeviceMapper.Instance.MapDevices();
+        RadarDeviceMapper.Instance.MapDevices();
     }
 
 }
