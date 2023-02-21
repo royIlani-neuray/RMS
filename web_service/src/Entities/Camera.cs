@@ -8,6 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 using WebService.Database;
+using WebService.WebSockets;
 
 namespace WebService.Entites;
 
@@ -18,6 +19,12 @@ public class Camera : DeviceEntity {
 
     [JsonIgnore]
     public override string StoragePath => StorageDatabase.CameraStoragePath;
+
+    [JsonPropertyName("rtsp_url")]
+    public String RTSPUrl { get; set; }
+
+    [JsonIgnore]
+    public CameraWebSocketServer CameraWebSocket;
 
     public class CameraBrief : DeviceBrief
     {
@@ -30,5 +37,7 @@ public class Camera : DeviceEntity {
     public Camera() : base(DeviceTypes.Camera)
     {
         Id = Guid.NewGuid().ToString();
+        RTSPUrl = String.Empty;
+        CameraWebSocket = new CameraWebSocketServer();
     }
 }

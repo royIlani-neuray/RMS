@@ -191,7 +191,7 @@ public class RadarTracker
                 tracksHttpReporter.SendReport(LastFrameData);
             }
 
-            radar.DeviceWebSocket.SendFrameData(LastFrameData);
+            radar.RadarWebSocket.SendFrameData(LastFrameData);
 
             // pass the frame to linked services
             ServiceManager.Instance.HandleFrame(LastFrameData, radar.LinkedServices);

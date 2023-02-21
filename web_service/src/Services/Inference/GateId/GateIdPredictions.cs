@@ -37,14 +37,14 @@ public class GateIdPredictions
     }
 
     private Dictionary<uint, Prediction> predictions;
-    private DeviceWebSocketServer deviceWebSocketsServer;
+    private RadarWebSocketServer deviceWebSocketsServer;
 
     private int requiredHitCount;
     private int requiredMissCount;
     
     public float ConfidenceThreshold {get; set;}
 
-    public GateIdPredictions(DeviceWebSocketServer deviceWebSocketsServer, int requiredHitCount, int requiredMissCount)
+    public GateIdPredictions(RadarWebSocketServer deviceWebSocketsServer, int requiredHitCount, int requiredMissCount)
     {
         predictions = new Dictionary<uint, Prediction>();
         this.deviceWebSocketsServer = deviceWebSocketsServer;

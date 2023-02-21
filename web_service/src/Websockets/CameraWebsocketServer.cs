@@ -7,31 +7,26 @@
 **
 ***/
 using WebService.Utils;
-using WebService.Tracking;
 
 namespace WebService.WebSockets;
 
-public class DeviceWebSocketServer : WebSocketServer
+public class CameraWebSocketServer : WebSocketServer
 {
-    private const int MAX_FRAME_RATE_FPS = 10;
-    private const int GATE_ID_PREDICTIONS_RATE = 2;
+    private const int MAX_FRAME_RATE_FPS = 30;
     private ActionRateLimiter frameRateLimiter;
-    private ActionRateLimiter gateIdRateLimiter;
 
-    public DeviceWebSocketServer()
+    public CameraWebSocketServer()
     {
         frameRateLimiter = new ActionRateLimiter(MAX_FRAME_RATE_FPS);
-        gateIdRateLimiter = new ActionRateLimiter(GATE_ID_PREDICTIONS_RATE);
-
         StartWorker();
     }
 
-    ~DeviceWebSocketServer()
+    ~CameraWebSocketServer()
     {
         StopWorker();
     }
 
-    public void SendFrameData(FrameData frame)
+    public void SendFrameData(object frame)
     {
         var message = new WebSocketMessage() 
         {
@@ -43,15 +38,5 @@ public class DeviceWebSocketServer : WebSocketServer
         frameRateLimiter.Run(() => Enqueue(message));
     }
 
-    public void SendGateIdPredictions(Object predictions)
-    {
-        var message = new WebSocketMessage() 
-        {
-            MessageType = "GATE_ID_PREDICTIONS",
-            MessageData = predictions
-        };
-
-        gateIdRateLimiter.Run(() => Enqueue(message));
-    }
     
 }

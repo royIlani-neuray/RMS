@@ -21,16 +21,25 @@ public class AddCameraArgs
     [JsonPropertyName("description")]
     public String Description { get; set; }
 
+    [JsonPropertyName("rtsp_url")]
+    public String RTSPUrl { get; set; }
+
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; set; } = false;
+
     public AddCameraArgs()
     {
         Name = String.Empty;
         Description = String.Empty;
+        RTSPUrl = String.Empty;
     }
 
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Name))
             throw new HttpRequestException("Camera name not defined");
+        if (string.IsNullOrWhiteSpace(RTSPUrl))
+            throw new HttpRequestException("Camera RTSP url not defined");
     }
 }
 
@@ -50,6 +59,8 @@ public class AddCameraAction : IAction
         Camera camera = new Camera();
         camera.Name = args.Name;
         camera.Description = args.Description;
+        camera.RTSPUrl = args.RTSPUrl;
+        camera.Enabled = args.Enabled;
 
         System.Console.WriteLine($"Adding new camera - [{camera.Name}]");
  

@@ -42,6 +42,12 @@ public sealed class CameraContext : EntityContext<Camera> {
     public void LoadCamerasFromStorage()
     {
         LoadEntitiesFromStorage(StorageDatabase.CameraStoragePath);
+
+        foreach (var camera in entities.Values)
+        {
+            camera.State = Camera.DeviceState.Disconnected;
+            camera.Status = camera.Enabled ? "The device is disconnected." : "The device is disabled.";
+        }
     }
 
     public bool IsCameraExist(string cameraId)

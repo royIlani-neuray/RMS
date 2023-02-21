@@ -42,10 +42,10 @@ public sealed class RadarContext : EntityContext<Radar> {
     {
         LoadEntitiesFromStorage(StorageDatabase.RadarStoragePath);
 
-        foreach (var device in entities.Values)
+        foreach (var radar in entities.Values)
         {
-            device.State = Radar.DeviceState.Disconnected;
-            device.Status = device.Enabled ? "The device is disconnected." : "The device is disabled.";
+            radar.State = Radar.DeviceState.Disconnected;
+            radar.Status = radar.Enabled ? "The device is disconnected." : "The device is disabled.";
         }
     }
 

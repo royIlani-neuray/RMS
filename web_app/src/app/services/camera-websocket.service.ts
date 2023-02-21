@@ -8,50 +8,42 @@
 ***/
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { FrameData } from '../entities/frame-data';
-
-export interface GateIdPrediction {
-  track_id: number
-  identity: string
-}
 
 @Injectable()
-export class RadarWebsocketService {
+export class CameraWebsocketService {
 
   private connected : boolean
   private socket : WebSocket  
-  private frameDataSubject: Subject<FrameData>;
-  private gateIdPredictionsSubject: Subject<GateIdPrediction[]>;
+  private frameDataSubject: Subject<String>;
   
   constructor() 
   { 
     this.connected = false
   }
 
-  public Connect(radarId : string)
+  public Connect(cameraId : string)
   {
     if (this.connected)
     {
       this.Disconnect()
     }
     
-    console.log(`connecting to radar device: ${radarId}`)
-    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/radars/" + radarId);
+    console.log(`connecting to camera websocket: ${cameraId}`)
+    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/cameras/" + cameraId);
     
     this.socket.onopen = function (event) {
-      console.log('Radar Websocket connection state: [Open]')
+      console.log('Camera Websocket connection state: [Open]')
     }
 
     this.socket.onerror = function (event) {
-      console.log('Radar Websocket connection state: [Error]')
+      console.log('Camera Websocket connection state: [Error]')
     }
 
     this.socket.onclose = function (event) {
-      console.log('Radar Websocket connection state: [Closed]')
+      console.log('Camera Websocket connection state: [Closed]')
     };
 
-    this.frameDataSubject = new Subject<FrameData>();
-    this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    this.frameDataSubject = new Subject<String>();
     
     this.socket.onmessage = (event) => {
       //console.log('Websockets Message -' + event.data)
@@ -60,10 +52,6 @@ export class RadarWebsocketService {
       if (message['type'] == 'FRAME_DATA')
       {
         this.frameDataSubject.next(message['data'])
-      }
-      else if (message['type'] == 'GATE_ID_PREDICTIONS')
-      {
-        this.gateIdPredictionsSubject.next(message['data'])
       }
     }
 
@@ -88,9 +76,5 @@ export class RadarWebsocketService {
   {
     return this.frameDataSubject;
   }
-
-  public GetGateIdPredictions()
-  {
-    return this.gateIdPredictionsSubject;
-  }
+  
 }

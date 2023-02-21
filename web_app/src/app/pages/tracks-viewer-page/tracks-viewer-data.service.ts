@@ -10,7 +10,9 @@ import { Injectable } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { CameraBrief } from 'src/app/entities/camera';
 import { RadarBrief } from 'src/app/entities/radar';
+import { CamerasService } from 'src/app/services/cameras.service';
 import { RadarsService } from 'src/app/services/radars.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
@@ -23,30 +25,48 @@ export class TracksViewerDataService {
   public windowsLayoutSubject: Subject<string> = new Subject<string>()
 
   public radarsList: RadarBrief[] = [];
+  public camerasList: CameraBrief[] = [];
 
   public radarWindowsList: RadarViewWindowComponent[] = []; 
 
   public drawer: MatDrawer
 
   constructor (private radarsService : RadarsService,
+               private camerasService : CamerasService,
                private rmsEventsService : RmsEventsService,
                private router : Router) 
   {
-    this.getDeviceList()
+    this.getRadarList()
+    this.getCameraList()
 
     this.rmsEventsService.radarUpdatedEvent.subscribe({
-      next: (deviceId) => 
+      next: (radarId) => 
       {
-        this.getDeviceList()
+        this.getRadarList()
       }
     })
-    
+
+    this.rmsEventsService.cameraUpdatedEvent.subscribe({
+      next: (cameraId) => 
+      {
+        this.getCameraList()
+      }
+    })
+
   }
   
-  private getDeviceList()
+  private getRadarList()
   {
     this.radarsService.getRadars().subscribe({
       next : (response) => this.radarsList = response as RadarBrief[],
+      error : (err) => this.router.navigate(['/no-service'])
+    })
+  }
+
+  private getCameraList()
+  {
+    this.camerasService.getCameras().subscribe({
+      next : (response) => this.camerasList = response as CameraBrief[],
       error : (err) => this.router.navigate(['/no-service'])
     })
   }

@@ -57,7 +57,7 @@ public class Radar : DeviceEntity {
     public RadarTracker? radarTracker;
 
     [JsonIgnore]
-    public DeviceWebSocketServer DeviceWebSocket;
+    public RadarWebSocketServer RadarWebSocket;
 
     public class RadarBrief : DeviceBrief
     {
@@ -74,7 +74,7 @@ public class Radar : DeviceEntity {
     {
         ConfigScript = new List<string>();
         LinkedServices = new List<LinkedService>();
-        DeviceWebSocket = new DeviceWebSocketServer();
+        RadarWebSocket = new RadarWebSocketServer();
     }
 
     public void SetStatus(string status)
