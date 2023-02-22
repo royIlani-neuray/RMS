@@ -62,4 +62,20 @@ public class CameraController : ControllerBase
         action.Run();
     }
 
+    [HttpPost("{cameraId}/enable")]
+    public void EnableCamera(string cameraId)
+    {
+        ValidateCameraId(cameraId);
+        var action = new EnableCameraAction(cameraId);
+        action.Run();
+    }
+
+    [HttpPost("{cameraId}/disable")]
+    public void DisableCamera(string cameraId)
+    {
+        ValidateCameraId(cameraId);
+        var action = new DisableCameraAction(cameraId);
+        action.Run();
+    }
+
 }

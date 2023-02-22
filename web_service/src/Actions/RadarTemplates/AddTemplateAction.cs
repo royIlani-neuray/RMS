@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Actions.RadarTemplates;
 

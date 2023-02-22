@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Actions.Radars;
 

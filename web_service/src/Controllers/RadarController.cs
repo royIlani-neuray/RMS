@@ -9,9 +9,10 @@
 using WebService.Entites;
 using WebService.Context;
 using WebService.Actions.Radars;
-using WebService.Tracking;
+using WebService.RadarLogic.Tracking;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Controllers;
 
@@ -129,7 +130,7 @@ public class RadarController : ControllerBase
     public void SendRestBroadcast(string radarId)
     {
         ValidateRadarId(radarId); 
-        RadarLogic.IPRadarClient.SendResetBroadcast(radarId);
+        IPRadarClient.SendResetBroadcast(radarId);
     }
 
     [HttpGet("{radarId}/tracks")]

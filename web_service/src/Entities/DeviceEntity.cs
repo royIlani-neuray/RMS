@@ -93,4 +93,10 @@ public abstract class DeviceEntity : IEntity {
         Enabled = false;
         EntityLock = new ReaderWriterLockSlim();
     }
+
+    public void SetStatus(string status)
+    {
+        this.Status = status;
+        System.Console.WriteLine($"[{Type} - {Id}] {status}");
+    }
 }

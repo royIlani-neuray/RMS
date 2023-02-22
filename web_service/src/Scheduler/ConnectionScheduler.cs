@@ -8,6 +8,7 @@
 ***/
 using WebService.Context;
 using WebService.Actions.Radars;
+using WebService.Actions.Cameras;
 
 namespace WebService.Scheduler;
 
@@ -40,17 +41,17 @@ public class ConnectionScheduler : TaskScheduler{
 
     private const int SCHEDULING_PERIOD_MINUTES = 2;
 
-    public override void RunTask()
+    private void ConnectRadars()
     {
-        var devicesList = RadarContext.Instance.GetRadarsBrief();
+        var radarsList = RadarContext.Instance.GetRadarsBrief();
 
-        foreach (var deviceInfo in devicesList)
+        foreach (var radarInfo in radarsList)
         {
-            if (deviceInfo.State == Entites.Radar.DeviceState.Disconnected)
+            if (radarInfo.State == Entites.Radar.DeviceState.Disconnected)
             {
                 try
                 {
-                    var action = new ReconnectAction(deviceInfo.Id);
+                    var action = new ReconnectRadarAction(radarInfo.Id);
                     action.Run();
                 }
                 catch 
@@ -58,6 +59,32 @@ public class ConnectionScheduler : TaskScheduler{
                 }
             }
         }
+    }
+
+    private void ConnectCameras()
+    {
+        var camerasList = CameraContext.Instance.GetCamerasBrief();
+
+        foreach (var cameraInfo in camerasList)
+        {
+            if (cameraInfo.State == Entites.Camera.DeviceState.Disconnected)
+            {
+                try
+                {
+                    var action = new ReconnectCameraAction(cameraInfo.Id);
+                    action.Run();
+                }
+                catch 
+                {
+                }
+            }
+        }
+    }    
+
+    public override void RunTask()
+    {
+        ConnectRadars();
+        ConnectCameras();
     }
 
 }

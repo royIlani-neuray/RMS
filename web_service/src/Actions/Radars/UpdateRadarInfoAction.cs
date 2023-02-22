@@ -8,7 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 using WebService.Entites;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Actions.Radars;
 

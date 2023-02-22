@@ -7,8 +7,8 @@
 **
 ***/
 using System.Text.Json.Serialization;
-using WebService.RadarLogic;
-using WebService.Tracking;
+using WebService.RadarLogic.IPRadar;
+using WebService.RadarLogic.Tracking;
 using WebService.WebSockets;
 using WebService.Services;
 using WebService.Database;
@@ -75,11 +75,5 @@ public class Radar : DeviceEntity {
         ConfigScript = new List<string>();
         LinkedServices = new List<LinkedService>();
         RadarWebSocket = new RadarWebSocketServer();
-    }
-
-    public void SetStatus(string status)
-    {
-        this.Status = status;
-        System.Console.WriteLine($"[{Id}] {status}");
     }
 }

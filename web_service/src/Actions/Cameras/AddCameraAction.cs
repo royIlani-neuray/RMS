@@ -60,7 +60,6 @@ public class AddCameraAction : IAction
         camera.Name = args.Name;
         camera.Description = args.Description;
         camera.RTSPUrl = args.RTSPUrl;
-        camera.Enabled = args.Enabled;
 
         System.Console.WriteLine($"Adding new camera - [{camera.Name}]");
  
@@ -69,5 +68,22 @@ public class AddCameraAction : IAction
         System.Console.WriteLine($"Camera added.");
 
         RMSEvents.Instance.CameraAddedEvent(camera.Id);
+
+        if (args.Enabled)
+        {
+            Task enableCameraTask = new Task(() => 
+            {
+                try
+                {
+                    var action = new EnableCameraAction(camera.Id);
+                    action.Run();
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine($"Error: could not enable camera device! - {ex.Message}");
+                }
+            });
+            enableCameraTask.Start();
+        }
     }
 }

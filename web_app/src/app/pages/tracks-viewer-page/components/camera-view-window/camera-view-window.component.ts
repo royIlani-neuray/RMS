@@ -21,8 +21,9 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
   camera : Camera | null
   frameDataSubscription! : any
   mediaSource : MediaSource = new MediaSource()
-  sourceBuffer : any | null
-  framesList = []
+  sourceBuffer : SourceBuffer | null = null
+  framesList : Uint8Array[] = []
+  streamingStarted = false
 
   ngOnInit(): void {
   }
@@ -45,13 +46,40 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
         
         this.cameraWebsocket.Connect(cameraId)
         
-        this.initVideoPlayer()
+        //this.initVideoPlayer()
 
         // we have the radar info, now subscribe for tracks streaming
         this.frameDataSubscription = this.cameraWebsocket.GetFrameData().subscribe({
           next : (frameData) => 
           {
-            // TODO.....
+            
+            this.videoRef.nativeElement.src = 'data:video/h264;base64,' + frameData
+            /*
+            //console.log(`Got camera frame data!!!!!! ${frameData}`)
+            if (!this.streamingStarted)
+            {
+              if (this.sourceBuffer == null)
+              {
+                console.log("Media source not initialized yet!")
+                return
+              }
+
+              this.streamingStarted = true;
+              //console.log(`Got camera frame data!!!!!! ${frameData}`)
+              //console.log(`source buffer = ${this.sourceBuffer}`)
+
+              const typedArray1 = new Uint8Array(frameData);
+              this.sourceBuffer!.appendBuffer(typedArray1)
+              
+              //this.sourceBuffer!.appendBuffer(frameData)
+              return;
+            }
+            else
+            {
+              //console.log('writing frame to frameList.')
+              this.framesList.push(new Uint8Array(frameData))
+            }
+            */
           }
         })
 
@@ -64,7 +92,25 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
   initVideoPlayer()
   {
     console.log("Initializing video player...")
+    this.videoRef.nativeElement.loop = false
+
+    this.videoRef.nativeElement.onerror = () => {
+      console.log("Media element error");
+    }
+
+    this.videoRef.nativeElement.addEventListener('canplay', () => 
+    {
+      console.log('Video can start, but not sure it will play through.');
+      this.videoRef.nativeElement.play();
+    });
+
+    /* NOTE: Chrome will not play the video if we define audio here
+    * and the stream does not include audio */
     var mimeCodec = 'video/mp4; codecs="avc1.4D0033, mp4a.40.2"';
+    //var mimeCodec = 'video/mp4; codecs="avc1.4D0033, mp4a.40.2"';
+    //var mimeCodec = 'video/mp4; codecs=avc1.42E01E,mp4a.40.2'
+    //var mimeCodec = 'video/mp4; codecs=avc1.4d002a,mp4a.40.2';
+    //var mimeCodec = 'video/mp4; codecs="avc1.64001E, mp4a.40.2"'; high
 
     if (!MediaSource)
     {
@@ -86,11 +132,22 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
 
       this.sourceBuffer.addEventListener("updateend",() => {
         console.log("on updateend...")
-        if ((!this.sourceBuffer.updating) && (this.framesList.length >0))
+        if (!this.sourceBuffer!.updating) 
         {
-          let frameData = this.framesList.shift(); // pop from the begining
-          this.sourceBuffer.appendBuffer(frameData)
+          if (this.framesList.length>0)
+          {
+            console.log("pushing next frame...")
+            let frameData = this.framesList.shift(); // pop from the begining
+            this.sourceBuffer!.appendBuffer(frameData!)
+          }
+          else
+          {
+            this.streamingStarted = false
+          }
+
         }
+        
+
 
       });
 
@@ -98,8 +155,7 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
         console.log("Media source error");
       });
     });
-    
-    
+
   }
 
 }

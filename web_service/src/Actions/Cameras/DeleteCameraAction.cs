@@ -6,7 +6,6 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
@@ -20,8 +19,16 @@ public class DeleteCameraAction : CameraAction {
     protected override void RunCameraAction(Camera camera)
     {
         System.Console.WriteLine($"Deleting camera - {camera.Id}");
+
+        var disconnectAction = new DisconnectCameraAction(camera);
+        disconnectAction.Run();
+
         CameraContext.Instance.DeleteCamera(camera);
 
-        RMSEvents.Instance.CameraDeletedEvent(camera.Id);        
+        camera.CameraWebSocket.CloseServer();
+
+        camera.SetStatus("Camera device deleted.");
+
+        RMSEvents.Instance.CameraDeletedEvent(camera.Id);      
     }
 }
