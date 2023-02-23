@@ -25,9 +25,9 @@ public class DeleteRadarAction : RadarAction
 
         RadarContext.Instance.DeleteRadar(radar);
 
-        radar.DeviceWebSocket.CloseServer();
+        radar.RadarWebSocket.CloseServer();
 
-        radar.SetStatus("Device deleted.");
+        radar.SetStatus("Radar device deleted.");
 
         RMSEvents.Instance.RadarDeletedEvent(radar.Id);
     }

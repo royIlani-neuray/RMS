@@ -7,8 +7,8 @@
 **
 ***/
 using WebService.Entites;
-using WebService.RadarLogic;
-using WebService.Tracking;
+using WebService.RadarLogic.IPRadar;
+using WebService.RadarLogic.Tracking;
 
 namespace WebService.Actions.Radars;
 
@@ -27,7 +27,7 @@ public class ConnectRadarAction : IAction
 
         if (!radar.Enabled)
         {
-            Console.WriteLine($"[{radar.Id}] device is disabled - ignore connect action.");
+            Console.WriteLine($"[{radar.Id}] radar device is disabled - ignore connect action.");
             return;
         }
 
@@ -54,19 +54,19 @@ public class ConnectRadarAction : IAction
             }
             catch
             {
-                radar.SetStatus("Error: connection attempt to the device failed.");
+                radar.SetStatus("Error: connection attempt to the radar failed.");
                 return;
             }
 
             radar.State = Radar.DeviceState.Connected;
-            radar.SetStatus("The device is connected.");
+            radar.SetStatus("The radar device is connected.");
         }
 
         if (radar.State == Radar.DeviceState.Connected)
         {
             if (radar.ConfigScript.Count == 0)
             {
-                radar.SetStatus("Error: no connection script is assigned to this device.");
+                radar.SetStatus("Error: no connection script is assigned.");
                 return;
             }
 

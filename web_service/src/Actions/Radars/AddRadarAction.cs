@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 using WebService.Utils;
 
 namespace WebService.Actions.Radars;
@@ -101,7 +101,7 @@ public class AddRadarAction : IAction
 
         if (args.Enabled)
         {
-            Task enableDeviceTask = new Task(() => 
+            Task enableRadarTask = new Task(() => 
             {
                 try
                 {
@@ -113,7 +113,7 @@ public class AddRadarAction : IAction
                     System.Console.WriteLine($"Error: could not enable radar device! - {ex.Message}");
                 }
             });
-            enableDeviceTask.Start();
+            enableRadarTask.Start();
         }
     }
 }

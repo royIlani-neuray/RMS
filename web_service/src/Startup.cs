@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 using WebService.Database;
 using WebService.Context;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 using WebService.Actions.Radars;
 using WebService.Scheduler;
 using WebService.Services;

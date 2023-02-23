@@ -11,6 +11,7 @@ import { MatGridList } from '@angular/material/grid-list';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDrawer } from '@angular/material/sidenav';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
+import { CameraViewWindowComponent } from './components/camera-view-window/camera-view-window.component';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 import { TracksViewerDataService } from './tracks-viewer-data.service';
 
@@ -94,6 +95,13 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarViewWindowComponent)
     component?.instance.setRadar(radarId)
+  }
+
+  setCamera(cameraId : string)
+  {
+    this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(CameraViewWindowComponent)
+    component?.instance.setCamera(cameraId)
   }
 
 }

@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 using WebService.Context;
 using System.Text.Json.Serialization;
 

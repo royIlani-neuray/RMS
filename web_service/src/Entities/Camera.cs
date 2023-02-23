@@ -7,7 +7,9 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.CameraLogic.CameraStream;
 using WebService.Database;
+using WebService.WebSockets;
 
 namespace WebService.Entites;
 
@@ -19,6 +21,15 @@ public class Camera : DeviceEntity {
     [JsonIgnore]
     public override string StoragePath => StorageDatabase.CameraStoragePath;
 
+    [JsonPropertyName("rtsp_url")]
+    public String RTSPUrl { get; set; }
+
+    [JsonIgnore]
+    public CameraWebSocketServer CameraWebSocket;
+
+    [JsonIgnore]
+    public CameraStreamer? cameraStreamer;
+
     public class CameraBrief : DeviceBrief
     {
         public CameraBrief(Camera camera) : base(camera)
@@ -29,6 +40,9 @@ public class Camera : DeviceEntity {
 
     public Camera() : base(DeviceTypes.Camera)
     {
-
+        Id = Guid.NewGuid().ToString();
+        RTSPUrl = String.Empty;
+        CameraWebSocket = new CameraWebSocketServer();
     }
+    
 }

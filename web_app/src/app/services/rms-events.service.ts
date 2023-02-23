@@ -16,14 +16,18 @@ export class RmsEventsService
 {
   private socket : WebSocket
 
-  public radarUpdatedEvent: Subject<string> = new Subject<string>()
   public radarAddedEvent: Subject<string> = new Subject<string>()
+  public radarUpdatedEvent: Subject<string> = new Subject<string>()
   public radarDeletedEvent: Subject<string> = new Subject<string>()
 
   public deviceMappingUpdatedEvent: Subject<null> = new Subject()
 
   public templateAddedEvent: Subject<string> = new Subject<string>()
   public templateDeletedEvent: Subject<string> = new Subject<string>()
+
+  public cameraAddedEvent: Subject<string> = new Subject<string>()
+  public cameraUpdatedEvent: Subject<string> = new Subject<string>()
+  public cameraDeletedEvent: Subject<string> = new Subject<string>()
 
 
   constructor() 
@@ -69,6 +73,18 @@ export class RmsEventsService
       else if (message['type'] == 'TEMPLATE_DELETED')
       {
         this.templateDeletedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'CAMERA_DEVICE_UPDATED')
+      {
+        this.cameraUpdatedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'CAMERA_DEVICE_ADDED')
+      {
+        this.cameraAddedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'CAMERA_DEVICE_DELETED')
+      {
+        this.cameraDeletedEvent.next(message['data'])
       }
 
     }

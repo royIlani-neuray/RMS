@@ -28,26 +28,26 @@ export class RadarWebsocketService {
     this.connected = false
   }
 
-  public Connect(deviceId : string)
+  public Connect(radarId : string)
   {
     if (this.connected)
     {
       this.Disconnect()
     }
     
-    console.log(`connecting to device: ${deviceId}`)
-    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/radars/" + deviceId);
+    console.log(`connecting to radar device: ${radarId}`)
+    this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/radars/" + radarId);
     
     this.socket.onopen = function (event) {
-      console.log('Websockets connection state: [Open]')
+      console.log('Radar Websocket connection state: [Open]')
     }
 
     this.socket.onerror = function (event) {
-      console.log('Websockets connection state: [Error]')
+      console.log('Radar Websocket connection state: [Error]')
     }
 
     this.socket.onclose = function (event) {
-      console.log('Websockets connection state: [Closed]')
+      console.log('Radar Websocket connection state: [Closed]')
     };
 
     this.frameDataSubject = new Subject<FrameData>();

@@ -7,7 +7,7 @@
 **
 ***/
 using WebService.Entites;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 using WebService.Context;
 using WebService.Utils;
 using System.Text.Json.Serialization;

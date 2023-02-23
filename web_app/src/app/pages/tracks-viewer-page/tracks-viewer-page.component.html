@@ -21,12 +21,17 @@
 </div>
 
 <mat-menu #contextMenu="matMenu">
-    <button mat-menu-item [matMenuTriggerFor]="selectRadarDeviceMenu">Select Radar Device</button>
+    <button mat-menu-item [matMenuTriggerFor]="selectRadarMenu">Select Radar Device</button>
+    <button mat-menu-item [matMenuTriggerFor]="selectCameraMenu">Select Camera Device</button>
     <button mat-menu-item [matMenuTriggerFor]="setWindowsLayoutMenu">Set Windows Layout</button>
 </mat-menu>
 
-<mat-menu #selectRadarDeviceMenu="matMenu">
+<mat-menu #selectRadarMenu="matMenu">
     <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setRadar(radar.device_id)" mat-menu-item>{{radar.name}}</button>
+</mat-menu>
+
+<mat-menu #selectCameraMenu="matMenu">
+    <button *ngFor="let camera of this.tracksViewerData.camerasList" [disabled]="!camera.enabled" (click)="setCamera(camera.device_id)" mat-menu-item>{{camera.name}}</button>
 </mat-menu>
 
 <mat-menu #setWindowsLayoutMenu="matMenu">

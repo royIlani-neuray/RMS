@@ -8,7 +8,7 @@
 ***/
 using System.Text.Json;
 using WebService.Utils;
-using WebService.Tracking;
+using WebService.RadarLogic.Tracking;
 using WebService.Entites;
 
 namespace WebService.Services.Inference.GateId;
@@ -27,7 +27,7 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     {
         State = IServiceContext.ServiceState.Initialized;
         tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize, device.radarSettings!.SensorPosition!.HeightMeters);
-        predictions = new GateIdPredictions(device.DeviceWebSocket, requiredHitCount, requiredMissCount);
+        predictions = new GateIdPredictions(device.RadarWebSocket, requiredHitCount, requiredMissCount);
         this.modelName = modelName;
         
     }

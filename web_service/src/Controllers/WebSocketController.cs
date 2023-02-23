@@ -38,24 +38,46 @@ public class WebSocketController : ControllerBase
     }    
 
     [HttpGet("radars/{radarId}")]
-    public async Task GetDeviceWebsocket(string radarId)
+    public async Task GetRadarWebsocket(string radarId)
     {
         //System.Console.WriteLine($"In get radar device websocket - radar id: {radarId}");
 
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
-            Radar device = RadarContext.Instance.GetRadar(radarId);
+            Radar radar = RadarContext.Instance.GetRadar(radarId);
 
             using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             var socketFinishedTcs = new TaskCompletionSource<object>();
 
-            device.DeviceWebSocket.AddWebSocketClient(webSocket, socketFinishedTcs); 
+            radar.RadarWebSocket.AddWebSocketClient(webSocket, socketFinishedTcs); 
             
             // we must wait for the TracksWebsocketReporter to finish processing before returning
             // from this function, otherwise the socket connection will close
             await socketFinishedTcs.Task;
 
             //System.Console.WriteLine($"Websocket connection closed - radar device id: {radarId}");
+        }
+        else
+        {
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+        }
+    }
+
+    [HttpGet("cameras/{cameraId}")]
+    public async Task GetCameraWebsocket(string cameraId)
+    {
+        if (HttpContext.WebSockets.IsWebSocketRequest)
+        {
+            Camera camera = CameraContext.Instance.GetCamera(cameraId);
+
+            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            var socketFinishedTcs = new TaskCompletionSource<object>();
+
+            camera.CameraWebSocket.AddWebSocketClient(webSocket, socketFinishedTcs); 
+            
+            // we must wait for the TracksWebsocketReporter to finish processing before returning
+            // from this function, otherwise the socket connection will close
+            await socketFinishedTcs.Task;
         }
         else
         {

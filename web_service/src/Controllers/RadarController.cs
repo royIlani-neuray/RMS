@@ -9,9 +9,10 @@
 using WebService.Entites;
 using WebService.Context;
 using WebService.Actions.Radars;
-using WebService.Tracking;
+using WebService.RadarLogic.Tracking;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Controllers;
 
@@ -43,7 +44,7 @@ public class RadarController : ControllerBase
     {
         ValidateRadarId(radarId);        
         if (!RadarContext.Instance.IsRadarExist(radarId))
-            throw new NotFoundException("There is no device with the provided id");
+            throw new NotFoundException("There is no radar with the provided id");
 
         return RadarContext.Instance.GetRadar(radarId);
     }
@@ -129,7 +130,7 @@ public class RadarController : ControllerBase
     public void SendRestBroadcast(string radarId)
     {
         ValidateRadarId(radarId); 
-        RadarLogic.IPRadarClient.SendResetBroadcast(radarId);
+        IPRadarClient.SendResetBroadcast(radarId);
     }
 
     [HttpGet("{radarId}/tracks")]

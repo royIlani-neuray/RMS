@@ -10,46 +10,46 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
-using WebService.RadarLogic;
+using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Actions.RadarTemplates;
 
 public class AddTemplateArgs 
+{
+    [JsonPropertyName("name")]
+    public String Name { get; set; }
+
+    [JsonPropertyName("description")]
+    public String Description { get; set; }
+
+    [JsonPropertyName("model")]
+    public String Model { get; set; }
+
+    [JsonPropertyName("application")]
+    public String Application { get; set; }
+
+    [JsonPropertyName("config_script")]
+    public List<string> ConfigScript { get; set; }
+
+    public AddTemplateArgs()
     {
-        [JsonPropertyName("name")]
-        public String Name { get; set; }
-
-        [JsonPropertyName("description")]
-        public String Description { get; set; }
-
-        [JsonPropertyName("model")]
-        public String Model { get; set; }
-
-        [JsonPropertyName("application")]
-        public String Application { get; set; }
-
-        [JsonPropertyName("config_script")]
-        public List<string> ConfigScript { get; set; }
-
-        public AddTemplateArgs()
-        {
-            Name = String.Empty;
-            Description = String.Empty;
-            Model = String.Empty;
-            Application = String.Empty;
-            ConfigScript = new List<string>();
-        }
-
-        public void Validate()
-        {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new HttpRequestException("Template name not defined");
-            if (string.IsNullOrWhiteSpace(Application))
-                throw new HttpRequestException("Template application not defined");
-            if (string.IsNullOrWhiteSpace(Model))
-                throw new HttpRequestException("Template model not defined");
-        }
+        Name = String.Empty;
+        Description = String.Empty;
+        Model = String.Empty;
+        Application = String.Empty;
+        ConfigScript = new List<string>();
     }
+
+    public void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(Name))
+            throw new HttpRequestException("Template name not defined");
+        if (string.IsNullOrWhiteSpace(Application))
+            throw new HttpRequestException("Template application not defined");
+        if (string.IsNullOrWhiteSpace(Model))
+            throw new HttpRequestException("Template model not defined");
+    }
+}
 
 public class AddTemplateAction : IAction 
 {
