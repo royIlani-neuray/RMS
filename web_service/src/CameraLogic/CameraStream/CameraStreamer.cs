@@ -88,52 +88,46 @@ public class CameraStreamer
         streamerTask.Wait();
     }
 
+    /*
+    // a working sample for writing the stream as an H264 file.
+
+    bool fileCreated = false;
+    BinaryWriter? writer;
+
+    private void WriteToFile(ArraySegment<byte> buffer)
+    {
+        if (!fileCreated)
+        {
+            writer = new BinaryWriter(File.Open("./data/test.h264", FileMode.Create));
+            fileCreated = true;
+        }
+
+        writer!.Write(buffer);
+        writer.Flush();
+    }
+    */
+
     private void RtspClient_FrameReceived(object? sender, RtspClientSharpCore.RawFrames.RawFrame frame)
-    {   
-        /*
-        if (frame is RtspRawVideo.RawH264IFrame f1)
+    {
+        if (frame.Type != RtspClientSharpCore.RawFrames.FrameType.Video)
         {
-            camera.CameraWebSocket.SendFrameData(f1.SpsPpsSegment);
-            camera.CameraWebSocket.SendFrameData(f1.FrameSegment);
-            System.Console.WriteLine($"I-Frame f1.SpsPpsSegment len : {f1.SpsPpsSegment.Count}, f1.FrameSegment len : {f1.FrameSegment.Count}");
-        }
-        if (frame is RtspRawVideo.RawH264PFrame f2)
-        {
-            camera.CameraWebSocket.SendFrameData(f2.FrameSegment);
-            System.Console.WriteLine($"P-Frame f2.FrameSegment len : {f2.FrameSegment.Count}");
-        }
-        */
-        //camera.CameraWebSocket.SendFrameData(frame.FrameSegment);
-
-        if (frame is RtspRawVideo.RawH264IFrame f1)
-        {
-            System.Console.WriteLine($"I-Frame f1.SpsPpsSegment len : {f1.SpsPpsSegment.Count}, f1.FrameSegment len : {f1.FrameSegment.Count}");
-
-            using (var ms = new MemoryStream())
-            {
-                ms.Write(f1.SpsPpsSegment.Array!, f1.SpsPpsSegment.Offset, f1.SpsPpsSegment.Count);
-                ms.Write(SpsPpsDelimiter, 0, SpsPpsDelimiter.Length);
-                ms.Write(f1.FrameSegment.Array!, f1.FrameSegment.Offset, f1.FrameSegment.Count);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var base64 = Convert.ToBase64String(ms.ToArray());
-                camera.CameraWebSocket.SendFrameData(base64);
-            }
-        }
-        if (frame is RtspRawVideo.RawH264PFrame f2)
-        {
-            System.Console.WriteLine($"P-Frame f2.FrameSegment len : {f2.FrameSegment.Count}");
-
-            using (var ms = new MemoryStream(frame.FrameSegment.Array!, frame.FrameSegment.Offset, frame.FrameSegment.Count))
-            {
-                var base64 = Convert.ToBase64String(ms.ToArray());
-                camera.CameraWebSocket.SendFrameData(base64);
-            }
+            // skip Audio frames.
+            return;
         }
         
+        if (frame is RtspRawVideo.RawH264IFrame f1)
+        {
+            //WriteToFile(f1.SpsPpsSegment);
+            //WriteToFile(f1.FrameSegment);
 
-
-
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "SPS" , segment_data = Convert.ToBase64String(f1.SpsPpsSegment) });
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "IDATA" , segment_data = Convert.ToBase64String(f1.FrameSegment) });
+        }
+        if (frame is RtspRawVideo.RawH264PFrame f2)
+        {
+            //WriteToFile(f2.FrameSegment);
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "PDATA" , segment_data = Convert.ToBase64String(f2.FrameSegment) });
+        }
     }
 
     private async Task CameraStreamLoop()

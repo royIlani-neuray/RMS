@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
     "@types/three": "^0.144.0",
+    "h264-converter": "^0.1.4",
     "rxjs": "~7.5.0",
     "three": "^0.145.0",
     "tslib": "^2.3.0",

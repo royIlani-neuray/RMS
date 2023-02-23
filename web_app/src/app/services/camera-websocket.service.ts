@@ -9,12 +9,17 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
+export interface CameraFrameData {
+  segment_type: string
+  segment_data: string
+}
+
 @Injectable()
 export class CameraWebsocketService {
 
   private connected : boolean
   private socket : WebSocket  
-  private frameDataSubject: Subject<String>;
+  private frameDataSubject: Subject<CameraFrameData>;
   
   constructor() 
   { 
@@ -43,7 +48,7 @@ export class CameraWebsocketService {
       console.log('Camera Websocket connection state: [Closed]')
     };
 
-    this.frameDataSubject = new Subject<String>();
+    this.frameDataSubject = new Subject<CameraFrameData>();
     
     this.socket.onmessage = (event) => {
       //console.log('Websockets Message -' + event.data)

@@ -35,7 +35,8 @@ public class CameraWebSocketServer : WebSocketServer
         };
 
         // limit the rate since a high frame rate may cause display issues at the web app.
-        frameRateLimiter.Run(() => Enqueue(message));
+        //frameRateLimiter.Run(() => Enqueue(message));
+        Enqueue(message);
     }
 
     
