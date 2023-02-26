@@ -150,6 +150,11 @@ public class CameraStreamer
             {
                 return;
             }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"{camera.LogTag} Camera stream error: " + ex.Message);
+                throw ex;
+            }
         }
     }
 }
