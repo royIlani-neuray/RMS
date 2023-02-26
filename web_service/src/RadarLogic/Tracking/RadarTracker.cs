@@ -133,8 +133,8 @@ public class RadarTracker
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"[{radar.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
-                System.Console.WriteLine($"[{radar.Id}] Error: {ex.Message}");
+                System.Console.WriteLine($"{radar.LogTag} Error: could not initialize service context for service: {linkedService.ServiceId}");
+                System.Console.WriteLine($"{radar.LogTag} Error: {ex.Message}");
                 throw;
             }
         }
@@ -149,13 +149,13 @@ public class RadarTracker
             if (string.IsNullOrWhiteSpace(tiCommand) || tiCommand.StartsWith("%"))
                 continue;
             
-            Console.WriteLine($"[{radar.Id}] Sending command - {tiCommand}");
+            Console.WriteLine($"{radar.LogTag} Sending command - {tiCommand}");
             var response = radar.ipRadarClient!.SendTICommand(tiCommand);
-            Console.WriteLine($"[{radar.Id}] {response}");
+            Console.WriteLine($"{radar.LogTag} {response}");
 
             if (response != "Done")
             {
-                Console.WriteLine($"[{radar.Id}] The command '{tiCommand}' failed - got: {response}");
+                Console.WriteLine($"{radar.LogTag} The command '{tiCommand}' failed - got: {response}");
                 throw new Exception("Error: failed to configure the device!");
             }
         }
@@ -176,7 +176,7 @@ public class RadarTracker
             }
             catch (System.Exception ex)
             {
-                System.Console.WriteLine($"[{radar.Id}] Error: failed getting frame: {ex.Message}");
+                System.Console.WriteLine($"{radar.LogTag} Error: failed getting frame: {ex.Message}");
                 throw;
             }
             

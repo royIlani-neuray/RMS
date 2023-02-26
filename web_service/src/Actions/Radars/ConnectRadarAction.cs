@@ -27,7 +27,7 @@ public class ConnectRadarAction : IAction
 
         if (!radar.Enabled)
         {
-            Console.WriteLine($"[{radar.Id}] radar device is disabled - ignore connect action.");
+            Console.WriteLine($"{radar.LogTag} radar device is disabled - ignore connect action.");
             return;
         }
 

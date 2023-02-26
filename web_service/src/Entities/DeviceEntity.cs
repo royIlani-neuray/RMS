@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using WebService.Events;
 
 namespace WebService.Entites;
 
@@ -94,9 +95,21 @@ public abstract class DeviceEntity : IEntity {
         EntityLock = new ReaderWriterLockSlim();
     }
 
+    [JsonIgnore]
+    public string LogTag => $"[{Type} - {Id}]";
+
     public void SetStatus(string status)
     {
         this.Status = status;
-        System.Console.WriteLine($"[{Type} - {Id}] {status}");
+        System.Console.WriteLine($"{LogTag} {status}");
+
+        if (Type == DeviceTypes.Radar)
+        {
+            RMSEvents.Instance.RadarUpdatedEvent(Id);
+        }
+        else if (Type == DeviceTypes.Camera)
+        {
+            RMSEvents.Instance.CameraUpdatedEvent(Id);
+        }
     }
 }
