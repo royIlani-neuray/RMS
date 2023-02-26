@@ -10,6 +10,7 @@ using RtspClientSharpCore;
 using RtspRawVideo = RtspClientSharpCore.RawFrames.Video;
 using WebService.Actions.Cameras;
 using WebService.Entites;
+using WebService.Services;
 
 namespace WebService.CameraLogic.CameraStream;
 
@@ -60,7 +61,8 @@ public class CameraStreamer
         streamerTask = new Task(async () => 
         {
             try
-            {               
+            {
+                ServiceManager.Instance.InitDeviceServices(camera);               
                 await CameraStreamLoop();               
             }
             catch
@@ -115,19 +117,21 @@ public class CameraStreamer
             return;
         }
         
-        if (frame is RtspRawVideo.RawH264IFrame f1)
+        if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
             //WriteToFile(f1.SpsPpsSegment);
             //WriteToFile(f1.FrameSegment);
 
-            camera.CameraWebSocket.SendFrameData(new { segment_type = "SPS" , segment_data = Convert.ToBase64String(f1.SpsPpsSegment) });
-            camera.CameraWebSocket.SendFrameData(new { segment_type = "IDATA" , segment_data = Convert.ToBase64String(f1.FrameSegment) });
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "SPS" , segment_data = Convert.ToBase64String(iFrame.SpsPpsSegment) });
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "IDATA" , segment_data = Convert.ToBase64String(iFrame.FrameSegment) });
         }
-        if (frame is RtspRawVideo.RawH264PFrame f2)
+        if (frame is RtspRawVideo.RawH264PFrame pFrame)
         {
             //WriteToFile(f2.FrameSegment);
-            camera.CameraWebSocket.SendFrameData(new { segment_type = "PDATA" , segment_data = Convert.ToBase64String(f2.FrameSegment) });
+            camera.CameraWebSocket.SendFrameData(new { segment_type = "PDATA" , segment_data = Convert.ToBase64String(pFrame.FrameSegment) });
         }
+
+        ServiceManager.Instance.RunServices(camera, frame);
     }
 
     private async Task CameraStreamLoop()
@@ -141,7 +145,7 @@ public class CameraStreamer
 
             try
             {
-                //Console.WriteLine("Connecting...");
+                //Console.WriteLine($"Connecting to camera URL: {camera.RTSPUrl}");
                 await rtspClient.ConnectAsync(cancellationTokenSource!.Token);
                 //Console.WriteLine("Connected.");
                 await rtspClient.ReceiveAsync(cancellationTokenSource!.Token);
@@ -153,7 +157,7 @@ public class CameraStreamer
             catch (Exception ex)
             {
                 System.Console.WriteLine($"{camera.LogTag} Camera stream error: " + ex.Message);
-                throw ex;
+                throw;
             }
         }
     }

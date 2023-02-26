@@ -90,7 +90,7 @@ public class RadarTracker
             try
             {
                 tracksHttpReporter.StartWorker();
-                InitServices();
+                ServiceManager.Instance.InitDeviceServices(radar);
                 ConfigureRadar();
                 InitTrackingApp();                
                 TreakingLoop();               
@@ -121,23 +121,6 @@ public class RadarTracker
             return;
 
         trackerTask.Wait();
-    }
-
-    private void InitServices()
-    {
-        foreach (var linkedService in radar.LinkedServices)
-        {
-            try
-            {
-                ServiceManager.Instance.InitServiceContext(radar, linkedService);
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine($"{radar.LogTag} Error: could not initialize service context for service: {linkedService.ServiceId}");
-                System.Console.WriteLine($"{radar.LogTag} Error: {ex.Message}");
-                throw;
-            }
-        }
     }
 
     private void ConfigureRadar()
@@ -194,7 +177,7 @@ public class RadarTracker
             radar.RadarWebSocket.SendFrameData(LastFrameData);
 
             // pass the frame to linked services
-            ServiceManager.Instance.HandleFrame(LastFrameData, radar.LinkedServices);
+            ServiceManager.Instance.RunServices(radar, LastFrameData);
         }
 
         // System.Console.WriteLine("Debug: Tracking loop exited.");

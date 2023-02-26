@@ -8,6 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 using WebService.Events;
+using WebService.Services;
 
 namespace WebService.Entites;
 
@@ -26,6 +27,18 @@ public abstract class DeviceEntity : IEntity {
         Connected,
         Active
     };
+
+    public class LinkedService
+    {
+        [JsonPropertyName("service_id")]
+        public String ServiceId { get; set; } = String.Empty;
+
+        [JsonPropertyName("service_options")]
+        public Dictionary<string,string> ServiceOptions { get; set; } = new Dictionary<string, string>();
+
+        [JsonIgnore]
+        public IServiceContext? ServiceContext;
+    }
 
     [JsonPropertyName("type")]
 
@@ -51,6 +64,9 @@ public abstract class DeviceEntity : IEntity {
 
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
+
+    [JsonPropertyName("linked_services")]
+    public List<LinkedService> LinkedServices { get; set; }
 
     [JsonIgnore]
     public ReaderWriterLockSlim EntityLock { get; set; }
@@ -93,6 +109,8 @@ public abstract class DeviceEntity : IEntity {
         Status = String.Empty;
         Enabled = false;
         EntityLock = new ReaderWriterLockSlim();
+        LinkedServices = new List<LinkedService>();
+
     }
 
     [JsonIgnore]

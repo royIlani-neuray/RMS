@@ -10,24 +10,11 @@ using System.Text.Json.Serialization;
 using WebService.RadarLogic.IPRadar;
 using WebService.RadarLogic.Tracking;
 using WebService.WebSockets;
-using WebService.Services;
 using WebService.Database;
 
 namespace WebService.Entites;
 
 public class Radar : DeviceEntity {
-
-    public class LinkedService
-    {
-        [JsonPropertyName("service_id")]
-        public String ServiceId { get; set; } = String.Empty;
-
-        [JsonPropertyName("service_options")]
-        public Dictionary<string,string> ServiceOptions { get; set; } = new Dictionary<string, string>();
-
-        [JsonIgnore]
-        public IServiceContext? ServiceContext;
-    }
 
     [JsonIgnore]
     public override IEntity.EntityTypes EntityType => IEntity.EntityTypes.Radar;
@@ -46,9 +33,6 @@ public class Radar : DeviceEntity {
 
     [JsonPropertyName("radar_settings")]
     public RadarSettings? radarSettings { get; set;}
-
-    [JsonPropertyName("linked_services")]
-    public List<LinkedService> LinkedServices { get; set; }
 
     [JsonIgnore]
     public IPRadarClient? ipRadarClient;
@@ -73,7 +57,6 @@ public class Radar : DeviceEntity {
     public Radar() : base(DeviceTypes.Radar)
     {
         ConfigScript = new List<string>();
-        LinkedServices = new List<LinkedService>();
         RadarWebSocket = new RadarWebSocketServer();
     }
 }

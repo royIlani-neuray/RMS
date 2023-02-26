@@ -10,9 +10,9 @@ using WebService.Utils;
 using WebService.RadarLogic.Tracking;
 using System.Text.Json;
 
-namespace WebService.Services.Recording;
+namespace WebService.Services.RadarRecording;
 
-public class RecordingContext : WorkerThread<FrameData>, IServiceContext
+public class RadarRecordingContext : WorkerThread<FrameData>, IServiceContext
 {
     public IServiceContext.ServiceState State { get; set; }
 
@@ -24,7 +24,7 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
 
     private const int MAX_QUEUE_CAPACITY = 5;
     
-    public RecordingContext(string deviceId, string recordingPath, float frameRate) : base("RecordingContext", MAX_QUEUE_CAPACITY)
+    public RadarRecordingContext(string deviceId, string recordingPath, float frameRate) : base("RadarRecordingContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
         this.deviceId = deviceId;
@@ -63,7 +63,7 @@ public class RecordingContext : WorkerThread<FrameData>, IServiceContext
         return Task.CompletedTask;
     }
 
-    ~RecordingContext()
+    ~RadarRecordingContext()
     {
         binaryWriter.Close();
     }

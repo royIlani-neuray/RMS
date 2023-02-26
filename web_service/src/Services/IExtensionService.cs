@@ -7,19 +7,20 @@
 **
 ***/
 using WebService.Entites;
-using WebService.RadarLogic.Tracking;
 
 namespace WebService.Services;
 
-public interface IRadarService 
+public interface IExtensionService 
 {
     public string ServiceId { get; }
 
-    public RadarServiceSettings? Settings {get; set; }
-    public IServiceContext CreateServiceContext(Radar device, Dictionary<string,string> serviceOptions);
+    public List<DeviceEntity.DeviceTypes> SupportedDeviceTypes { get; }
+
+    public ExtensionServiceSettings? Settings {get; set; }
+    public IServiceContext CreateServiceContext(DeviceEntity device, Dictionary<string,string> serviceOptions);
 
     public void DisposeServiceContext(IServiceContext serviceContext);
 
-    public void HandleFrame(FrameData frame, IServiceContext serviceContext);
+    public void RunService(object dataObject, IServiceContext serviceContext);
     
 }

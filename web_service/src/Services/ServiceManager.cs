@@ -7,8 +7,7 @@
 **
 ***/
 using WebService.Entites;
-using WebService.RadarLogic.Tracking;
-using WebService.Services.Recording;
+using WebService.Services.RadarRecording;
 using WebService.Services.Inference.GateId;
 using WebService.Services.Inference.HumanDetection;
 
@@ -39,28 +38,29 @@ public sealed class ServiceManager {
 
     private ServiceManager() 
     {
-        servicesSettings = new List<RadarServiceSettings>();
-        services = new List<IRadarService>();
+        servicesSettings = new List<ExtensionServiceSettings>();
+        services = new List<IExtensionService>();
     }
 
     #endregion
 
-    private List<RadarServiceSettings> servicesSettings;
+    private List<ExtensionServiceSettings> servicesSettings;
 
-    private List<IRadarService> services;
+    private List<IExtensionService> services;
 
-    public void InitServices(List<RadarServiceSettings>? servicesSettings)
+    public void InitExtensionServices(List<ExtensionServiceSettings>? servicesSettings)
     {
         if (servicesSettings == null)
         {
-            servicesSettings = new List<RadarServiceSettings>();
+            servicesSettings = new List<ExtensionServiceSettings>();
         }
         
         this.servicesSettings = servicesSettings;
 
-        services.Add(new RecordingService());
+        services.Add(new RadarRecordingService());
         services.Add(new GateIdService());
         services.Add(new HumanDetectionService());
+        services.Add(new CameraRecordingService());
 
         foreach (var service in services)
         {
@@ -76,13 +76,37 @@ public sealed class ServiceManager {
         return services.Exists(service => service.ServiceId == serviceId);
     }
 
-    public void InitServiceContext(Radar device, Radar.LinkedService linkedService)
+    public bool IsDeviceSupportedByService(string serviceId, DeviceEntity device)
     {
-        IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+        var service = services.First(service => service.ServiceId == serviceId);
+        return service.SupportedDeviceTypes.Contains(device.Type);
+    }
+
+
+    public void InitDeviceServices(DeviceEntity device)
+    {
+        foreach (var linkedService in device.LinkedServices)
+        {
+            try
+            {
+                ServiceManager.Instance.InitServiceContext(device, linkedService);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"{device.LogTag} Error: could not initialize service context for service: {linkedService.ServiceId}");
+                System.Console.WriteLine($"{device.LogTag} Error: {ex.Message}");
+                throw;
+            }
+        }
+    }
+
+    public void InitServiceContext(DeviceEntity device, DeviceEntity.LinkedService linkedService)
+    {
+        IExtensionService service = services.First(service => service.ServiceId == linkedService.ServiceId);
 
         if (service.Settings!.Enabled)
         {
-            System.Console.WriteLine($"[{device.Id}] Creating {service.ServiceId} context.");
+            System.Console.WriteLine($"{device.LogTag} Creating {service.ServiceId} context.");
             linkedService.ServiceContext = service.CreateServiceContext(device, linkedService.ServiceOptions);
         }
         else
@@ -91,32 +115,32 @@ public sealed class ServiceManager {
         }
     }
 
-    public void DisposeServiceContext(string deviceId, Radar.LinkedService linkedService)
+    public void DisposeServiceContext(string deviceId, DeviceEntity.LinkedService linkedService)
     {
         if (linkedService.ServiceContext == null)
             return;
 
-        IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+        IExtensionService service = services.First(service => service.ServiceId == linkedService.ServiceId);
         System.Console.WriteLine($"[{deviceId}] Disposing {service.ServiceId} context.");
         service.DisposeServiceContext(linkedService.ServiceContext!);
     }
 
-    public void HandleFrame(FrameData frame, List<Radar.LinkedService> linkedServices)
+    public void RunServices(DeviceEntity device, object dataObject)
     {
-        foreach (var linkedService in linkedServices)
+        foreach (var linkedService in device.LinkedServices)
         {
             try
             {
-                IRadarService service = services.First(service => service.ServiceId == linkedService.ServiceId);
+                IExtensionService service = services.First(service => service.ServiceId == linkedService.ServiceId);
 
                 if ((!service.Settings!.Enabled) || (linkedService.ServiceContext == null))
                     continue;
 
-                service.HandleFrame(frame, linkedService.ServiceContext);
+                service.RunService(dataObject, linkedService.ServiceContext);
             }
             catch
             {
-                System.Console.WriteLine($"[{frame.DeviceId}] Error: unexpected error while handling frame data in service: {linkedService.ServiceId}");
+                System.Console.WriteLine($"{device.LogTag} Error: unexpected error while running service: {linkedService.ServiceId}");
             }
         }
     }
