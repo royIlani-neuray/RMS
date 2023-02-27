@@ -19,7 +19,8 @@ public class CameraRecordingService : IExtensionService
 
     public static readonly string StoragePath = "./data/recordings";
 
-    public const string RecordingDataFileExtention = ".h264";
+    public const string RecordingVideoFileExtention = ".h264";
+    public const string RecordingTimestampFileExtention = ".csv";
 
     public string ServiceId => SERVICE_ID;
 
@@ -44,9 +45,10 @@ public class CameraRecordingService : IExtensionService
         Camera camera = (Camera) device;
         
         string filename = $"{camera.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
-        string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingDataFileExtention}");
+        string recordingVideoPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingVideoFileExtention}");
+        string recordingTimestampPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingTimestampFileExtention}");
 
-        CameraRecordingContext recordingContext = new CameraRecordingContext(recordingPath);
+        CameraRecordingContext recordingContext = new CameraRecordingContext(recordingVideoPath, recordingTimestampPath);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
         return recordingContext;
