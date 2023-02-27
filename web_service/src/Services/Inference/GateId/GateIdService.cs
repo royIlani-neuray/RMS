@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace WebService.Services.Inference.GateId;
 
-public class GateIdService : IRadarService
+public class GateIdService : IExtensionService
 {
     private const string SERVICE_ID = "GATE_ID_CLOSED_SET";
     private const int REQUIRED_WINDOW_SIZE = 30;
@@ -24,7 +24,9 @@ public class GateIdService : IRadarService
 
     public string ServiceId => SERVICE_ID;
 
-    public RadarServiceSettings? Settings { get; set; }
+    public List<DeviceEntity.DeviceTypes> SupportedDeviceTypes => new List<DeviceEntity.DeviceTypes>() { DeviceEntity.DeviceTypes.Radar };
+
+    public ExtensionServiceSettings? Settings { get; set; }
 
     private void GetServiceSettings(Dictionary<string, string> serviceOptions, out string modelName)
     {
@@ -34,10 +36,14 @@ public class GateIdService : IRadarService
         modelName = serviceOptions[SERVICE_OPTION_MODEL_NAME];
     }
 
-    public IServiceContext CreateServiceContext(Radar device, Dictionary<string, string> serviceOptions)
+    public IServiceContext CreateServiceContext(DeviceEntity device, Dictionary<string, string> serviceOptions)
     {
+        if (device.Type != DeviceEntity.DeviceTypes.Radar)
+            throw new Exception("Unsupported device passed to service.");
+
+        Radar radar = (Radar) device;
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(device, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
+        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;
@@ -50,8 +56,12 @@ public class GateIdService : IRadarService
         gateIdContext.State = IServiceContext.ServiceState.Initialized;
     }
 
-    public void HandleFrame(FrameData frame, IServiceContext serviceContext)
+    public void RunService(object dataObject, IServiceContext serviceContext)
     {
+        if (dataObject is not FrameData)
+            return;
+
+        FrameData frame = (FrameData) dataObject;
         GateIdContext gateIdContext = (GateIdContext) serviceContext;
         gateIdContext.HandleFrame(frame);
     }

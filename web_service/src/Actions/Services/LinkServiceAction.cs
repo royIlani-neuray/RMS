@@ -6,9 +6,9 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using System.Text.Json.Serialization;
 using WebService.Entites;
 using WebService.Services;
-using System.Text.Json.Serialization;
 
 namespace WebService.Actions.Services;
 
@@ -27,36 +27,41 @@ public class LinkServiceArgs
     }
 }
 
-public class LinkServiceAction : RadarAction 
+public class LinkServiceAction : IAction
 {
+    private DeviceEntity device;
     private LinkServiceArgs args;
 
-    public LinkServiceAction(string radarId, LinkServiceArgs args) : base(radarId) 
+    public LinkServiceAction(DeviceEntity device, LinkServiceArgs args)
     {
+        this.device = device;
         this.args = args;
     }
 
-    protected override void RunRadarAction(Radar radar)
+    public void Run()
     {
-        var alreadyLinked = radar.LinkedServices.Exists(linkedService => linkedService.ServiceId == args.ServiceId);
+        var alreadyLinked = device.LinkedServices.Exists(linkedService => linkedService.ServiceId == args.ServiceId);
 
         if (alreadyLinked)
-            throw new Exception($"The service is already linked to this radar device.");        
+            throw new Exception($"The service is already linked to this device.");        
 
         if (!ServiceManager.Instance.ServiceExist(args.ServiceId))
             throw new Exception($"Cannot find service with the provided id.");
 
-        var linkedService = new Radar.LinkedService() 
+        if (!ServiceManager.Instance.IsDeviceSupportedByService(args.ServiceId, device))
+            throw new Exception("The requested service does not support the given device");
+
+        var linkedService = new DeviceEntity.LinkedService() 
         {
             ServiceId = args.ServiceId,
             ServiceOptions = args.ServiceOptions
         };
 
-        if (radar.State == Radar.DeviceState.Active)
+        if (device.State == DeviceEntity.DeviceState.Active)
         {
-            ServiceManager.Instance.InitServiceContext(radar, linkedService);
+            ServiceManager.Instance.InitServiceContext(device, linkedService);
         }
 
-        radar.LinkedServices.Add(linkedService);
+        device.LinkedServices.Add(linkedService);
     }
-}
+} 

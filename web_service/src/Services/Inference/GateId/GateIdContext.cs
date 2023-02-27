@@ -23,13 +23,12 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     private GateIdPredictions predictions;
     private string modelName;
     
-    public GateIdContext(Radar device, string modelName, int requiredWindowSize, int requiredHitCount, int requiredMissCount) : base("GateIdContext", MAX_QUEUE_CAPACITY)
+    public GateIdContext(Radar radar, string modelName, int requiredWindowSize, int requiredHitCount, int requiredMissCount) : base("GateIdContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
-        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize, device.radarSettings!.SensorPosition!.HeightMeters);
-        predictions = new GateIdPredictions(device.RadarWebSocket, requiredHitCount, requiredMissCount);
+        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize, radar.radarSettings!.SensorPosition!.HeightMeters);
+        predictions = new GateIdPredictions(radar.RadarWebSocket, requiredHitCount, requiredMissCount);
         this.modelName = modelName;
-        
     }
 
     public void HandleFrame(FrameData frameData)

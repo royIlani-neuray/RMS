@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace WebService.Services;
 
-public class RadarServiceSettings 
+public class ExtensionServiceSettings 
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = String.Empty;

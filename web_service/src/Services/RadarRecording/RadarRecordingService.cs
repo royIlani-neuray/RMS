@@ -10,9 +10,9 @@ using WebService.Entites;
 using WebService.RadarLogic.Tracking;
 using System.Text.Json;
 
-namespace WebService.Services.Recording;
+namespace WebService.Services.RadarRecording;
 
-public class RecordingService : IRadarService 
+public class RadarRecordingService : IExtensionService 
 {
     private const string SERVICE_ID = "RADAR_RECORDER";
 
@@ -22,9 +22,11 @@ public class RecordingService : IRadarService
 
     public string ServiceId => SERVICE_ID;
 
-    public RadarServiceSettings? Settings { get; set; }
+    public List<DeviceEntity.DeviceTypes> SupportedDeviceTypes => new List<DeviceEntity.DeviceTypes>() { DeviceEntity.DeviceTypes.Radar };
 
-    public RecordingService()
+    public ExtensionServiceSettings? Settings { get; set; }
+
+    public RadarRecordingService()
     {
         if (!System.IO.Directory.Exists(StoragePath))
         {
@@ -33,18 +35,22 @@ public class RecordingService : IRadarService
         }
     }
 
-    public IServiceContext CreateServiceContext(Radar device, Dictionary<string,string> serviceOptions)
+    public IServiceContext CreateServiceContext(DeviceEntity device, Dictionary<string,string> serviceOptions)
     {
-        float frameRate = device.radarSettings!.DetectionParams!.FrameRate;
+        if (device.Type != DeviceEntity.DeviceTypes.Radar)
+            throw new Exception("Unsupported device passed to service.");
+        
+        Radar radar = (Radar) device;
+        float frameRate = radar.radarSettings!.DetectionParams!.FrameRate;
 
-        string filename = $"{device.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
+        string filename = $"{radar.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
         string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingDataFileExtention}");
 
-        string deviceString = JsonSerializer.Serialize(device);
+        string deviceString = JsonSerializer.Serialize(radar);
         string configPath = System.IO.Path.Combine(StoragePath, $"{filename}.json");
         File.WriteAllText(configPath, deviceString);
 
-        RecordingContext recordingContext = new RecordingContext(device.Id, recordingPath, frameRate);
+        RadarRecordingContext recordingContext = new RadarRecordingContext(radar.Id, recordingPath, frameRate);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
         return recordingContext;
@@ -52,14 +58,18 @@ public class RecordingService : IRadarService
 
     public void DisposeServiceContext(IServiceContext serviceContext)
     {
-        RecordingContext recordingContext = (RecordingContext) serviceContext;
+        RadarRecordingContext recordingContext = (RadarRecordingContext) serviceContext;
         recordingContext.StopWorker();
         recordingContext.State = IServiceContext.ServiceState.Initialized;
     }
 
-    public void HandleFrame(FrameData frame, IServiceContext serviceContext)
+    public void RunService(object dataObject, IServiceContext serviceContext)
     {
-        RecordingContext recordingContext = (RecordingContext) serviceContext;
+        if (dataObject is not FrameData)
+            return;
+
+        FrameData frame = (FrameData) dataObject;
+        RadarRecordingContext recordingContext = (RadarRecordingContext) serviceContext;
         recordingContext.RecordFrame(frame);
     }
 }

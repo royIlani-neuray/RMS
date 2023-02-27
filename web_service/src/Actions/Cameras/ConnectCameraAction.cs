@@ -26,7 +26,7 @@ public class ConnectCameraAction : IAction
 
         if (!camera.Enabled)
         {
-            Console.WriteLine($"[{camera.Id}] camera device is disabled - ignore connect action.");
+            Console.WriteLine($"{camera.LogTag} camera device is disabled - ignore connect action.");
             return;
         }
 

@@ -10,6 +10,7 @@ using WebService.Entites;
 using WebService.Context;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Cameras;
+using WebService.Actions.Services;
 
 namespace WebService.Controllers;
 
@@ -76,6 +77,30 @@ public class CameraController : ControllerBase
         ValidateCameraId(cameraId);
         var action = new DisableCameraAction(cameraId);
         action.Run();
+    }
+
+    [HttpPost("{cameraId}/services")]
+    public void LinkToService(string cameraId, [FromBody] LinkServiceArgs args)
+    {
+        ValidateCameraId(cameraId); 
+        args.Validate();
+        var action = new LinkCameraServiceAction(cameraId, args);
+        action.Run();
+    }
+
+    [HttpDelete("{cameraId}/services/{serviceId}")]
+    public void UnlinkService(string cameraId, string serviceId)
+    {        
+        ValidateCameraId(cameraId); 
+        var action = new UnlinkCameraServiceAction(cameraId, serviceId);
+        action.Run();
+    }
+
+    [HttpPost("test-connection")]
+    public async Task<TestCameraConnectionResults> TestCameraConnection([FromBody] TestCameraConnectionArgs args)
+    {
+        var action = new TestCameraConnectionAction(args);
+        return await action.Run();
     }
 
 }

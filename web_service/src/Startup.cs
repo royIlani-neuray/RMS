@@ -50,9 +50,9 @@ public class Startup
         TemplateContext.Instance.LoadTemplatesFromStorage();
 
         Console.WriteLine("Loading services...");
-        var servicesSettings = config.GetSection("services").Get<List<RadarServiceSettings>>();
+        var servicesSettings = config.GetSection("services").Get<List<ExtensionServiceSettings>>();
 
-        ServiceManager.Instance.InitServices(servicesSettings);
+        ServiceManager.Instance.InitExtensionServices(servicesSettings);
 
         Console.WriteLine("Loading cameras from storage...");
         CameraContext.Instance.LoadCamerasFromStorage();

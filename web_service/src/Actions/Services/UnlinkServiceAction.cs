@@ -11,23 +11,25 @@ using WebService.Services;
 
 namespace WebService.Actions.Services;
 
-public class UnlinkServiceAction : RadarAction 
+public class UnlinkServiceAction : IAction
 {
     private string serviceId;
-
-    public UnlinkServiceAction(string radarId, string serviceId) : base(radarId) 
+    private DeviceEntity device;
+    
+    public UnlinkServiceAction(DeviceEntity device, string serviceId)
     {
+        this.device = device;
         this.serviceId = serviceId;
     }
 
-    protected override void RunRadarAction(Radar radar)
+    public void Run()
     {
-        var linkedService = radar.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
+        var linkedService = device.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == serviceId);
 
         if (linkedService == null)
             throw new Exception($"Could not find linked service with id - {serviceId}");
         
-        ServiceManager.Instance.DisposeServiceContext(radar.Id, linkedService);
-        radar.LinkedServices.Remove(linkedService);
+        ServiceManager.Instance.DisposeServiceContext(device.Id, linkedService);
+        device.LinkedServices.Remove(linkedService);
     }
 }

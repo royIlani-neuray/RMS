@@ -34,7 +34,7 @@ public class DeviceDiscoveredAction : RadarAction {
         }
         catch (NotFoundException)
         {
-            System.Console.WriteLine($"[{deviceId}] The following device is not registerd in the system. ignoring discovery event.");
+            System.Console.WriteLine($"[{deviceId}] The following radar is not registerd in the system. ignoring discovery event.");
         }
         catch (Exception ex)
         {

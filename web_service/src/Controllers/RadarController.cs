@@ -184,7 +184,7 @@ public class RadarController : ControllerBase
     {
         ValidateRadarId(radarId); 
         args.Validate();
-        LinkServiceAction action = new LinkServiceAction(radarId, args);
+        LinkRadarServiceAction action = new LinkRadarServiceAction(radarId, args);
         action.Run();
     }
 
@@ -192,7 +192,7 @@ public class RadarController : ControllerBase
     public void UnlinkService(string radarId, string serviceId)
     {        
         ValidateRadarId(radarId); 
-        var action = new UnlinkServiceAction(radarId, serviceId);
+        var action = new UnlinkRadarServiceAction(radarId, serviceId);
         action.Run();
     }
 

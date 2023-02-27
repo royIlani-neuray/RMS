@@ -90,7 +90,7 @@ public class RadarTracker
             try
             {
                 tracksHttpReporter.StartWorker();
-                InitServices();
+                ServiceManager.Instance.InitDeviceServices(radar);
                 ConfigureRadar();
                 InitTrackingApp();                
                 TreakingLoop();               
@@ -123,23 +123,6 @@ public class RadarTracker
         trackerTask.Wait();
     }
 
-    private void InitServices()
-    {
-        foreach (var linkedService in radar.LinkedServices)
-        {
-            try
-            {
-                ServiceManager.Instance.InitServiceContext(radar, linkedService);
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine($"[{radar.Id}] Error: could not initialize service context for service: {linkedService.ServiceId}");
-                System.Console.WriteLine($"[{radar.Id}] Error: {ex.Message}");
-                throw;
-            }
-        }
-    }
-
     private void ConfigureRadar()
     {
         radar.SetStatus($"Configuring the device...");
@@ -149,13 +132,13 @@ public class RadarTracker
             if (string.IsNullOrWhiteSpace(tiCommand) || tiCommand.StartsWith("%"))
                 continue;
             
-            Console.WriteLine($"[{radar.Id}] Sending command - {tiCommand}");
+            Console.WriteLine($"{radar.LogTag} Sending command - {tiCommand}");
             var response = radar.ipRadarClient!.SendTICommand(tiCommand);
-            Console.WriteLine($"[{radar.Id}] {response}");
+            Console.WriteLine($"{radar.LogTag} {response}");
 
             if (response != "Done")
             {
-                Console.WriteLine($"[{radar.Id}] The command '{tiCommand}' failed - got: {response}");
+                Console.WriteLine($"{radar.LogTag} The command '{tiCommand}' failed - got: {response}");
                 throw new Exception("Error: failed to configure the device!");
             }
         }
@@ -176,7 +159,7 @@ public class RadarTracker
             }
             catch (System.Exception ex)
             {
-                System.Console.WriteLine($"[{radar.Id}] Error: failed getting frame: {ex.Message}");
+                System.Console.WriteLine($"{radar.LogTag} Error: failed getting frame: {ex.Message}");
                 throw;
             }
             
@@ -194,7 +177,7 @@ public class RadarTracker
             radar.RadarWebSocket.SendFrameData(LastFrameData);
 
             // pass the frame to linked services
-            ServiceManager.Instance.HandleFrame(LastFrameData, radar.LinkedServices);
+            ServiceManager.Instance.RunServices(radar, LastFrameData);
         }
 
         // System.Console.WriteLine("Debug: Tracking loop exited.");
