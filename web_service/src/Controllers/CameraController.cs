@@ -96,4 +96,11 @@ public class CameraController : ControllerBase
         action.Run();
     }
 
+    [HttpPost("test-connection")]
+    public async Task<TestCameraConnectionResults> TestCameraConnection([FromBody] TestCameraConnectionArgs args)
+    {
+        var action = new TestCameraConnectionAction(args);
+        return await action.Run();
+    }
+
 }
