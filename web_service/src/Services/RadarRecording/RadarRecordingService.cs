@@ -9,6 +9,7 @@
 using WebService.Entites;
 using WebService.RadarLogic.Tracking;
 using System.Text.Json;
+using WebService.Recordings;
 
 namespace WebService.Services.RadarRecording;
 
@@ -26,28 +27,21 @@ public class RadarRecordingService : IExtensionService
 
     public ExtensionServiceSettings? Settings { get; set; }
 
-    public RadarRecordingService()
-    {
-        if (!System.IO.Directory.Exists(StoragePath))
-        {
-            System.Console.WriteLine("Creating device recordings folder.");
-            System.IO.Directory.CreateDirectory(StoragePath);
-        }
-    }
-
     public IServiceContext CreateServiceContext(DeviceEntity device, Dictionary<string,string> serviceOptions)
     {
         if (device.Type != DeviceEntity.DeviceTypes.Radar)
             throw new Exception("Unsupported device passed to service.");
         
+        serviceOptions.TryGetValue(RecordingsManager.RECORDING_OVERRIDE_KEY, out string? recordingName);
+        RecordingsManager.Instance.CreateRecordingEntry(device, out string entryPath, recordingName);
+
         Radar radar = (Radar) device;
         float frameRate = radar.radarSettings!.DetectionParams!.FrameRate;
 
-        string filename = $"{radar.Id}_{DateTime.UtcNow.ToString("yyyy_MM_ddTHH_mm_ss")}";
-        string recordingPath = System.IO.Path.Combine(StoragePath, $"{filename}{RecordingDataFileExtention}");
+        string recordingPath = System.IO.Path.Combine(entryPath, $"radar.rrec");
 
         string deviceString = JsonSerializer.Serialize(radar);
-        string configPath = System.IO.Path.Combine(StoragePath, $"{filename}.json");
+        string configPath = System.IO.Path.Combine(entryPath, $"radar.json");
         File.WriteAllText(configPath, deviceString);
 
         RadarRecordingContext recordingContext = new RadarRecordingContext(radar.Id, recordingPath, frameRate);

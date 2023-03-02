@@ -1,0 +1,48 @@
+/***
+** Copyright (C) 2020-2023 neuRay Labs. All rights reserved.
+**
+** The information and source code contained herein is the exclusive 
+** property of neuRay Labs and may not be disclosed, examined, reproduced, redistributed, used in source and binary forms, in whole or in part  
+** without explicit written authorization from the company.
+**
+***/
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+export interface RecordingInfo {
+  name: string
+  created_at: string
+  entries: RecordingEntry[]
+}
+
+export interface RecordingEntry {
+  device_name: string
+  device_id: string
+  device_type: string
+  created_at: string
+  entry_size_bytes: number
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RecordingsService {
+
+  constructor(private http:HttpClient) { }
+
+  public getRadarRecordings()
+  {
+    return this.http.get<RecordingInfo[]>("/api/recordings")
+  }
+
+  public deleteRecording(recordingName : string)
+  {
+    return this.http.delete("/api/recordings/" + recordingName)
+  }
+
+  public uploadRecording(recordingFile : any)
+  {
+    return this.http.post("/api/recordings", recordingFile)
+  }
+
+}

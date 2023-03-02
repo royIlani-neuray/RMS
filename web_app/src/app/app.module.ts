@@ -40,6 +40,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
 
 import { RadarPageComponent } from './pages/radar-page/radar-page.component';
 import { RadarsPageComponent } from './pages/radars-page/radars-page.component';
@@ -120,6 +121,7 @@ import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components
     MatTabsModule,
     MatGridListModule,
     MatMenuModule,
+    MatIconModule,
 
     HttpClientModule,
     RouterModule,

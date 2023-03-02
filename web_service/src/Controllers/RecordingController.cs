@@ -6,42 +6,32 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using DeviceEmulator.Recordings;
 using Microsoft.AspNetCore.Mvc;
+using WebService.Recordings;
 
-namespace DeviceEmulator.Controllers;
-
+namespace WebService.Controllers;
 
 [ApiController]
-[Route("emulator/recordings")]
+[Route("recordings")]
 public class RecordingsController : ControllerBase
 {
-    private readonly ILogger<RecordingsController> _logger;
-
-    public RecordingsController(ILogger<RecordingsController> logger)
-    {
-        _logger = logger;
-    }
-
     [HttpGet]
-    public List<RecordingsManager.RecordingInfo> GetRecordings()
+    public List<RecordingInfo> GetRecordings()
     {
-        return RecordingsManager.Instance.GetRecordingsList();
+        return RecordingsManager.Instance.GetRecordings();
     }
 
-    [HttpDelete("{recordingFile}")]
-    public void DeleteRecording(string recordingFile)
+    [HttpDelete("{recordingName}")]
+    public void DeleteRecording(string recordingName)
     {        
-        RecordingsManager.Instance.DeleteRecording(recordingFile);
+        RecordingsManager.Instance.DeleteRecording(recordingName);
     }
-
-    [HttpGet("{recordingFile}/download")]
-    public async Task<IActionResult> DownloadRecording(string recordingFile)
+    
+    [HttpGet("{recordingName}/download")]
+    public IActionResult DownloadRecording(string recordingName)
     {
-        var fileData = await RecordingsManager.Instance.DownloadRecording(recordingFile);
-
-        string zipFileName = Path.Combine(Path.GetFileNameWithoutExtension(recordingFile), ".zip");
-        return File(fileData, "application/zip", zipFileName);
+        var fileData = RecordingsManager.Instance.DownloadRecording(recordingName, out string archiveFileName);
+        return File(fileData, "application/zip", archiveFileName);
     }
 
     [HttpPost()]
@@ -62,4 +52,5 @@ public class RecordingsController : ControllerBase
             RecordingsManager.Instance.UploadRecording(ms);
         }
     }   
+    
 }

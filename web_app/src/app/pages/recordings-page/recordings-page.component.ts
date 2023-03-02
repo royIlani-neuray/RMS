@@ -8,18 +8,27 @@
 ***/
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { DeviceEmulatorService, RecordingInfo } from 'src/app/services/device-emulator.service';
+import { DeviceEmulatorService } from 'src/app/services/device-emulator.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { MatSort } from '@angular/material/sort';
+import { RecordingEntry, RecordingInfo, RecordingsService } from 'src/app/services/recordings.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-recordings-page',
   templateUrl: './recordings-page.component.html',
-  styleUrls: ['./recordings-page.component.css']
+  styleUrls: ['./recordings-page.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class RecordingsPageComponent implements OnInit {
 
@@ -27,10 +36,13 @@ export class RecordingsPageComponent implements OnInit {
   
   recordingListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RecordingInfo>()
-  displayedColumns: string[] = ['timestamp', 'device_name', 'device_id', 'file_size_bytes', 'actions'];
-  updateTimer : any
+  displayedColumns: string[] = ['created_at', 'name', 'recording_size', 'recording_actions'];
+  displayedColumnsWithExpend: string[] = [...this.displayedColumns, 'expand'];
+  expandedElement: RecordingInfo | null;
+
 
   constructor(private deviceEmulatorService : DeviceEmulatorService, 
+              private recordingsService : RecordingsService,
               private router : Router, private notification: MatSnackBar,
               public dialog: MatDialog) { }
 
@@ -39,25 +51,11 @@ export class RecordingsPageComponent implements OnInit {
     this.recordingListLoaded.next(false);
     
     this.getRecordingsList()
-
-    // trigger periodic update
-    this.updateTimer = setInterval(() => 
-    {
-      this.getRecordingsList()
-    }, 3000)
-  }
-
-  ngOnDestroy() 
-  {
-    if (this.updateTimer) 
-    {
-      clearInterval(this.updateTimer);
-    }
   }
 
   public getRecordingsList()
   {
-    this.deviceEmulatorService.getRadarRecordings().subscribe({
+    this.recordingsService.getRadarRecordings().subscribe({
       next : (recordings) => 
       {
         this.dataSource.data = recordings
@@ -73,7 +71,7 @@ export class RecordingsPageComponent implements OnInit {
 
   public getLocalDateString(timestamp : string)
   {
-    const matches = timestamp.match(/(\d+)_(\d+)_(\d+)T(\d+)_(\d+)_(\d+)/)!;
+    const matches = timestamp.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)/)!;
 
     const year = parseInt(matches[1], 10);
     const month = parseInt(matches[2], 10) - 1; // Note: months are 0-based in the Date constructor
@@ -89,14 +87,21 @@ export class RecordingsPageComponent implements OnInit {
     return localDate.toLocaleDateString() + ' ' + localDate.toLocaleTimeString()
   }
 
-  public runPlayback(recording : RecordingInfo)
+  public getRecordingSize(recording : RecordingInfo)
   {
-    this.deviceEmulatorService.setPlaybackSettings(recording).subscribe({
-      next : (response) => this.notification.open("Device emulator playback set", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not set playback")
-    })
+    let recordingSize = 0
+    recording.entries.forEach(entry => { recordingSize += entry.entry_size_bytes })
+    return recordingSize / (1024 * 1024)
   }
 
+  public runPlayback(recordingName : string, recordingEntry : RecordingEntry)
+  {
+    this.deviceEmulatorService.setPlaybackSettings(recordingName, recordingEntry.device_id).subscribe({
+      next : (response) => this.notification.open("Device emulator playback set", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
+      error : (err) => err.status == 504 ? this.showNotification("Error: could not connect to device emulator") : this.showNotification("Error: could not set playback")
+    })
+  }
+  
   public deleteRecording(recording : RecordingInfo)
   {
     let dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -109,7 +114,7 @@ export class RecordingsPageComponent implements OnInit {
 
       if (result)
       {
-        this.deviceEmulatorService.deleteRecording(recording).subscribe({
+        this.recordingsService.deleteRecording(recording.name).subscribe({
           next : (response) => this.getRecordingsList(),
           error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
         })
@@ -132,11 +137,11 @@ export class RecordingsPageComponent implements OnInit {
 
         formData.append("thumbnail", file);
 
-        this.deviceEmulatorService.uploadRecording(formData).subscribe({
+        this.recordingsService.uploadRecording(formData).subscribe({
           next : (response) => this.notification.open("Recording uploaded.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
           error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: upload recording failed!")
         })
     }
-}
+  }
 
 }
