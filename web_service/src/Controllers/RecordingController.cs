@@ -26,7 +26,14 @@ public class RecordingsController : ControllerBase
     {        
         RecordingsManager.Instance.DeleteRecording(recordingName);
     }
-    
+
+    [HttpPost("{recordingName}/rename")]
+    public void RenameRecording(string recordingName, [FromBody] RecordingsManager.RenameRecordingArgs args)
+    {
+        args.Validate();
+        RecordingsManager.Instance.RenameRecording(recordingName, args.NewRecordingName);
+    }
+
     [HttpGet("{recordingName}/download")]
     public IActionResult DownloadRecording(string recordingName)
     {

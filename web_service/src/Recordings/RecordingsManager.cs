@@ -9,6 +9,7 @@
 
 using WebService.Entites;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace WebService.Recordings;
 
@@ -45,6 +46,18 @@ public class RecordingsManager
     }
 
     #endregion
+
+    public class RenameRecordingArgs
+    {
+        [JsonPropertyName("new_name")]
+        public string NewRecordingName { get; set; } = String.Empty;
+
+        public void Validate()
+        {
+            if (string.IsNullOrWhiteSpace(NewRecordingName))
+                throw new BadRequestException("new_name wasn't provided.");
+        }
+    }
 
     public readonly string RecordingsStoragePath = "./data/recordings";
     public readonly string TempArchiveStoragePath = "/tmp/rms_recordings";
@@ -132,6 +145,29 @@ public class RecordingsManager
         }
     }
 
+    public void RenameRecording(string recordingName, string newName)
+    {
+        if (!IsEntryNameValid(newName))
+            throw new BadRequestException("Invalid new recording name provided.");
+
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            var recordingPath = GetRecordingPath(recordingName);
+            var newRecordingPath = GetRecordingPath(newName);
+
+            System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(recordingPath);
+            directoryInfo.MoveTo(newRecordingPath);
+            
+            // rename the name in the mata file
+            var recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(newName));
+            recording.Name = newName;
+            recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
+        }       
+    }
+
     private void UpdateEntrySizeBytes(RecordingInfo recording)
     {
         foreach (var entry in recording.RecordingEntries)
@@ -140,7 +176,7 @@ public class RecordingsManager
             string recordingPath = GetRecordingPath(recording.Name);
             var entryPath = Path.Combine(recordingPath, $"{entry.DeviceType}_{entry.DeviceId}");
             DirectoryInfo entryDirInfo = new DirectoryInfo(entryPath);
-            
+
             foreach (var entryFile in entryDirInfo.EnumerateFiles())
             {
                 entrySizeBytes += (new FileInfo(entryFile.FullName).Length);
@@ -213,8 +249,6 @@ public class RecordingsManager
                 }
             }
         }        
-
     }
     
-
 }

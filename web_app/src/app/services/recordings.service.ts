@@ -45,4 +45,12 @@ export class RecordingsService {
     return this.http.post("/api/recordings", recordingFile)
   }
 
+  public renameRecording(recordingName : string, newRecordingName : string)
+  {
+    return this.http.post("/api/recordings/" + recordingName + "/rename", 
+    {
+      new_name : newRecordingName
+    })
+  }
+
 }

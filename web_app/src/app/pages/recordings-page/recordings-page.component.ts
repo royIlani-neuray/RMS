@@ -17,6 +17,7 @@ import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confir
 import { MatSort } from '@angular/material/sort';
 import { RecordingEntry, RecordingInfo, RecordingsService } from 'src/app/services/recordings.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import { RenameRecordingDialogComponent } from './components/rename-recording-dialog/rename-recording-dialog.component';
 
 @Component({
   selector: 'app-recordings-page',
@@ -118,6 +119,23 @@ export class RecordingsPageComponent implements OnInit {
           next : (response) => this.getRecordingsList(),
           error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
         })
+      }
+    });
+  }
+
+  public renameRecordingClicked(recording : RecordingInfo)
+  {
+    let dialogRef = this.dialog.open(RenameRecordingDialogComponent, {
+      width: '550px',
+      height: '240px',
+      data: { recording: recording }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result)
+      {
+        this.getRecordingsList()
       }
     });
   }

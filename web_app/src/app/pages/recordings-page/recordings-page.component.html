@@ -23,6 +23,8 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
             <td mat-cell *matCellDef="let element">
 
+                <button mat-raised-button (click)="renameRecordingClicked(element)" color="primary">Rename</button>
+
                 <a href="/api/recordings/{{element.name}}/download" target="_self" download>
                     <button mat-raised-button color="primary" style="margin-left: 10px;">Download</button>
                 </a>
