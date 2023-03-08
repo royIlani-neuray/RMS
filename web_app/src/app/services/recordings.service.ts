@@ -53,4 +53,23 @@ export class RecordingsService {
     })
   }
 
+  public startRecording(recordingName : string, radars : string[], cameras : string[])
+  {
+    return this.http.post("/api/recordings/start-recording", 
+    {
+      recording_name : recordingName,
+      radars : radars,
+      cameras : cameras
+    })
+  }
+
+  public stopRecording(radars : string[], cameras : string[])
+  {
+    return this.http.post("/api/recordings/stop-recording", 
+    {
+      radars : radars,
+      cameras : cameras
+    })
+  }
+
 }

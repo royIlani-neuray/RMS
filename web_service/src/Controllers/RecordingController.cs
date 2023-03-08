@@ -7,6 +7,7 @@
 **
 ***/
 using Microsoft.AspNetCore.Mvc;
+using WebService.Actions.Recordings;
 using WebService.Recordings;
 
 namespace WebService.Controllers;
@@ -19,6 +20,20 @@ public class RecordingsController : ControllerBase
     public List<RecordingInfo> GetRecordings()
     {
         return RecordingsManager.Instance.GetRecordings();
+    }
+
+    [HttpPost("start-recording")]
+    public void StartRecording([FromBody] StartRecordingArgs args)
+    {
+        var action = new StartRecordingAction(args);
+        action.Run();
+    }
+
+    [HttpPost("stop-recording")]
+    public void StopRecording([FromBody] StopRecordingArgs args)
+    {
+        var action = new StopRecordingAction(args);
+        action.Run();
     }
 
     [HttpDelete("{recordingName}")]

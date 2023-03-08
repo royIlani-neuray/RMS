@@ -15,7 +15,7 @@ namespace WebService.Services.RadarRecording;
 
 public class RadarRecordingService : IExtensionService 
 {
-    private const string SERVICE_ID = "RADAR_RECORDER";
+    public const string SERVICE_ID = "RADAR_RECORDER";
 
     public static readonly string StoragePath = "./data/recordings";
 

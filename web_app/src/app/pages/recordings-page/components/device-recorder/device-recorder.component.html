@@ -1,0 +1,24 @@
+<h3>Device Recorder</h3>
+
+<div class="device-selection-wrapper">
+    <mat-selection-list #radarSelectionList>
+        <mat-list-option *ngFor="let radar of radars" [value]="radar.device_id" [disabled]="!radar.enabled">
+          {{radar.name}} {{radar.enabled ? "" : "(disabled)"}}
+        </mat-list-option>
+    </mat-selection-list>
+    
+    <mat-selection-list #cameraSelectionList>
+        <mat-list-option *ngFor="let camera of cameras" [value]="camera.device_id" [disabled]="!camera.enabled">
+          {{camera.name}} {{camera.enabled ? "" : "(disabled)"}}
+        </mat-list-option>
+    </mat-selection-list>
+</div>
+
+<br>
+
+<div>
+    <button mat-raised-button (click)="startRecording()" color="primary" [disabled]="isTriggerButtonDisabled()">Start Recording</button>
+    <button mat-raised-button (click)="stopRecording()" color="primary" [disabled]="isTriggerButtonDisabled()" style="margin-left: 10px;">Stop Recording</button>
+</div>
+
+

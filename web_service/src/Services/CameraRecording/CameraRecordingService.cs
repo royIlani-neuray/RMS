@@ -16,7 +16,7 @@ namespace WebService.Services.RadarRecording;
 
 public class CameraRecordingService : IExtensionService 
 {
-    private const string SERVICE_ID = "CAMERA_RECORDER";
+    public const string SERVICE_ID = "CAMERA_RECORDER";
 
     public string ServiceId => SERVICE_ID;
 

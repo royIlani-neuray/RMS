@@ -65,6 +65,8 @@ import { ConfigScriptDialogComponent } from './pages/radar-page/components/confi
 import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
 import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components/camera-view-window/camera-view-window.component';
 import { RenameRecordingDialogComponent } from './pages/recordings-page/components/rename-recording-dialog/rename-recording-dialog.component';
+import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
+import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +94,9 @@ import { RenameRecordingDialogComponent } from './pages/recordings-page/componen
     ConfigScriptDialogComponent,
     CreateTemplateDialogComponent,
     CameraViewWindowComponent,
-    RenameRecordingDialogComponent
+    RenameRecordingDialogComponent,
+    RecordingsListComponent,
+    DeviceRecorderComponent
   ],
   imports: [
     BrowserModule,

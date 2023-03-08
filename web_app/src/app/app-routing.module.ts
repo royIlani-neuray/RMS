@@ -24,6 +24,8 @@ import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error
 
 import { RadarInfoComponent } from './pages/radar-page/components/radar-info/radar-info.component';
 import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
+import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
+import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent },
@@ -56,7 +58,26 @@ const routes: Routes = [
   { path: 'templates', title: 'Templates - RMS | neuRay Labs', component: TemplatesPageComponent},
   { path: 'template/:template_id', title: 'Templates - RMS | neuRay Labs', component: TemplatePageComponent },
 
-  { path: 'recordings', title: 'Recordings - RMS | neuRay Labs', component: RecordingsPageComponent},
+  { 
+    path: 'recordings', 
+    title: 'Recordings - RMS | neuRay Labs', 
+    component: RecordingsPageComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'recordings-list',
+        pathMatch: 'full'
+      },
+      {
+        path: 'recordings-list',
+        component: RecordingsListComponent
+      },
+      {
+        path: 'device-recorder',
+        component: DeviceRecorderComponent
+      }
+    ]
+  },
   { path: 'tracks-viewer', title: 'Tracks Viewer - RMS | neuRay Labs', component: TracksViewerPageComponent},
   { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent },
   { path: 'no-service', component: ErrorPageNoServiceComponent },
