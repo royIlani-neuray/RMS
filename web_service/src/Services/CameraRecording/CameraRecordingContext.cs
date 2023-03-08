@@ -46,7 +46,12 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
     {
         if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
-            gotFirstIFrame = true;
+            if (!gotFirstIFrame)
+            {
+                gotFirstIFrame = true;
+                frameCounter = 1;
+            }
+
             frameBinaryWriter.Write(iFrame.SpsPpsSegment);
         }
         else if (!gotFirstIFrame)
