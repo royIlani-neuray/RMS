@@ -1,15 +1,17 @@
 <h3>Device Recorder</h3>
 
+<p>Select one or more devices to record:</p>
+
 <div class="device-selection-wrapper">
     <mat-selection-list #radarSelectionList>
-        <mat-list-option *ngFor="let radar of radars" [value]="radar.device_id" [disabled]="!radar.enabled">
-          {{radar.name}} {{radar.enabled ? "" : "(disabled)"}}
+        <mat-list-option *ngFor="let radar of radars" [value]="radar.device_id" [disabled]="!radar.enabled || radar.state != 'active'">
+          {{radar.name}} {{radar.enabled ? "" : "(disabled)"}} {{radar.state == 'active' ? "" : "(incative)"}}
         </mat-list-option>
     </mat-selection-list>
     
     <mat-selection-list #cameraSelectionList>
-        <mat-list-option *ngFor="let camera of cameras" [value]="camera.device_id" [disabled]="!camera.enabled">
-          {{camera.name}} {{camera.enabled ? "" : "(disabled)"}}
+        <mat-list-option *ngFor="let camera of cameras" [value]="camera.device_id" [disabled]="!camera.enabled || camera.state != 'active'">
+          {{camera.name}} {{camera.enabled ? "" : "(disabled)"}} {{camera.state == 'active' ? "" : "(incative)"}}
         </mat-list-option>
     </mat-selection-list>
 </div>
