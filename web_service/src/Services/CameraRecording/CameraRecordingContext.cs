@@ -42,7 +42,7 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
         Enqueue(frame);
     }
 
-    private void WriteFrameData(RawFrame frame)
+    private bool WriteFrameData(RawFrame frame)
     {
         if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
@@ -53,30 +53,41 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
         else if (frame is RtspRawVideo.RawH264PFrame pFrame)
         {
             if (!gotFirstIFrame)
-                return;
+                return false;
 
             frameBinaryWriter.Write(pFrame.FrameSegment);
         }
 
         frameBinaryWriter.Flush();
+        return true;
     }
 
-    private async Task WriteTimeStampAsync(DateTime timestamp)
+    private async Task WriteTimeStampAsync(RawFrame frame)
     {
-        if (frameCounter == 1)
+        int frameSizeBytes = frame.FrameSegment.Count;
+
+        if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
-            await timestampWriter.WriteLineAsync("frame,datetime");
+            frameSizeBytes += iFrame.SpsPpsSegment.Count;
         }
 
-        await timestampWriter.WriteLineAsync($"{frameCounter},{timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}");
+        if (frameCounter == 1)
+        {
+            await timestampWriter.WriteLineAsync("frame_number,datetime,frame_size_bytes");
+        }
+
+        await timestampWriter.WriteLineAsync($"{frameCounter},{frame.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)},{frameSizeBytes}");
         await timestampWriter.FlushAsync();
     }
 
     protected override async Task DoWork(RawFrame workItem)
     {
         frameCounter++;
-        WriteFrameData(workItem);
-        await WriteTimeStampAsync(workItem.Timestamp);
+        
+        if (WriteFrameData(workItem))
+        {
+            await WriteTimeStampAsync(workItem);
+        }
     }
 
     ~CameraRecordingContext()
