@@ -48,16 +48,13 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
         {
             gotFirstIFrame = true;
             frameBinaryWriter.Write(iFrame.SpsPpsSegment);
-            frameBinaryWriter.Write(iFrame.FrameSegment);
         }
-        else if (frame is RtspRawVideo.RawH264PFrame pFrame)
+        else if (!gotFirstIFrame)
         {
-            if (!gotFirstIFrame)
-                return false;
-
-            frameBinaryWriter.Write(pFrame.FrameSegment);
+            return false;  
         }
 
+        frameBinaryWriter.Write(frame.FrameSegment);
         frameBinaryWriter.Flush();
         return true;
     }
