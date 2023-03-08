@@ -100,15 +100,11 @@ public class CameraStreamer
         
         if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
-            //WriteToFile(f1.SpsPpsSegment);
-            //WriteToFile(f1.FrameSegment);
-
             camera.CameraWebSocket.SendFrameData(new { segment_type = "SPS" , segment_data = Convert.ToBase64String(iFrame.SpsPpsSegment) });
             camera.CameraWebSocket.SendFrameData(new { segment_type = "IDATA" , segment_data = Convert.ToBase64String(iFrame.FrameSegment) });
         }
         if (frame is RtspRawVideo.RawH264PFrame pFrame)
         {
-            //WriteToFile(f2.FrameSegment);
             camera.CameraWebSocket.SendFrameData(new { segment_type = "PDATA" , segment_data = Convert.ToBase64String(pFrame.FrameSegment) });
         }
 
