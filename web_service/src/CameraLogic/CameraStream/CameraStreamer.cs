@@ -90,25 +90,6 @@ public class CameraStreamer
         streamerTask.Wait();
     }
 
-    /*
-    // a working sample for writing the stream as an H264 file.
-
-    bool fileCreated = false;
-    BinaryWriter? writer;
-
-    private void WriteToFile(ArraySegment<byte> buffer)
-    {
-        if (!fileCreated)
-        {
-            writer = new BinaryWriter(File.Open("./data/test.h264", FileMode.Create));
-            fileCreated = true;
-        }
-
-        writer!.Write(buffer);
-        writer.Flush();
-    }
-    */
-
     private void RtspClient_FrameReceived(object? sender, RtspClientSharpCore.RawFrames.RawFrame frame)
     {
         if (frame.Type != RtspClientSharpCore.RawFrames.FrameType.Video)
