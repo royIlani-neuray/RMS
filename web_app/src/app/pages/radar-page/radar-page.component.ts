@@ -30,7 +30,7 @@ export class RadarPageComponent implements OnInit {
   radarId : string
 
   ngOnInit(): void {
-    let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
+    let deviceId = this.activatedRoute.snapshot.paramMap.get("radar_id");
 
     if (deviceId == null)
     {

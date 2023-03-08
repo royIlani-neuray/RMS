@@ -67,6 +67,9 @@ import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components
 import { RenameRecordingDialogComponent } from './pages/recordings-page/components/rename-recording-dialog/rename-recording-dialog.component';
 import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
 import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
+import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
+import { CameraPageComponent } from './pages/camera-page/camera-page.component';
+import { RegisterCameraDialogComponent } from './pages/cameras-page/components/register-camera-dialog/register-camera-dialog.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +99,10 @@ import { DeviceRecorderComponent } from './pages/recordings-page/components/devi
     CameraViewWindowComponent,
     RenameRecordingDialogComponent,
     RecordingsListComponent,
-    DeviceRecorderComponent
+    DeviceRecorderComponent,
+    CamerasPageComponent,
+    CameraPageComponent,
+    RegisterCameraDialogComponent
   ],
   imports: [
     BrowserModule,

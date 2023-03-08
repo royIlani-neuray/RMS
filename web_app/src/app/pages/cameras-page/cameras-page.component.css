@@ -1,13 +1,13 @@
 
-.radars-table {
+.cameras-table {
     width: 100%;
   }
 
-.radars-table th {
+.cameras-table th {
     background-color: #7385d3;
 }
   
-.radars-table tr:nth-of-type(even) {
+.cameras-table tr:nth-of-type(even) {
       background-color: #f3f3f3;
 }
 
