@@ -33,37 +33,37 @@ export class RadarsPageComponent implements OnInit {
   {
     this.deviceListLoaded.next(false);
     
-    this.getDeviceList()
+    this.getRadarsList()
 
     this.rmsEventsService.radarUpdatedEvent.subscribe({
-      next: (deviceId) => 
+      next: (radarId) => 
       {
-        this.getDeviceList()
+        this.getRadarsList()
       }
     })
 
     this.rmsEventsService.radarAddedEvent.subscribe({
-      next: (deviceId) => 
+      next: (radarId) => 
       {
-        this.getDeviceList()
+        this.getRadarsList()
       }
     })
 
     this.rmsEventsService.radarDeletedEvent.subscribe({
-      next: (deviceId) => 
+      next: (radarId) => 
       {
-        this.getDeviceList()
+        this.getRadarsList()
       }
     })
 
   }
 
-  public getDeviceList()
+  public getRadarsList()
   {
     this.radarsService.getRadars().subscribe({
-      next : (devices) => 
+      next : (radars) => 
       {
-        this.dataSource.data = devices
+        this.dataSource.data = radars
         this.deviceListLoaded.next(true);
       },
       error : (err) => this.router.navigate(['/no-service'])

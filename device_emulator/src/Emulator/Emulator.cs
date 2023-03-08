@@ -40,24 +40,39 @@ public class Emulator {
     {
         deviceId = EmulatorSettings.Instance.DeviceId.ToString();
         playback = new PlaybackArgs();
+
+        var recordingPath = Environment.GetEnvironmentVariable("RMS_RECORDING_PATH");
+
+        if (recordingPath != null)
+        {
+            System.Console.WriteLine($"Override recording path to: {recordingPath}");
+            RecordingsFolderPath = recordingPath;
+        }
     }
 
     #endregion
 
     public class PlaybackArgs 
     {
-        [JsonPropertyName("playback_file")]
-        public string PlaybackFile { get; set; } = String.Empty;
+        [JsonPropertyName("recording_name")]
+        public string RecordingName { get; set; } = String.Empty;
+
+        [JsonPropertyName("device_id")]
+        public string DeviceId { get; set; } = String.Empty;
 
         [JsonPropertyName("loop_forever")]
         public bool LoopForever { get; set; } = false;
 
         public void Validate()
         {
-            if (string.IsNullOrWhiteSpace(PlaybackFile))
-                throw new HttpRequestException("Missing playback file name.");
+            if (string.IsNullOrWhiteSpace(RecordingName))
+                throw new HttpRequestException("Missing recording name.");
+            if (string.IsNullOrWhiteSpace(DeviceId))
+                throw new HttpRequestException("Missing device id.");
         }
     }
+
+    public string RecordingsFolderPath = "./data/recordings";
 
     private Task? emulatorTask;
     private RMSClient? rmsClient;
@@ -66,28 +81,36 @@ public class Emulator {
 
     private PlaybackArgs playback;
 
+    private void GetRecordingFilesPath(string recordingName, string deviceId, out string playbackDataPath, out string deviceInfoPath)
+    {
+        var recordingPath = Path.Combine(RecordingsFolderPath, recordingName);
+        var entryPath = Path.Combine(recordingPath, $"Radar_{deviceId}");
+        playbackDataPath = Path.Combine(entryPath, "radar.rrec");
+        deviceInfoPath = Path.Combine(entryPath, "radar.json");
+    }
+
     public async Task SetPlaybackAsync(PlaybackArgs playbackArgs)
     {
         playbackArgs.Validate();
-        var deviceSettings = RecordingsManager.Instance.GetDeviceSettings(playbackArgs.PlaybackFile);
+
+        GetRecordingFilesPath(playbackArgs.RecordingName, playbackArgs.DeviceId, out string playbackDataPath, out string deviceInfoPath);
+        var device = DeviceInfo.LoadFromFile(deviceInfoPath);
         
         System.Console.WriteLine();
         System.Console.WriteLine("** Loading playback file **");
-        System.Console.WriteLine($"** Recorded Device Name: {deviceSettings.Name}");
-        System.Console.WriteLine($"** Recorded Device Id: {deviceSettings.Id}");
+        System.Console.WriteLine($"** Recorded Device Name: {device.Name}");
+        System.Console.WriteLine($"** Recorded Device Id: {device.Id}");
         System.Console.WriteLine($"** Loop forever: {playbackArgs.LoopForever}");
         System.Console.WriteLine();
 
-        string playbackFilePath = System.IO.Path.Combine(RecordingsManager.Instance.RecordingsFolderPath, playbackArgs.PlaybackFile);
-
-        RecordingStreamer.Instance.SetRecordingSource(playbackFilePath, playbackArgs.LoopForever);
+        RecordingStreamer.Instance.SetRecordingSource(playbackDataPath, playbackArgs.LoopForever);
 
         playback = playbackArgs;
         
         await RegisterEmulatorAsync(); // register the device again in case it was removed.
 
         System.Console.WriteLine("Update emulator device configuration script");
-        await rmsClient!.SetDeviceConfig(deviceId, deviceSettings.ConfigScript);
+        await rmsClient!.SetDeviceConfig(deviceId, device.ConfigScript);
 
         System.Console.WriteLine("Sending device info broadcast");
         rmsClient!.SendDeviceDiscoveryMessage(deviceId);

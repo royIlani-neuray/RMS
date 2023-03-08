@@ -1,15 +1,30 @@
-.recordings-table {
-    width: 100%;
+.device-page-header {
+    padding: 20px;
+    background-color: #3f51b5;
+    color: white;
 }
 
-.recordings-table th {
-  background-color: #7385d3;
+.device-sidenav {
+    width: 204px;
+    margin: 0;
+    height: 100%;
+    background-color: #f2f2f2;
 }
 
-.recordings-table tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+.device-sidenav-content {
+    height: 100%;
+    padding: 20px;
 }
 
-.mat-row:hover {
-    background-color:lightcyan;
+.route-active {
+    color: #3f51b5;
+    background-color: #dbdbdb;
 }
+
+.nav-list-item:hover {
+    background-color: #dbdbdb;
+    color:#1976d2;
+}
+
+
+

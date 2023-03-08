@@ -40,6 +40,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
 
 import { RadarPageComponent } from './pages/radar-page/radar-page.component';
 import { RadarsPageComponent } from './pages/radars-page/radars-page.component';
@@ -63,6 +64,9 @@ import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components
 import { ConfigScriptDialogComponent } from './pages/radar-page/components/config-script-dialog/config-script-dialog.component';
 import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
 import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components/camera-view-window/camera-view-window.component';
+import { RenameRecordingDialogComponent } from './pages/recordings-page/components/rename-recording-dialog/rename-recording-dialog.component';
+import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
+import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +93,10 @@ import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components
     RadarDetailsInfoComponent,
     ConfigScriptDialogComponent,
     CreateTemplateDialogComponent,
-    CameraViewWindowComponent
+    CameraViewWindowComponent,
+    RenameRecordingDialogComponent,
+    RecordingsListComponent,
+    DeviceRecorderComponent
   ],
   imports: [
     BrowserModule,
@@ -120,6 +127,7 @@ import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components
     MatTabsModule,
     MatGridListModule,
     MatMenuModule,
+    MatIconModule,
 
     HttpClientModule,
     RouterModule,

@@ -10,6 +10,7 @@ using RtspClientSharpCore.RawFrames;
 using RtspRawVideo = RtspClientSharpCore.RawFrames.Video;
 
 using WebService.Utils;
+using System.Globalization;
 
 namespace WebService.Services.RadarRecording;
 
@@ -19,17 +20,21 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
 
 
     private Stream stream;
-    private BinaryWriter binaryWriter;
+    private BinaryWriter frameBinaryWriter;
+    private StreamWriter timestampWriter;
+    private uint frameCounter;
     private bool gotFirstIFrame;
 
     private const int MAX_QUEUE_CAPACITY = 20;
     
-    public CameraRecordingContext(string recordingPath) : base("CameraRecordingContext", MAX_QUEUE_CAPACITY)
+    public CameraRecordingContext(string recordingVideoPath, string recordingTimestampPath) : base("CameraRecordingContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
         this.gotFirstIFrame = false;
-        stream = new FileStream(recordingPath, FileMode.Create);
-        binaryWriter = new BinaryWriter(stream);
+        stream = new FileStream(recordingVideoPath, FileMode.Create);
+        frameBinaryWriter = new BinaryWriter(stream);
+        timestampWriter = new StreamWriter(recordingTimestampPath);
+        frameCounter = 0;
     }
 
     public void RecordFrame(RawFrame frame)
@@ -37,30 +42,46 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
         Enqueue(frame);
     }
 
-    protected override Task DoWork(RawFrame workItem)
+    private void WriteFrameData(RawFrame frame)
     {
-        if (workItem is RtspRawVideo.RawH264IFrame iFrame)
+        if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
             gotFirstIFrame = true;
-            binaryWriter.Write(iFrame.SpsPpsSegment);
-            binaryWriter.Write(iFrame.FrameSegment);
-            binaryWriter.Flush();
-
+            frameBinaryWriter.Write(iFrame.SpsPpsSegment);
+            frameBinaryWriter.Write(iFrame.FrameSegment);
         }
-        else if (workItem is RtspRawVideo.RawH264PFrame pFrame)
+        else if (frame is RtspRawVideo.RawH264PFrame pFrame)
         {
             if (!gotFirstIFrame)
-                return Task.CompletedTask;
+                return;
 
-            binaryWriter.Write(pFrame.FrameSegment);
-            binaryWriter.Flush();
+            frameBinaryWriter.Write(pFrame.FrameSegment);
         }
 
-        return Task.CompletedTask;
+        frameBinaryWriter.Flush();
+    }
+
+    private async Task WriteTimeStampAsync(DateTime timestamp)
+    {
+        if (frameCounter == 1)
+        {
+            await timestampWriter.WriteLineAsync("frame,datetime");
+        }
+
+        await timestampWriter.WriteLineAsync($"{frameCounter},{timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}");
+        await timestampWriter.FlushAsync();
+    }
+
+    protected override async Task DoWork(RawFrame workItem)
+    {
+        frameCounter++;
+        WriteFrameData(workItem);
+        await WriteTimeStampAsync(workItem.Timestamp);
     }
 
     ~CameraRecordingContext()
     {
-        binaryWriter.Close();
+        frameBinaryWriter.Close();
+        timestampWriter.Close();
     }
 }
