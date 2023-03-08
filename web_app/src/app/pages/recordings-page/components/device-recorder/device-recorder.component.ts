@@ -8,6 +8,7 @@ import { RadarBrief } from 'src/app/entities/radar';
 import { CamerasService } from 'src/app/services/cameras.service';
 import { RadarsService } from 'src/app/services/radars.service';
 import { RecordingsService } from 'src/app/services/recordings.service';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 
 @Component({
   selector: 'app-device-recorder',
@@ -25,6 +26,7 @@ export class DeviceRecorderComponent implements OnInit {
   constructor(private radarsService : RadarsService,
               private camerasService : CamerasService,
               private recordingsService : RecordingsService,
+              private rmsEventsService : RmsEventsService,
               private notification: MatSnackBar,
               private router : Router) { }
 
@@ -32,6 +34,20 @@ export class DeviceRecorderComponent implements OnInit {
   {
     this.getRadarsList()
     this.getCamerasList()
+
+    this.rmsEventsService.radarUpdatedEvent.subscribe({
+      next: () => 
+      {
+        this.getRadarsList()
+      }
+    })
+
+    this.rmsEventsService.cameraUpdatedEvent.subscribe({
+      next: () => 
+      {
+        this.getCamerasList()
+      }
+    })
   }
 
   public getRadarsList()
