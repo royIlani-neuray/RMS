@@ -48,11 +48,11 @@ public class CameraController : ControllerBase
     }
 
     [HttpPost]
-    public void AddCamera([FromBody] AddCameraArgs args)
+    public object AddCamera([FromBody] AddCameraArgs args)
     {
         AddCameraAction action = new AddCameraAction(args);
         action.Run();
-        return;
+        return new { camera_id = action.CameraId };
     }
 
     [HttpDelete("{cameraId}")]

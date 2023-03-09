@@ -12,7 +12,7 @@ export interface CameraBrief {
     state: string
     description: string
     device_id: string
-    enabled: boolean,
+    enabled: boolean
 }
 
 export interface Camera {
@@ -22,4 +22,11 @@ export interface Camera {
     description: string
     device_id: string
     enabled: boolean
+    rtsp_url: string
+    linked_services: LinkedService[]
+}
+
+export interface LinkedService {
+    service_id: string
+    service_options: Map<string, string>
 }

@@ -26,12 +26,14 @@ import { RadarInfoComponent } from './pages/radar-page/components/radar-info/rad
 import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
 import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
 import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
+import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
+import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent },
 
   { 
-    path: 'radar/:device_id', 
+    path: 'radar/:radar_id', 
     title: 'Devices - RMS | neuRay Labs', 
     component: RadarPageComponent,
     children: [
@@ -52,6 +54,10 @@ const routes: Routes = [
   },
 
   { path: 'radars', title: 'Radars - RMS | neuRay Labs', component: RadarsPageComponent },
+
+  { path: 'cameras', title: 'Cameras - RMS | neuRay Labs', component: CamerasPageComponent },
+  { path: 'camera/:camera_id', title: 'Cameras - RMS | neuRay Labs', component: CameraPageComponent },
+
   { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent },
   { path: 'register-radar', title: 'Register Radar Device - RMS | neuRay Labs', component: RegisterRadarPageComponent },
 

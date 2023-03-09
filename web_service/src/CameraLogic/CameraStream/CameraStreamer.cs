@@ -124,7 +124,9 @@ public class CameraStreamer
             {
                 //Console.WriteLine($"Connecting to camera URL: {camera.RTSPUrl}");
                 await rtspClient.ConnectAsync(cancellationTokenSource!.Token);
-                //Console.WriteLine("Connected.");
+
+                camera.SetStatus("The device is active.");
+                
                 await rtspClient.ReceiveAsync(cancellationTokenSource!.Token);
             }
             catch (OperationCanceledException)

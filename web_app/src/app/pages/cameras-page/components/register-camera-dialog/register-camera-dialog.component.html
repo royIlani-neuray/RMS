@@ -1,0 +1,27 @@
+<h3>Register New Camera</h3>
+
+<form>
+    <mat-form-field class="input-full-width"  hintLabel="Max 30 characters" appearance="fill">
+        <mat-label>Camera Name</mat-label>
+        <input matInput #cameraNameInput maxlength="30" placeholder="Name this camera" [formControl]="cameraNameFC">
+        <mat-hint align="end">{{cameraNameInput.value!.length || 0}}/30</mat-hint>
+    </mat-form-field>
+    
+    <mat-form-field class="input-full-width" appearance="fill">
+        <mat-label>Description</mat-label>
+        <input matInput #cameraDescriptionInput placeholder="Add optional description" [formControl]="descriptionFC">
+    </mat-form-field>
+    
+    <mat-form-field class="input-full-width" appearance="fill">
+        <mat-label>Camera address (RTSP)</mat-label>
+        <input matInput #rtspUrlInput placeholder="Enter URL in RTSP format" [formControl]="rtspUrlFC">
+    </mat-form-field>    
+</form>
+
+<button mat-raised-button color="primary" (click)="testConnectionClicked()">Test Connection</button> {{testConnectionStatus}}
+
+
+<div mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onRegisterClicked()" cdkFocusInitial>Register</button>
+    <button mat-raised-button (click)="onCancelClicked()">Cancel</button>
+</div>

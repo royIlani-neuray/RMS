@@ -27,18 +27,15 @@ export class RadarPageComponent implements OnInit {
               private activatedRoute:ActivatedRoute) { }
 
   radar : Radar
-  radarId : string
 
   ngOnInit(): void {
-    let deviceId = this.activatedRoute.snapshot.paramMap.get("device_id");
+    let radarId = this.activatedRoute.snapshot.paramMap.get("radar_id");
 
-    if (deviceId == null)
+    if (radarId == null)
     {
       this.router.navigate(['/error-404'])
       return
     }
-
-    this.radarId = deviceId
 
     this.radarPageData.radarSubject.subscribe({
       next : (radar) => {
@@ -46,21 +43,21 @@ export class RadarPageComponent implements OnInit {
       }
     })
 
-    this.radarPageData.getRadar(this.radarId)
+    this.radarPageData.getRadar(radarId)
 
     this.rmsEventsService.radarUpdatedEvent.subscribe({
-      next: (deviceId) => 
+      next: (updatedRadarId) => 
       {
-        if (deviceId == this.radarId)
+        if (radarId == updatedRadarId)
         {
-          this.radarPageData.getRadar(this.radarId)
+          this.radarPageData.getRadar(radarId)
         }
       }
     })
     
   }
 
-  getDeviceStatus()
+  getRadarStatus()
   {
     if (!this.radar.enabled)
     {

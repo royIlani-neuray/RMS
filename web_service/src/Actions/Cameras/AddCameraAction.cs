@@ -47,9 +47,12 @@ public class AddCameraAction : IAction
 {
     AddCameraArgs args;
 
+    public string CameraId { get; set; }
+
     public AddCameraAction(AddCameraArgs args)
     {
         this.args = args;
+        CameraId = String.Empty;
     }
 
     public void Run()
@@ -85,5 +88,7 @@ public class AddCameraAction : IAction
             });
             enableCameraTask.Start();
         }
+
+        CameraId = camera.Id;
     }
 }
