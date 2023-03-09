@@ -1,1 +1,45 @@
-<p>camera-page works!</p>
+<div *ngIf="!camera" style="display: flex; justify-content: center; align-items: center; background: white;">
+    <mat-spinner [diameter]="60"></mat-spinner>
+</div>
+
+<div *ngIf="camera" class="camera-page-header">
+    <span style="font-size: 25px;">{{camera.name}}</span><span style="padding-left: 10px; font-size: 15px;">({{getCameraStatus()}})</span>
+</div>
+
+<br>
+
+<div *ngIf="camera" class="page-margin">
+
+    <div>
+        <table class="camera-info-table">
+            <tr>
+                <td>Enabled:</td>
+                <td>{{camera.enabled}}</td>
+            </tr>
+            <tr>
+                <td>Status:</td>
+                <td>{{camera.status}}</td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td>{{camera.description}}</td>
+            </tr>
+            <tr>
+                <td>RTSP URL:</td>
+                <td>{{camera.rtsp_url}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Control buttons -->
+    <div>
+        <button mat-raised-button *ngIf="!camera.enabled" (click)="enableCamera()" color="primary" style="margin-left: 10px;">Enable Camera</button>
+        <button mat-raised-button *ngIf="camera.enabled" (click)="disableCamera()" color="primary" style="margin-left: 10px;">Disable Camera</button>
+
+        <button mat-raised-button *ngIf="!isCameraRecordingEnabled()" (click)="enableCameraRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
+        <button mat-raised-button *ngIf="isCameraRecordingEnabled()" (click)="disableCameraRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
+
+        <button mat-raised-button (click)="deleteCamera()" color="primary" style="margin-left: 10px;">Delete Camera</button>
+    </div>
+
+</div>

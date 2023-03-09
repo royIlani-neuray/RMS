@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { CamerasService } from 'src/app/services/cameras.service';
 
 @Component({
@@ -12,25 +13,46 @@ export class RegisterCameraDialogComponent implements OnInit {
 
   cameraNameFC: FormControl
   rtspUrlFC: FormControl
+  descriptionFC: FormControl
 
-  testConnectionStatus : string = "Works!"
+  testConnectionStatus : string = ""
   
   constructor(public dialogRef: MatDialogRef<RegisterCameraDialogComponent>,
-    private camerasService : CamerasService) { }
+    private camerasService : CamerasService,
+    private router : Router) { }
 
   ngOnInit(): void 
   {
     this.cameraNameFC = new FormControl("", [Validators.required])
     this.rtspUrlFC = new FormControl("", [Validators.required])
+    this.descriptionFC = new FormControl("", [])
   }
 
   public testConnectionClicked()
   {
-    //this.camerasService.
+    let rtspUrl = this.rtspUrlFC.value
+    this.camerasService.testConnection(rtspUrl).subscribe({
+      next: (response) => this.testConnectionStatus = response.status_string,
+      error: (err) => this.testConnectionStatus = "Error: test connection failed."
+    })
   }
 
   public onRegisterClicked()
   {
+    if (!this.cameraNameFC.valid || !this.rtspUrlFC.valid)
+      return
+      
+    let name = this.cameraNameFC.value
+    let rtspUrl = this.rtspUrlFC.value
+    let description = this.descriptionFC.value
+
+    this.camerasService.registerCamera(name, description, rtspUrl).subscribe({
+      next: (response) => {
+        this.router.navigate(['/camera', response.camera_id])
+        this.dialogRef.close(true)
+      },
+      error: (err) => this.dialogRef.close(false)
+    })
 
   }
 
