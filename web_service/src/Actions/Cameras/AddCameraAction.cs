@@ -27,6 +27,21 @@ public class AddCameraArgs
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; } = false;
 
+    [JsonPropertyName("frame_rate")]
+    public float FrameRate { get; set; }
+
+    [JsonPropertyName("fov_x")]
+    public int FieldOfViewX { get; set; }
+
+    [JsonPropertyName("fov_y")]
+    public int FieldOfViewY { get; set; }
+
+    [JsonPropertyName("resolution_x")]
+    public int ResolutionX { get; set; }
+
+    [JsonPropertyName("resolution_y")]
+    public int ResolutionY { get; set; }
+
     public AddCameraArgs()
     {
         Name = String.Empty;
@@ -63,6 +78,11 @@ public class AddCameraAction : IAction
         camera.Name = args.Name;
         camera.Description = args.Description;
         camera.RTSPUrl = args.RTSPUrl;
+        camera.FrameRate = args.FrameRate;
+        camera.FieldOfViewX = args.FieldOfViewX;
+        camera.FieldOfViewY = args.FieldOfViewY;
+        camera.ResolutionX = args.ResolutionX;
+        camera.ResolutionY = args.ResolutionY;
 
         System.Console.WriteLine($"Adding new camera - [{camera.Name}]");
  

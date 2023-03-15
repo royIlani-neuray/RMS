@@ -69,7 +69,7 @@ export class CamerasPageComponent implements OnInit {
   {
     let dialogRef = this.dialog.open(RegisterCameraDialogComponent, {
       width: '850px',
-      height: '480px',
+      height: '720px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

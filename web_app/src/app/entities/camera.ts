@@ -23,6 +23,11 @@ export interface Camera {
     device_id: string
     enabled: boolean
     rtsp_url: string
+    frame_rate: number
+    fov_x: number
+    fov_y: number
+    resolution_x: number
+    resolution_y: number
     linked_services: LinkedService[]
 }
 

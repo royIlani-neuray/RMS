@@ -24,6 +24,21 @@ public class Camera : DeviceEntity {
     [JsonPropertyName("rtsp_url")]
     public String RTSPUrl { get; set; }
 
+    [JsonPropertyName("frame_rate")]
+    public float FrameRate { get; set; }
+
+    [JsonPropertyName("fov_x")]
+    public int FieldOfViewX { get; set; }
+
+    [JsonPropertyName("fov_y")]
+    public int FieldOfViewY { get; set; }
+
+    [JsonPropertyName("resolution_x")]
+    public int ResolutionX { get; set; }
+
+    [JsonPropertyName("resolution_y")]
+    public int ResolutionY { get; set; }
+
     [JsonIgnore]
     public CameraWebSocketServer CameraWebSocket;
 
