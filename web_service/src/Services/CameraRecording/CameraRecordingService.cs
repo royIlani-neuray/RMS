@@ -40,7 +40,7 @@ public class CameraRecordingService : IExtensionService
         File.WriteAllText(configPath, deviceString);
 
         string recordingVideoPath = System.IO.Path.Combine(entryPath, $"camera.h264");
-        string recordingTimestampPath = System.IO.Path.Combine(entryPath, $"timestamps.csv");
+        string recordingTimestampPath = System.IO.Path.Combine(entryPath, $"camera.ts.csv");
 
         CameraRecordingContext recordingContext = new CameraRecordingContext(recordingVideoPath, recordingTimestampPath);
         recordingContext.StartWorker();

@@ -28,14 +28,20 @@ export class CamerasService {
     return this.http.get<Camera>("/api/cameras/" + cameraId)
   }
 
-  public registerCamera(name : string, description : string, rtspUrl : string)
+  public registerCamera(name : string, description : string, rtspUrl : string, frameRate : number, 
+                        resolutionX : number, resolutionY : number, fovX : number, fovY : number)
   {
     return this.http.post<RegisterCameraResponse>("/api/cameras", 
     {
       name: name,
       description: description,
       rtsp_url: rtspUrl,
-      enabled: true
+      enabled: true,
+      frame_rate: frameRate,
+      fov_x: fovX,
+      fov_y: fovY,
+      resolution_x: resolutionX,
+      resolution_y: resolutionY
     })  
   }
 

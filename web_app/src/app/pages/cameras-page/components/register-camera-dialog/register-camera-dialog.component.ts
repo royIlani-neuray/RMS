@@ -14,6 +14,11 @@ export class RegisterCameraDialogComponent implements OnInit {
   cameraNameFC: FormControl
   rtspUrlFC: FormControl
   descriptionFC: FormControl
+  frameRateFC: FormControl
+  resolutionXFC: FormControl
+  resolutionYFC: FormControl
+  fovXFC: FormControl
+  fovYFC: FormControl
 
   testConnectionStatus : string = ""
   
@@ -26,6 +31,11 @@ export class RegisterCameraDialogComponent implements OnInit {
     this.cameraNameFC = new FormControl("", [Validators.required])
     this.rtspUrlFC = new FormControl("", [Validators.required])
     this.descriptionFC = new FormControl("", [])
+    this.frameRateFC = new FormControl(0, [Validators.required])
+    this.resolutionXFC = new FormControl(0, [Validators.required])
+    this.resolutionYFC = new FormControl(0, [Validators.required])
+    this.fovXFC = new FormControl(0, [Validators.required])
+    this.fovYFC = new FormControl(0, [Validators.required])
   }
 
   public testConnectionClicked()
@@ -39,14 +49,20 @@ export class RegisterCameraDialogComponent implements OnInit {
 
   public onRegisterClicked()
   {
-    if (!this.cameraNameFC.valid || !this.rtspUrlFC.valid)
+    if (!this.cameraNameFC.valid || !this.rtspUrlFC.valid ||!this.frameRateFC.valid 
+        || !this.resolutionXFC.valid || !this.resolutionYFC.valid || !this.fovXFC.valid || !this.fovYFC.valid)
       return
       
     let name = this.cameraNameFC.value
     let rtspUrl = this.rtspUrlFC.value
     let description = this.descriptionFC.value
+    let frameRate = this.frameRateFC.value
+    let resolutionX = this.resolutionXFC.value
+    let resolutionY = this.resolutionYFC.value
+    let fovX = this.fovXFC.value
+    let fovY = this.fovYFC.value
 
-    this.camerasService.registerCamera(name, description, rtspUrl).subscribe({
+    this.camerasService.registerCamera(name, description, rtspUrl, frameRate, resolutionX, resolutionY, fovX, fovY).subscribe({
       next: (response) => {
         this.router.navigate(['/camera', response.camera_id])
         this.dialogRef.close(true)

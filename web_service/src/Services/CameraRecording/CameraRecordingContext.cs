@@ -75,7 +75,7 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
 
         if (frameCounter == 1)
         {
-            await timestampWriter.WriteLineAsync("frame_number,datetime,frame_size_bytes");
+            await timestampWriter.WriteLineAsync("frame,datetime,frame_size_bytes");
         }
 
         await timestampWriter.WriteLineAsync($"{frameCounter},{frame.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)},{frameSizeBytes}");
