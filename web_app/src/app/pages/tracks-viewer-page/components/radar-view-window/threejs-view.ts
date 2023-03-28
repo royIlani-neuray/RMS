@@ -130,8 +130,9 @@ export class ThreeJsView {
         let boundingBoxSizeX = Math.abs(radar.radar_settings.boundary_box.x_max - radar.radar_settings.boundary_box.x_min)
         let boundingBoxSizeY = Math.abs(radar.radar_settings.boundary_box.z_max - radar.radar_settings.boundary_box.z_min)
         let boundingBoxSizeZ = Math.abs(radar.radar_settings.boundary_box.y_max - radar.radar_settings.boundary_box.y_min)
-        let boundingBoxZoffset = radar.radar_settings.boundary_box.y_min
+        let boundingBoxXoffset = -radar.radar_settings.boundary_box.x_min
         let boundingBoxYoffset = radar.radar_settings.boundary_box.z_min
+        let boundingBoxZoffset = radar.radar_settings.boundary_box.y_min
 
         // draw the floor (plane grid)
         let planeGridSize = Math.max(boundingBoxSizeZ, boundingBoxSizeX)
@@ -149,7 +150,7 @@ export class ThreeJsView {
         let boxGeometry = new THREE.BoxGeometry(boundingBoxSizeX,boundingBoxSizeY,boundingBoxSizeZ)
         let boxEdges = new THREE.EdgesGeometry(boxGeometry)
         this.boundingBox = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial( { color: 0xff00ff } ) )
-        this.boundingBox.position.set(0, boundingBoxYoffset + (boundingBoxSizeY/2), boundingBoxZoffset + (boundingBoxSizeZ/2))
+        this.boundingBox.position.set(boundingBoxXoffset - (boundingBoxSizeX/2), boundingBoxYoffset + (boundingBoxSizeY/2), boundingBoxZoffset + (boundingBoxSizeZ/2))
         
         if (!this.showBoundingBox)
         {
@@ -164,14 +165,15 @@ export class ThreeJsView {
         let staticBoundingBoxSizeX = Math.abs(radar.radar_settings.static_boundary_box.x_max - radar.radar_settings.static_boundary_box.x_min)
         let staticBoundingBoxSizeY = Math.abs(radar.radar_settings.static_boundary_box.z_max - radar.radar_settings.static_boundary_box.z_min)
         let staticBoundingBoxSizeZ = Math.abs(radar.radar_settings.static_boundary_box.y_max - radar.radar_settings.static_boundary_box.y_min)
-        let staticBoundingBoxZoffset = radar.radar_settings.static_boundary_box.y_min
+        let staticBoundingBoxXoffset = -radar.radar_settings.static_boundary_box.x_min
         let staticBoundingBoxYoffset = radar.radar_settings.static_boundary_box.z_min
+        let staticBoundingBoxZoffset = radar.radar_settings.static_boundary_box.y_min
 
         // draw the static bounding box
         let staticBoxGeometry = new THREE.BoxGeometry(staticBoundingBoxSizeX,staticBoundingBoxSizeY,staticBoundingBoxSizeZ)
         let staticBoxEdges = new THREE.EdgesGeometry(staticBoxGeometry)
         this.staticBoundingBox = new THREE.LineSegments(staticBoxEdges, new THREE.LineBasicMaterial( { color: 0xffffff } ) )
-        this.staticBoundingBox.position.set(0, staticBoundingBoxYoffset + (staticBoundingBoxSizeY/2), staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
+        this.staticBoundingBox.position.set(staticBoundingBoxXoffset - (staticBoundingBoxSizeX/2), staticBoundingBoxYoffset + (staticBoundingBoxSizeY/2), staticBoundingBoxZoffset + (staticBoundingBoxSizeZ/2))
 
         if (!this.showStaticBoundingBox)
         {
