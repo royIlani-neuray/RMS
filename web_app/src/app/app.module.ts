@@ -70,6 +70,7 @@ import { DeviceRecorderComponent } from './pages/recordings-page/components/devi
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { RegisterCameraDialogComponent } from './pages/cameras-page/components/register-camera-dialog/register-camera-dialog.component';
+import { GaitIdWindowComponent } from './pages/tracks-viewer-page/components/gait-id-window/gait-id-window.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,8 @@ import { RegisterCameraDialogComponent } from './pages/cameras-page/components/r
     DeviceRecorderComponent,
     CamerasPageComponent,
     CameraPageComponent,
-    RegisterCameraDialogComponent
+    RegisterCameraDialogComponent,
+    GaitIdWindowComponent
   ],
   imports: [
     BrowserModule,
