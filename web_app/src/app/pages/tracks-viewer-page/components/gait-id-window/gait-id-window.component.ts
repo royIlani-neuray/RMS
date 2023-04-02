@@ -18,14 +18,22 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
 
   radar : Radar | null
   predictionsSubscription! : any
+  frameDataSubscription! : any
 
-  currentId = "No ID yet..."
+  currentIdentity = "[No Detection]"
+  currentTrackId = -1
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void 
   {
+    if (this.frameDataSubscription != null)
+    {
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
+    }
+
     if (this.predictionsSubscription != null)
     {
       this.predictionsSubscription.unsubscribe()
@@ -35,6 +43,12 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
 
   setRadar(radarId : string)
   {
+    if (this.frameDataSubscription != null)
+    {
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
+    }
+
     if (this.predictionsSubscription != null)
     {
       this.predictionsSubscription.unsubscribe()
@@ -48,12 +62,23 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
         
         this.deviceWebsocketService.Connect(radarId)
 
-        // we have the radar info, now subscribe for gait id predictions
+        // we have the radar info, now subscribe for tracks streaming
+        this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
+          next : (frameData) => 
+          {
+            if (frameData.tracks.findIndex(track => track.track_id == this.currentTrackId) == -1)
+            {
+              this.currentIdentity = "[No Detection]"
+              this.currentTrackId = -1
+            }
+          }
+        })
 
         this.predictionsSubscription = this.deviceWebsocketService.GetGateIdPredictions().subscribe({
           next : (predictions) => 
           {
-            this.currentId = predictions[0].identity
+            this.currentIdentity = predictions[0].identity
+            this.currentTrackId = predictions[0].track_id
           }
         })
         
