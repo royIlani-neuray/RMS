@@ -1,0 +1,15 @@
+
+.current-id { 
+    color: rgb(172, 49, 49);
+    font-size: xx-large;
+}
+
+.selected-device-lable {
+    color: white;
+    background-color: rgb(75, 75, 75);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    padding: 2px;
+}

@@ -6,21 +6,23 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChildren, ViewChild, QueryList, ElementRef, ViewContainerRef, AfterViewInit, ChangeDetectorRef, Input } from '@angular/core';
 import { MatGridList } from '@angular/material/grid-list';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDrawer } from '@angular/material/sidenav';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { CameraViewWindowComponent } from './components/camera-view-window/camera-view-window.component';
+import { GaitIdWindowComponent } from './components/gait-id-window/gait-id-window.component';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 import { TracksViewerDataService } from './tracks-viewer-data.service';
 
 @Component({
   selector: 'dynamic-window',
-  template: '<div>No device selected. (right click to select)</div>'
+  template: '<div *ngIf="!windowCreated">No view selected. (right click to select)</div>'
 })
 export class DynamicWindow {
   constructor(public viewContainerRef: ViewContainerRef) { }
+  windowCreated = false
 }
 
 @Component({
@@ -90,16 +92,26 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     //return false; // avoid default browser action on click
   }
 
-  setRadar(radarId : string)
+  setRadarWindow(radarId : string)
   {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarViewWindowComponent)
     component?.instance.setRadar(radarId)
   }
 
-  setCamera(cameraId : string)
+  setGaitIdWindow(radarId : string)
   {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
+    const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(GaitIdWindowComponent)
+    component?.instance.setRadar(radarId)
+  }
+
+  setCameraWindow(cameraId : string)
+  {
+    this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(CameraViewWindowComponent)
     component?.instance.setCamera(cameraId)
   }
