@@ -26,30 +26,30 @@ public class GateIdPredictions
         [JsonPropertyName("identity")]
         public String Identity {get; set;}
 
-        public LabelHitMissPredictor hitMissPredictor;
+        public MajorityPerdictor majorityPerdictor;
 
-        public Prediction(uint trackId, int requiredHitCount, int requiredMissCount)
+        public Prediction(uint trackId, int minRequiredHitCount, int majorityWindowSize)
         {
             TrackId = trackId;
             Identity = String.Empty;
-            hitMissPredictor = new LabelHitMissPredictor(requiredHitCount, requiredMissCount, GateIdPredictions.InvalidGateIdPrediction);
+            majorityPerdictor = new MajorityPerdictor(minRequiredHitCount, majorityWindowSize, GateIdPredictions.InvalidGateIdPrediction);
         }
     }
 
     private Dictionary<uint, Prediction> predictions;
     private RadarWebSocketServer deviceWebSocketsServer;
 
-    private int requiredHitCount;
-    private int requiredMissCount;
+    private int minRequiredHitCount;
+    private int majorityWindowSize;
     
     public float ConfidenceThreshold {get; set;}
 
-    public GateIdPredictions(RadarWebSocketServer deviceWebSocketsServer, int requiredHitCount, int requiredMissCount)
+    public GateIdPredictions(RadarWebSocketServer deviceWebSocketsServer, int minRequiredHitCount, int majorityWindowSize)
     {
         predictions = new Dictionary<uint, Prediction>();
         this.deviceWebSocketsServer = deviceWebSocketsServer;
-        this.requiredHitCount = requiredHitCount;
-        this.requiredMissCount = requiredMissCount;
+        this.minRequiredHitCount = minRequiredHitCount;
+        this.majorityWindowSize = majorityWindowSize;
         ConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
     }
 
@@ -76,11 +76,11 @@ public class GateIdPredictions
 
         if (!predictions.ContainsKey(trackId))
         {
-            predictions.Add(trackId, new Prediction(trackId, requiredHitCount, requiredMissCount));
+            predictions.Add(trackId, new Prediction(trackId, minRequiredHitCount, majorityWindowSize));
         }
 
-        predictions[trackId].hitMissPredictor.UpdatePrediction(identity);
-        predictions[trackId].Identity = predictions[trackId].hitMissPredictor.GetPrediction();
+        predictions[trackId].majorityPerdictor.UpdatePrediction(identity);
+        predictions[trackId].Identity = predictions[trackId].majorityPerdictor.GetPrediction();
     }
 
     public void PublishPredictions()
