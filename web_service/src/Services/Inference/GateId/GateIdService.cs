@@ -17,8 +17,8 @@ public class GateIdService : IExtensionService
     private const string SERVICE_ID = "GATE_ID_CLOSED_SET";
     private const int REQUIRED_WINDOW_SIZE = 30;
 
-    private const int PREDICTION_REQUIRED_HIT_COUNT = 3;
-    private const int PREDICTION_REQUIRED_MISS_COUNT = 2;
+    private const int MAJORITY_PREDICTOR_MIN_REQUIRED_HITS = 3;
+    private const int MAJORITY_PREDICTOR_WINDOW_SIZE = 10;
 
     private const string SERVICE_OPTION_MODEL_NAME = "gate_id_model";
 
@@ -43,7 +43,7 @@ public class GateIdService : IExtensionService
 
         Radar radar = (Radar) device;
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
+        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, MAJORITY_PREDICTOR_MIN_REQUIRED_HITS, MAJORITY_PREDICTOR_WINDOW_SIZE);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;

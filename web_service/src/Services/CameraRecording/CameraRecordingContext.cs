@@ -25,7 +25,7 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
     private uint frameCounter;
     private bool gotFirstIFrame;
 
-    private const int MAX_QUEUE_CAPACITY = 20;
+    private const int MAX_QUEUE_CAPACITY = 200;
     
     public CameraRecordingContext(string recordingVideoPath, string recordingTimestampPath) : base("CameraRecordingContext", MAX_QUEUE_CAPACITY)
     {

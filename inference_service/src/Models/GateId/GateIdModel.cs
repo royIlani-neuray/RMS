@@ -79,17 +79,20 @@ public class GateIdModel : IModelImplementation
         }
         
         // need to align the xTensor and zTensors according to the mean.
+        
         var averageX = xTensor.Average();
         for (int index=0; index < xTensor.Length; index++)
         {
             xTensor.SetValue(index, xTensor.GetValue(index) - averageX);
         }
 
+        /*
         var averageZ = zTensor.Average();
         for (int index=0; index < zTensor.Length; index++)
         {
             zTensor.SetValue(index, zTensor.GetValue(index) - averageZ);
         }
+        */
 
 
         var inputs = new List<NamedOnnxValue> 
