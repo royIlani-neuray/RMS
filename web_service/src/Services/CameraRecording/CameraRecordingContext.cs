@@ -67,18 +67,20 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
     private async Task WriteTimeStampAsync(RawFrame frame)
     {
         int frameSizeBytes = frame.FrameSegment.Count;
+        byte isKeyFrame = 0;
 
         if (frame is RtspRawVideo.RawH264IFrame iFrame)
         {
             frameSizeBytes += iFrame.SpsPpsSegment.Count;
+            isKeyFrame = 1;
         }
 
         if (frameCounter == 1)
         {
-            await timestampWriter.WriteLineAsync("frame,datetime,frame_size_bytes");
+            await timestampWriter.WriteLineAsync("frame,datetime,frame_size_bytes,key_frame");
         }
 
-        await timestampWriter.WriteLineAsync($"{frameCounter},{frame.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)},{frameSizeBytes}");
+        await timestampWriter.WriteLineAsync($"{frameCounter},{frame.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture)},{frameSizeBytes},{isKeyFrame}");
         await timestampWriter.FlushAsync();
     }
 
