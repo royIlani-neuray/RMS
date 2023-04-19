@@ -15,7 +15,9 @@ namespace WebService.Services.Inference.GateId;
 public class GateIdService : IExtensionService
 {
     private const string SERVICE_ID = "GATE_ID_CLOSED_SET";
-    private const int REQUIRED_WINDOW_SIZE = 30;
+    private const int REQUIRED_WINDOW_SIZE = 30;    // amount of frames required for inference
+
+    private const int GAIT_WINDOW_SHIFT_SIZE = 6;   // amount of frames to remove from the window after inference.
 
     private const int MAJORITY_PREDICTOR_MIN_REQUIRED_HITS = 3;
     private const int MAJORITY_PREDICTOR_WINDOW_SIZE = 10;
@@ -43,7 +45,7 @@ public class GateIdService : IExtensionService
 
         Radar radar = (Radar) device;
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, MAJORITY_PREDICTOR_MIN_REQUIRED_HITS, MAJORITY_PREDICTOR_WINDOW_SIZE);
+        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, GAIT_WINDOW_SHIFT_SIZE, MAJORITY_PREDICTOR_MIN_REQUIRED_HITS, MAJORITY_PREDICTOR_WINDOW_SIZE);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;
