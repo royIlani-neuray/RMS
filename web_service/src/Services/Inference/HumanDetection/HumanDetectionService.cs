@@ -17,7 +17,7 @@ public class HumanDetectionService : IExtensionService
 {
     private const string SERVICE_ID = "HUMAN_DETECTION";
     private const int REQUIRED_WINDOW_SIZE = 15;
-
+    private const int WINDOW_SHIFT_SIZE = 15;   // amount of frames to remove from the window after inference.
     private const int PREDICTION_REQUIRED_HIT_COUNT = 1;
     private const int PREDICTION_REQUIRED_MISS_COUNT = 1;
 
@@ -44,7 +44,7 @@ public class HumanDetectionService : IExtensionService
 
         Radar radar = (Radar) device;
         GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
+        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, WINDOW_SHIFT_SIZE, PREDICTION_REQUIRED_HIT_COUNT, PREDICTION_REQUIRED_MISS_COUNT);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;

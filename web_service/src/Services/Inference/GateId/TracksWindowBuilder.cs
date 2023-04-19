@@ -33,12 +33,17 @@ public class TracksWindowBuilder
     private FrameData? lastFrame;
 
     private int requiredWindowSize;
+    private int windowShiftSize;
 
-    public TracksWindowBuilder(int requiredWindowSize)
+    public TracksWindowBuilder(int requiredWindowSize, int windowShiftSize)
     {
         tracksWindows = new Dictionary<byte, TrackWindow>(); // Key: track Id , Value: window data
         lastFrame = null;
         this.requiredWindowSize = requiredWindowSize;
+        this.windowShiftSize = windowShiftSize;
+
+        if (windowShiftSize > requiredWindowSize)
+            throw new Exception("Error: window shift size cannot exceed the actual window size");
     }
 
     private void CreateNewWindows(List<byte> targetIndexList)
@@ -189,13 +194,22 @@ public class TracksWindowBuilder
         {
             if (tracksWindows[trackId].windowPoints.Count == requiredWindowSize)
             {
-                // track window is ready, convert it to a Gate Id request format and clear the window.
+                // track window is ready, convert it to a Gate Id request format
                 
                 readyWindows.Add(trackId, CreateGateIdRequest(trackId));
-                tracksWindows.Remove(trackId);
-            }
+                
+                // we want to reuse some of the window frames for the next inference, so instead of clearing it we
+                // only remove the first 'windowShiftSize' frames.
+                
+                Stack<List<FrameData.Point>> reversedStack = new Stack<List<FrameData.Point>>(tracksWindows[trackId].windowPoints);
 
-            //System.Console.WriteLine($"debug: pulled window for track id: {trackId}");
+                for (int i=0; i < windowShiftSize; i++)
+                {
+                    reversedStack.Pop();
+                }
+
+                tracksWindows[trackId].windowPoints = new Stack<List<FrameData.Point>>(reversedStack);
+            }
         }
 
         return readyWindows;
