@@ -212,7 +212,22 @@ public class RecordingsManager
         return recordings;
     }
 
-    public byte[] DownloadRecording(string recordingName, out string archiveFileName)
+    private void ClearTempStorage()
+    {
+        var tempFiles = Directory.GetFiles(TempArchiveStoragePath);
+
+        foreach (string tempFile in tempFiles)
+        {
+            try
+            {
+                System.Console.WriteLine($"Debug: delete existing file: {tempFile}...");
+                File.Delete(tempFile);
+            }
+            catch {}
+        }
+    }
+
+    public Stream DownloadRecording(string recordingName, out string archiveFileName)
     {
         Directory.CreateDirectory(TempArchiveStoragePath);
 
@@ -223,11 +238,13 @@ public class RecordingsManager
         archiveFileName = recordingName + ".zip";
         string zipFilePath = Path.Combine(TempArchiveStoragePath, archiveFileName);
 
+        ClearTempStorage();
+        
         ZipFile.CreateFromDirectory(recordingPath, zipFilePath, CompressionLevel.Optimal, true);
-        var archive = File.ReadAllBytes(zipFilePath);
-        File.Delete(zipFilePath);
 
-        return archive; 
+        FileStream stream = new FileStream(zipFilePath, FileMode.Open);
+
+        return stream; 
     }
 
     public void UploadRecording(Stream fileStream)
