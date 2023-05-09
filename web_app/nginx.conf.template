@@ -15,6 +15,7 @@ http {
         location /api/ {
             proxy_pass http://localhost:${RMS_SERVICE_PORT}/;
             add_header Access-Control-Allow-Origin *;
+            proxy_read_timeout 300;
         }
 
         location /websocket/ {

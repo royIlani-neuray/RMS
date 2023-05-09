@@ -220,7 +220,7 @@ public class RecordingsManager
         {
             try
             {
-                System.Console.WriteLine($"Debug: delete existing file: {tempFile}...");
+                //System.Console.WriteLine($"Debug: delete existing file: {tempFile}...");
                 File.Delete(tempFile);
             }
             catch {}
