@@ -23,6 +23,10 @@ public class GateIdService : IExtensionService
     private const int MAJORITY_PREDICTOR_WINDOW_SIZE = 10;
 
     private const string SERVICE_OPTION_MODEL_NAME = "gate_id_model";
+    private const string SERVICE_OPTION_MAJORITY_WINDOW_SIZE = "majority_window_size";
+    private const string SERVICE_OPTION_MAJORITY_MIN_HITS = "majority_required_hits";
+
+    private const string SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE = "gait_window_shift_size";
 
     public string ServiceId => SERVICE_ID;
 
@@ -30,8 +34,20 @@ public class GateIdService : IExtensionService
 
     public ExtensionServiceSettings? Settings { get; set; }
 
-    private void GetServiceSettings(Dictionary<string, string> serviceOptions, out string modelName)
+    private void GetServiceSettings(Dictionary<string, string> serviceOptions, out string modelName, out int gaitWindowShitSize, out int minRequiredHitCount, out int majorityWindowSize)
     {
+        majorityWindowSize = MAJORITY_PREDICTOR_WINDOW_SIZE;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_MAJORITY_WINDOW_SIZE))
+            majorityWindowSize = int.Parse(serviceOptions[SERVICE_OPTION_MAJORITY_WINDOW_SIZE]);
+
+        minRequiredHitCount = MAJORITY_PREDICTOR_MIN_REQUIRED_HITS;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_MAJORITY_MIN_HITS))
+            minRequiredHitCount = int.Parse(serviceOptions[SERVICE_OPTION_MAJORITY_MIN_HITS]);
+
+        gaitWindowShitSize = GAIT_WINDOW_SHIFT_SIZE;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE))
+            gaitWindowShitSize = int.Parse(serviceOptions[SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE]);
+
         if (!serviceOptions.ContainsKey(SERVICE_OPTION_MODEL_NAME))
             throw new BadRequestException($"Missing required service option: {SERVICE_OPTION_MODEL_NAME}");
         
@@ -44,8 +60,8 @@ public class GateIdService : IExtensionService
             throw new Exception("Unsupported device passed to service.");
 
         Radar radar = (Radar) device;
-        GetServiceSettings(serviceOptions, out string modelName);
-        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, GAIT_WINDOW_SHIFT_SIZE, MAJORITY_PREDICTOR_MIN_REQUIRED_HITS, MAJORITY_PREDICTOR_WINDOW_SIZE);
+        GetServiceSettings(serviceOptions, out string modelName, out int gaitWindowShitSize, out int minRequiredHitCount, out int majorityWindowSize);
+        GateIdContext gateIdContext = new GateIdContext(radar, modelName, REQUIRED_WINDOW_SIZE, gaitWindowShitSize, minRequiredHitCount, majorityWindowSize);
         gateIdContext.StartWorker();
         gateIdContext.State = IServiceContext.ServiceState.Active;
         return gateIdContext;
