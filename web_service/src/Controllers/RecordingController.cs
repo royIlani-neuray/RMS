@@ -52,8 +52,8 @@ public class RecordingsController : ControllerBase
     [HttpGet("{recordingName}/download")]
     public IActionResult DownloadRecording(string recordingName)
     {
-        var fileData = RecordingsManager.Instance.DownloadRecording(recordingName, out string archiveFileName);
-        return File(fileData, "application/zip", archiveFileName);
+        var fileDataStream = RecordingsManager.Instance.DownloadRecording(recordingName, out string archiveFileName);
+        return File(fileDataStream, "application/zip", archiveFileName);
     }
 
     [HttpPost()]
