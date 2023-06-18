@@ -33,7 +33,7 @@
         "sensorPosition 2 0 15",
         "gatingParam 3 2 2 3 4",
         "stateParam 3 3 12 200 5 6000",
-        "allocationParam 20 100 0.1 20 0.5 20",
+        "allocationParam 20 100 0.1 5 0.5 20",
         "maxAcceleration 0.1 0.1 0.1",
         "trackingCfg 1 2 800 30 46 96 60",
         "presenceBoundaryBox -4 4 0.5 12 0 3",
