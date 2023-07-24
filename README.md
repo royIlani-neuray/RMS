@@ -1,4 +1,4 @@
 # captains_eye
 
 # web_service
-a REST service that manage RoE devices, packed in a docker
+a REST service that manage IP Radar devices, packed in a docker
