@@ -65,6 +65,15 @@ public class RadarTracker
 
             trackingApp = new PeopleTracking(radar.radarSettings.SensorPosition);
         }
+        else if (appName == "LONG_RANGE_TRACKING")
+        {
+            if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
+            {
+                throw new Exception($"Error: cannot create tracker app - missing radar position.");
+            }
+
+            trackingApp = new LongRangeTracking(radar.radarSettings.SensorPosition);
+        }
         else if (appName == "TRAFFIC_MONITORING")
         {
             trackingApp = new TrafficMonitoring();
