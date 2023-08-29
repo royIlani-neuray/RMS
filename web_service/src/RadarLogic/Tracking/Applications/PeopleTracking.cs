@@ -95,7 +95,7 @@ public class PeopleTracking : ITrackingApplication
 
         public class TargetHeight
         {
-            public byte targetId;
+            public uint targetId;
             public float maxZ;
             public float minZ;
         }
@@ -232,10 +232,12 @@ public class PeopleTracking : ITrackingApplication
                 for (int targetIndex = 0; targetIndex < targetsCount; targetIndex++)
                 {
                     PeopleTrackingFrameData.TargetHeight target = new PeopleTrackingFrameData.TargetHeight();
-                    target.targetId = reader.ReadByte();
+                    target.targetId = reader.ReadUInt32();
                     target.maxZ = reader.ReadSingle();
                     target.minZ = reader.ReadSingle();
                     frameData.targetsHeightList.Add(target);
+
+                    // Console.WriteLine($"Target Height: Track-{target.targetId}, Max-Z: {target.maxZ:0.00}, Min-Z: {target.minZ:0.00}");
                 }
             }
         }
@@ -298,6 +300,12 @@ public class PeopleTracking : ITrackingApplication
         }
 
         outFrameData.TargetsIndexList = frameData.targetsIndexList;
+
+        outFrameData.TargetsHeightList = frameData.targetsHeightList.ConvertAll(target => new FrameData.TargetHeight() {
+            targetId = target.targetId,
+            maxZ = target.maxZ,
+            minZ = target.minZ
+        });
 
         return outFrameData;
     }
