@@ -19,7 +19,8 @@ public class Model
         Unknown,
         GateId,
         PoseEstimation,
-        HumanDetection
+        HumanDetection,
+        SmartFanGestures
     }
 
     [JsonPropertyName("name")]
