@@ -20,7 +20,7 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
   predictionsSubscription! : any
   frameDataSubscription! : any
 
-  currentIdentity = "[No Detection]"
+  currentIdentity = "[No Fall Detected]"
   currentTrackId = -1
 
   ngOnInit(): void {

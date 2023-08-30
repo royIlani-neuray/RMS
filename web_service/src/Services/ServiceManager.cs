@@ -10,6 +10,8 @@ using WebService.Entites;
 using WebService.Services.RadarRecording;
 using WebService.Services.Inference.GateId;
 using WebService.Services.Inference.HumanDetection;
+using WebService.Services.FallDetection;
+using WebService.Services.Inference.SmartFanGestures;
 
 namespace WebService.Services;
 
@@ -61,6 +63,8 @@ public sealed class ServiceManager {
         services.Add(new GateIdService());
         services.Add(new HumanDetectionService());
         services.Add(new CameraRecordingService());
+        services.Add(new FallDetectionService());
+        services.Add(new SmartFanService());
 
         foreach (var service in services)
         {

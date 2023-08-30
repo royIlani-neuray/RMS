@@ -15,13 +15,17 @@ public class RadarWebSocketServer : WebSocketServer
 {
     private const int MAX_FRAME_RATE_FPS = 10;
     private const int GATE_ID_PREDICTIONS_RATE = 2;
+    private const int FALL_DETECTION_SEND_RATE = 5;
+
     private ActionRateLimiter frameRateLimiter;
     private ActionRateLimiter gateIdRateLimiter;
+    private ActionRateLimiter fallDetectionRateLimiter;
 
     public RadarWebSocketServer()
     {
         frameRateLimiter = new ActionRateLimiter(MAX_FRAME_RATE_FPS);
         gateIdRateLimiter = new ActionRateLimiter(GATE_ID_PREDICTIONS_RATE);
+        fallDetectionRateLimiter = new ActionRateLimiter(FALL_DETECTION_SEND_RATE);
 
         StartWorker();
     }
@@ -54,4 +58,14 @@ public class RadarWebSocketServer : WebSocketServer
         gateIdRateLimiter.Run(() => Enqueue(message));
     }
     
+    public void SendFallDetectionData(Object fallData)
+    {
+        var message = new WebSocketMessage() 
+        {
+            MessageType = "FALL_DETECTION",
+            MessageData = fallData
+        };
+
+        fallDetectionRateLimiter.Run(() => Enqueue(message));
+    }   
 }

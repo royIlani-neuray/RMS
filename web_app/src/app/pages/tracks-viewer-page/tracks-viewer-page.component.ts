@@ -13,6 +13,7 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { CameraViewWindowComponent } from './components/camera-view-window/camera-view-window.component';
 import { GaitIdWindowComponent } from './components/gait-id-window/gait-id-window.component';
+import { FallDetectionWindowComponent } from './components/fall-detection-window/fall-detection-window.component';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 import { TracksViewerDataService } from './tracks-viewer-data.service';
 
@@ -105,6 +106,14 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
     this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(GaitIdWindowComponent)
+    component?.instance.setRadar(radarId)
+  }
+
+  setFallDetectionWindow(radarId : string)
+  {
+    this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
+    const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(FallDetectionWindowComponent)
     component?.instance.setRadar(radarId)
   }
 
