@@ -15,6 +15,11 @@ export interface GateIdPrediction {
   identity: string
 }
 
+export interface FallDetectionData {
+  track_id: number
+  fall_detected: boolean
+}
+
 @Injectable()
 export class RadarWebsocketService {
 
@@ -22,6 +27,7 @@ export class RadarWebsocketService {
   private socket : WebSocket  
   private frameDataSubject: Subject<FrameData>;
   private gateIdPredictionsSubject: Subject<GateIdPrediction[]>;
+  private fallDetectionSubject: Subject<FallDetectionData[]>;
   
   constructor() 
   { 
@@ -52,6 +58,7 @@ export class RadarWebsocketService {
 
     this.frameDataSubject = new Subject<FrameData>();
     this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    this.fallDetectionSubject = new Subject<FallDetectionData[]>();
     
     this.socket.onmessage = (event) => {
       //console.log('Websockets Message -' + event.data)
@@ -64,6 +71,10 @@ export class RadarWebsocketService {
       else if (message['type'] == 'GATE_ID_PREDICTIONS')
       {
         this.gateIdPredictionsSubject.next(message['data'])
+      }
+      else if (message['type'] == 'FALL_DETECTION')
+      {
+        this.fallDetectionSubject.next(message['data'])
       }
     }
 
@@ -93,4 +104,10 @@ export class RadarWebsocketService {
   {
     return this.gateIdPredictionsSubject;
   }
+
+  public GetFallDetectionData() 
+  {
+    return this.fallDetectionSubject;
+  }
+
 }

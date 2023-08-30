@@ -39,6 +39,13 @@ public class FrameData
         public float PositionZ { get; set; }       
     }
 
+    public class TargetHeight
+    {
+        public uint targetId;
+        public float maxZ;
+        public float minZ;
+    }
+
     public class Track
     {
         [JsonPropertyName("track_id")]
@@ -77,6 +84,9 @@ public class FrameData
 
     [JsonPropertyName("targets_index")]
     public List<byte> TargetsIndexList { get; set; } = new List<byte>();
+
+    [JsonPropertyName("targets_height")]
+    public List<TargetHeight> TargetsHeightList = new List<TargetHeight>();
 
     [JsonPropertyName("device_id")]
     public string DeviceId { get; set; } = String.Empty;

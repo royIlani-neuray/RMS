@@ -24,6 +24,7 @@
     <button mat-menu-item [matMenuTriggerFor]="selectRadarMenu">Radar View</button>
     <button mat-menu-item [matMenuTriggerFor]="selectCameraMenu">Camera View</button>
     <button mat-menu-item [matMenuTriggerFor]="selectGaitIdMenu">Gait ID</button>
+    <button mat-menu-item [matMenuTriggerFor]="selectFallDetectionMenu">Fall Detection</button>
     <button mat-menu-item [matMenuTriggerFor]="setWindowsLayoutMenu">Set Windows Layout</button>
 </mat-menu>
 
@@ -33,6 +34,10 @@
 
 <mat-menu #selectGaitIdMenu="matMenu">
     <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setGaitIdWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
+</mat-menu>
+
+<mat-menu #selectFallDetectionMenu="matMenu">
+    <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setFallDetectionWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
 </mat-menu>
 
 <mat-menu #selectCameraMenu="matMenu">
