@@ -18,15 +18,19 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     public IServiceContext.ServiceState State { get; set; }
 
     private const int MAX_QUEUE_CAPACITY = 20;
+    
+    private const int POINTS_COUNT_PER_FRAME = 128;
+    private const int MIN_POINTS_FOR_VALID_FRAME = 7;
+    private const int MAX_INVALID_FRAMES = 10;
 
-    private TracksWindowBuilder tracksWindowBuilder;
+    private GaitIdWindowBuilder windowBuilder;
     private GateIdPredictions predictions;
     private string modelName;
     
     public GateIdContext(Radar radar, string modelName, int requiredWindowSize, int windowShiftSize, int minRequiredHitCount, int majorityWindowSize) : base("GateIdContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
-        tracksWindowBuilder = new TracksWindowBuilder(requiredWindowSize, windowShiftSize);
+        windowBuilder = new GaitIdWindowBuilder(requiredWindowSize, windowShiftSize, POINTS_COUNT_PER_FRAME, MIN_POINTS_FOR_VALID_FRAME, MAX_INVALID_FRAMES);
         predictions = new GateIdPredictions(radar.RadarWebSocket, minRequiredHitCount, majorityWindowSize);
         this.modelName = modelName;
     }
@@ -54,9 +58,9 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     {
         predictions.RemoveLostTracks(frame);
 
-        tracksWindowBuilder.AddFrame(frame);
+        windowBuilder.AddFrame(frame);
 
-        Dictionary<byte, GateIdRequest> readyWindows = tracksWindowBuilder.PullReadyWindows();
+        Dictionary<byte, GateIdRequest> readyWindows = windowBuilder.PullReadyWindows();
 
         try
         {

@@ -15,6 +15,11 @@ export interface GateIdPrediction {
   identity: string
 }
 
+export interface SmartFanGesturesPrediction {
+  track_id: number
+  gesture: string
+}
+
 export interface FallDetectionData {
   track_id: number
   fall_detected: boolean
@@ -27,6 +32,7 @@ export class RadarWebsocketService {
   private socket : WebSocket  
   private frameDataSubject: Subject<FrameData>;
   private gateIdPredictionsSubject: Subject<GateIdPrediction[]>;
+  private fanGesturesPredictionsSubject: Subject<SmartFanGesturesPrediction[]>;
   private fallDetectionSubject: Subject<FallDetectionData[]>;
   
   constructor() 
@@ -58,6 +64,7 @@ export class RadarWebsocketService {
 
     this.frameDataSubject = new Subject<FrameData>();
     this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    this.fanGesturesPredictionsSubject = new Subject<SmartFanGesturesPrediction[]>();
     this.fallDetectionSubject = new Subject<FallDetectionData[]>();
     
     this.socket.onmessage = (event) => {
@@ -71,6 +78,10 @@ export class RadarWebsocketService {
       else if (message['type'] == 'GATE_ID_PREDICTIONS')
       {
         this.gateIdPredictionsSubject.next(message['data'])
+      }
+      else if (message['type'] == 'SMART_FAN_GESTURES_PREDICTIONS')
+      {
+        this.fanGesturesPredictionsSubject.next(message['data'])
       }
       else if (message['type'] == 'FALL_DETECTION')
       {
@@ -103,6 +114,11 @@ export class RadarWebsocketService {
   public GetGateIdPredictions()
   {
     return this.gateIdPredictionsSubject;
+  }
+
+  public GetFanGesturesPredictions()
+  {
+    return this.fanGesturesPredictionsSubject;
   }
 
   public GetFallDetectionData() 

@@ -19,7 +19,7 @@ public class PeopleTracking : ITrackingApplication
     public const int TRACK_OBJECT_TLV_SIZE = 112;
     public const int POINT_CLOUD_UNIT_SIZE = 20;
     public const int POINT_CLOUD_INFO_SIZE = 8;
-    public const int TARGET_HEIGHT_INFO_SIZE = 9;
+    public const int TARGET_HEIGHT_INFO_SIZE = 12;
 
     public const int TLV_TYPE_POINT_CLOUD = 1020;
     public const int TLV_TYPE_TRACKS_LIST = 1010;
@@ -236,7 +236,7 @@ public class PeopleTracking : ITrackingApplication
                     target.maxZ = reader.ReadSingle();
                     target.minZ = reader.ReadSingle();
                     frameData.targetsHeightList.Add(target);
-
+                    
                     // Console.WriteLine($"Target Height: Track-{target.targetId}, Max-Z: {target.maxZ:0.00}, Min-Z: {target.minZ:0.00}");
                 }
             }

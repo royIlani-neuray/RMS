@@ -1,0 +1,10 @@
+{
+    "name": "smart_fan_gestures_v1",
+    "type": "SmartFanGestures",
+    "description": "Smart Fan Gestures model",
+    "registered_at": "2022-12-06T08:41:47.656858Z",
+    "settings": {
+        "FRAMES_PER_WINDOW" : "32"
+    },
+    "labels": ["clockwise", "knocking", "left_right", "negative", "right_left"]
+}

@@ -107,12 +107,14 @@ public class IPRadarClient
         {
             if (controlStream != null)
             {
+                // Console.WriteLine($"Debug: Disconnnect - Closing control stream...");
                 controlStream.Close();
                 controlStream = null;
             }
             
             if (dataStream != null)
             {
+                // Console.WriteLine($"Debug: Disconnnect - Closing data stream...");
                 dataStream.Close();
                 dataStream = null;
             }
@@ -194,11 +196,20 @@ public class IPRadarClient
         int bytesRead = 0;
         var stream = dataStream!.GetStream();
 
-        while (bytesRead < size)
+        try
         {
-            bytesRead += stream.Read(dataArray, bytesRead, size - bytesRead);
-            //System.Console.WriteLine($"Debug: Read {bytesRead} out of {size}");
+            while (bytesRead < size)
+            {
+                bytesRead += stream.Read(dataArray, bytesRead, size - bytesRead);
+                //System.Console.WriteLine($"Debug: Read {bytesRead} out of {size}");
+            }
         }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Debug: ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}"); 
+            throw;
+        }
+
 
         return bytesRead;
     }
