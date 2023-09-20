@@ -40,7 +40,7 @@ public class PredictAction : IAction
 
     public void Run()
     {
-        System.Console.WriteLine($"***** Prediction : {modelName} ******");
+        System.Console.WriteLine($"\n***** Prediction : {modelName} [{DateTime.Now}] *****");
         DateTime start = DateTime.Now;
         var modelEntity = ModelsContext.Instance.GetModel(modelName);
         var model = ModelFactory.GetModelImplementation(modelEntity);

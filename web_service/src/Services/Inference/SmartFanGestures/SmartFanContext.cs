@@ -18,13 +18,20 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
     public IServiceContext.ServiceState State { get; set; }
 
     private const int MAX_QUEUE_CAPACITY = 20;
+    
+    private const int POINTS_COUNT_PER_FRAME = 32;
+    private const int MIN_POINTS_FOR_VALID_FRAME = 10;
+    private const int MAX_INVALID_FRAMES = 5;
 
+    private SmartFanWindowBuilder windowBuilder;
+    private SmartFanGesturesPredictions predictions;
     private string modelName;
     
-    public SmartFanContext(Radar radar, string modelName) : base("SmartFanContext", MAX_QUEUE_CAPACITY)
+    public SmartFanContext(Radar radar, string modelName, int requiredWindowSize, int windowShiftSize, int minRequiredHitCount, int majorityWindowSize) : base("SmartFanContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
-
+        windowBuilder = new SmartFanWindowBuilder(requiredWindowSize, windowShiftSize, POINTS_COUNT_PER_FRAME, MIN_POINTS_FOR_VALID_FRAME, MAX_INVALID_FRAMES);
+        predictions = new SmartFanGesturesPredictions(radar.RadarWebSocket, minRequiredHitCount, majorityWindowSize);
         this.modelName = modelName;
     }
 
@@ -33,8 +40,39 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
         Enqueue(frameData);
     }
 
+    private async Task RunInference(Dictionary<byte, SmartFanGestureRequest> readyWindows)
+    {
+        foreach (var trackId in readyWindows.Keys)
+        {
+            SmartFanGestureRequest predictRequest = readyWindows[trackId];
+            string requestJsonString = JsonSerializer.Serialize(predictRequest);
+            string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
+            SmartFanGestureResponse response = JsonSerializer.Deserialize<SmartFanGestureResponse>(responseJsonString)!;
+            //System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
+
+            predictions.UpdateTrackPrediction(trackId, response.Label, response.Confidence);   
+        }
+    }
+
     protected override async Task DoWork(FrameData frame)
     {
-        await Task.CompletedTask;
+        predictions.RemoveLostTracks(frame);
+
+        windowBuilder.AddFrame(frame);
+
+        Dictionary<byte, SmartFanGestureRequest> readyWindows = windowBuilder.PullReadyWindows();
+
+        try
+        {
+            await RunInference(readyWindows);
+        }
+        catch (Exception ex)
+        {
+            State = IServiceContext.ServiceState.Error;
+            System.Console.WriteLine("Error: failed running SmartFanGesture inference: " + ex.Message);
+            return;
+        }
+
+        predictions.PublishPredictions();
     }
 }

@@ -57,7 +57,19 @@ public class RadarWebSocketServer : WebSocketServer
 
         gateIdRateLimiter.Run(() => Enqueue(message));
     }
-    
+
+    public void SendSmartFanGesturesPredictions(Object predictions)
+    {
+        var message = new WebSocketMessage() 
+        {
+            MessageType = "SMART_FAN_GESTURES_PREDICTIONS",
+            MessageData = predictions
+        };
+
+        gateIdRateLimiter.Run(() => Enqueue(message));
+    }
+
+
     public void SendFallDetectionData(Object fallData)
     {
         var message = new WebSocketMessage() 

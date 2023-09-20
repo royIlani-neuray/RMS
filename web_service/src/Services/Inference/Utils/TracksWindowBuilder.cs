@@ -8,39 +8,42 @@
 ***/
 using WebService.RadarLogic.Tracking;
 
-namespace WebService.Services.Inference.GateId;
+namespace WebService.Services.Inference.Utils;
 
 
 /// <summary>
 ///     The TracksWindowBuilder class is used to build a collection of track windows from a series of radar frames.
 ///     Each track window consists of a list of frame points belonging to a specific track.
-///     When a track window contains points from enough frames, it can be used for creating a Gate Id request.
+///     When a track window contains points from enough frames, it can be used for creating an inference request.
 /// </summary>
 public class TracksWindowBuilder 
 {
-    private const byte MAX_TRACK_ID_NUMBER = 252;
-    private const int MIN_TARCK_POINTS_IN_VALID_FRAME = 7;
-    private const int MAX_INVALID_FRAMES = 10;
-    private const int REQUIRED_POINTS_PER_FRAME = 128;
+    protected const byte MAX_TRACK_ID_NUMBER = 252;
 
-    private class TrackWindow 
+    protected class TrackWindow 
     {
         public Stack<List<FrameData.Point>> windowPoints = new Stack<List<FrameData.Point>>();
         public int invalidFramesCount;
     }
 
-    private Dictionary<byte, TrackWindow> tracksWindows;
+    protected Dictionary<byte, TrackWindow> tracksWindows;
+    protected int requiredWindowSize;           // number of frames needed in order to form a window (inference sample)
+    protected int numPointsPerFrame;            // the number of points in each frame            
+    protected int minRequiredPointsInFrame;     // minimum points in frame to be considered valid (will be padded to 'numPointsPerFrame')
+    protected int windowShiftSize;              // number of frames to shift (drop) when building the next window
+    protected int maxInvalidFramesInWindow;     // maximum invalid frames that are allowed in a valid window 
+
     private FrameData? lastFrame;
 
-    private int requiredWindowSize;
-    private int windowShiftSize;
-
-    public TracksWindowBuilder(int requiredWindowSize, int windowShiftSize)
+    public TracksWindowBuilder(int requiredWindowSize, int windowShiftSize, int numPointsPerFrame, int minRequiredPointsInFrame, int maxInvalidFramesInWindow)
     {
         tracksWindows = new Dictionary<byte, TrackWindow>(); // Key: track Id , Value: window data
         lastFrame = null;
         this.requiredWindowSize = requiredWindowSize;
         this.windowShiftSize = windowShiftSize;
+        this.numPointsPerFrame = numPointsPerFrame;
+        this.minRequiredPointsInFrame = minRequiredPointsInFrame;
+        this.maxInvalidFramesInWindow = maxInvalidFramesInWindow;
 
         if (windowShiftSize > requiredWindowSize)
             throw new Exception("Error: window shift size cannot exceed the actual window size");
@@ -66,7 +69,7 @@ public class TracksWindowBuilder
             var window = tracksWindows[trackId];
             var lastFramePoints = window.windowPoints.Peek();
 
-            if (lastFramePoints.Count < MIN_TARCK_POINTS_IN_VALID_FRAME)
+            if (lastFramePoints.Count < minRequiredPointsInFrame)
             {
                 // this frame is invalid (not enough points for this track)
                 window.windowPoints.Pop();
@@ -75,7 +78,7 @@ public class TracksWindowBuilder
                 {
                     window.invalidFramesCount++;
 
-                    if (window.invalidFramesCount > MAX_INVALID_FRAMES)
+                    if (window.invalidFramesCount > maxInvalidFramesInWindow)
                     {
                         // mark for delete
                         windowsToRemove.Add(trackId);
@@ -139,79 +142,17 @@ public class TracksWindowBuilder
         lastFrame = frame;
     }
 
-    private void PadFramePointsList(List<FrameData.Point> framePoints)
+    protected void PadFramePointsList(List<FrameData.Point> framePoints)
     {
         // duplicate the existing points until there are enough points in the list
 
-        while (framePoints.Count < REQUIRED_POINTS_PER_FRAME)
+        while (framePoints.Count < numPointsPerFrame)
         {
             framePoints.AddRange(framePoints);
         }
 
-        framePoints.RemoveRange(REQUIRED_POINTS_PER_FRAME, framePoints.Count - REQUIRED_POINTS_PER_FRAME);
+        framePoints.RemoveRange(numPointsPerFrame, framePoints.Count - numPointsPerFrame);
     }
 
-    private GateIdRequest CreateGateIdRequest(byte trackId)
-    {
-        GateIdRequest request = new GateIdRequest();
 
-        var framesList = tracksWindows[trackId].windowPoints.ToList();
-        framesList.Reverse();
-
-        foreach (var framePoints in framesList)
-        {
-            GateIdRequest.GateIdFrameInput frameInput = new GateIdRequest.GateIdFrameInput();
-
-            if (framePoints.Count > REQUIRED_POINTS_PER_FRAME)
-            {
-                framePoints.RemoveRange(REQUIRED_POINTS_PER_FRAME, framePoints.Count - REQUIRED_POINTS_PER_FRAME);
-            }
-            else if (framePoints.Count < REQUIRED_POINTS_PER_FRAME)
-            {
-                PadFramePointsList(framePoints);
-            }
-
-            foreach (var point in framePoints)
-            {
-                frameInput.xAxis.Add(point.PositionX);
-                frameInput.yAxis.Add(point.PositionY);
-                frameInput.zAxis.Add(point.PositionZ);
-                frameInput.Velocity.Add(point.Doppler);
-                frameInput.Intensity.Add(point.SNR);
-            }
-
-            request.Frames.Add(frameInput);
-        }
-
-        return request;
-    }
-
-    public Dictionary<byte, GateIdRequest> PullReadyWindows()
-    {
-        Dictionary<byte, GateIdRequest> readyWindows = new Dictionary<byte, GateIdRequest>();
-
-        foreach (var trackId in tracksWindows.Keys)
-        {
-            if (tracksWindows[trackId].windowPoints.Count == requiredWindowSize)
-            {
-                // track window is ready, convert it to a Gate Id request format
-                
-                readyWindows.Add(trackId, CreateGateIdRequest(trackId));
-                
-                // we want to reuse some of the window frames for the next inference, so instead of clearing it we
-                // only remove the first 'windowShiftSize' frames.
-                
-                Stack<List<FrameData.Point>> reversedStack = new Stack<List<FrameData.Point>>(tracksWindows[trackId].windowPoints);
-
-                for (int i=0; i < windowShiftSize; i++)
-                {
-                    reversedStack.Pop();
-                }
-
-                tracksWindows[trackId].windowPoints = new Stack<List<FrameData.Point>>(reversedStack);
-            }
-        }
-
-        return readyWindows;
-    }
 }

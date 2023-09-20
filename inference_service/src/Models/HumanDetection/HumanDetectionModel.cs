@@ -111,7 +111,7 @@ public class HumanDetectionModel : IModelImplementation
             isPerson = true;
         }
 
-        System.Console.WriteLine($"Person Detected: {isPerson}. Confidence: {outTensor.ToArray()[0]}");
+        System.Console.WriteLine($"Person Detected: {isPerson}. Confidence: {outTensor.ToArray()[0]:0.00}");
 
         GateIdResponse response = new GateIdResponse() 
         {

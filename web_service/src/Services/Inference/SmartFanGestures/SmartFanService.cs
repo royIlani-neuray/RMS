@@ -15,8 +15,17 @@ namespace WebService.Services.Inference.SmartFanGestures;
 public class SmartFanService : IExtensionService
 {
     private const string SERVICE_ID = "SMART_FAN_GESTURES";
+    
+    private const int REQUIRED_WINDOW_SIZE = 32;    // amount of frames required for inference
+    private const int GESTURE_WINDOW_SHIFT_SIZE = 6;   // amount of frames to remove from the window after inference.
+
+    private const int MAJORITY_PREDICTOR_MIN_REQUIRED_HITS = 3;
+    private const int MAJORITY_PREDICTOR_WINDOW_SIZE = 10;
 
     private const string SERVICE_OPTION_MODEL_NAME = "smart_fan_model";
+    private const string SERVICE_OPTION_MAJORITY_WINDOW_SIZE = "majority_window_size";
+    private const string SERVICE_OPTION_MAJORITY_MIN_HITS = "majority_required_hits";
+    private const string SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE = "gait_window_shift_size";
 
     public string ServiceId => SERVICE_ID;
 
@@ -24,8 +33,20 @@ public class SmartFanService : IExtensionService
 
     public ExtensionServiceSettings? Settings { get; set; }
 
-    private void GetServiceSettings(Dictionary<string, string> serviceOptions, out string modelName)
+    private void GetServiceSettings(Dictionary<string, string> serviceOptions, out string modelName, out int gestureWindowShitSize, out int minRequiredHitCount, out int majorityWindowSize)
     {
+        majorityWindowSize = MAJORITY_PREDICTOR_WINDOW_SIZE;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_MAJORITY_WINDOW_SIZE))
+            majorityWindowSize = int.Parse(serviceOptions[SERVICE_OPTION_MAJORITY_WINDOW_SIZE]);
+
+        minRequiredHitCount = MAJORITY_PREDICTOR_MIN_REQUIRED_HITS;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_MAJORITY_MIN_HITS))
+            minRequiredHitCount = int.Parse(serviceOptions[SERVICE_OPTION_MAJORITY_MIN_HITS]);
+
+        gestureWindowShitSize = GESTURE_WINDOW_SHIFT_SIZE;
+        if (serviceOptions.ContainsKey(SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE))
+            gestureWindowShitSize = int.Parse(serviceOptions[SERVICE_OPTION_GATE_WINDOW_SHIFT_SIZE]);
+
         if (!serviceOptions.ContainsKey(SERVICE_OPTION_MODEL_NAME))
             throw new BadRequestException($"Missing required service option: {SERVICE_OPTION_MODEL_NAME}");
         
@@ -38,9 +59,9 @@ public class SmartFanService : IExtensionService
             throw new Exception("Unsupported device passed to service.");
 
         Radar radar = (Radar) device;
-        GetServiceSettings(serviceOptions, out string modelName);
+        GetServiceSettings(serviceOptions, out string modelName, out int gestureWindowShitSize, out int minRequiredHitCount, out int majorityWindowSize);
         
-        SmartFanContext smartFanContext = new SmartFanContext(radar, modelName);
+        SmartFanContext smartFanContext = new SmartFanContext(radar, modelName, REQUIRED_WINDOW_SIZE, gestureWindowShitSize, minRequiredHitCount, majorityWindowSize);
         smartFanContext.StartWorker();
         smartFanContext.State = IServiceContext.ServiceState.Active;
         return smartFanContext;

@@ -72,6 +72,7 @@ import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { RegisterCameraDialogComponent } from './pages/cameras-page/components/register-camera-dialog/register-camera-dialog.component';
 import { GaitIdWindowComponent } from './pages/tracks-viewer-page/components/gait-id-window/gait-id-window.component';
 import { FallDetectionWindowComponent } from './pages/tracks-viewer-page/components/fall-detection-window/fall-detection-window.component';
+import { FanGesturesWindowComponent } from './pages/tracks-viewer-page/components/fan-gestures-window/fan-gestures-window.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import { FallDetectionWindowComponent } from './pages/tracks-viewer-page/compone
     CameraPageComponent,
     RegisterCameraDialogComponent,
     GaitIdWindowComponent,
-    FallDetectionWindowComponent
+    FallDetectionWindowComponent,
+    FanGesturesWindowComponent
   ],
   imports: [
     BrowserModule,

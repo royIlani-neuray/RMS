@@ -114,7 +114,7 @@ public class GateIdModel : IModelImplementation
 
         for (int lableIndex=0; lableIndex < softmax.Length; lableIndex++)
         {
-            System.Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]}");
+            Console.WriteLine($"{this.model.Labels[lableIndex]} - {softmax[lableIndex]:0.00}");
 
             if (confidence < softmax[lableIndex])
             {
@@ -123,7 +123,7 @@ public class GateIdModel : IModelImplementation
             }
         }
 
-        System.Console.WriteLine($"Selected label: {label}");
+        Console.WriteLine($"Selected label ==> ** {label} **");
 
         GateIdResponse response = new GateIdResponse() 
         {
