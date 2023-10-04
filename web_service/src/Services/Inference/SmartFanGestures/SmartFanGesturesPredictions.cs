@@ -16,7 +16,11 @@ namespace WebService.Services.Inference.SmartFanGestures;
 public class SmartFanGesturesPredictions 
 {
     public const string InvalidPrediction = "No Gesture";
+    public const string NegativePrediction = "negative";
+
     public const float DEFAULT_CONFIDENCE_THRESHOLD = 0.50F;
+
+    public const float COOLDOWN_BETWEEN_GESTURES_SECONDS = 2F;
 
     private class Prediction
     {
@@ -26,12 +30,17 @@ public class SmartFanGesturesPredictions
         [JsonPropertyName("gesture")]
         public String Gesture {get; set;}
 
+        [JsonPropertyName("prediction_time")]
+        public DateTime PredictionTime {get; set;}
+
         public MajorityPerdictor majorityPerdictor;
+
+        public bool IsPublished = false;
 
         public Prediction(uint trackId, int minRequiredHitCount, int majorityWindowSize)
         {
             TrackId = trackId;
-            Gesture = String.Empty;
+            Gesture = InvalidPrediction;
             majorityPerdictor = new MajorityPerdictor(minRequiredHitCount, majorityWindowSize, SmartFanGesturesPredictions.InvalidPrediction);
         }
     }
@@ -80,11 +89,51 @@ public class SmartFanGesturesPredictions
         }
 
         predictions[trackId].majorityPerdictor.UpdatePrediction(identity);
-        predictions[trackId].Gesture = predictions[trackId].majorityPerdictor.GetPrediction();
+
+        var prediction = predictions[trackId].majorityPerdictor.GetPrediction();
+        
+        if (prediction != InvalidPrediction)
+        {
+            if (predictions[trackId].Gesture == InvalidPrediction)
+            {
+                // new gesture detected
+                predictions[trackId].Gesture = prediction;
+                predictions[trackId].PredictionTime = DateTime.UtcNow;
+            }
+        }
+
+        //predictions[trackId].Gesture = predictions[trackId].majorityPerdictor.GetPrediction();
+    }
+
+    private void UpdateGestureCooldowns()
+    {
+        foreach (var trackId in predictions.Keys)
+        {
+            if ((predictions[trackId].Gesture != InvalidPrediction) && 
+                (predictions[trackId].PredictionTime.AddSeconds(COOLDOWN_BETWEEN_GESTURES_SECONDS) < DateTime.UtcNow))
+            {
+                predictions[trackId] = new Prediction(trackId, minRequiredHitCount, majorityWindowSize);
+                //predictions[trackId].Gesture = InvalidPrediction; // another option that consider inference during the perdiction hold-off...
+            }
+        }
     }
 
     public void PublishPredictions()
     {
-        deviceWebSocketsServer.SendSmartFanGesturesPredictions(predictions.Values.ToList());
+        var predictionsToPublish = predictions.Values.Where(prediction => (prediction.Gesture != InvalidPrediction) && 
+                                                                          (prediction.Gesture != NegativePrediction) &&
+                                                                          (prediction.IsPublished == false)).ToList();
+
+        if (predictionsToPublish.Count > 0)
+        {
+            deviceWebSocketsServer.SendSmartFanGesturesPredictions(predictionsToPublish);
+        }
+
+        foreach (var prediction in predictionsToPublish)
+        {
+            prediction.IsPublished = true;  
+        }
+
+        UpdateGestureCooldowns();
     }
 }

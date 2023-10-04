@@ -31,7 +31,7 @@ public class TracksWindowBuilder
     protected int numPointsPerFrame;            // the number of points in each frame            
     protected int minRequiredPointsInFrame;     // minimum points in frame to be considered valid (will be padded to 'numPointsPerFrame')
     protected int windowShiftSize;              // number of frames to shift (drop) when building the next window
-    protected int maxInvalidFramesInWindow;     // maximum invalid frames that are allowed in a valid window 
+    protected int maxInvalidFramesInWindow;     // maximum invalid consecutive frames that are allowed in a valid window 
 
     private FrameData? lastFrame;
 
@@ -88,6 +88,11 @@ public class TracksWindowBuilder
                     // in case of a bad frame we duplicate the last frame point list
                     window.windowPoints.Push(lastFramePoints);
                 }
+            }
+            else
+            {
+                // since this is a good frame, reset the invalid frames count
+                window.invalidFramesCount = 0;
             }
         }
 
