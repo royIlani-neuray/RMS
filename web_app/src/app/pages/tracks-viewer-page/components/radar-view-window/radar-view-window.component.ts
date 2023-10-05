@@ -63,6 +63,11 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
 
   ngOnDestroy(): void 
   {
+    if (this.deviceWebsocketService.IsConnected())
+    {
+      this.deviceWebsocketService.Disconnect()
+    }
+
     this.threeJsView.dispose()
 
     if (this.windowRefreshInterval != null)
@@ -112,18 +117,6 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
 
   setRadar(radarId : string)
   {
-    if (this.frameDataSubscription != null)
-    {
-      this.frameDataSubscription.unsubscribe()
-      this.frameDataSubscription = null
-    }
-
-    if (this.predictionsSubscription != null)
-    {
-      this.predictionsSubscription.unsubscribe()
-      this.predictionsSubscription = null
-    }
-
     // request the radar device info based on the given device id
     this.radarsService.getRadar(radarId).subscribe({
       next : (radar) => {
@@ -131,7 +124,22 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
         
         this.threeJsView.initScene(this.radar)
 
-        this.deviceWebsocketService.Connect(radarId)
+        if (!this.deviceWebsocketService.IsConnected())
+        {
+          this.deviceWebsocketService.Connect(radarId)
+        }
+        
+        if (this.frameDataSubscription != null)
+        {
+          this.frameDataSubscription.unsubscribe()
+          this.frameDataSubscription = null
+        }
+    
+        if (this.predictionsSubscription != null)
+        {
+          this.predictionsSubscription.unsubscribe()
+          this.predictionsSubscription = null
+        }
 
         // we have the radar info, now subscribe for tracks streaming
         this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
