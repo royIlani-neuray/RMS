@@ -22,6 +22,9 @@ public class SmartFanGesturesPredictions
 
     public const float COOLDOWN_BETWEEN_GESTURES_SECONDS = 2F;
 
+    public DateTime LastPredictionTime;
+
+
     private class Prediction
     {
         [JsonPropertyName("track_id")]
@@ -34,8 +37,6 @@ public class SmartFanGesturesPredictions
         public DateTime PredictionTime {get; set;}
 
         public MajorityPerdictor majorityPerdictor;
-
-        public bool IsPublished = false;
 
         public Prediction(uint trackId, int minRequiredHitCount, int majorityWindowSize)
         {
@@ -60,6 +61,7 @@ public class SmartFanGesturesPredictions
         this.minRequiredHitCount = minRequiredHitCount;
         this.majorityWindowSize = majorityWindowSize;
         ConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
+        LastPredictionTime = DateTime.UtcNow;
     }
 
     public void RemoveLostTracks(FrameData frame)
@@ -80,8 +82,15 @@ public class SmartFanGesturesPredictions
 
     public void UpdateTrackPrediction(byte trackId, string identity, float confidence)
     {
+        // ignore predictions that dosn't 
         if (confidence < ConfidenceThreshold)
             return;
+
+        if (PredictionsInCooldown())
+        {
+            // avoid updating majority queues while in cooldown
+            return;
+        }
 
         if (!predictions.ContainsKey(trackId))
         {
@@ -93,7 +102,7 @@ public class SmartFanGesturesPredictions
         var prediction = predictions[trackId].majorityPerdictor.GetPrediction();
         
         if (prediction != InvalidPrediction)
-        {
+        {   
             if (predictions[trackId].Gesture == InvalidPrediction)
             {
                 // new gesture detected
@@ -105,35 +114,34 @@ public class SmartFanGesturesPredictions
         //predictions[trackId].Gesture = predictions[trackId].majorityPerdictor.GetPrediction();
     }
 
-    private void UpdateGestureCooldowns()
+    private bool PredictionsInCooldown()
     {
-        foreach (var trackId in predictions.Keys)
-        {
-            if ((predictions[trackId].Gesture != InvalidPrediction) && 
-                (predictions[trackId].PredictionTime.AddSeconds(COOLDOWN_BETWEEN_GESTURES_SECONDS) < DateTime.UtcNow))
-            {
-                predictions[trackId] = new Prediction(trackId, minRequiredHitCount, majorityWindowSize);
-                //predictions[trackId].Gesture = InvalidPrediction; // another option that consider inference during the perdiction hold-off...
-            }
-        }
+        return LastPredictionTime.AddSeconds(COOLDOWN_BETWEEN_GESTURES_SECONDS) > DateTime.UtcNow;
     }
 
     public void PublishPredictions()
     {
+        if (PredictionsInCooldown())
+        {
+            // we are in cooldown don't publish prediction
+            return;
+        }
+
         var predictionsToPublish = predictions.Values.Where(prediction => (prediction.Gesture != InvalidPrediction) && 
-                                                                          (prediction.Gesture != NegativePrediction) &&
-                                                                          (prediction.IsPublished == false)).ToList();
+                                                                          (prediction.Gesture != NegativePrediction)).ToList();
 
         if (predictionsToPublish.Count > 0)
         {
+            LastPredictionTime = DateTime.UtcNow;
             deviceWebSocketsServer.SendSmartFanGesturesPredictions(predictionsToPublish);
         }
 
-        foreach (var prediction in predictionsToPublish)
+        foreach (var trackId in predictions.Keys)
         {
-            prediction.IsPublished = true;  
+            if (predictions[trackId].Gesture != InvalidPrediction)
+            {
+                predictions[trackId] = new Prediction(trackId, minRequiredHitCount, majorityWindowSize);
+            }
         }
-
-        UpdateGestureCooldowns();
     }
 }
