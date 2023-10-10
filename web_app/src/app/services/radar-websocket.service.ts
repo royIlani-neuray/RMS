@@ -38,6 +38,11 @@ export class RadarWebsocketService {
   constructor() 
   { 
     this.connected = false
+
+    this.frameDataSubject = new Subject<FrameData>();
+    this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
+    this.fanGesturesPredictionsSubject = new Subject<SmartFanGesturesPrediction[]>();
+    this.fallDetectionSubject = new Subject<FallDetectionData[]>();
   }
 
   public Connect(radarId : string)
@@ -50,23 +55,20 @@ export class RadarWebsocketService {
     console.log(`connecting to radar device: ${radarId}`)
     this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/radars/" + radarId);
     
-    this.socket.onopen = function (event) {
+    this.socket.onopen = (event) => {
       console.log('Radar Websocket connection state: [Open]')
+      this.connected = true
     }
 
     this.socket.onerror = function (event) {
       console.log('Radar Websocket connection state: [Error]')
     }
 
-    this.socket.onclose = function (event) {
+    this.socket.onclose = (event) => {
       console.log('Radar Websocket connection state: [Closed]')
+      this.Disconnect()
     };
 
-    this.frameDataSubject = new Subject<FrameData>();
-    this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
-    this.fanGesturesPredictionsSubject = new Subject<SmartFanGesturesPrediction[]>();
-    this.fallDetectionSubject = new Subject<FallDetectionData[]>();
-    
     this.socket.onmessage = (event) => {
       //console.log('Websockets Message -' + event.data)
       let message = JSON.parse(event.data)
@@ -88,8 +90,6 @@ export class RadarWebsocketService {
         this.fallDetectionSubject.next(message['data'])
       }
     }
-
-    this.connected = true
   }
 
   public Disconnect()
@@ -104,6 +104,11 @@ export class RadarWebsocketService {
     }
 
     this.connected = false
+  }
+
+  public IsConnected()
+  {
+    return this.connected
   }
 
   public GetFrameData() 

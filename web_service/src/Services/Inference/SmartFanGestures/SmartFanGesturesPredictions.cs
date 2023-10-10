@@ -16,7 +16,14 @@ namespace WebService.Services.Inference.SmartFanGestures;
 public class SmartFanGesturesPredictions 
 {
     public const string InvalidPrediction = "No Gesture";
+    public const string NegativePrediction = "negative";
+
     public const float DEFAULT_CONFIDENCE_THRESHOLD = 0.50F;
+
+    public const float COOLDOWN_BETWEEN_GESTURES_SECONDS = 2F;
+
+    public DateTime LastPredictionTime;
+
 
     private class Prediction
     {
@@ -26,12 +33,15 @@ public class SmartFanGesturesPredictions
         [JsonPropertyName("gesture")]
         public String Gesture {get; set;}
 
+        [JsonPropertyName("prediction_time")]
+        public DateTime PredictionTime {get; set;}
+
         public MajorityPerdictor majorityPerdictor;
 
         public Prediction(uint trackId, int minRequiredHitCount, int majorityWindowSize)
         {
             TrackId = trackId;
-            Gesture = String.Empty;
+            Gesture = InvalidPrediction;
             majorityPerdictor = new MajorityPerdictor(minRequiredHitCount, majorityWindowSize, SmartFanGesturesPredictions.InvalidPrediction);
         }
     }
@@ -51,6 +61,7 @@ public class SmartFanGesturesPredictions
         this.minRequiredHitCount = minRequiredHitCount;
         this.majorityWindowSize = majorityWindowSize;
         ConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
+        LastPredictionTime = DateTime.UtcNow;
     }
 
     public void RemoveLostTracks(FrameData frame)
@@ -71,8 +82,15 @@ public class SmartFanGesturesPredictions
 
     public void UpdateTrackPrediction(byte trackId, string identity, float confidence)
     {
+        // ignore predictions that dosn't 
         if (confidence < ConfidenceThreshold)
             return;
+
+        if (PredictionsInCooldown())
+        {
+            // avoid updating majority queues while in cooldown
+            return;
+        }
 
         if (!predictions.ContainsKey(trackId))
         {
@@ -80,11 +98,50 @@ public class SmartFanGesturesPredictions
         }
 
         predictions[trackId].majorityPerdictor.UpdatePrediction(identity);
-        predictions[trackId].Gesture = predictions[trackId].majorityPerdictor.GetPrediction();
+
+        var prediction = predictions[trackId].majorityPerdictor.GetPrediction();
+        
+        if (prediction != InvalidPrediction)
+        {   
+            if (predictions[trackId].Gesture == InvalidPrediction)
+            {
+                // new gesture detected
+                predictions[trackId].Gesture = prediction;
+                predictions[trackId].PredictionTime = DateTime.UtcNow;
+            }
+        }
+
+        //predictions[trackId].Gesture = predictions[trackId].majorityPerdictor.GetPrediction();
+    }
+
+    private bool PredictionsInCooldown()
+    {
+        return LastPredictionTime.AddSeconds(COOLDOWN_BETWEEN_GESTURES_SECONDS) > DateTime.UtcNow;
     }
 
     public void PublishPredictions()
     {
-        deviceWebSocketsServer.SendSmartFanGesturesPredictions(predictions.Values.ToList());
+        if (PredictionsInCooldown())
+        {
+            // we are in cooldown don't publish prediction
+            return;
+        }
+
+        var predictionsToPublish = predictions.Values.Where(prediction => (prediction.Gesture != InvalidPrediction) && 
+                                                                          (prediction.Gesture != NegativePrediction)).ToList();
+
+        if (predictionsToPublish.Count > 0)
+        {
+            LastPredictionTime = DateTime.UtcNow;
+            deviceWebSocketsServer.SendSmartFanGesturesPredictions(predictionsToPublish);
+        }
+
+        foreach (var trackId in predictions.Keys)
+        {
+            if (predictions[trackId].Gesture != InvalidPrediction)
+            {
+                predictions[trackId] = new Prediction(trackId, minRequiredHitCount, majorityWindowSize);
+            }
+        }
     }
 }

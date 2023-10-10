@@ -39,6 +39,13 @@ public class SmartFanModel : IModelImplementation
         return PredictSmartFanGesture(smartFanGestureRequest);
     }
 
+    private void CalcCartesianFromSpherical(float azimuth, float elevation, float range, out float positionX, out float positionY, out float positionZ)
+    {
+        positionX = (float) (range * Math.Sin(azimuth) * Math.Cos(elevation));
+        positionY = (float) (range * Math.Cos(azimuth) * Math.Cos(elevation));
+        positionZ = (float) (range * Math.Sin(elevation));
+    }
+
     private object PredictSmartFanGesture(SmartFanGestureRequest request)
     {
         if (request.Frames.Count != framesPerWindow)
@@ -53,15 +60,40 @@ public class SmartFanModel : IModelImplementation
         {
             var frame = request.Frames[frameIndex];
 
-            if ((frame.xAxis.Count != POINTS_PER_FRAME) || (frame.yAxis.Count != POINTS_PER_FRAME) || (frame.zAxis.Count != POINTS_PER_FRAME) ||
+            if ((frame.Azimuth.Count != POINTS_PER_FRAME) || (frame.Elevation.Count != POINTS_PER_FRAME) || (frame.Range.Count != POINTS_PER_FRAME) ||
                 (frame.Intensity.Count != POINTS_PER_FRAME) || (frame.Velocity.Count != POINTS_PER_FRAME))
             {
                 throw new BadRequestException($"Invalid SmartFanGesture request provided. each frame should contain {POINTS_PER_FRAME} points.");
             }
 
-            float[] xAxis = frame.xAxis.ToArray();
-            float[] yAxis = frame.yAxis.ToArray();
-            float[] zAxis = frame.zAxis.ToArray();
+            List<float> xAxisList = new();
+            List<float> yAxisList = new();
+            List<float> zAxisList = new();
+
+            // need to align Azimuth/Elevation/Range according to their mean and convert to cartesian points            
+            //var averageAzimuth = frame.Azimuth.Average();
+            //var averageElevation = frame.Elevation.Average();
+            //var averageRange = frame.Range.Average();
+
+            // normalization disabled for now
+            var averageAzimuth = 0;
+            var averageElevation = 0;
+            var averageRange = 0;
+
+            for (int pointIndex=0; pointIndex < POINTS_PER_FRAME; pointIndex++)
+            {
+                CalcCartesianFromSpherical(frame.Azimuth[pointIndex] - averageAzimuth, 
+                                           frame.Elevation[pointIndex] - averageElevation, 
+                                           frame.Range[pointIndex] - averageRange, 
+                                           out float positionX, out float positionY, out float positionZ);
+                xAxisList.Add(positionX);
+                yAxisList.Add(positionY);
+                zAxisList.Add(positionZ);
+            }
+
+            float[] xAxis = xAxisList.ToArray();
+            float[] yAxis = yAxisList.ToArray();
+            float[] zAxis = zAxisList.ToArray();
             float[] velocity = frame.Velocity.ToArray();
             float[] intensity = frame.Intensity.ToArray();
 

@@ -6,5 +6,5 @@
     "settings": {
         "FRAMES_PER_WINDOW" : "32"
     },
-    "labels": ["clockwise", "knocking", "left_right", "negative", "right_left"]
+    "labels": ["clockwise", "horizontal", "knocking", "negative", "vertical"]
 }
