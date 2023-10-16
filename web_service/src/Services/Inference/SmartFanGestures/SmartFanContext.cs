@@ -20,7 +20,7 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
     private const int MAX_QUEUE_CAPACITY = 20;
     
     private const int POINTS_COUNT_PER_FRAME = 32;
-    private const int MIN_POINTS_FOR_VALID_FRAME = 10;
+    private const int MIN_POINTS_FOR_VALID_FRAME = 3;
     private const int MAX_INVALID_FRAMES = 5;
 
     private SmartFanWindowBuilder windowBuilder;

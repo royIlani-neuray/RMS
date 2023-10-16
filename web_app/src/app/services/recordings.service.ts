@@ -30,6 +30,11 @@ export class RecordingsService {
 
   constructor(private http:HttpClient) { }
 
+  public getRadarRecording(recordingName : string)
+  {
+    return this.http.get<RecordingInfo>("/api/recordings/" + recordingName)
+  }
+
   public getRadarRecordings()
   {
     return this.http.get<RecordingInfo[]>("/api/recordings")
