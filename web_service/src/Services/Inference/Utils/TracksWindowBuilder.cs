@@ -72,27 +72,19 @@ public class TracksWindowBuilder
             if (lastFramePoints.Count < minRequiredPointsInFrame)
             {
                 // this frame is invalid (not enough points for this track)
-                window.windowPoints.Pop();
+                window.invalidFramesCount++;
 
-                if (window.windowPoints.TryPeek(out lastFramePoints))
+                if (lastFramePoints.Count == 0)
                 {
-                    window.invalidFramesCount++;
-
-                    if (window.invalidFramesCount > maxInvalidFramesInWindow)
-                    {
-                        // mark for delete
-                        windowsToRemove.Add(trackId);
-                        continue;
-                    }
-
-                    // in case of a bad frame we duplicate the last frame point list
-                    window.windowPoints.Push(lastFramePoints);
+                    window.windowPoints.Pop();  // drop empty frames
                 }
-            }
-            else
-            {
-                // since this is a good frame, reset the invalid frames count
-                window.invalidFramesCount = 0;
+
+                if (window.invalidFramesCount > maxInvalidFramesInWindow)
+                {
+                    // mark for delete
+                    windowsToRemove.Add(trackId);
+                    continue;
+                }
             }
         }
 
