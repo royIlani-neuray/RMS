@@ -1,9 +1,9 @@
 <h3>Rename Recording</h3>
 
-<mat-form-field style="width: 100%;" hintLabel="Max 50 characters" appearance="fill">
-    <input matInput #radarNameInput maxlength="50">
-    <mat-hint align="end">{{radarNameInput.value!.length || 0}}/50</mat-hint>
-  </mat-form-field>
+<mat-form-field style="width: 100%;" hintLabel="Max 80 characters" appearance="fill">
+    <input matInput #radarNameInput maxlength="80">
+    <mat-hint align="end">{{radarNameInput.value!.length || 0}}/80</mat-hint>
+</mat-form-field>
 
 <div mat-dialog-actions align="end">
     <button mat-raised-button color="primary" (click)="onSaveClicked()" cdkFocusInitial>Save</button>

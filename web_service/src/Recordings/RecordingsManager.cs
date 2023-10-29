@@ -83,7 +83,7 @@ public class RecordingsManager
         return Path.Combine(GetRecordingPath(recordingName), RecordingMetaFileName);
     }
 
-    private bool IsRecordingExist(string recordingName)
+    public bool IsRecordingExist(string recordingName)
     {
         return File.Exists(GetRecordingMetaFilePath(recordingName));
     }
@@ -183,6 +183,18 @@ public class RecordingsManager
             }
 
             entry.EntrySizeBytes = entrySizeBytes;
+        }
+    }
+
+    public RecordingInfo GetRecording(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            return recording;
         }
     }
 

@@ -212,7 +212,7 @@ public class RadarDeviceMapper
             UpdateRegisteredStatus(deviceInfo);
 
             Console.WriteLine();
-            Console.WriteLine($"Got a broadcast message from: {endpoint}");
+            Console.WriteLine($"Got a broadcast message from: {endpoint} [{DateTime.Now}]");
             Console.WriteLine($"Guid: {guid}");
             Console.WriteLine($"ip: {ip}");
             Console.WriteLine($"subnet: {subnet}");

@@ -7,6 +7,7 @@
 **
 ***/
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatInput } from '@angular/material/input';
 import { MatSelectionList } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -29,6 +30,8 @@ export class DeviceRecorderComponent implements OnInit {
 
   @ViewChild("radarSelectionList") radarSelectionList: MatSelectionList;
   @ViewChild("cameraSelectionList") cameraSelectionList: MatSelectionList;
+
+  @ViewChild(MatInput) recordingNameInput: MatInput;
 
   constructor(private radarsService : RadarsService,
               private camerasService : CamerasService,
@@ -84,16 +87,32 @@ export class DeviceRecorderComponent implements OnInit {
     let selectedRadars : string[] = this.radarSelectionList.selectedOptions.selected.map(item => item.value)
     let selectedCameras : string[] = this.cameraSelectionList.selectedOptions.selected.map(item => item.value)
 
+    let recordingName : string = this.recordingNameInput.value
+
     if (selectedCameras.length + selectedRadars.length == 0)
     {
       this.notification.open("No device selected.", "Close", { duration : 1000 })
       return
     }
 
-    this.recordingsService.startRecording("", selectedRadars, selectedCameras).subscribe(
+    this.recordingsService.startRecording(recordingName, selectedRadars, selectedCameras).subscribe(
     {
       next : () => this.notification.open("Recording started.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
-      error: (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: Start recording failed.", "Close", { duration : 4000 })
+      error: (err) => 
+      {
+        if (err.status == 504)
+        {
+          this.router.navigate(['/no-service'])
+        }
+        else if (err.status == 400)
+        {
+          this.notification.open("Error: recording with the given name already exist.", "Close", { duration : 2500 })
+        }
+        else 
+        {
+          this.notification.open("Error: Start recording failed.", "Close", { duration : 4000 })
+        }
+      }
     })
 
   }

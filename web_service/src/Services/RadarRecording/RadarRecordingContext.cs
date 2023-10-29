@@ -22,7 +22,7 @@ public class RadarRecordingContext : WorkerThread<FrameData>, IServiceContext
     private BinaryWriter binaryWriter;
 
 
-    private const int MAX_QUEUE_CAPACITY = 5;
+    private const int MAX_QUEUE_CAPACITY = 200;
     
     public RadarRecordingContext(string deviceId, string recordingPath, float frameRate) : base("RadarRecordingContext", MAX_QUEUE_CAPACITY)
     {

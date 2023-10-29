@@ -135,6 +135,7 @@ public class RadarTracker
     private void ConfigureRadar()
     {
         radar.SetStatus($"Configuring the device...");
+        Console.WriteLine($"{radar.LogTag} Configuration Time: {DateTime.Now}");
 
         foreach (string tiCommand in radar.ConfigScript)
         {

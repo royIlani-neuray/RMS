@@ -22,6 +22,15 @@ public class RecordingsController : ControllerBase
         return RecordingsManager.Instance.GetRecordings();
     }
 
+    [HttpGet("{recordingName}")]
+    public RecordingInfo GetRecording(string recordingName)
+    {      
+        if (!RecordingsManager.Instance.IsRecordingExist(recordingName))
+            throw new NotFoundException("There is no recording with the provided name");
+
+        return RecordingsManager.Instance.GetRecording(recordingName);
+    }
+
     [HttpPost("start-recording")]
     public void StartRecording([FromBody] StartRecordingArgs args)
     {

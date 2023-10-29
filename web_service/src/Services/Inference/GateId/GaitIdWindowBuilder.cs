@@ -65,15 +65,7 @@ public class GaitIdWindowBuilder : TracksWindowBuilder
                 
                 // we want to reuse some of the window frames for the next inference, so instead of clearing it we
                 // only remove the first 'windowShiftSize' frames.
-                
-                Stack<List<FrameData.Point>> reversedStack = new Stack<List<FrameData.Point>>(tracksWindows[trackId].windowPoints);
-
-                for (int i=0; i < windowShiftSize; i++)
-                {
-                    reversedStack.Pop();
-                }
-
-                tracksWindows[trackId].windowPoints = new Stack<List<FrameData.Point>>(reversedStack);
+                ShiftTrackWindow(trackId);
             }
         }
 

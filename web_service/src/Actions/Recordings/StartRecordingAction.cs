@@ -51,6 +51,11 @@ public class StartRecordingAction : IAction
             recordingName = DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss.fff");
         }
 
+        if (RecordingsManager.Instance.IsRecordingExist(recordingName))
+        {
+            throw new BadRequestException("Recording with the given name already exist!");
+        }
+
         LinkServiceArgs serviceArgs = new LinkServiceArgs();
         serviceArgs.ServiceOptions.Add(RecordingsManager.RECORDING_OVERRIDE_KEY, recordingName);
         serviceArgs.ServiceId = RadarRecordingService.SERVICE_ID;

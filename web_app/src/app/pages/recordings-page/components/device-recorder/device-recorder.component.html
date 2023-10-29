@@ -19,6 +19,16 @@
 <br>
 
 <div>
+  <mat-form-field style="width: 100%;" hintLabel="Max 80 characters" appearance="fill">
+    <mat-label>Recording name</mat-label>
+    <input matInput #recordingNameInput maxlength="80" placeholder="Optional: Set the name for this recording.">
+    <mat-hint align="end">{{recordingNameInput.value!.length || 0}}/80</mat-hint>
+  </mat-form-field>
+</div>
+
+<br>
+
+<div>
     <button mat-raised-button (click)="startRecording()" color="primary" [disabled]="isTriggerButtonDisabled()">Start Recording</button>
     <button mat-raised-button (click)="stopRecording()" color="primary" [disabled]="isTriggerButtonDisabled()" style="margin-left: 10px;">Stop Recording</button>
 </div>
