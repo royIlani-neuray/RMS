@@ -114,13 +114,13 @@ public class RecordingStreamer {
                         {
                             if (loopForever)
                             {
-                                System.Console.WriteLine("Got to end of recording. rewinding...");
+                                System.Console.WriteLine($"[{DateTime.Now}] Got to end of recording. rewinding...");
                                 reader.Rewind();
                                 reader.GetNextFrame(out frameBytes);
                             }
                             else
                             {
-                                System.Console.WriteLine("Got to end of recording.");
+                                System.Console.WriteLine($"[{DateTime.Now}] Got to end of recording.");
                                 reader = null;
                                 continue;
                             }

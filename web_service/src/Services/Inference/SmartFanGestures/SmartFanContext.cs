@@ -20,8 +20,8 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
     private const int MAX_QUEUE_CAPACITY = 20;
     
     private const int POINTS_COUNT_PER_FRAME = 32;
-    private const int MIN_POINTS_FOR_VALID_FRAME = 3;
-    private const int MAX_INVALID_FRAMES = 5;
+    private const int MIN_POINTS_FOR_VALID_FRAME = 7;
+    private const int MAX_INVALID_FRAMES = 19;
 
     private SmartFanWindowBuilder windowBuilder;
     private SmartFanGesturesPredictions predictions;
@@ -33,6 +33,16 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
         windowBuilder = new SmartFanWindowBuilder(requiredWindowSize, windowShiftSize, POINTS_COUNT_PER_FRAME, MIN_POINTS_FOR_VALID_FRAME, MAX_INVALID_FRAMES);
         predictions = new SmartFanGesturesPredictions(radar.RadarWebSocket, minRequiredHitCount, majorityWindowSize);
         this.modelName = modelName;
+
+        //System.Console.WriteLine("\n*** DEBUG: SmartFanContext ***");
+        //System.Console.WriteLine($"model name: {modelName}");
+        //System.Console.WriteLine($"required Window Size: {requiredWindowSize}");
+        //System.Console.WriteLine($"window Shift Size: {windowShiftSize}");
+        //System.Console.WriteLine($"required Points Per Frame: {POINTS_COUNT_PER_FRAME}");
+        //System.Console.WriteLine($"min Points For Valid Frame: {MIN_POINTS_FOR_VALID_FRAME}");
+        //System.Console.WriteLine($"max Invalid Frames: {MAX_INVALID_FRAMES}");
+        //System.Console.WriteLine($"minRequiredHitCount: {minRequiredHitCount}");
+        //System.Console.WriteLine($"majorityWindowSize: {majorityWindowSize}\n");
     }
 
     public void HandleFrame(FrameData frameData)

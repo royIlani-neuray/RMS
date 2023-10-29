@@ -20,7 +20,7 @@ public class SmartFanGesturesPredictions
 
     public const float DEFAULT_CONFIDENCE_THRESHOLD = 0.50F;
 
-    public const float COOLDOWN_BETWEEN_GESTURES_SECONDS = 2F;
+    public const float COOLDOWN_BETWEEN_GESTURES_SECONDS = 3F;
 
     public DateTime LastPredictionTime;
 

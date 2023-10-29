@@ -206,7 +206,7 @@ public class IPRadarClient
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine($"Debug: ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}"); 
+            Console.WriteLine($"[{DateTime.Now}] Debug: ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}"); 
             throw;
         }
 

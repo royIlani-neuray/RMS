@@ -23,7 +23,7 @@ public class TracksWindowBuilder
     protected class TrackWindow 
     {
         public Stack<List<FrameData.Point>> windowPoints = new Stack<List<FrameData.Point>>();
-        public int invalidFramesCount;
+        public int invalidFramesCount = 0;
     }
 
     protected Dictionary<byte, TrackWindow> tracksWindows;
@@ -62,8 +62,6 @@ public class TracksWindowBuilder
 
     private void CheckInvalidFrames()
     {
-        List<byte> windowsToRemove = new List<byte>();
-
         foreach (var trackId in tracksWindows.Keys)
         {
             var window = tracksWindows[trackId];
@@ -81,18 +79,27 @@ public class TracksWindowBuilder
 
                 if (window.invalidFramesCount > maxInvalidFramesInWindow)
                 {
-                    // mark for delete
-                    windowsToRemove.Add(trackId);
-                    continue;
+                    // this track has invalid window - shift the frames and continue to build the window
+                    // System.Console.WriteLine($"Debug: Bad Window for inference! [{trackId}]. - [{DateTime.Now}]");
+                    ShiftTrackWindow(trackId);
                 }
             }
         }
+    }
 
-        // remove tracks with invalid windows
-        foreach (var trackId in windowsToRemove)
+    protected void ShiftTrackWindow(byte trackId)
+    {
+        Stack<List<FrameData.Point>> reversedStack = new Stack<List<FrameData.Point>>(tracksWindows[trackId].windowPoints);
+
+        for (int i=0; i < windowShiftSize; i++)
         {
-            tracksWindows.Remove(trackId);
+            reversedStack.TryPop(out _);
         }
+
+        tracksWindows[trackId].windowPoints = new Stack<List<FrameData.Point>>(reversedStack);
+
+        // reset the invalid frames count
+        tracksWindows[trackId].invalidFramesCount = 0;
     }
 
     public void AddFrame(FrameData frame)
@@ -116,16 +123,25 @@ public class TracksWindowBuilder
 
         if ((lastFrame.FrameNumber + 1) == frame.FrameNumber)
         {
-            // fill the points in the relevant windows
-            for (int index = 0; index < frame.TargetsIndexList.Count; index ++)
+            if (lastFrame.PointsList.Count != frame.TargetsIndexList.Count)
             {
-                if (frame.TargetsIndexList[index] > MAX_TRACK_ID_NUMBER) // point is not assocaited to a track. 
-                    continue;
+                System.Console.WriteLine($"Error: mismatch of points to target-indexs between frames {lastFrame.FrameNumber} and {frame.FrameNumber}!");
+                System.Console.WriteLine($"lastFrame.PointsList.Count : {lastFrame.PointsList.Count}");
+                System.Console.WriteLine($"frame.TargetsIndexList.Count : {frame.TargetsIndexList.Count}");
+            }
+            else
+            {
+                // fill the points in the relevant windows
+                for (int index = 0; index < frame.TargetsIndexList.Count; index ++)
+                {
+                    if (frame.TargetsIndexList[index] > MAX_TRACK_ID_NUMBER) // point is not assocaited to a track. 
+                        continue;
 
-                byte trackId = frame.TargetsIndexList[index];
+                    byte trackId = frame.TargetsIndexList[index];
 
-                var trackPoint = lastFrame.PointsList[index];
-                tracksWindows[trackId].windowPoints.Peek().Add(trackPoint);
+                    var trackPoint = lastFrame.PointsList[index];
+                    tracksWindows[trackId].windowPoints.Peek().Add(trackPoint);
+                }
             }
         }
         else
@@ -136,7 +152,28 @@ public class TracksWindowBuilder
         // check invalid frames per track
         CheckInvalidFrames();
 
+        RemoveLostTracks(frame.TracksList);
+
         lastFrame = frame;
+    }
+
+    void RemoveLostTracks(List<FrameData.Track> tracksList)
+    {
+        // remove tracks that dosent exist anymore
+        List<byte> tracksToRemove = new List<byte>();
+
+        foreach (var trackId in tracksWindows.Keys)
+        {
+            if (!tracksList.Exists(track => track.TrackId == trackId))
+            {
+                tracksToRemove.Add(trackId);
+            }
+        }
+
+        foreach (var trackId in tracksToRemove)
+        {
+            tracksWindows.Remove(trackId);
+        }
     }
 
     protected void PadFramePointsList(List<FrameData.Point> framePoints)
