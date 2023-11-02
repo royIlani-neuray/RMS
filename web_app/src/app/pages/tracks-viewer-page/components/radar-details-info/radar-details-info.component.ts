@@ -28,8 +28,8 @@ export class RadarDetailsInfoComponent implements OnInit {
   showPointCloudFC = new FormControl(false)
 
   tracksDataSource = new MatTableDataSource<TrackData>()
-  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
-  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
+  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
 
   gateIdPredictionsSource = new MatTableDataSource<GateIdPrediction>()
   gateIdDisplayedColumns: string[] = ['track_id', 'identity'];
