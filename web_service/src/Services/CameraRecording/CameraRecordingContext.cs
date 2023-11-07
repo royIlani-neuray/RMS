@@ -31,7 +31,7 @@ public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
     {
         State = IServiceContext.ServiceState.Initialized;
         this.gotFirstIFrame = false;
-        stream = new FileStream(recordingVideoPath, FileMode.Create);
+        stream = new FileStream(recordingVideoPath, FileMode.Append);
         frameBinaryWriter = new BinaryWriter(stream);
         timestampWriter = new StreamWriter(recordingTimestampPath);
         frameCounter = 0;

@@ -29,10 +29,20 @@ public class RadarRecordingContext : WorkerThread<FrameData>, IServiceContext
         State = IServiceContext.ServiceState.Initialized;
         this.deviceId = deviceId;
 
-        stream = new FileStream(recordingPath, FileMode.Create);
-        binaryWriter = new BinaryWriter(stream);
-        binaryWriter.Write(frameRate);
-        binaryWriter.Flush();
+        if (!File.Exists(recordingPath))
+        {
+            // create new recording file
+            stream = new FileStream(recordingPath, FileMode.Create);
+            binaryWriter = new BinaryWriter(stream);
+            binaryWriter.Write(frameRate);
+            binaryWriter.Flush();
+        }
+        else
+        {
+            // recording file already exist, append to it.
+            stream = new FileStream(recordingPath, FileMode.Append);
+            binaryWriter = new BinaryWriter(stream);
+        }
     }
 
     public void RecordFrame(FrameData frameData)

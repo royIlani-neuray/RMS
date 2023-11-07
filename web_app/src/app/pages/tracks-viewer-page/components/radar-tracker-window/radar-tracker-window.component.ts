@@ -3,25 +3,29 @@ import { Router } from '@angular/router';
 import { Radar } from 'src/app/entities/radar';
 import { RadarWebsocketService } from 'src/app/services/radar-websocket.service';
 import { RadarsService } from 'src/app/services/radars.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { TrackData } from 'src/app/entities/frame-data';
 
 @Component({
-  selector: 'app-gait-id-window',
-  templateUrl: './gait-id-window.component.html',
-  styleUrls: ['./gait-id-window.component.css'],
+  selector: 'app-radar-tracker-window',
+  templateUrl: './radar-tracker-window.component.html',
+  styleUrls: ['./radar-tracker-window.component.css'],
   providers: [RadarWebsocketService]
 })
-export class GaitIdWindowComponent implements OnInit, OnDestroy {
+export class RadarTrackerWindowComponent implements OnInit, OnDestroy {
 
   constructor(private radarsService : RadarsService,
               private deviceWebsocketService : RadarWebsocketService,
               private router : Router) { }
 
   radar : Radar | null
-  predictionsSubscription! : any
   frameDataSubscription! : any
 
-  currentIdentity = "[No Fall Detected]"
-  currentTrackId = -1
+  tracksDataSource = new MatTableDataSource<TrackData>()
+  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
+  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
+
+  numberOfPoints = 0
 
   ngOnInit(): void {
   }
@@ -34,11 +38,6 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
       this.frameDataSubscription = null
     }
 
-    if (this.predictionsSubscription != null)
-    {
-      this.predictionsSubscription.unsubscribe()
-      this.predictionsSubscription = null
-    }
   }
 
   setRadar(radarId : string)
@@ -56,35 +55,28 @@ export class GaitIdWindowComponent implements OnInit, OnDestroy {
           this.frameDataSubscription = null
         }
     
-        if (this.predictionsSubscription != null)
-        {
-          this.predictionsSubscription.unsubscribe()
-          this.predictionsSubscription = null
-        }
-
         // we have the radar info, now subscribe for tracks streaming
         this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
           next : (frameData) => 
           {
-            if (frameData.tracks.findIndex(track => track.track_id == this.currentTrackId) == -1)
-            {
-              this.currentIdentity = "[No Detection]"
-              this.currentTrackId = -1
-            }
+            this.tracksDataSource.data = frameData.tracks
+            this.numberOfPoints = frameData.points.length
           }
         })
 
-        this.predictionsSubscription = this.deviceWebsocketService.GetGateIdPredictions().subscribe({
-          next : (predictions) => 
-          {
-            this.currentIdentity = predictions[0].identity
-            this.currentTrackId = predictions[0].track_id
-          }
-        })
-        
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
+  }
+
+  public getTrackRange(track : TrackData)
+  {
+    let radarHeight = this.radar!.radar_settings.sensor_position.height
+
+    // track x,y,z is in reference to the floor which is the origin (0,0,0).
+    // in order to get the range from the radar and not from the floor we reduce the radar height.
+
+    return Math.sqrt(Math.pow(track.position_x,2) + Math.pow(track.position_y,2) + Math.pow((track.position_z - radarHeight),2))
   }
 
 }

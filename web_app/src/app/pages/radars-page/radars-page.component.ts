@@ -6,13 +6,14 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { RadarBrief } from 'src/app/entities/radar';
 import { RadarsService } from '../../services/radars.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-radars-page',
@@ -21,6 +22,8 @@ import { RmsEventsService } from 'src/app/services/rms-events.service';
 })
 export class RadarsPageComponent implements OnInit {
 
+  @ViewChild(MatSort) sort: MatSort;
+  
   deviceListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'send_tracks_report', 'device_id', 'description'];
@@ -58,6 +61,10 @@ export class RadarsPageComponent implements OnInit {
 
   }
 
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+  
   public getRadarsList()
   {
     this.radarsService.getRadars().subscribe({

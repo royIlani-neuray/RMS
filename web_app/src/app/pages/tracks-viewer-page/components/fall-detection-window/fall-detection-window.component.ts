@@ -35,18 +35,18 @@ export class FallDetectionWindowComponent implements OnInit, OnDestroy {
 
   setRadar(radarId : string)
   {
-    if (this.fallDetectionSubscription != null)
-    {
-      this.fallDetectionSubscription.unsubscribe()
-      this.fallDetectionSubscription = null
-    }
-
     // request the radar device info based on the given device id
     this.radarsService.getRadar(radarId).subscribe({
       next : (radar) => {
         this.radar = radar
         
         this.deviceWebsocketService.Connect(radarId)
+        
+        if (this.fallDetectionSubscription != null)
+        {
+          this.fallDetectionSubscription.unsubscribe()
+          this.fallDetectionSubscription = null
+        }
         
         this.fallDetectionSubscription = this.deviceWebsocketService.GetFallDetectionData().subscribe({
           next : (fallDetectionData) => 

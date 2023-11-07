@@ -1,0 +1,46 @@
+
+.tracks-list-table {
+    width: 100%;
+    min-width: 450px;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.mat-header-row {
+    background-color: #7653f3;
+    
+}
+
+.mat-header-cell {
+    color: white;
+    text-align: center;
+}
+
+.mat-cell {
+    text-align: center;
+}
+
+.mat-row:nth-of-type(odd) {
+    background-color: #e3dcfd;
+}
+
+.mat-row {
+    border-bottom: 1px solid #dddddd;
+}
+
+.mat-row:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+
+.selected-device-lable {
+    color: white;
+    background-color: rgb(75, 75, 75);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    padding: 2px;
+}

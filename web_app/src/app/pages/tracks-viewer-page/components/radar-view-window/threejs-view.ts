@@ -97,7 +97,7 @@ export class ThreeJsView {
         45,
         aspectRatio,
         0.1,
-        200
+        350
       );
   
       this.camera.position.set(0,2,-17)

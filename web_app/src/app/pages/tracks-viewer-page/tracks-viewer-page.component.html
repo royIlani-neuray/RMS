@@ -22,6 +22,7 @@
 
 <mat-menu #contextMenu="matMenu">
     <button mat-menu-item [matMenuTriggerFor]="selectRadarMenu">Radar View</button>
+    <button mat-menu-item [matMenuTriggerFor]="selectRadarTrackerMenu">Radar Tracker</button>
     <button mat-menu-item [matMenuTriggerFor]="selectCameraMenu">Camera View</button>
     <button mat-menu-item [matMenuTriggerFor]="selectGaitIdMenu">Gait ID</button>
     <button mat-menu-item [matMenuTriggerFor]="selectFanGesturesMenu">Smart Fan Gestures</button>
@@ -31,6 +32,10 @@
 
 <mat-menu #selectRadarMenu="matMenu">
     <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setRadarWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
+</mat-menu>
+
+<mat-menu #selectRadarTrackerMenu="matMenu">
+    <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setRadarTrackerWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
 </mat-menu>
 
 <mat-menu #selectFanGesturesMenu="matMenu">

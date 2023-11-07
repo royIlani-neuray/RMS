@@ -17,6 +17,7 @@ import { FallDetectionWindowComponent } from './components/fall-detection-window
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 import { TracksViewerDataService } from './tracks-viewer-data.service';
 import { FanGesturesWindowComponent } from './components/fan-gestures-window/fan-gestures-window.component';
+import { RadarTrackerWindowComponent } from './components/radar-tracker-window/radar-tracker-window.component';
 
 @Component({
   selector: 'dynamic-window',
@@ -99,6 +100,14 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
     this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarViewWindowComponent)
+    component?.instance.setRadar(radarId)
+  }
+
+  setRadarTrackerWindow(radarId : string)
+  {
+    this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
+    const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarTrackerWindowComponent)
     component?.instance.setRadar(radarId)
   }
 

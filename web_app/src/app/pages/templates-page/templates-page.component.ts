@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { TemplatesService } from '../../services/templates.service';
@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { CreateTemplateDialogComponent } from './components/create-template-dialog/create-template-dialog.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-templates-page',
@@ -23,6 +24,8 @@ import { CreateTemplateDialogComponent } from './components/create-template-dial
 })
 export class TemplatesPageComponent implements OnInit {
  
+  @ViewChild(MatSort) sort: MatSort;
+
   templateListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RadarTemplateBrief>()
   displayedColumns: string[] = ['name', 'description', 'model', 'application'];
@@ -52,6 +55,10 @@ export class TemplatesPageComponent implements OnInit {
       }
     })
 
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   public getTemplatesList()

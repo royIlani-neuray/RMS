@@ -36,7 +36,19 @@ public class RadarRecordingService : IExtensionService
         RecordingsManager.Instance.CreateRecordingEntry(device, out string entryPath, recordingName);
 
         Radar radar = (Radar) device;
-        float frameRate = radar.radarSettings!.DetectionParams!.FrameRate;
+
+        float frameRate;
+
+        if (radar.radarSettings!.DetectionParams == null)
+        {
+            // TODO: need to parse DetectionParams on configs that has subframes. for now this is a patch...
+            System.Console.WriteLine("Warning: unknown frame rate, setting to 4.16");
+            frameRate = 4.16F;
+        }
+        else
+        {
+            frameRate = radar.radarSettings!.DetectionParams!.FrameRate;
+        }
 
         string recordingPath = System.IO.Path.Combine(entryPath, $"radar.rrec");
 
