@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Camera } from 'src/app/entities/camera';
 import { CameraWebsocketService } from 'src/app/services/camera-websocket.service';
@@ -12,7 +12,7 @@ import { setLogger } from 'h264-converter';
   styleUrls: ['./camera-view-window.component.css'],
   providers: [CameraWebsocketService]
 })
-export class CameraViewWindowComponent implements OnInit, AfterViewInit {
+export class CameraViewWindowComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private camerasService : CamerasService, 
               private cameraWebsocket : CameraWebsocketService,
@@ -32,6 +32,15 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+  ngOnDestroy(): void 
+  {
+    if (this.frameDataSubscription != null)
+    {
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
+    }
+  }
+
   convertAndAddFrame(base64Frame : string) {
     var dataUrl = "data:application/octet-binary;base64," + base64Frame;
 
@@ -45,12 +54,6 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
 
   setCamera(cameraId : string)
   {
-    if (this.frameDataSubscription != null)
-    {
-      this.frameDataSubscription.unsubscribe()
-      this.frameDataSubscription = null
-    }
-
     // request the camera device info based on the given camera id
     this.camerasService.getCamera(cameraId).subscribe({
       next : (camera) => {
@@ -62,6 +65,11 @@ export class CameraViewWindowComponent implements OnInit, AfterViewInit {
         this.converter = new VideoConverter(this.videoRef.nativeElement, 15, 1)
         this.converter.play();
         
+        if (this.frameDataSubscription != null)
+        {
+          this.frameDataSubscription.unsubscribe()
+          this.frameDataSubscription = null
+        }
 
         // we have the radar info, now subscribe for tracks streaming
         this.frameDataSubscription = this.cameraWebsocket.GetFrameData().subscribe({

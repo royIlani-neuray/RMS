@@ -38,12 +38,6 @@ export class FanGesturesWindowComponent implements OnInit, OnDestroy {
 
   setRadar(radarId : string)
   {
-    if (this.predictionsSubscription != null)
-    {
-      this.predictionsSubscription.unsubscribe()
-      this.predictionsSubscription = null
-    }
-
     // request the radar device info based on the given device id
     this.radarsService.getRadar(radarId).subscribe({
       next : (radar) => {
@@ -51,6 +45,12 @@ export class FanGesturesWindowComponent implements OnInit, OnDestroy {
         
         this.deviceWebsocketService.Connect(radarId)
 
+        if (this.predictionsSubscription != null)
+        {
+          this.predictionsSubscription.unsubscribe()
+          this.predictionsSubscription = null
+        }
+        
         // we have the radar info, now subscribe for tracks streaming
         this.predictionsSubscription = this.deviceWebsocketService.GetFanGesturesPredictions().subscribe({
           next : (predictions) => 

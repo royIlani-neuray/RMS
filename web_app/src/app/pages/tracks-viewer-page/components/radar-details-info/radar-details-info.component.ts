@@ -6,7 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { TrackData } from 'src/app/entities/frame-data';
@@ -20,7 +20,7 @@ import { RadarViewWindowComponent } from '../radar-view-window/radar-view-window
   templateUrl: './radar-details-info.component.html',
   styleUrls: ['./radar-details-info.component.css']
 })
-export class RadarDetailsInfoComponent implements OnInit {
+export class RadarDetailsInfoComponent implements OnInit, OnDestroy {
 
   showTracksFC = new FormControl(false)
   showBoundryBoxFC = new FormControl(false)
@@ -91,6 +91,21 @@ export class RadarDetailsInfoComponent implements OnInit {
         })
       }
     })
+  }
+
+  ngOnDestroy(): void 
+  {
+    if (this.frameDataSubscription != null)
+    {
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
+    }
+
+    if (this.predictionsSubscription != null)
+    {
+      this.predictionsSubscription.unsubscribe()
+      this.predictionsSubscription = null
+    }
   }
 
   private initViewFilters()
