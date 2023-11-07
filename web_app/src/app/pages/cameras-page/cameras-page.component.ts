@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { CameraBrief } from 'src/app/entities/camera';
 import { CamerasService } from 'src/app/services/cameras.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RegisterCameraDialogComponent } from './components/register-camera-dialog/register-camera-dialog.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-cameras-page',
@@ -15,6 +16,8 @@ import { RegisterCameraDialogComponent } from './components/register-camera-dial
 })
 export class CamerasPageComponent implements OnInit {
 
+  @ViewChild(MatSort) sort: MatSort;
+  
   camerasListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<CameraBrief>()
   displayedColumns: string[] = ['name', 'state', 'enabled', 'device_id', 'description'];
@@ -51,6 +54,10 @@ export class CamerasPageComponent implements OnInit {
       }
     })
 
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   public getCamerasList()
