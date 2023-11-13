@@ -22,7 +22,6 @@ export interface SmartFanGesturesPrediction {
 
 export interface FallDetectionData {
   track_id: number
-  fall_detected: boolean
 }
 
 @Injectable()
@@ -33,7 +32,7 @@ export class RadarWebsocketService {
   private frameDataSubject: Subject<FrameData>;
   private gateIdPredictionsSubject: Subject<GateIdPrediction[]>;
   private fanGesturesPredictionsSubject: Subject<SmartFanGesturesPrediction[]>;
-  private fallDetectionSubject: Subject<FallDetectionData[]>;
+  private fallDetectionSubject: Subject<FallDetectionData>;
   
   constructor() 
   { 
@@ -42,7 +41,7 @@ export class RadarWebsocketService {
     this.frameDataSubject = new Subject<FrameData>();
     this.gateIdPredictionsSubject = new Subject<GateIdPrediction[]>();
     this.fanGesturesPredictionsSubject = new Subject<SmartFanGesturesPrediction[]>();
-    this.fallDetectionSubject = new Subject<FallDetectionData[]>();
+    this.fallDetectionSubject = new Subject<FallDetectionData>();
   }
 
   public Connect(radarId : string)

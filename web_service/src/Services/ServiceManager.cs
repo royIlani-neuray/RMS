@@ -110,8 +110,17 @@ public sealed class ServiceManager {
 
         if (service.Settings!.Enabled)
         {
-            System.Console.WriteLine($"{device.LogTag} Creating {service.ServiceId} context.");
-            linkedService.ServiceContext = service.CreateServiceContext(device, linkedService.ServiceOptions);
+            Console.WriteLine($"{device.LogTag} Creating {service.ServiceId} context.");
+
+            try
+            {
+                linkedService.ServiceContext = service.CreateServiceContext(device, linkedService.ServiceOptions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{device.LogTag} Error: failed to create service context. exception:\n{ex}");
+                throw;
+            }
         }
         else
         {

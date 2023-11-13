@@ -302,9 +302,9 @@ public class PeopleTracking : ITrackingApplication
         outFrameData.TargetsIndexList = frameData.targetsIndexList;
 
         outFrameData.TargetsHeightList = frameData.targetsHeightList.ConvertAll(target => new FrameData.TargetHeight() {
-            targetId = target.targetId,
-            maxZ = target.maxZ,
-            minZ = target.minZ
+            TargetId = target.targetId,
+            MaxZ = target.maxZ,
+            MinZ = target.minZ
         });
 
         return outFrameData;
