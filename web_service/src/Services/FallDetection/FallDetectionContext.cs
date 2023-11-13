@@ -21,7 +21,7 @@ public class FallDetectionContext : WorkerThread<FrameData>, IServiceContext
 
     private FallDetectionTracker fallTracker;
 
-    public FallDetectionContext(Radar radar, float fallingThreshold, float minTrackingDurationSeconds, float maxTrackingDurationSeconds, float alertDurationSeconds) : base("FallDetectionContext", MAX_QUEUE_CAPACITY)
+    public FallDetectionContext(Radar radar, float fallingThreshold, float minTrackingDurationSeconds, float maxTrackingDurationSeconds, float alertCooldownSeconds) : base("FallDetectionContext", MAX_QUEUE_CAPACITY)
     {
         State = IServiceContext.ServiceState.Initialized;
 
@@ -29,7 +29,7 @@ public class FallDetectionContext : WorkerThread<FrameData>, IServiceContext
         int minTrackingDurationFrames = (int) (minTrackingDurationSeconds * frameRate);
         int maxTrackingDurationFrames = (int) (maxTrackingDurationSeconds * frameRate);
 
-        fallTracker = new FallDetectionTracker(radar.RadarWebSocket, fallingThreshold, minTrackingDurationFrames, maxTrackingDurationFrames, alertDurationSeconds);
+        fallTracker = new FallDetectionTracker(radar.RadarWebSocket, fallingThreshold, minTrackingDurationFrames, maxTrackingDurationFrames, alertCooldownSeconds);
     }
 
     public void HandleFrame(FrameData frameData)
@@ -41,8 +41,6 @@ public class FallDetectionContext : WorkerThread<FrameData>, IServiceContext
     {
         fallTracker.HandleFrame(frame);
         
-        fallTracker.PublishFallDetectionStatus();
-
         await Task.CompletedTask;
     }
 }

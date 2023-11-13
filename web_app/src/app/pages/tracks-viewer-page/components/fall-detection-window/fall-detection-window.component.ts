@@ -20,6 +20,7 @@ export class FallDetectionWindowComponent implements OnInit, OnDestroy {
   fallDetectionSubscription! : any
 
   currentDetection = "[No Detection]"
+  clearDetectionTimer : any
 
   ngOnInit(): void {
   }
@@ -51,17 +52,16 @@ export class FallDetectionWindowComponent implements OnInit, OnDestroy {
         this.fallDetectionSubscription = this.deviceWebsocketService.GetFallDetectionData().subscribe({
           next : (fallDetectionData) => 
           {
-            this.currentDetection = "[No Detection]";
+            clearTimeout(this.clearDetectionTimer)
 
-            fallDetectionData.forEach((detection) => {
-              if (detection.fall_detected)
-              {
-                this.currentDetection = "FALL DETECTED!!!";
-              }
-            })
+            this.currentDetection = `FALL DETECTED!!! [Track-${fallDetectionData.track_id}]`;
+
+            this.clearDetectionTimer = setTimeout(() => 
+            {
+              this.currentDetection = "[No Detection]"
+            }, 3000);
           }
         })
-        
         
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])

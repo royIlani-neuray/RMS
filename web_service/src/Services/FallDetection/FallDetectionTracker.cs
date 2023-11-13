@@ -19,11 +19,8 @@ public class FallDetectionTracker
         [JsonPropertyName("track_id")]
         public uint TrackId {get; set;}
 
-        [JsonPropertyName("fall_detected")]
-        public bool fallDetected {get; set;} = false;
-
         public Queue<float> LastHeights = new Queue<float>();
-        public DateTime detectionTime;
+        public DateTime lastDetectionTime;
     }
 
     private List<FallData> tracksFallData {get; set;}
@@ -31,18 +28,18 @@ public class FallDetectionTracker
     private float fallingThreshold;
     private int minTrackingDurationFrames;
     private int maxTrackingDurationFrames;
-    private float alertDurationSeconds;
+    private float alertCooldownSeconds;
 
     private RadarWebSocketServer deviceWebSocketsServer;
 
-    public FallDetectionTracker(RadarWebSocketServer deviceWebSocketsServer, float fallingThreshold, int minTrackingDurationFrames, int maxTrackingDurationFrames, float alertDurationSeconds)
+    public FallDetectionTracker(RadarWebSocketServer deviceWebSocketsServer, float fallingThreshold, int minTrackingDurationFrames, int maxTrackingDurationFrames, float alertCooldownSeconds)
     {
         tracksFallData = new List<FallData>();
 
         this.fallingThreshold = fallingThreshold;
         this.minTrackingDurationFrames = minTrackingDurationFrames;
         this.maxTrackingDurationFrames = maxTrackingDurationFrames;
-        this.alertDurationSeconds = alertDurationSeconds;
+        this.alertCooldownSeconds = alertCooldownSeconds;
 
         this.deviceWebSocketsServer = deviceWebSocketsServer;
 
@@ -51,14 +48,14 @@ public class FallDetectionTracker
         // Console.WriteLine($"** Debug: fallingThreshold: {fallingThreshold}");
         // Console.WriteLine($"** Debug: minTrackingDurationFrames: {minTrackingDurationFrames}");
         // Console.WriteLine($"** Debug: maxTrackingDurationFrames: {maxTrackingDurationFrames}");
-        // Console.WriteLine($"** Debug: alertDurationSeconds: {alertDurationSeconds}");
+        // Console.WriteLine($"** Debug: alertCooldownSeconds: {alertCooldownSeconds}");
         // Console.WriteLine($"** Debug:");
 
     }
 
     private void RemoveOldTargets(List<FrameData.TargetHeight> targets)
     {
-        List<uint> frameTargetsIds = targets.ConvertAll(target => target.targetId);
+        List<uint> frameTargetsIds = targets.ConvertAll(target => target.TargetId);
 
         List<FallData> updatedList = new List<FallData>();
 
@@ -75,7 +72,13 @@ public class FallDetectionTracker
 
     private void UpdateFallData(FallData fallData, float currentHeight)
     {
-        //Console.WriteLine($"** Debug: Track-{fallData.TrackId}, Height: {currentHeight:0.00} meters");
+        // Console.WriteLine($"** Debug: Track-{fallData.TrackId}, Height: {currentHeight:0.00} meters");
+
+        if (fallData.lastDetectionTime.AddSeconds(alertCooldownSeconds) > DateTime.UtcNow)
+        {
+            // we are in cooldown, don't update the fall data for this track.
+            return;
+        }
 
         fallData.LastHeights.Enqueue(currentHeight);
 
@@ -87,27 +90,16 @@ public class FallDetectionTracker
         
         float averageHeight = fallData.LastHeights.Average();
 
-        //if (!fallData.fallDetected)
-        //    Console.WriteLine($"** Debug: average height: {averageHeight:0.00}, threashold: {fallingThreshold:0.00}");
-
         if (currentHeight < (fallingThreshold * averageHeight))
         {
-            if (fallData.fallDetected == false)
-            {
-                // fall detected!
-                fallData.fallDetected = true;
-                fallData.detectionTime = DateTime.UtcNow;
-
-                //Console.WriteLine("****** FALL DETECTED!!!!!! ***********");
-            }
-        }
-
-        if (fallData.fallDetected && (fallData.detectionTime.AddSeconds(alertDurationSeconds) < DateTime.UtcNow))
-        {
-            fallData.fallDetected = false;
+            // fall detected!
+            fallData.lastDetectionTime = DateTime.UtcNow;
+            fallData.LastHeights.Clear();
+            
+            //Console.WriteLine($"****** FALL DETECTED!!!!!! Track {fallData.TrackId} ***********");
+            deviceWebSocketsServer.SendFallDetectionData(fallData);
         }
         
-
     }
 
     public void HandleFrame(FrameData frame)
@@ -117,24 +109,21 @@ public class FallDetectionTracker
         // add and update fall data according to latest frame
         foreach (var target in frame.TargetsHeightList)
         {
-            FallData? fallData = tracksFallData.FirstOrDefault(trackData => trackData.TrackId == target.targetId);
+            FallData? fallData = tracksFallData.FirstOrDefault(trackData => trackData.TrackId == target.TargetId);
 
             if (fallData == null)
             {
                 // add new entry
                 fallData = new FallData();
-                fallData.TrackId = target.targetId;
+                fallData.TrackId = target.TargetId;
+                fallData.lastDetectionTime = DateTime.UtcNow.AddSeconds(-alertCooldownSeconds);
                 tracksFallData.Add(fallData);
             }
 
             // update fall data according to the new target info
-            UpdateFallData(fallData, target.maxZ);
+            UpdateFallData(fallData, target.MaxZ);
         }
         
     }
 
-    public void PublishFallDetectionStatus()
-    {
-        deviceWebSocketsServer.SendFallDetectionData(tracksFallData);
-    }
 }

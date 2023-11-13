@@ -18,7 +18,7 @@ public class FallDetectionService : IExtensionService
     private const string SERVICE_OPTION_FALL_THRESHOLD = "falling_threshold";
     private const string SERVICE_OPTION_MIN_TRACKING_DURATION = "min_tracking_duration_seconds";
     private const string SERVICE_OPTION_MAX_TRACKING_DURATION = "max_tracking_duration_seconds";
-    private const string SERVICE_OPTION_ALERT_DURATION = "alert_duration_seconds";
+    private const string SERVICE_OPTION_ALERT_COOLDOWN_DURATION = "alert_cooldown_seconds";
 
     public string ServiceId => SERVICE_ID;
 
@@ -27,7 +27,7 @@ public class FallDetectionService : IExtensionService
     public ExtensionServiceSettings? Settings { get; set; }
 
     private void GetServiceSettings(Dictionary<string, string> serviceOptions, out float fallingThreshold, 
-                                    out float minTrackingDurationSeconds, out float maxTrackingDurationSeconds, out float alertDurationSeconds)
+                                    out float minTrackingDurationSeconds, out float maxTrackingDurationSeconds, out float alertCooldownSeconds)
     {
         if (!serviceOptions.ContainsKey(SERVICE_OPTION_FALL_THRESHOLD))
             throw new BadRequestException($"Missing required service option: {SERVICE_OPTION_FALL_THRESHOLD}");
@@ -50,11 +50,11 @@ public class FallDetectionService : IExtensionService
         if (!float.TryParse(serviceOptions[SERVICE_OPTION_MAX_TRACKING_DURATION], out maxTrackingDurationSeconds))
             throw new BadRequestException($"Invalid value for '{SERVICE_OPTION_MAX_TRACKING_DURATION}' provided!");
 
-        if (!serviceOptions.ContainsKey(SERVICE_OPTION_ALERT_DURATION))
-            throw new BadRequestException($"Missing required service option: {SERVICE_OPTION_ALERT_DURATION}");
+        if (!serviceOptions.ContainsKey(SERVICE_OPTION_ALERT_COOLDOWN_DURATION))
+            throw new BadRequestException($"Missing required service option: {SERVICE_OPTION_ALERT_COOLDOWN_DURATION}");
 
-        if (!float.TryParse(serviceOptions[SERVICE_OPTION_ALERT_DURATION], out alertDurationSeconds))
-            throw new BadRequestException($"Invalid value for '{SERVICE_OPTION_ALERT_DURATION}' provided!");
+        if (!float.TryParse(serviceOptions[SERVICE_OPTION_ALERT_COOLDOWN_DURATION], out alertCooldownSeconds))
+            throw new BadRequestException($"Invalid value for '{SERVICE_OPTION_ALERT_COOLDOWN_DURATION}' provided!");
     }
 
     public IServiceContext CreateServiceContext(DeviceEntity device, Dictionary<string, string> serviceOptions)
@@ -63,9 +63,9 @@ public class FallDetectionService : IExtensionService
             throw new Exception("Unsupported device passed to service.");
 
         Radar radar = (Radar) device;
-        GetServiceSettings(serviceOptions, out float fallingThreshold, out float minTrackingDurationSeconds, out float maxTrackingDurationSeconds, out float alertDurationSeconds);
+        GetServiceSettings(serviceOptions, out float fallingThreshold, out float minTrackingDurationSeconds, out float maxTrackingDurationSeconds, out float alertCooldownSeconds);
         
-        FallDetectionContext fallDetectionContext = new FallDetectionContext(radar, fallingThreshold, minTrackingDurationSeconds, maxTrackingDurationSeconds, alertDurationSeconds);
+        FallDetectionContext fallDetectionContext = new FallDetectionContext(radar, fallingThreshold, minTrackingDurationSeconds, maxTrackingDurationSeconds, alertCooldownSeconds);
         fallDetectionContext.StartWorker();
         fallDetectionContext.State = IServiceContext.ServiceState.Active;
         return fallDetectionContext;
