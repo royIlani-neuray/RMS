@@ -42,21 +42,21 @@ export class SetDeviceConfigDialogComponent implements OnInit {
   });
 
   boundaryBoxFormGroup = this.formBuilder.group({
-    xMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    xMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    yMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    yMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    zMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    zMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    xMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    xMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    yMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    yMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    zMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    zMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
   });
 
   staticBoundaryBoxFormGroup = this.formBuilder.group({
-    xMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    xMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    yMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    yMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    zMin: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
-    zMax: ['', [Validators.required, Validators.min(-100), Validators.max(100)] ],
+    xMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    xMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    yMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    yMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    zMin: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
+    zMax: ['', [Validators.required, Validators.min(-300), Validators.max(300)] ],
   });
 
   calibrationFormGroup = this.formBuilder.group({

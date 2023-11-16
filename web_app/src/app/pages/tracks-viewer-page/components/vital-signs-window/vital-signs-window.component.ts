@@ -11,34 +11,37 @@ import { Router } from '@angular/router';
 import { Radar } from 'src/app/entities/radar';
 import { RadarWebsocketService } from 'src/app/services/radar-websocket.service';
 import { RadarsService } from 'src/app/services/radars.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { TrackData } from 'src/app/entities/frame-data';
 
 @Component({
-  selector: 'app-fall-detection-window',
-  templateUrl: './fall-detection-window.component.html',
-  styleUrls: ['./fall-detection-window.component.css'],
+  selector: 'app-vital-signs-window',
+  templateUrl: './vital-signs-window.component.html',
+  styleUrls: ['./vital-signs-window.component.css'],
   providers: [RadarWebsocketService]
 })
-export class FallDetectionWindowComponent implements OnInit, OnDestroy {
+export class VitalSignsWindowComponent implements OnInit, OnDestroy {
 
   constructor(private radarsService : RadarsService,
               private deviceWebsocketService : RadarWebsocketService,
               private router : Router) { }
 
   radar : Radar | null
-  fallDetectionSubscription! : any
+  frameDataSubscription! : any
 
-  currentDetection = "[No Detection]"
-  clearDetectionTimer : any
+  targetId = 0
+  heartRate = 0
+  breathRate = 0
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void 
   {
-    if (this.fallDetectionSubscription != null)
+    if (this.frameDataSubscription != null)
     {
-      this.fallDetectionSubscription.unsubscribe()
-      this.fallDetectionSubscription = null
+      this.frameDataSubscription.unsubscribe()
+      this.frameDataSubscription = null
     }
   }
 
@@ -50,30 +53,29 @@ export class FallDetectionWindowComponent implements OnInit, OnDestroy {
         this.radar = radar
         
         this.deviceWebsocketService.Connect(radarId)
-        
-        if (this.fallDetectionSubscription != null)
+
+        if (this.frameDataSubscription != null)
         {
-          this.fallDetectionSubscription.unsubscribe()
-          this.fallDetectionSubscription = null
+          this.frameDataSubscription.unsubscribe()
+          this.frameDataSubscription = null
         }
-        
-        this.fallDetectionSubscription = this.deviceWebsocketService.GetFallDetectionData().subscribe({
-          next : (fallDetectionData) => 
+    
+        // we have the radar info, now subscribe for frame data streaming
+        this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
+          next : (frameData) => 
           {
-            clearTimeout(this.clearDetectionTimer)
-
-            this.currentDetection = `FALL DETECTED!!! [Track-${fallDetectionData.track_id}]`;
-
-            this.clearDetectionTimer = setTimeout(() => 
+            if (frameData.vital_signs != null)
             {
-              this.currentDetection = "[No Detection]"
-            }, 3000);
+              this.targetId = frameData.vital_signs.target_id
+              this.heartRate = frameData.vital_signs.heart_rate
+              this.breathRate = frameData.vital_signs.breathing_rate
+            }
           }
         })
-        
+
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
   }
-  
+
 }

@@ -51,6 +51,30 @@ public class FrameData
         public float MinZ { get; set; }
     }
 
+    public class VitalSignsInfo
+    {
+        [JsonPropertyName("target_id")]
+        public uint TargetId { get; set; }                                  // Target ID used for XYZ location
+        
+        [JsonPropertyName("range_bin")]
+        public uint RangeBin { get; set; }                                  // range bin for XYZ location
+        
+        [JsonPropertyName("breathing_deviation")]
+        public float BreathingDeviation { get; set; }                       // deviation of breathing measurement over time
+        
+        [JsonPropertyName("heart_rate")]
+        public float HeartRate { get; set; }                                // Heart Rate Measurement
+        
+        [JsonPropertyName("breathing_rate")]
+        public float BreathingRate { get; set; }                            // Breath Rate Measurement
+        
+        [JsonPropertyName("heart_circular_buffer")]
+        public List<float> HeartCircularBuffer { get; set; } = new();       // Buffer of heartrate waveform
+        
+        [JsonPropertyName("breath_circular_buffer")]
+        public List<float> BreathCircularBuffer { get; set; } = new();      // Buffer of breathrate waveform
+    }
+
     public class Track
     {
         [JsonPropertyName("track_id")]
@@ -104,6 +128,9 @@ public class FrameData
 
     [JsonPropertyName("tracks")]
     public List<Track> TracksList { get; set; } = new List<Track>();
+
+    [JsonPropertyName("vital_signs")]
+    public VitalSignsInfo? VitalSigns { get; set; }
 
     [JsonPropertyName("frame_number")]
     public uint FrameNumber;

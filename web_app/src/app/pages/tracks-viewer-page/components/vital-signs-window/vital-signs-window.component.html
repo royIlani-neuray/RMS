@@ -1,0 +1,18 @@
+<div>
+    <table>
+        <tr>
+            <td>Track ID:</td>
+            <td>{{targetId}}</td>
+        </tr>
+        <tr>
+            <td>Heart Rate:</td>
+            <td>{{heartRate}}</td>
+        </tr>
+        <tr>
+            <td>Breath Rate:</td>
+            <td>{{breathRate}}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="selected-device-lable" *ngIf="radar != null;">{{radar.name}} [Vital Signs]</div>
