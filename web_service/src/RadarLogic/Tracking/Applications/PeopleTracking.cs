@@ -20,12 +20,14 @@ public class PeopleTracking : ITrackingApplication
     public const int POINT_CLOUD_UNIT_SIZE = 20;
     public const int POINT_CLOUD_INFO_SIZE = 8;
     public const int TARGET_HEIGHT_INFO_SIZE = 12;
+    public const int VITAL_SIGNS_CIRCULAR_BUFFER_SIZE = 15;
 
     public const int TLV_TYPE_POINT_CLOUD = 1020;
     public const int TLV_TYPE_TRACKS_LIST = 1010;
     public const int TLV_TYPE_TARGETS_INDEX = 1011;
     public const int TLV_TYPE_TARGETS_HEIGHT = 1012;
     public const int TLV_TYPE_PRESENCE_INDICATION = 1021;
+    public const int TLV_TYPE_VITAL_SIGNS = 1040;
 
     private RadarSettings.SensorPositionParams radarPosition;
 
@@ -95,16 +97,28 @@ public class PeopleTracking : ITrackingApplication
 
         public class TargetHeight
         {
-            public uint targetId;
-            public float maxZ;
-            public float minZ;
+            public uint TargetId;
+            public float MaxZ;
+            public float MinZ;
+        }
+
+        public class VitalSignsInfo
+        {
+            public uint TargetId;                             // Target ID used for XYZ location
+            public uint RangeBin;                             // range bin for XYZ location
+            public float BreathingDeviation;                  // deviation of breathing measurement over time
+            public float HeartRate;                           // Heart Rate Measurement
+            public float BreathingRate;                       // Breath Rate Measurement
+            public List<float> HeartCircularBuffer = new();   // Buffer of heartrate waveform
+            public List<float> BreathCircularBuffer = new();  // Buffer of breathrate waveform
         }
 
         public FrameHeader? frameHeader;
-        public List<Point> pointCloudList = new List<Point>();
-        public List<TargetHeight> targetsHeightList = new List<TargetHeight>();
-        public List<byte> targetsIndexList = new List<byte>();
-        public List<Track> tracksList = new List<Track>();
+        public List<Point> pointCloudList = new();
+        public List<TargetHeight> targetsHeightList = new();
+        public List<byte> targetsIndexList = new();
+        public List<Track> tracksList = new();
+        public VitalSignsInfo? vitalSigns;
 
     }
 
@@ -232,13 +246,37 @@ public class PeopleTracking : ITrackingApplication
                 for (int targetIndex = 0; targetIndex < targetsCount; targetIndex++)
                 {
                     PeopleTrackingFrameData.TargetHeight target = new PeopleTrackingFrameData.TargetHeight();
-                    target.targetId = reader.ReadUInt32();
-                    target.maxZ = reader.ReadSingle();
-                    target.minZ = reader.ReadSingle();
+                    target.TargetId = reader.ReadUInt32();
+                    target.MaxZ = reader.ReadSingle();
+                    target.MinZ = reader.ReadSingle();
                     frameData.targetsHeightList.Add(target);
                     
                     // Console.WriteLine($"Target Height: Track-{target.targetId}, Max-Z: {target.maxZ:0.00}, Min-Z: {target.minZ:0.00}");
                 }
+            }
+
+            if (tlvType == TLV_TYPE_VITAL_SIGNS)
+            {
+                frameData.vitalSigns = new PeopleTrackingFrameData.VitalSignsInfo
+                {
+                    TargetId = reader.ReadUInt16(),
+                    RangeBin = reader.ReadUInt16(),
+                    BreathingDeviation = reader.ReadSingle(),
+                    HeartRate = reader.ReadSingle(),
+                    BreathingRate = reader.ReadSingle()
+                };
+
+                for (int i=0; i<VITAL_SIGNS_CIRCULAR_BUFFER_SIZE; i++)
+                {
+                    frameData.vitalSigns.HeartCircularBuffer.Add(reader.ReadSingle());
+                }
+
+                for (int i=0; i<VITAL_SIGNS_CIRCULAR_BUFFER_SIZE; i++)
+                {
+                    frameData.vitalSigns.BreathCircularBuffer.Add(reader.ReadSingle());
+                }
+
+                Console.WriteLine($"Vital Signs: Track-{frameData.vitalSigns.TargetId}, Heart Rate: {frameData.vitalSigns.HeartRate:0.00}, Breathing Rate: {frameData.vitalSigns.BreathingRate:0.00}");
             }
         }
 
@@ -250,7 +288,7 @@ public class PeopleTracking : ITrackingApplication
         PeopleTrackingFrameData frameData = ReadFrame(readTIDataFunction);
         
         // convert to generic frame data
-        FrameData outFrameData = new Tracking.FrameData();
+        FrameData outFrameData = new();
         outFrameData.FrameNumber = frameData.frameHeader!.FrameNumber;
 
         foreach (var point in frameData.pointCloudList)
@@ -302,10 +340,24 @@ public class PeopleTracking : ITrackingApplication
         outFrameData.TargetsIndexList = frameData.targetsIndexList;
 
         outFrameData.TargetsHeightList = frameData.targetsHeightList.ConvertAll(target => new FrameData.TargetHeight() {
-            TargetId = target.targetId,
-            MaxZ = target.maxZ,
-            MinZ = target.minZ
+            TargetId = target.TargetId,
+            MaxZ = target.MaxZ,
+            MinZ = target.MinZ
         });
+
+        if (frameData.vitalSigns != null)
+        {
+            outFrameData.VitalSigns = new FrameData.VitalSignsInfo()
+            {
+                TargetId = frameData.vitalSigns.TargetId,
+                RangeBin = frameData.vitalSigns.RangeBin,
+                BreathingDeviation = frameData.vitalSigns.BreathingDeviation,
+                HeartRate = frameData.vitalSigns.HeartRate,
+                BreathingRate = frameData.vitalSigns.BreathingRate,
+                HeartCircularBuffer = frameData.vitalSigns.HeartCircularBuffer,
+                BreathCircularBuffer = frameData.vitalSigns.BreathCircularBuffer
+            };
+        }
 
         return outFrameData;
     }

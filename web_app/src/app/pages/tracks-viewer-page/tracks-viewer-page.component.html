@@ -27,6 +27,7 @@
     <button mat-menu-item [matMenuTriggerFor]="selectGaitIdMenu">Gait ID</button>
     <button mat-menu-item [matMenuTriggerFor]="selectFanGesturesMenu">Smart Fan Gestures</button>
     <button mat-menu-item [matMenuTriggerFor]="selectFallDetectionMenu">Fall Detection</button>
+    <button mat-menu-item [matMenuTriggerFor]="selectVitalSignsMenu">Vital Signs</button>
     <button mat-menu-item [matMenuTriggerFor]="setWindowsLayoutMenu">Set Windows Layout</button>
 </mat-menu>
 
@@ -48,6 +49,10 @@
 
 <mat-menu #selectFallDetectionMenu="matMenu">
     <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setFallDetectionWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
+</mat-menu>
+
+<mat-menu #selectVitalSignsMenu="matMenu">
+    <button *ngFor="let radar of this.tracksViewerData.radarsList" [disabled]="!radar.enabled" (click)="setVitalSignsWindow(radar.device_id)" mat-menu-item>{{radar.name}}</button>
 </mat-menu>
 
 <mat-menu #selectCameraMenu="matMenu">

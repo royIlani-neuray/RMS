@@ -56,7 +56,7 @@ public class RadarTracker
 
         string appName = radar.deviceMapping.appName;
 
-        if (appName.StartsWith("PEOPLE_TRACKING"))
+        if (appName.StartsWith("PEOPLE_TRACKING") || (appName == "VITAL_SIGNS"))
         {
             if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {

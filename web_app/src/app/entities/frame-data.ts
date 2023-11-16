@@ -15,6 +15,10 @@ export interface FrameData {
     tracks: TrackData[]
     points: PointData[]
     targets_index: number[]
+
+    targets_height: TargetsHeight[]
+
+    vital_signs? : VitalSignsInfo
 }
 
 export interface TrackData {
@@ -39,4 +43,20 @@ export interface PointData {
     position_x : number
     position_y : number
     position_z : number
+}
+
+export interface TargetsHeight {
+    target_id : number
+    max_z : number
+    min_z : number
+}
+
+export interface VitalSignsInfo {
+    target_id : number
+    range_bin : number
+    breathing_deviation : number
+    heart_rate : number
+    breathing_rate : number
+    heart_circular_buffer : number[]
+    breath_circular_buffer : number[]
 }

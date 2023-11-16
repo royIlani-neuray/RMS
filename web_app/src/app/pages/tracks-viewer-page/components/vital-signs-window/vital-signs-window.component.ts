@@ -15,12 +15,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TrackData } from 'src/app/entities/frame-data';
 
 @Component({
-  selector: 'app-radar-tracker-window',
-  templateUrl: './radar-tracker-window.component.html',
-  styleUrls: ['./radar-tracker-window.component.css'],
+  selector: 'app-vital-signs-window',
+  templateUrl: './vital-signs-window.component.html',
+  styleUrls: ['./vital-signs-window.component.css'],
   providers: [RadarWebsocketService]
 })
-export class RadarTrackerWindowComponent implements OnInit, OnDestroy {
+export class VitalSignsWindowComponent implements OnInit, OnDestroy {
 
   constructor(private radarsService : RadarsService,
               private deviceWebsocketService : RadarWebsocketService,
@@ -29,11 +29,9 @@ export class RadarTrackerWindowComponent implements OnInit, OnDestroy {
   radar : Radar | null
   frameDataSubscription! : any
 
-  tracksDataSource = new MatTableDataSource<TrackData>()
-  tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z', 'velocity_x', 'velocity_y', 'velocity_z'];
-  //tracksTableDisplayedColumns: string[] = ['track_id', 'range', 'position_x', 'position_y', 'position_z'];
-
-  numberOfPoints = 0
+  targetId = 0
+  heartRate = 0
+  breathRate = 0
 
   ngOnInit(): void {
   }
@@ -62,28 +60,22 @@ export class RadarTrackerWindowComponent implements OnInit, OnDestroy {
           this.frameDataSubscription = null
         }
     
-        // we have the radar info, now subscribe for tracks streaming
+        // we have the radar info, now subscribe for frame data streaming
         this.frameDataSubscription = this.deviceWebsocketService.GetFrameData().subscribe({
           next : (frameData) => 
           {
-            this.tracksDataSource.data = frameData.tracks
-            this.numberOfPoints = frameData.points.length
+            if (frameData.vital_signs != null)
+            {
+              this.targetId = frameData.vital_signs.target_id
+              this.heartRate = frameData.vital_signs.heart_rate
+              this.breathRate = frameData.vital_signs.breathing_rate
+            }
           }
         })
 
       },
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.router.navigate(['/error-404'])
     })
-  }
-
-  public getTrackRange(track : TrackData)
-  {
-    let radarHeight = this.radar!.radar_settings.sensor_position.height
-
-    // track x,y,z is in reference to the floor which is the origin (0,0,0).
-    // in order to get the range from the radar and not from the floor we reduce the radar height.
-
-    return Math.sqrt(Math.pow(track.position_x,2) + Math.pow(track.position_y,2) + Math.pow((track.position_z - radarHeight),2))
   }
 
 }
