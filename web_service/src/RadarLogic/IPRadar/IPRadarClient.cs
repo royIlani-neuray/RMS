@@ -28,6 +28,7 @@ public class IPRadarClient
     public const byte TI_COMMAND_RESPONSE_KEY = 101;
     public const byte FW_UPDATE_RESPONSE_KEY = 102;
     public const byte SET_DEVICE_ID_RESPONSE_KEY = 103;
+    public const byte GET_IMU_DATA_RESPONSE_KEY = 104;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
@@ -36,6 +37,7 @@ public class IPRadarClient
     public const byte FW_UPDATE_INIT_KEY = 205;
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
+    public const byte GET_IMU_DATA_KEY = 208;
 
     public const int FW_UPDATE_CHUNK_SIZE = 512;
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
@@ -212,6 +214,34 @@ public class IPRadarClient
 
 
         return bytesRead;
+    }
+
+    public void GetIMUData()
+    {
+        if (!isConnected)
+            throw new Exception("SendTICommand failed - radar not connected.");
+
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarClient.PROTOCOL_REVISION);
+        writer.Write(IPRadarClient.GET_IMU_DATA_KEY);
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 10, GET_IMU_DATA_RESPONSE_KEY);
+
+        bool isSupported = reader.ReadBoolean();
+        bool isActive = reader.ReadBoolean();
+        float pitchDegrees = reader.ReadSingle();
+        float rollDegrees = reader.ReadSingle();
+
+        Console.WriteLine($"IMU supported? {isSupported}");
+        if (isSupported) {
+            Console.WriteLine($"IMU active? {isActive}");
+            if (isActive) {
+                Console.WriteLine($"IMU data: pitch_deg {pitchDegrees}");
+                Console.WriteLine($"IMU data: roll_deg {rollDegrees}");
+            }
+        }
     }
 
     public static List<IPAddress> GetBroadcastAddresses()
