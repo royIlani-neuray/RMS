@@ -78,6 +78,10 @@ public class RadarTracker
         {
             trackingApp = new TrafficMonitoring();
         }
+        else if (appName == "LEVEL_SENSING")
+        {
+            trackingApp = new LevelSensing();
+        }
         else if (appName == "EMULATOR_APPLICATION")
         {
             trackingApp = new EmulatorStream(radar.Name, radar.Id);
