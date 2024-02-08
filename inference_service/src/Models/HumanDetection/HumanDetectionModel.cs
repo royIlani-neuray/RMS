@@ -51,7 +51,7 @@ public class HumanDetectionModel : IModelImplementation
         Tensor<float> iTensor = new DenseTensor<float>(new[] {1, 1, framesPerWindow, POINTS_PER_FRAME});
 
         //System.Console.WriteLine($"Tensor len: {xTensor.Length}");
-
+        /*
         for (int frameIndex=0; frameIndex<framesPerWindow; frameIndex++)
         {
             var frame = request.Frames[frameIndex];
@@ -77,7 +77,7 @@ public class HumanDetectionModel : IModelImplementation
                 iTensor.SetValue((frameIndex * POINTS_PER_FRAME) + pointIndex, intensity[pointIndex]);
             }
         }
-        
+        */
         // need to align the xTensor and zTensors according to the mean.
         var averageX = xTensor.Average();
         for (int index=0; index < xTensor.Length; index++)

@@ -20,8 +20,8 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
     private const int MAX_QUEUE_CAPACITY = 20;
     
     private const int POINTS_COUNT_PER_FRAME = 128;
-    private const int MIN_POINTS_FOR_VALID_FRAME = 7;
-    private const int MAX_INVALID_FRAMES = 10;
+    private const int MIN_POINTS_FOR_VALID_FRAME = 10;
+    private const int MAX_INVALID_FRAMES = 22;
 
     private GaitIdWindowBuilder windowBuilder;
     private GateIdPredictions predictions;
