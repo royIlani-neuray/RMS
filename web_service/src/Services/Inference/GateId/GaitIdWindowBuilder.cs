@@ -38,9 +38,10 @@ public class GaitIdWindowBuilder : TracksWindowBuilder
 
             foreach (var point in framePoints)
             {
-                frameInput.xAxis.Add(point.PositionX);
-                frameInput.yAxis.Add(point.PositionY);
-                frameInput.zAxis.Add(point.PositionZ);
+                // input is in cartesian points at radar body
+                frameInput.Azimuth.Add(point.Azimuth);
+                frameInput.Elevation.Add(point.Elevation);
+                frameInput.Range.Add(point.Range);
                 frameInput.Velocity.Add(point.Doppler);
                 frameInput.Intensity.Add(point.SNR);
             }

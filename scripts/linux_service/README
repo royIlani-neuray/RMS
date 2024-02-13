@@ -1,0 +1,5 @@
+To register the service:
+Place the file at /etc/systemd/system/neuray-rms.service
+
+Run the following command:
+systemctl enable neuray-rms.service

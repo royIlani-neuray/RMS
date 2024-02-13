@@ -15,9 +15,10 @@ namespace WebService.Services.Inference.GateId;
 public class GateIdService : IExtensionService
 {
     private const string SERVICE_ID = "GATE_ID_CLOSED_SET";
-    private const int REQUIRED_WINDOW_SIZE = 30;    // amount of frames required for inference
+    // private const int REQUIRED_WINDOW_SIZE = 30;    // amount of frames required for inference
+    private const int REQUIRED_WINDOW_SIZE = 32;    // amount of frames required for inference
 
-    private const int GAIT_WINDOW_SHIFT_SIZE = 6;   // amount of frames to remove from the window after inference.
+    private const int GAIT_WINDOW_SHIFT_SIZE = 8;   // amount of frames to remove from the window after inference.
 
     private const int MAJORITY_PREDICTOR_MIN_REQUIRED_HITS = 3;
     private const int MAJORITY_PREDICTOR_WINDOW_SIZE = 10;

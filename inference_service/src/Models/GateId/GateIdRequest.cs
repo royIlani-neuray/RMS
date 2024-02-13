@@ -12,14 +12,14 @@ public class GateIdRequest
 {
     public class GateIdFrameInput 
     {
-        [JsonPropertyName("x_axis")]
-        public List<float> xAxis { get; set; } = new List<float>();
+        [JsonPropertyName("azimuth")]
+        public List<float> Azimuth { get; set; } = new List<float>();
 
-        [JsonPropertyName("y_axis")]
-        public List<float> yAxis { get; set; } = new List<float>();
+        [JsonPropertyName("elevation")]
+        public List<float> Elevation { get; set; } = new List<float>();
 
-        [JsonPropertyName("z_axis")]
-        public List<float> zAxis { get; set; } = new List<float>();
+        [JsonPropertyName("range")]
+        public List<float> Range { get; set; } = new List<float>();
 
         [JsonPropertyName("velocity")]
         public List<float> Velocity { get; set; } = new List<float>();
