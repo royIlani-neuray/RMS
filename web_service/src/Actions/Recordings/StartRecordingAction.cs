@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using WebService.Actions.Services;
 using WebService.Context;
 using WebService.Recordings;
+using WebService.Events;
 using WebService.Services.RadarRecording;
 
 namespace WebService.Actions.Recordings;
@@ -69,6 +70,7 @@ public class StartRecordingAction : IAction
 
             var action = new LinkRadarServiceAction(radarId, serviceArgs);
             action.Run();
+            RMSEvents.Instance.RecordingStartedEvent(radarId);
         }
 
         serviceArgs.ServiceId = CameraRecordingService.SERVICE_ID;
@@ -82,6 +84,7 @@ public class StartRecordingAction : IAction
 
             var action = new LinkCameraServiceAction(cameraId, serviceArgs);
             action.Run();
+            RMSEvents.Instance.RecordingStartedEvent(cameraId);
         }
     }
 }

@@ -14,3 +14,15 @@
 .mat-row:hover {
     background-color:lightcyan;
 }
+
+.recording-icon {
+    margin-right: 5px;
+    color: red;
+    animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%{opacity: 0;}
+    50%{opacity: 1;}
+    100%{opacity: 0;}
+}

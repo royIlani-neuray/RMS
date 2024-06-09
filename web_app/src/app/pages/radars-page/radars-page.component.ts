@@ -59,6 +59,19 @@ export class RadarsPageComponent implements OnInit {
       }
     })
 
+    this.rmsEventsService.recordingStartedEvent.subscribe({
+      next: (radarId) =>
+      {
+        this.getRadarsList()
+      }
+    })
+
+    this.rmsEventsService.recordingStoppedEvent.subscribe({
+      next: (radarId) =>
+      {
+        this.getRadarsList()
+      }
+    })
   }
 
   ngAfterViewInit() {

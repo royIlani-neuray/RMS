@@ -29,6 +29,8 @@ export class RmsEventsService
   public cameraUpdatedEvent: Subject<string> = new Subject<string>()
   public cameraDeletedEvent: Subject<string> = new Subject<string>()
 
+  public recordingStartedEvent: Subject<string> = new Subject<string>()
+  public recordingStoppedEvent: Subject<string> = new Subject<string>()
 
   constructor() 
   { 
@@ -85,6 +87,14 @@ export class RmsEventsService
       else if (message['type'] == 'CAMERA_DEVICE_DELETED')
       {
         this.cameraDeletedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'RECORDING_STARTED')
+      {
+        this.recordingStartedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'RECORDING_STOPPED')
+      {
+        this.recordingStoppedEvent.next(message['data'])
       }
 
     }
