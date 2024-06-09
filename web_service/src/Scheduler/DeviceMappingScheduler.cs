@@ -37,7 +37,7 @@ public class DeviceMappingScheduler : TaskScheduler {
 
     #endregion
 
-    private const int SCHEDULING_PERIOD_MINUTES = 2;
+    private const double SCHEDULING_PERIOD_MINUTES = 2;
 
     public override void RunTask()
     {

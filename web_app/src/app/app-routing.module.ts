@@ -28,6 +28,7 @@ import { RecordingsListComponent } from './pages/recordings-page/components/reco
 import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
+import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent },
@@ -81,6 +82,10 @@ const routes: Routes = [
       {
         path: 'device-recorder',
         component: DeviceRecorderComponent
+      },
+      {
+        path: 'schedules-list',
+        component: SchedulesListComponent
       }
     ]
   },

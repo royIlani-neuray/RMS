@@ -15,7 +15,8 @@ public interface IEntity {
         Radar,
         Camera, 
         RadarTemplate,
-        User
+        User,
+        RecordingSchedule
     }
 
     public EntityTypes EntityType { get; }

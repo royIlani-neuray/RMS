@@ -31,7 +31,7 @@ public class EntityStorage<Entity> where Entity : IEntity {
         }
         else
         {
-            Console.WriteLine($"Warning: could not entity file for {entity.EntityType}: {entity.Id}");
+            Console.WriteLine($"Warning: could not delete entity file for {entity.EntityType}: {entity.Id}");
         }
     }
 

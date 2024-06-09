@@ -1,0 +1,11 @@
+<div class="week-day-row">
+    <div *ngFor="let day of daysOfWeek" 
+        [class.highlighted]="isSelected(day.id)"
+        (click)="!readOnly && onDayClick(day.id)"
+        [style.cursor] = "readOnly ? 'default' : 'pointer'"
+        [style.font-size] = "size + 'px'"
+        [style.width] = "size * 1.8 + 'px'"
+        [style.height] = "size * 1.8 + 'px'">
+        <span class="day-icon" >{{ day.shortName }}</span>
+    </div>
+</div>

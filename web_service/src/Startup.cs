@@ -49,6 +49,9 @@ public class Startup
         Console.WriteLine("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();
 
+        Console.WriteLine("Loading recording schedules from storage...");
+        RecordingScheduleContext.Instance.LoadSchedulesFromStorage();
+
         Console.WriteLine("Loading services...");
         var servicesSettings = config.GetSection("services").Get<List<ExtensionServiceSettings>>();
 
@@ -72,6 +75,9 @@ public class Startup
 
         Console.WriteLine("Starting Connection Scheduler...");
         ConnectionScheduler.Instance.Start();
+
+        Console.WriteLine("Starting Recordings Scheduler...");
+        RecordingScheduler.Instance.Start();
     }
 
 }

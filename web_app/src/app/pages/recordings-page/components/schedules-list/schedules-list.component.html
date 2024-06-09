@@ -1,0 +1,101 @@
+
+<h3>Recording Schedules</h3>
+
+<table  *ngIf="{
+    obs1: schedulesListLoaded | async,
+    obs2: radarsListLoaded | async,
+    obs3: camerasListLoaded | async
+  } as observables" mat-table [dataSource]="dataSource" multiTemplateDataRows matSort matSortActive="name" matSortDirection="desc" class="mat-elevation-z8 schedules-table">
+
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> <b>Schedule Name</b> </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="enabled">
+        <th mat-header-cell *matHeaderCellDef><b>Enabled</b></th>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon *ngIf="element.enabled" style="color: green">check_circle</mat-icon>
+            <mat-icon *ngIf="!element.enabled" style="color: red">cancel</mat-icon>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="times">
+        <th mat-header-cell *matHeaderCellDef><b>Times</b></th>
+        <td mat-cell *matCellDef="let element">
+            <table style="text-align: end;">
+                <tr>
+                    <td>From:</td>
+                    <td><span class="time">{{element.start_time | slice:0:-3}}</span></td>
+                    <td><days-of-week [(selectedDays)]=element.start_days [readOnly]="true"></days-of-week></td>
+                </tr>
+                <tr>
+                    <td>To:</td>
+                    <td><span class="time">{{element.end_time | slice:0:-3}}</span></td>
+                    <td><days-of-week [(selectedDays)]=element.end_days [readOnly]="true"></days-of-week></td>
+                </tr>
+            </table>            
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="num_of_devices">
+        <th mat-header-cell *matHeaderCellDef><b>Devices</b></th>
+        <td mat-cell *matCellDef="let element"> {{element.radars.length + element.cameras.length}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell mat-cell *matCellDef="let element">
+            <div class="action-bottons">    
+                <button mat-raised-button (click)="toggleEnable(element); $event.stopPropagation()" color="primary">
+                    {{element.enabled ? "Disable" : "Enable"}}
+                </button>
+                <button mat-raised-button (click)="renameSchedule(element); $event.stopPropagation()" color="primary">Rename</button>
+                <button mat-raised-button (click)="deleteSchedule(element); $event.stopPropagation()" color="primary">Delete</button>
+            </div>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expand">
+        <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+            <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+            <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+          </button>
+        </td>
+    </ng-container>
+
+    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+    <ng-container matColumnDef="scheduleExpended">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsWithExpand.length">
+        <div class="expended-schedule-content" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <table class="entries-table">
+                <thead>
+                    <th>Device Type</th>
+                    <th>Device Name</th>
+                </thead>
+                <tr *ngFor="let radarId of element.radars">
+                    <td>Radar</td>
+                    <td>{{radarNameById(radarId)}}</td>
+                </tr>
+                <tr *ngFor="let cameraId of element.cameras">
+                    <td>Camera</td>
+                    <td>{{cameraNameById(cameraId)}}</td>
+                </tr>
+            </table>
+        </div>
+        </td>
+    </ng-container>
+    
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsWithExpand"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumnsWithExpand;"
+        [class.expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['scheduleExpended']" class="detail-row"></tr>
+</table>
+
+<div *ngIf="!(schedulesListLoaded | async)" style="display: flex; justify-content: center; align-items: center; background: white;">
+    <mat-spinner [diameter]="40"></mat-spinner>
+</div>

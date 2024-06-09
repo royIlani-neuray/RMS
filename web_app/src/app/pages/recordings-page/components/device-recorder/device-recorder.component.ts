@@ -13,8 +13,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { CameraBrief } from 'src/app/entities/camera';
 import { RadarBrief } from 'src/app/entities/radar';
+import { AddRecordingScheduleArgs } from 'src/app/entities/recording-schedule';
 import { CamerasService } from 'src/app/services/cameras.service';
 import { RadarsService } from 'src/app/services/radars.service';
+import { RecordingSchedulesService } from 'src/app/services/recording-schedules.service';
 import { RecordingsService } from 'src/app/services/recordings.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 
@@ -28,14 +30,29 @@ export class DeviceRecorderComponent implements OnInit {
   radars: RadarBrief[] = []
   cameras: CameraBrief[] = []
 
+  isSchedule = false;
+  days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  schedule: AddRecordingScheduleArgs = {
+    name: '',
+    start_time: '',
+    end_time: '',
+    start_days: [],
+    end_days: [],
+    radars: [],
+    cameras: [],
+  };
+
   @ViewChild("radarSelectionList") radarSelectionList: MatSelectionList;
   @ViewChild("cameraSelectionList") cameraSelectionList: MatSelectionList;
 
-  @ViewChild(MatInput) recordingNameInput: MatInput;
+  @ViewChild(MatInput) nameInput: MatInput;
+
+  notificationConfig: any = { duration : 2500, horizontalPosition : 'right', verticalPosition : 'bottom' };
 
   constructor(private radarsService : RadarsService,
               private camerasService : CamerasService,
               private recordingsService : RecordingsService,
+              private recordingSchedulesService : RecordingSchedulesService,
               private rmsEventsService : RmsEventsService,
               private notification: MatSnackBar,
               private router : Router) { }
@@ -87,7 +104,7 @@ export class DeviceRecorderComponent implements OnInit {
     let selectedRadars : string[] = this.radarSelectionList.selectedOptions.selected.map(item => item.value)
     let selectedCameras : string[] = this.cameraSelectionList.selectedOptions.selected.map(item => item.value)
 
-    let recordingName : string = this.recordingNameInput.value
+    let recordingName : string = this.nameInput.value
 
     if (selectedCameras.length + selectedRadars.length == 0)
     {
@@ -97,7 +114,7 @@ export class DeviceRecorderComponent implements OnInit {
 
     this.recordingsService.startRecording(recordingName, selectedRadars, selectedCameras).subscribe(
     {
-      next : () => this.notification.open("Recording started.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
+      next : () => this.notification.open("Recording started.", "Close", this.notificationConfig),
       error: (err) => 
       {
         if (err.status == 504)
@@ -130,26 +147,54 @@ export class DeviceRecorderComponent implements OnInit {
 
     this.recordingsService.stopRecording(selectedRadars, selectedCameras).subscribe(
     {
-      next : () => this.notification.open("Recording stopped.", "Close", { duration : 2500, horizontalPosition : 'right', verticalPosition : 'top' }),
+      next : () => this.notification.open("Recording stopped.", "Close", this.notificationConfig),
       error: (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: Stop recording failed.", "Close", { duration : 4000 })
     })
-
   }
 
-  public isTriggerButtonDisabled()
+  public getSelectedDevicesCount(): number
   {
     if (this.radarSelectionList == null)
-      return true
+      return 0
       
     let selectedRadars : string[] = this.radarSelectionList.selectedOptions.selected.map(item => item.value)
     let selectedCameras : string[] = this.cameraSelectionList.selectedOptions.selected.map(item => item.value)
 
-    if (selectedCameras.length + selectedRadars.length == 0)
-    {
-      return true
-    } 
-
-    return false  
+    return selectedCameras.length + selectedRadars.length;
   }
 
+  public isTriggerButtonDisabled()
+  {
+    return this.getSelectedDevicesCount() == 0;
+  }
+
+  public isValidSchedule(): boolean
+  {
+    if (this.getSelectedDevicesCount() == 0) return false;
+    if (this.nameInput.value == "") return false;
+    if (this.schedule.start_time == "") return false;
+    if (this.schedule.end_time == "") return false;
+    if (this.schedule.start_days.length == 0) return false;
+    if (this.schedule.start_days.length != this.schedule.end_days.length) return false;
+    return true;
+  }
+
+  public onSaveSchedule()
+  {
+    console.log(this.schedule);
+    if (!this.isValidSchedule()) {
+      this.notification.open("Not all schedule parameters set correctly.", "Close", this.notificationConfig);
+      return;
+    }
+    this.schedule.name = this.nameInput.value;
+    this.schedule.radars = this.radarSelectionList.selectedOptions.selected.map(item => item.value);
+    this.schedule.cameras = this.cameraSelectionList.selectedOptions.selected.map(item => item.value);
+    if (this.schedule.start_time.length == 5) this.schedule.start_time += ':00';
+    if (this.schedule.end_time.length == 5) this.schedule.end_time += ':00';
+    
+    this.recordingSchedulesService.addSchedule(this.schedule).subscribe({
+      next : (response) => this.notification.open("Schedule saved and set.", "Close", this.notificationConfig),
+      error : (err) => this.notification.open("Server Error: could not save schedule.", "Close", this.notificationConfig)
+    })
+  }
 }

@@ -9,7 +9,7 @@
 public abstract class TaskScheduler {
 
     private Task? SchedulerTask;
-    private int SchedulingPeriodMinutes;
+    private double SchedulingPeriodMinutes;
     private bool runScheduler = false;
 
     public void Start()
@@ -26,7 +26,7 @@ public abstract class TaskScheduler {
         SchedulerTask.Start();
     }
 
-    public TaskScheduler(int schedulingPeriodMinutes)
+    public TaskScheduler(double schedulingPeriodMinutes)
     {
         this.SchedulingPeriodMinutes = schedulingPeriodMinutes;
     }
@@ -44,7 +44,7 @@ public abstract class TaskScheduler {
                 System.Console.WriteLine($"Unexpected exeption in scheduler: {ex.Message}");
             }
 
-            Thread.Sleep(SchedulingPeriodMinutes * 60 * 1000);
+            Thread.Sleep((int)(SchedulingPeriodMinutes * 60 * 1000));
         }
     }
 

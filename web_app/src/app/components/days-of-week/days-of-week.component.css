@@ -1,0 +1,19 @@
+.week-day-row {
+    display: flex;
+    padding: 6px;
+}
+  
+.week-day-row > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: lightgray;
+    font-weight: bold;
+    color: white;
+    margin-right: 4px;
+}
+
+.highlighted {
+    background-color: #3f51b5 !important;
+}

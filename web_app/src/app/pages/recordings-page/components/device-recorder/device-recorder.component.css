@@ -2,3 +2,32 @@
 .device-selection-wrapper {
     border: 1px solid gray;
 }
+
+.schedule-container {
+    display: table;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+    /* max-width: 500px; */
+    margin: 10px 0px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+    font-size: 20px;
+}
+
+td {
+    padding: 0 15px;
+}
+
+.actions {
+    margin-top: 10px;
+}
+
+.actions >>> button {
+    margin-right: 10px;
+}

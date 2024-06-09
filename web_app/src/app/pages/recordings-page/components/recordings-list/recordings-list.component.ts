@@ -10,14 +10,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { DeviceEmulatorService } from 'src/app/services/device-emulator.service';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { MatSort } from '@angular/material/sort';
 import { RecordingEntry, RecordingInfo, RecordingsService } from 'src/app/services/recordings.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import { RenameRecordingDialogComponent } from '../rename-recording-dialog/rename-recording-dialog.component';
+import { RenameDialogComponent } from '../rename-dialog/rename-dialog.component';
 
 
 @Component({
@@ -113,30 +113,32 @@ export class RecordingsListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-
       if (result)
       {
         this.recordingsService.deleteRecording(recording.name).subscribe({
           next : (response) => this.getRecordingsList(),
-          error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete radar device")
-        })
+          error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not delete recording")
+        });
       }
     });
   }
 
-  public renameRecordingClicked(recording : RecordingInfo)
+  public renameRecordingClicked(recording: RecordingInfo)
   {
-    let dialogRef = this.dialog.open(RenameRecordingDialogComponent, {
+    let dialogRef = this.dialog.open(RenameDialogComponent, {
       width: '550px',
       height: '240px',
-      data: { recording: recording }
+      data: {
+        name: recording.name
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-
-      if (result)
-      {
-        this.getRecordingsList()
+      if (result) {
+        this.recordingsService.renameRecording(recording.name, result).subscribe({
+          next : (response) => this.getRecordingsList(),
+          error : (err) => this.showNotification("Error: could not rename recording")
+        });
       }
     });
   }

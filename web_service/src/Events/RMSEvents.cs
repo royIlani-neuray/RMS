@@ -96,5 +96,15 @@ public class RMSEvents : WebSocketServer
         SendEvent("CAMERA_DEVICE_DELETED", cameraId);
     }
 
+    public void RecordingScheduleAddedEvent(string scheduleId)
+    {
+        SendEvent("RECORDING_SCHEDULE_ADDED", scheduleId);
+    }
+
+    public void RecordingScheduleDeletedEvent(string scheduleId)
+    {
+        SendEvent("RECORDING_SCHEDULE_DELETED", scheduleId);
+    }
+
 
 }

@@ -20,17 +20,50 @@
 
 <div>
   <mat-form-field style="width: 100%;" hintLabel="Max 80 characters" appearance="fill">
-    <mat-label>Recording name</mat-label>
-    <input matInput #recordingNameInput maxlength="80" placeholder="Optional: Set the name for this recording.">
-    <mat-hint align="end">{{recordingNameInput.value!.length || 0}}/80</mat-hint>
+    <mat-label>{{isSchedule ? 'Schedule Name' : 'Recording name'}}</mat-label>
+    <input matInput #nameInput maxlength="80" placeholder="Set the name for this recording." [required]="isSchedule">
+    <mat-hint align="end">{{nameInput.value!.length || 0}}/80</mat-hint>
   </mat-form-field>
 </div>
 
 <br>
 
-<div>
-    <button mat-raised-button (click)="startRecording()" color="primary" [disabled]="isTriggerButtonDisabled()">Start Recording</button>
-    <button mat-raised-button (click)="stopRecording()" color="primary" [disabled]="isTriggerButtonDisabled()" style="margin-left: 10px;">Stop Recording</button>
+<label>
+  <input type="checkbox" [(ngModel)]="isSchedule" /> Create a schedule
+</label>
+
+<div class="schedule-container" *ngIf="isSchedule">
+  <table style="text-align: end;">
+      <tr>
+        <td>From</td>
+        <td>
+          <mat-form-field appearance="outline">
+            <mat-label>Start Time</mat-label>
+            <input matInput type="time" [(ngModel)]="schedule.start_time" required onfocus="this.showPicker()">
+          </mat-form-field>
+        </td>
+        <td><days-of-week [(selectedDays)]="schedule.start_days" [readOnly]="false" [size]="20"></days-of-week></td>
+      </tr>
+      <tr>
+        <td>To</td>
+        <td>
+          <mat-form-field appearance="outline">
+            <mat-label>End Time</mat-label>
+            <input matInput type="time" [(ngModel)]="schedule.end_time" required onfocus="this.showPicker()">
+          </mat-form-field>
+        </td>
+        <td><days-of-week [(selectedDays)]="schedule.end_days" [readOnly]="false" [size]="20"></days-of-week></td>
+      </tr>
+  </table>
 </div>
 
-
+<div class="actions">
+  <ng-container *ngIf="isSchedule; then schedule_actions else recording_actions"></ng-container>
+  <ng-template #schedule_actions>
+    <button mat-raised-button (click)="onSaveSchedule()" color="primary" [disabled]="isTriggerButtonDisabled()">Save Schedule</button>
+  </ng-template>
+  <ng-template #recording_actions>
+    <button mat-raised-button (click)="startRecording()" color="primary" [disabled]="isTriggerButtonDisabled()">Start Recording</button>
+    <button mat-raised-button (click)="stopRecording()" color="primary" [disabled]="isTriggerButtonDisabled()">Stop Recording</button>
+  </ng-template>
+</div>

@@ -9,22 +9,24 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
+import { Observable } from 'rxjs';
 import { RecordingInfo, RecordingsService } from 'src/app/services/recordings.service';
 
 export interface DialogData {
-  recording: RecordingInfo
+  name: string
+  onSave: (newName: string) => Observable<Object>
 }
 
 @Component({
-  selector: 'app-rename-recording-dialog',
-  templateUrl: './rename-recording-dialog.component.html',
-  styleUrls: ['./rename-recording-dialog.component.css']
+  selector: 'app-rename-dialog',
+  templateUrl: './rename-dialog.component.html',
+  styleUrls: ['./rename-dialog.component.css']
 })
-export class RenameRecordingDialogComponent implements OnInit {
+export class RenameDialogComponent implements OnInit {
 
   @ViewChild(MatInput) textInput: MatInput;
   
-  constructor(public dialogRef: MatDialogRef<RenameRecordingDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<RenameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData, private cd : ChangeDetectorRef,
     private recordingsService : RecordingsService) { }
 
@@ -33,23 +35,17 @@ export class RenameRecordingDialogComponent implements OnInit {
 
   ngAfterViewInit(): void 
   {
-    this.textInput.value = this.data.recording.name
+    this.textInput.value = this.data.name
     this.cd.detectChanges()
   }
 
   public onSaveClicked()
   {
-    let configScript = this.textInput.value.split("\n")
-
-    this.recordingsService.renameRecording(this.data.recording.name, this.textInput.value).subscribe({
-      next : (response) => this.dialogRef.close(true),
-      error : (err) => this.dialogRef.close(false)
-    })
+    this.dialogRef.close(this.textInput.value);
   }
 
   public onCancelClicked()
   {
     this.dialogRef.close(false);
   }
-
 }

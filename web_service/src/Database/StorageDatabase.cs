@@ -14,6 +14,7 @@ public class StorageDatabase
     public const string CameraStoragePath = "./data/cameras";
     public const string TemplateStoragePath = "./data/templates";
     public const string UserStoragePath = "./data/users";
+    public const string RecordingSchedulesStoragePath = "./data/recordings_schedules";
 
 
     public static void DatabaseInit()
@@ -36,6 +37,12 @@ public class StorageDatabase
         {
             System.Console.WriteLine("Creating cameras storage folder.");
             System.IO.Directory.CreateDirectory(CameraStoragePath);
+        }
+
+        if (!System.IO.Directory.Exists(RecordingSchedulesStoragePath))
+        {
+            System.Console.WriteLine("Creating recording schedules storage folder.");
+            System.IO.Directory.CreateDirectory(RecordingSchedulesStoragePath);
         }
 
 

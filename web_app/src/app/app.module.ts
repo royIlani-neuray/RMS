@@ -64,7 +64,7 @@ import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components
 import { ConfigScriptDialogComponent } from './pages/radar-page/components/config-script-dialog/config-script-dialog.component';
 import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
 import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components/camera-view-window/camera-view-window.component';
-import { RenameRecordingDialogComponent } from './pages/recordings-page/components/rename-recording-dialog/rename-recording-dialog.component';
+import { RenameDialogComponent } from './pages/recordings-page/components/rename-dialog/rename-dialog.component';
 import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
 import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
@@ -75,6 +75,8 @@ import { FallDetectionWindowComponent } from './pages/tracks-viewer-page/compone
 import { FanGesturesWindowComponent } from './pages/tracks-viewer-page/components/fan-gestures-window/fan-gestures-window.component';
 import { RadarTrackerWindowComponent } from './pages/tracks-viewer-page/components/radar-tracker-window/radar-tracker-window.component';
 import { VitalSignsWindowComponent } from './pages/tracks-viewer-page/components/vital-signs-window/vital-signs-window.component';
+import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
+import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.component';
 
 @NgModule({
   declarations: [
@@ -102,8 +104,9 @@ import { VitalSignsWindowComponent } from './pages/tracks-viewer-page/components
     ConfigScriptDialogComponent,
     CreateTemplateDialogComponent,
     CameraViewWindowComponent,
-    RenameRecordingDialogComponent,
+    RenameDialogComponent,
     RecordingsListComponent,
+    SchedulesListComponent,
     DeviceRecorderComponent,
     CamerasPageComponent,
     CameraPageComponent,
@@ -112,7 +115,8 @@ import { VitalSignsWindowComponent } from './pages/tracks-viewer-page/components
     FallDetectionWindowComponent,
     FanGesturesWindowComponent,
     RadarTrackerWindowComponent,
-    VitalSignsWindowComponent
+    VitalSignsWindowComponent,
+    DaysOfWeekComponent
   ],
   imports: [
     BrowserModule,

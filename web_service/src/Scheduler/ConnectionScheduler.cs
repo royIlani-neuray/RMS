@@ -39,7 +39,7 @@ public class ConnectionScheduler : TaskScheduler{
 
     #endregion
 
-    private const int SCHEDULING_PERIOD_MINUTES = 2;
+    private const double SCHEDULING_PERIOD_MINUTES = 2;
 
     private void ConnectRadars()
     {

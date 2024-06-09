@@ -1,0 +1,50 @@
+.schedules-table {
+    width: 100%;
+}
+
+.schedules-table th {
+  background-color: #7385d3;
+}
+
+.mat-row:hover {
+    background-color:lightcyan;
+}
+
+tr.detail-row {
+    height: 0;
+}
+
+.expended-schedule-content {
+    overflow: hidden;
+    display: flex;
+}
+
+.time {
+    font-size: 18px;
+    display: table;
+    margin: 0 auto;
+}
+
+.action-bottons > button{
+    margin-left: 10px;
+}
+
+.entries-table {
+    width: 100%;
+    margin: 20px;
+    border: 1px solid;
+}
+
+.entries-table th {
+    padding: 10px;
+    background-color: #7385d3;
+}
+
+.entries-table td {
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.entries-table tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+}
