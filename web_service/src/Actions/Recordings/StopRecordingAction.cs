@@ -9,6 +9,7 @@
 using System.Text.Json.Serialization;
 using WebService.Actions.Services;
 using WebService.Context;
+using WebService.Events;
 using WebService.Services.RadarRecording;
 
 namespace WebService.Actions.Recordings;
@@ -48,6 +49,7 @@ public class StopRecordingAction : IAction
 
             var action = new UnlinkRadarServiceAction(radarId, RadarRecordingService.SERVICE_ID);
             action.Run();
+            RMSEvents.Instance.RecordingStoppedEvent(radarId);
         }
 
         foreach (string cameraId in args.CameraIds)
@@ -59,6 +61,7 @@ public class StopRecordingAction : IAction
             
             var action = new UnlinkCameraServiceAction(cameraId, CameraRecordingService.SERVICE_ID);
             action.Run();
+            RMSEvents.Instance.RecordingStoppedEvent(cameraId);
         }
     }
 }

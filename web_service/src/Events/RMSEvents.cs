@@ -106,5 +106,13 @@ public class RMSEvents : WebSocketServer
         SendEvent("RECORDING_SCHEDULE_DELETED", scheduleId);
     }
 
+    public void RecordingStartedEvent(string deviceId)
+    {
+        SendEvent("RECORDING_STARTED", deviceId);
+    }
 
+    public void RecordingStoppedEvent(string deviceId)
+    {
+        SendEvent("RECORDING_STOPPED", deviceId);
+    }
 }

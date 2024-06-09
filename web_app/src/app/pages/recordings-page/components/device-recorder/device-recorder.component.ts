@@ -75,6 +75,20 @@ export class DeviceRecorderComponent implements OnInit {
         this.getCamerasList()
       }
     })
+
+    this.rmsEventsService.recordingStartedEvent.subscribe({
+      next: (radarId) => 
+      {
+        this.getRadarsList()
+      }
+    })
+
+    this.rmsEventsService.recordingStoppedEvent.subscribe({
+      next: (radarId) => 
+      {
+        this.getRadarsList()
+      }
+    })
   }
 
   public getRadarsList()

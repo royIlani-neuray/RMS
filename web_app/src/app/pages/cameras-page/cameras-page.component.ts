@@ -41,14 +41,14 @@ export class CamerasPageComponent implements OnInit {
     })
 
     this.rmsEventsService.cameraAddedEvent.subscribe({
-      next: (cameraId) => 
+      next: (cameraId) =>
       {
         this.getCamerasList()
       }
     })
 
     this.rmsEventsService.cameraDeletedEvent.subscribe({
-      next: (cameraId) => 
+      next: (cameraId) =>
       {
         this.getCamerasList()
       }
