@@ -3,6 +3,18 @@
     border: 1px solid gray;
 }
 
+.recording-icon {
+    margin-right: 5px;
+    color: red;
+    animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%{opacity: 0;}
+    50%{opacity: 1;}
+    100%{opacity: 0;}
+}
+
 .schedule-container {
     display: table;
     flex-direction: column;

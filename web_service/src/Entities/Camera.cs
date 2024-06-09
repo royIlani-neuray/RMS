@@ -9,6 +9,7 @@
 using System.Text.Json.Serialization;
 using WebService.CameraLogic.CameraStream;
 using WebService.Database;
+using WebService.Services.RadarRecording;
 using WebService.WebSockets;
 
 namespace WebService.Entites;
@@ -39,6 +40,9 @@ public class Camera : DeviceEntity {
     [JsonPropertyName("resolution_y")]
     public int ResolutionY { get; set; }
 
+    [JsonPropertyName("is_recording")]
+    public bool isRecording => this.LinkedServices.Exists(service => service.ServiceId == CameraRecordingService.SERVICE_ID);
+
     [JsonIgnore]
     public CameraWebSocketServer CameraWebSocket;
 
@@ -47,9 +51,12 @@ public class Camera : DeviceEntity {
 
     public class CameraBrief : DeviceBrief
     {
+        [JsonPropertyName("is_recording")]
+        public bool isRecording { get; set; }
+
         public CameraBrief(Camera camera) : base(camera)
         {
-            // No additional camera specific details.
+            isRecording = camera.isRecording;
         }
     }
 

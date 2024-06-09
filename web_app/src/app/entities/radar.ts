@@ -15,6 +15,7 @@ export interface RadarBrief {
     device_id: string
     enabled: boolean,
     send_tracks_report: boolean
+    is_recording: boolean
 }
 
 export interface Radar {
@@ -25,6 +26,7 @@ export interface Radar {
     device_id: string
     enabled: boolean
     send_tracks_report: boolean
+    is_recording: boolean
 
     config_script: string[]
 

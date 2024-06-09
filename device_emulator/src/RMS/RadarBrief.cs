@@ -35,6 +35,9 @@ public class RadarBrief
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }
 
+    [JsonPropertyName("is_recording")]
+    public bool IsRecording { get; set; }
+
     public RadarBrief()
     {
         Name = String.Empty;

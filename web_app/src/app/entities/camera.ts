@@ -13,6 +13,7 @@ export interface CameraBrief {
     description: string
     device_id: string
     enabled: boolean
+    is_recording: boolean
 }
 
 export interface Camera {
@@ -29,6 +30,7 @@ export interface Camera {
     resolution_x: number
     resolution_y: number
     linked_services: LinkedService[]
+    is_recording: boolean
 }
 
 export interface LinkedService {

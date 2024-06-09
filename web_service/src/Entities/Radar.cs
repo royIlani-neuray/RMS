@@ -11,6 +11,7 @@ using WebService.RadarLogic.IPRadar;
 using WebService.RadarLogic.Tracking;
 using WebService.WebSockets;
 using WebService.Database;
+using WebService.Services.RadarRecording;
 
 namespace WebService.Entites;
 
@@ -21,6 +22,9 @@ public class Radar : DeviceEntity {
     
     [JsonIgnore]
     public override string StoragePath => StorageDatabase.RadarStoragePath;
+
+    [JsonPropertyName("is_recording")]
+    public bool isRecording => this.LinkedServices.Exists(service => service.ServiceId == RadarRecordingService.SERVICE_ID);
 
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }
@@ -48,9 +52,13 @@ public class Radar : DeviceEntity {
         [JsonPropertyName("send_tracks_report")]
         public bool SendTracksReport { get; set; }
 
+        [JsonPropertyName("is_recording")]
+        public bool isRecording { get; set; }
+
         public RadarBrief(Radar device) : base(device)
         {
             SendTracksReport = device.SendTracksReport;
+            isRecording = device.isRecording;
         }
     }
 

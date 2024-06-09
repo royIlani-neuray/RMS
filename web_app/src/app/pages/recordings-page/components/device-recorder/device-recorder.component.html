@@ -5,13 +5,19 @@
 <div class="device-selection-wrapper">
     <mat-selection-list #radarSelectionList>
         <mat-list-option *ngFor="let radar of radars" [value]="radar.device_id" [disabled]="!radar.enabled || radar.state != 'Active'">
-          {{radar.name}} {{radar.enabled ? "" : "(disabled)"}} {{radar.state == 'Active' ? "" : "(incative)"}}
+          <div style="display: flex; align-items: center;">
+            <mat-icon class="recording-icon" *ngIf="radar.is_recording">circle</mat-icon>
+            {{radar.name}} {{radar.enabled ? "" : "(disabled)"}} {{radar.state == 'Active' ? "" : "(inactive)"}}
+          </div>
         </mat-list-option>
     </mat-selection-list>
     
     <mat-selection-list #cameraSelectionList>
         <mat-list-option *ngFor="let camera of cameras" [value]="camera.device_id" [disabled]="!camera.enabled || camera.state != 'Active'">
-          {{camera.name}} {{camera.enabled ? "" : "(disabled)"}} {{camera.state == 'Active' ? "" : "(incative)"}}
+          <div style="display: flex; align-items: center;">
+            <mat-icon class="recording-icon" *ngIf="camera.is_recording">circle</mat-icon>
+            {{camera.name}} {{camera.enabled ? "" : "(disabled)"}} {{camera.state == 'Active' ? "" : "(inactive)"}}
+          </div>
         </mat-list-option>
     </mat-selection-list>
 </div>
