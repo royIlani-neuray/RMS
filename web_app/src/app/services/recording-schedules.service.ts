@@ -10,6 +10,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AddRecordingScheduleArgs, RecordingSchedule } from '../entities/recording-schedule';
 
+import TIMES from '../utils/times';
+import { tap } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,16 +22,27 @@ export class RecordingSchedulesService {
 
   public getSchedule(scheduleId : string)
   {
-    return this.http.get<RecordingSchedule>("/api/schedules/" + scheduleId)
+    return this.http.get<RecordingSchedule>("/api/schedules/" + scheduleId).pipe(
+      tap(
+        (schedule: RecordingSchedule) => this.convertFromUTC(schedule)
+      )
+    );
   }
 
   public getSchedules()
   {
-    return this.http.get<RecordingSchedule[]>("/api/schedules")
+    return this.http.get<RecordingSchedule[]>("/api/schedules").pipe(
+      tap(
+        (schedules: RecordingSchedule[]) => schedules.forEach(
+          (schedule: RecordingSchedule) => this.convertFromUTC(schedule)
+        )
+      )
+    );
   }
 
   public addSchedule(schedule: AddRecordingScheduleArgs)
   {
+    this.convertToUTC(schedule);
     return this.http.post("/api/schedules/", schedule)
   }
 
@@ -45,4 +59,21 @@ export class RecordingSchedulesService {
     })
   }
 
+  public convertToUTC(schedule: AddRecordingScheduleArgs) {
+    const [startTimeUTC, startDaysShift] = TIMES.getTimeAndDayShiftOnToUTCConversion(schedule.start_time);
+    schedule.start_time = startTimeUTC;
+    schedule.start_days = schedule.start_days.map(TIMES.dayShiftFunc(startDaysShift));
+    const [endTimeUTC, endDaysShift] = TIMES.getTimeAndDayShiftOnToUTCConversion(schedule.end_time);
+    schedule.end_time = endTimeUTC;
+    schedule.end_days = schedule.end_days.map(TIMES.dayShiftFunc(endDaysShift));
+  }
+
+  public convertFromUTC(schedule: RecordingSchedule) {
+    const [startTimeUTC, startDaysShift] = TIMES.getTimeAndDayShiftOnFromUTCConversion(schedule.start_time);
+    schedule.start_time = startTimeUTC;
+    schedule.start_days = schedule.start_days.map(TIMES.dayShiftFunc(startDaysShift));
+    const [endTimeUTC, endDaysShift] = TIMES.getTimeAndDayShiftOnFromUTCConversion(schedule.end_time);
+    schedule.end_time = endTimeUTC;
+    schedule.end_days = schedule.end_days.map(TIMES.dayShiftFunc(endDaysShift));
+  }
 }

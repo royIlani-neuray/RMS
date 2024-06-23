@@ -12,8 +12,6 @@ services:
     volumes:
       - webservice_storage:/app/data
       - webservice_recordings:/app/data/recordings
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
 
   web_app:
     image: web_app:latest
@@ -24,9 +22,6 @@ services:
     env_file:
       - rms-variables.env
     command: /bin/sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
   
   device_emulator:
     image: device_emulator:latest
@@ -38,8 +33,6 @@ services:
       - rms-variables.env
     volumes:
       - webservice_recordings:/app/data/recordings
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
 
   inference_service:
     image: inference_service:latest
@@ -51,8 +44,6 @@ services:
       - rms-variables.env
     volumes:
       - inference_service_storage:/app/data
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     profiles:
       - donotstart
 
