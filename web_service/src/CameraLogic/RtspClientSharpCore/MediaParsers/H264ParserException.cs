@@ -18,10 +18,5 @@ namespace RtspClientSharpCore.MediaParsers
         {
         }
 
-        protected H264ParserException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

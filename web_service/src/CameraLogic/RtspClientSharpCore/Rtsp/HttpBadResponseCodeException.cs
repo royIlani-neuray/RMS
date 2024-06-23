@@ -15,10 +15,5 @@ namespace RtspClientSharpCore.Rtsp
             Code = code;
         }
 
-        protected HttpBadResponseCodeException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

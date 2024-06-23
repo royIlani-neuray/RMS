@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine3.20 AS base
 WORKDIR /app
 
 #ENV ASPNETCORE_URLS=http://+:16500 (defined in .env file)
@@ -8,15 +8,14 @@ WORKDIR /app
 RUN adduser -u 5678 --disabled-password --gecos "" user && chown -R user /app
 USER user
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.20 AS build
 WORKDIR /src
 COPY ["device_emulator/device_emulator.csproj", "./"]
 RUN dotnet restore "device_emulator.csproj"
 COPY device_emulator/. .
 RUN dotnet publish "device_emulator.csproj" -c Release -o /app/publish \
-    -r alpine-x64 \
+    -r linux-musl-x64 \
     --self-contained true \
-    -p:PublishTrimmed=true \
     -p:PublishSingeFile=true
 
 FROM base AS final
