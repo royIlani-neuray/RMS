@@ -76,18 +76,4 @@ export class CamerasService {
     return this.http.delete("/api/cameras/" + cameraId)
   }
 
-  public enableCameraRecording(cameraId : string)
-  {
-    return this.http.post("/api/cameras/" + cameraId + "/services", 
-    {
-      service_id : "CAMERA_RECORDER",
-      service_options : {}
-    })
-  }
-
-  public disableCameraRecording(cameraId : string)
-  {
-    return this.http.delete("/api/cameras/" + cameraId + "/services/CAMERA_RECORDER")
-  }
-
 }

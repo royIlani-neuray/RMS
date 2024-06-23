@@ -6,7 +6,12 @@
         <!-- Name Column -->
         <ng-container matColumnDef="name">
             <th mat-header-cell mat-sort-header *matHeaderCellDef> <b>Name</b> </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-cell *matCellDef="let element">
+                <div style="display: flex; align-items: center;">
+                    <mat-icon class="recording-icon" *ngIf="element.is_recording">circle</mat-icon>
+                    {{element.name}}
+                </div>
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="state">

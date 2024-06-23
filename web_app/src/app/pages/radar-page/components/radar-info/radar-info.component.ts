@@ -128,20 +128,4 @@ export class RadarInfoComponent implements OnInit {
     return (this.radar.radar_settings.radar_calibration != "0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0")
   }
 
-  public enableRadarRecording()
-  {
-    this.radarsService.enableRadarRecording(this.radar.device_id).subscribe({
-      next : (response) => this.radarPageData.getRadar(this.radar.device_id),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable radar recording")
-    })
-  }
-
-  public disableRadarRecording()
-  {
-    this.radarsService.disableRadarRecording(this.radar.device_id).subscribe({
-      next : (response) => this.radarPageData.getRadar(this.radar.device_id),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable radar recording")
-    })
-  }
-
 }

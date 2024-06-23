@@ -118,18 +118,4 @@ export class RadarsService {
     })  
   }
 
-  public enableRadarRecording(radarId : string)
-  {
-    return this.http.post("/api/radars/" + radarId + "/services", 
-    {
-      service_id : "RADAR_RECORDER",
-      service_options : {}
-    })
-  }
-
-  public disableRadarRecording(radarId : string)
-  {
-    return this.http.delete("/api/radars/" + radarId + "/services/RADAR_RECORDER")
-  }
-
 }

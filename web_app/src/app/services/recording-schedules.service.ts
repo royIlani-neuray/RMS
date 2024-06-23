@@ -42,8 +42,9 @@ export class RecordingSchedulesService {
 
   public addSchedule(schedule: AddRecordingScheduleArgs)
   {
-    this.convertToUTC(schedule);
-    return this.http.post("/api/schedules/", schedule)
+    let scheduleCopy = JSON.parse(JSON.stringify(schedule))  // to not change the user view of the schedule
+    this.convertToUTC(scheduleCopy);
+    return this.http.post("/api/schedules/", scheduleCopy)
   }
 
   public deleteSchedule(scheduleId: string)

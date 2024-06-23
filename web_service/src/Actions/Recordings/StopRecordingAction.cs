@@ -53,12 +53,12 @@ public class StopRecordingAction : IAction
             action.Run();
 
             RMSEvents.Instance.RecordingStoppedEvent(radarId);
-            linkedService.ServiceOptions.TryGetValue(RecordingsManager.RECORDING_NAME, out string? recordingName);
-            linkedService.ServiceOptions.TryGetValue(RecordingsManager.UPLOAD_S3, out string? uploadS3);
-            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName!, radarId);
+            var recordingName = linkedService.ServiceOptions[RecordingsManager.RECORDING_NAME];
+            var uploadS3 = linkedService.ServiceOptions[RecordingsManager.UPLOAD_S3];
+            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName, radarId);
             if (ServiceSettings.Instance.CloudUploadSupport &&
                 RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
-                bool.Parse(uploadS3!)) {
+                bool.Parse(uploadS3)) {
                     RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
             }
         }
@@ -67,7 +67,7 @@ public class StopRecordingAction : IAction
         {
             var camera = CameraContext.Instance.GetCamera(cameraId);
             
-            var linkedService = camera.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == RadarRecordingService.SERVICE_ID);
+            var linkedService = camera.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == CameraRecordingService.SERVICE_ID);
             if (linkedService == null)
                 continue;
             
@@ -75,12 +75,12 @@ public class StopRecordingAction : IAction
             action.Run();
 
             RMSEvents.Instance.RecordingStoppedEvent(cameraId);
-            linkedService.ServiceOptions.TryGetValue(RecordingsManager.RECORDING_NAME, out string? recordingName);
-            linkedService.ServiceOptions.TryGetValue(RecordingsManager.UPLOAD_S3, out string? uploadS3);
-            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName!, cameraId);
+            var recordingName = linkedService.ServiceOptions[RecordingsManager.RECORDING_NAME];
+            var uploadS3 = linkedService.ServiceOptions[RecordingsManager.UPLOAD_S3];
+            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName, cameraId);
             if (ServiceSettings.Instance.CloudUploadSupport &&
                 RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
-                bool.Parse(uploadS3!)) {
+                bool.Parse(uploadS3)) {
                     RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
             }
         }

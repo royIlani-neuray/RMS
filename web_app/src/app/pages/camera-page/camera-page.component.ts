@@ -115,20 +115,4 @@ export class CameraPageComponent implements OnInit {
     return recordService != null;
   }
 
-  public enableCameraRecording()
-  {
-    this.camerasService.enableCameraRecording(this.camera.device_id).subscribe({
-      next : (response) => this.getCamera(this.camera.device_id),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not enable camera recording")
-    })
-  }
-
-  public disableCameraRecording()
-  {
-    this.camerasService.disableCameraRecording(this.camera.device_id).subscribe({
-      next : (response) => this.getCamera(this.camera.device_id),
-      error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.showNotification("Error: could not disable camera recording")
-    })
-  }
-
 }

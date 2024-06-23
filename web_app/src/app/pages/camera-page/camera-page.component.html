@@ -52,9 +52,6 @@
         <button mat-raised-button *ngIf="!camera.enabled" (click)="enableCamera()" color="primary" style="margin-left: 10px;">Enable Camera</button>
         <button mat-raised-button *ngIf="camera.enabled" (click)="disableCamera()" color="primary" style="margin-left: 10px;">Disable Camera</button>
 
-        <button mat-raised-button *ngIf="!isCameraRecordingEnabled()" (click)="enableCameraRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
-        <button mat-raised-button *ngIf="isCameraRecordingEnabled()" (click)="disableCameraRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
-
         <button mat-raised-button (click)="deleteCamera()" color="primary" style="margin-left: 10px;">Delete Camera</button>
     </div>
 

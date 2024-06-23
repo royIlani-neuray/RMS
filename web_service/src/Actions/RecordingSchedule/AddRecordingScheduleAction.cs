@@ -40,6 +40,9 @@ public class AddRecordingScheduleArgs
     [JsonPropertyName("end_time")]
     public TimeOnly EndTime { get; set; }
 
+    [JsonPropertyName("upload_s3")]
+    public bool UploadS3 { get; set; }
+
     public AddRecordingScheduleArgs()
     {
         Name = String.Empty;
@@ -48,6 +51,7 @@ public class AddRecordingScheduleArgs
         Cameras = new List<String>();
         StartDays = new List<DayOfWeek>();
         EndDays = new List<DayOfWeek>();
+        UploadS3 = false;
     }
 
     public void Validate()
@@ -85,7 +89,8 @@ public class AddRecordingScheduleAction : IAction
             StartDays = args.StartDays,
             StartTime = args.StartTime,
             EndDays = args.EndDays,
-            EndTime = args.EndTime
+            EndTime = args.EndTime,
+            UploadS3 = args.UploadS3,
         };
 
         System.Console.WriteLine($"Adding new schedule - {schedule.Name}");

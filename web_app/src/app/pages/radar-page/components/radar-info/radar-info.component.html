@@ -96,9 +96,6 @@
         <button mat-raised-button *ngIf="!radar.enabled" (click)="enableRadar()" color="primary" style="margin-left: 10px;">Enable Radar</button>
         <button mat-raised-button *ngIf="radar.enabled" (click)="disableRadar()" color="primary" style="margin-left: 10px;">Disable Radar</button>
 
-        <button mat-raised-button *ngIf="!isRadarRecordingEnabled()" (click)="enableRadarRecording()" color="primary" style="margin-left: 10px;">Enable Recording</button>
-        <button mat-raised-button *ngIf="isRadarRecordingEnabled()" (click)="disableRadarRecording()" color="primary" style="margin-left: 10px;">Disable Recording</button>
-
         <button mat-raised-button (click)="deleteRadar()" color="primary" style="margin-left: 10px;">Delete Radar</button>
     </div>
 
