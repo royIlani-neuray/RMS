@@ -18,10 +18,5 @@ namespace RtspClientSharpCore.MediaParsers
         {
         }
 
-        protected MediaPayloadParserException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

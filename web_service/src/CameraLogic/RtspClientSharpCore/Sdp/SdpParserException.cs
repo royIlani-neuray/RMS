@@ -18,10 +18,5 @@ namespace RtspClientSharpCore.Sdp
         {
         }
 
-        protected SdpParserException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
     }
 }
