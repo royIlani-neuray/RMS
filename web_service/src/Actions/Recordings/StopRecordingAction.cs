@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using WebService.Actions.Services;
 using WebService.Context;
 using WebService.Events;
+using WebService.Recordings;
 using WebService.Services.RadarRecording;
 
 namespace WebService.Actions.Recordings;
@@ -43,25 +44,45 @@ public class StopRecordingAction : IAction
         foreach (string radarId in args.RadarIds)
         {
             var radar = RadarContext.Instance.GetRadar(radarId);
-
-            if (!radar.LinkedServices.Exists(service => service.ServiceId == RadarRecordingService.SERVICE_ID))
+            
+            var linkedService = radar.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == RadarRecordingService.SERVICE_ID);
+            if (linkedService == null)
                 continue;
 
             var action = new UnlinkRadarServiceAction(radarId, RadarRecordingService.SERVICE_ID);
             action.Run();
+
             RMSEvents.Instance.RecordingStoppedEvent(radarId);
+            linkedService.ServiceOptions.TryGetValue(RecordingsManager.RECORDING_NAME, out string? recordingName);
+            linkedService.ServiceOptions.TryGetValue(RecordingsManager.UPLOAD_S3, out string? uploadS3);
+            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName!, radarId);
+            if (ServiceSettings.Instance.CloudUploadSupport &&
+                RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
+                bool.Parse(uploadS3!)) {
+                    RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
+            }
         }
 
         foreach (string cameraId in args.CameraIds)
         {
             var camera = CameraContext.Instance.GetCamera(cameraId);
-
-            if (!camera.LinkedServices.Exists(service => service.ServiceId == CameraRecordingService.SERVICE_ID))
+            
+            var linkedService = camera.LinkedServices.FirstOrDefault(linkedService => linkedService.ServiceId == RadarRecordingService.SERVICE_ID);
+            if (linkedService == null)
                 continue;
             
             var action = new UnlinkCameraServiceAction(cameraId, CameraRecordingService.SERVICE_ID);
             action.Run();
+
             RMSEvents.Instance.RecordingStoppedEvent(cameraId);
+            linkedService.ServiceOptions.TryGetValue(RecordingsManager.RECORDING_NAME, out string? recordingName);
+            linkedService.ServiceOptions.TryGetValue(RecordingsManager.UPLOAD_S3, out string? uploadS3);
+            RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName!, cameraId);
+            if (ServiceSettings.Instance.CloudUploadSupport &&
+                RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
+                bool.Parse(uploadS3!)) {
+                    RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
+            }
         }
     }
 }

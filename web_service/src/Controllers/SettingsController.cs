@@ -96,4 +96,13 @@ public class SettingsController : ControllerBase
             version = ServiceSettings.Instance.RMSVersion
         };
     }
+
+    [HttpGet("cloud-upload-support")]
+    public object GetCloudUploadSupport()
+    {
+        return new
+        {
+            support = ServiceSettings.Instance.CloudUploadSupport
+        };
+    }
 }

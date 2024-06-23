@@ -26,11 +26,15 @@ public class StartRecordingArgs
     [JsonPropertyName("cameras")]
     public List<string> CameraIds { get; set; }
 
+    [JsonPropertyName("upload_s3")]
+    public bool UploadS3 { get; set; }
+
     public StartRecordingArgs()
     {
         RecordingName = String.Empty;
         RadarIds = new List<string>();
         CameraIds = new List<string>();
+        UploadS3 = false;
     }
 }
 
@@ -58,7 +62,8 @@ public class StartRecordingAction : IAction
         }
 
         LinkServiceArgs serviceArgs = new LinkServiceArgs();
-        serviceArgs.ServiceOptions.Add(RecordingsManager.RECORDING_OVERRIDE_KEY, recordingName);
+        serviceArgs.ServiceOptions.Add(RecordingsManager.RECORDING_NAME, recordingName);
+        serviceArgs.ServiceOptions.Add(RecordingsManager.UPLOAD_S3, args.UploadS3.ToString()!);
         serviceArgs.ServiceId = RadarRecordingService.SERVICE_ID;
         
         foreach (string radarId in args.RadarIds)

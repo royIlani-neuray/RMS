@@ -48,7 +48,7 @@ export class SchedulesListComponent implements OnInit {
   radarsListLoaded = new Subject<boolean>();
   camerasListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RecordingSchedule>()
-  displayedColumns: string[] = ['name', 'enabled', 'times', 'num_of_devices', 'actions'];
+  displayedColumns: string[] = ['name', 'enabled', 'upload_s3', 'times', 'num_of_devices', 'actions'];
   displayedColumnsWithExpand: string[] = [...this.displayedColumns, 'expand'];
   expandedElement: RecordingSchedule | null;
 
@@ -160,6 +160,14 @@ export class SchedulesListComponent implements OnInit {
   public toggleEnable(schedule: RecordingSchedule)
   {
     this.recordingSchedulesService.updateSchedule(schedule.id, undefined, !schedule.enabled).subscribe({
+      next : (response) => this.getSchedulesList(),
+      error : (err) => this.showNotification("Error: could not update schedule")
+    });
+  }
+
+  public toggleCloud(schedule: RecordingSchedule)
+  {
+    this.recordingSchedulesService.updateSchedule(schedule.id, undefined, undefined, !schedule.upload_s3).subscribe({
       next : (response) => this.getSchedulesList(),
       error : (err) => this.showNotification("Error: could not update schedule")
     });

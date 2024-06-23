@@ -10,6 +10,8 @@
 using WebService.Entites;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
+using WebService.Context;
+using WebService.Services.RadarRecording;
 
 namespace WebService.Recordings;
 
@@ -66,7 +68,8 @@ public class RecordingsManager
 
     private object syncLock = new Object();
 
-    public const string RECORDING_OVERRIDE_KEY = "RECORDING_NAME";
+    public const string RECORDING_NAME = "RECORDING_NAME";
+    public const string UPLOAD_S3 = "UPLOAD_S3";
 
     private bool IsEntryNameValid(string recordingName)
     {
@@ -88,7 +91,7 @@ public class RecordingsManager
         return File.Exists(GetRecordingMetaFilePath(recordingName));
     }
 
-    private RecordingInfo CreateRecordingFolder(string? recordingName)
+    private RecordingInfo CreateRecordingFolder(string? recordingName, string? uploadS3)
     {
         var recording = new RecordingInfo();
 
@@ -106,6 +109,10 @@ public class RecordingsManager
         }
         else
         {
+            if (!string.IsNullOrWhiteSpace(uploadS3))
+            {
+                recording.UploadS3 = bool.Parse(uploadS3);
+            }
             Directory.CreateDirectory(GetRecordingPath(recording.Name));
             recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
         }
@@ -113,11 +120,11 @@ public class RecordingsManager
         return recording;
     }
 
-    public void CreateRecordingEntry(DeviceEntity device, out string entryPath, string? recordingNameOverride = "")
+    public void CreateRecordingEntry(DeviceEntity device, out string entryPath, string? recordingNameOverride = "", string? uploadS3 = "")
     {
         lock(syncLock)
         {
-            RecordingInfo recording = CreateRecordingFolder(recordingNameOverride);
+            RecordingInfo recording = CreateRecordingFolder(recordingNameOverride, uploadS3);
             string recordingPath = GetRecordingPath(recording.Name);
             entryPath = Path.Combine(recordingPath, $"{device.Type}_{device.Id}");
             Directory.CreateDirectory(entryPath);
@@ -239,6 +246,34 @@ public class RecordingsManager
         }
     }
 
+    public void MarkDeviceRecordingFinished(string recordingName, string deviceId)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            var deviceIndex = recording.RecordingEntries.FindIndex(entry => entry.DeviceId == deviceId);
+            if (deviceIndex != -1) {
+                recording.RecordingEntries[deviceIndex].IsFinished = true;
+                recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
+            }
+        }
+    }
+
+    public bool IsRecordingFinished(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            return recording.RecordingEntries.All(entry => entry.IsFinished);
+        }
+    }
+
     public Stream DownloadRecording(string recordingName, out string archiveFileName)
     {
         Directory.CreateDirectory(TempArchiveStoragePath);
@@ -279,5 +314,18 @@ public class RecordingsManager
             }
         }        
     }
-    
+
+    public void UploadRecordingToS3(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            Console.WriteLine($"Uploading recording to cloud: {recordingName}");
+            var recordingPath = GetRecordingPath(recordingName);
+            // Not sure if legal to fire async task inside a lock...
+            Task.Run(() => S3Manager.Instance.UploadDirectoryAsync(recordingPath));
+        }
+    }
 }

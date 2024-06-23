@@ -17,6 +17,7 @@ export interface RecordingSchedule {
     last_start: string
     radars: string[]
     cameras: string[]
+    upload_s3: boolean
 }
 export interface AddRecordingScheduleArgs {
     name: string
@@ -26,4 +27,5 @@ export interface AddRecordingScheduleArgs {
     end_time: string
     radars: string[]
     cameras: string[]
+    upload_s3: boolean
 }

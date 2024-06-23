@@ -51,11 +51,12 @@ export class RecordingSchedulesService {
     return this.http.delete("/api/schedules/" + scheduleId)
   }
 
-  public updateSchedule(scheduleId: string, name?: string, enabled?: boolean)
+  public updateSchedule(scheduleId: string, name?: string, enabled?: boolean, upload_s3?: boolean)
   {
     return this.http.post("/api/schedules/" + scheduleId, {
       "name": name,
       "enabled": enabled,
+      "upload_s3": upload_s3,
     })
   }
 

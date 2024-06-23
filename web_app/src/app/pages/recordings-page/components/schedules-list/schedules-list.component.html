@@ -20,6 +20,14 @@
         </td>
     </ng-container>
 
+    <ng-container matColumnDef="upload_s3">
+        <th mat-header-cell *matHeaderCellDef><b>Cloud</b></th>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon *ngIf="element.upload_s3" style="color: green">cloud</mat-icon>
+            <mat-icon *ngIf="!element.upload_s3" style="color: red">cloud_off</mat-icon>
+        </td>
+    </ng-container>
+
     <ng-container matColumnDef="times">
         <th mat-header-cell *matHeaderCellDef><b>Times</b></th>
         <td mat-cell *matCellDef="let element">
@@ -46,9 +54,12 @@
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell mat-cell *matCellDef="let element">
-            <div class="action-bottons">    
+            <div class="action-bottons">
                 <button mat-raised-button (click)="toggleEnable(element); $event.stopPropagation()" color="primary">
                     {{element.enabled ? "Disable" : "Enable"}}
+                </button>
+                <button mat-raised-button (click)="toggleCloud(element); $event.stopPropagation()" color="primary">
+                    {{element.upload_s3 ? "Cloud off" : "Cloud on"}}
                 </button>
                 <button mat-raised-button (click)="renameSchedule(element); $event.stopPropagation()" color="primary">Rename</button>
                 <button mat-raised-button (click)="deleteSchedule(element); $event.stopPropagation()" color="primary">Delete</button>

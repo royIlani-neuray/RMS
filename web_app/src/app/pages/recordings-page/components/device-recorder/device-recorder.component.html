@@ -33,7 +33,11 @@
 </div>
 
 <br>
+<label>
+  <input type="checkbox" [(ngModel)]="uploadS3" [disabled]="!cloudUploadSupport"/> Upload to Cloud
+</label>
 
+<br>
 <label>
   <input type="checkbox" [(ngModel)]="isSchedule" /> Create a schedule
 </label>

@@ -32,8 +32,9 @@ public class RadarRecordingService : IExtensionService
         if (device.Type != DeviceEntity.DeviceTypes.Radar)
             throw new Exception("Unsupported device passed to service.");
         
-        serviceOptions.TryGetValue(RecordingsManager.RECORDING_OVERRIDE_KEY, out string? recordingName);
-        RecordingsManager.Instance.CreateRecordingEntry(device, out string entryPath, recordingName);
+        serviceOptions.TryGetValue(RecordingsManager.RECORDING_NAME, out string? recordingName);
+        serviceOptions.TryGetValue(RecordingsManager.UPLOAD_S3, out string? uploadS3);
+        RecordingsManager.Instance.CreateRecordingEntry(device, out string entryPath, recordingName, uploadS3);
 
         Radar radar = (Radar) device;
 

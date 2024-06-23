@@ -19,6 +19,9 @@ public class UpdateRecordingScheduleArgs
 
     [JsonPropertyName("enabled")]
     public Boolean? Enabled { get; set; }
+
+    [JsonPropertyName("upload_s3")]
+    public Boolean? UploadS3 { get; set; }
 }
 
 public class UpdateRecordingSchedule : IAction 
@@ -46,6 +49,10 @@ public class UpdateRecordingSchedule : IAction
         if (args.Enabled != null && args.Enabled != schedule.Enabled) {
             System.Console.WriteLine($"Updating schedule - enabled: {args.Enabled}");
             schedule.Enabled = args.Enabled ?? true;
+        }
+        if (args.UploadS3 != null && args.UploadS3 != schedule.UploadS3) {
+            System.Console.WriteLine($"Updating schedule - uploadS3: {args.UploadS3}");
+            schedule.UploadS3 = args.UploadS3 ?? true;
         }
  
         RecordingScheduleContext.Instance.UpdateSchedule(schedule);

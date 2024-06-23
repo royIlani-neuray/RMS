@@ -17,6 +17,7 @@ using WebService.Actions.Radars;
 using WebService.Scheduler;
 using WebService.Services;
 using WebService.Events;
+using System.Collections;
 
 public class Startup 
 {
@@ -42,6 +43,10 @@ public class Startup
 
         Console.WriteLine("Initializing DB...");
         StorageDatabase.DatabaseInit();
+    
+        Console.WriteLine("Initializing S3 connection...");
+        var rmsName = config.GetSection("RMS_name").Get<String>();
+        S3Manager.Instance.InitS3Connection(rmsName!);
 
         Console.WriteLine("Loading users from storage...");
         UserContext.Instance.LoadUsersFromStorage();

@@ -66,6 +66,7 @@ public class ServiceSettings
     }
 
     public string RMSVersion { get; set; } = String.Empty;
+    public bool CloudUploadSupport { get; set; } = false;
 
     private ServiceSettings() 
     {

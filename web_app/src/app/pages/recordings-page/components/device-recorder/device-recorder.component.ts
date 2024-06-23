@@ -19,6 +19,7 @@ import { RadarsService } from 'src/app/services/radars.service';
 import { RecordingSchedulesService } from 'src/app/services/recording-schedules.service';
 import { RecordingsService } from 'src/app/services/recordings.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-device-recorder',
@@ -30,6 +31,8 @@ export class DeviceRecorderComponent implements OnInit {
   radars: RadarBrief[] = []
   cameras: CameraBrief[] = []
 
+  cloudUploadSupport = false;
+  uploadS3 = false;
   isSchedule = false;
   days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   schedule: AddRecordingScheduleArgs = {
@@ -40,6 +43,7 @@ export class DeviceRecorderComponent implements OnInit {
     end_days: [],
     radars: [],
     cameras: [],
+    upload_s3: false,
   };
 
   @ViewChild("radarSelectionList") radarSelectionList: MatSelectionList;
@@ -54,6 +58,7 @@ export class DeviceRecorderComponent implements OnInit {
               private recordingsService : RecordingsService,
               private recordingSchedulesService : RecordingSchedulesService,
               private rmsEventsService : RmsEventsService,
+              private settingsService : SettingsService,
               private notification: MatSnackBar,
               private router : Router) { }
 
@@ -87,6 +92,12 @@ export class DeviceRecorderComponent implements OnInit {
       next: (radarId) => 
       {
         this.getRadarsList()
+      }
+    })
+
+    this.settingsService.getCloudUploadSupport().subscribe({
+      next : (result) => {
+        this.cloudUploadSupport = result.support
       }
     })
   }
@@ -126,7 +137,7 @@ export class DeviceRecorderComponent implements OnInit {
       return
     }
 
-    this.recordingsService.startRecording(recordingName, selectedRadars, selectedCameras).subscribe(
+    this.recordingsService.startRecording(recordingName, selectedRadars, selectedCameras, this.uploadS3).subscribe(
     {
       next : () => this.notification.open("Recording started.", "Close", this.notificationConfig),
       error: (err) => 
@@ -203,6 +214,7 @@ export class DeviceRecorderComponent implements OnInit {
     this.schedule.name = this.nameInput.value;
     this.schedule.radars = this.radarSelectionList.selectedOptions.selected.map(item => item.value);
     this.schedule.cameras = this.cameraSelectionList.selectedOptions.selected.map(item => item.value);
+    this.schedule.upload_s3 = this.uploadS3;
     if (this.schedule.start_time.length == 5) this.schedule.start_time += ':00';
     if (this.schedule.end_time.length == 5) this.schedule.end_time += ':00';
     

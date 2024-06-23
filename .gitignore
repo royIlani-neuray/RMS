@@ -354,3 +354,5 @@ data/
 
 # output bin folder
 bin/
+
+s3-secrets.env

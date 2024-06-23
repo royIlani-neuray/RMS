@@ -18,6 +18,10 @@ export interface RMSVersion {
   version: string
 }
 
+export interface CloudUploadSupport {
+  support: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -52,5 +56,10 @@ export class SettingsService {
   public getRMSVersion()
   {
     return this.http.get<RMSVersion>("/api/settings/version")
+  }
+
+  public getCloudUploadSupport()
+  {
+    return this.http.get<CloudUploadSupport>("/api/settings/cloud-upload-support")
   }
 }

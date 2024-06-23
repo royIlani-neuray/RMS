@@ -75,6 +75,7 @@ public class RecordingScheduler : TaskScheduler{
             RecordingName = recordingName,
             RadarIds = schedule.RadarIds,
             CameraIds = schedule.CameraIds,
+            UploadS3 = schedule.UploadS3,
         };
         var action = new StartRecordingAction(args);
         action.Run();

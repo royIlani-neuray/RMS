@@ -58,13 +58,14 @@ export class RecordingsService {
     })
   }
 
-  public startRecording(recordingName : string, radars : string[], cameras : string[])
+  public startRecording(recordingName : string, radars : string[], cameras : string[], uploadS3 : boolean)
   {
     return this.http.post("/api/recordings/start-recording", 
     {
       recording_name : recordingName,
       radars : radars,
-      cameras : cameras
+      cameras : cameras,
+      upload_s3 : uploadS3
     })
   }
 

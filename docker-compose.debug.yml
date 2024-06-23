@@ -13,6 +13,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     env_file:
       - rms-variables.env
+      - s3-secrets.env
     volumes:
       - webservice_storage:/app/data
       - webservice_recordings:/app/data/recordings

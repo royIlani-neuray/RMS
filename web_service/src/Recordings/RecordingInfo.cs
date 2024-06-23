@@ -30,6 +30,9 @@ public class RecordingInfo
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        [JsonPropertyName("is_finished")]
+        public bool IsFinished { get; set; } = false;
+
         [JsonPropertyName("entry_size_bytes")]
         public float EntrySizeBytes { get; set; } = 0;
     }
@@ -42,6 +45,9 @@ public class RecordingInfo
 
     [JsonPropertyName("entries")]
     public List<RecordingEntry> RecordingEntries { get; set; }
+
+    [JsonPropertyName("upload_s3")]
+    public bool UploadS3 { get; set; } = false;
 
     public RecordingInfo()
     {
@@ -58,7 +64,7 @@ public class RecordingInfo
 
     public void SaveToFile(string filePath)
     {
-        var jsonString = JsonSerializer.Serialize<RecordingInfo>(this);
+        var jsonString = JsonSerializer.Serialize<RecordingInfo>(this, new JsonSerializerOptions{WriteIndented=true});
         File.WriteAllText(filePath, jsonString);
     }
 }

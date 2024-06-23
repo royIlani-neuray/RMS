@@ -46,6 +46,9 @@ public class RecordingSchedule : IEntity
     [JsonPropertyName("end_time")]
     public TimeOnly EndTime { get; set; }
 
+    [JsonPropertyName("upload_s3")]
+    public bool UploadS3 { get; set; }
+
     [JsonIgnore]
     public DateTime RegisteredAt { get; set; }
 
@@ -67,5 +70,6 @@ public class RecordingSchedule : IEntity
         StartDays = new List<DayOfWeek>();
         EndDays = new List<DayOfWeek>();
         RegisteredAt = DateTime.UtcNow;
+        UploadS3 = false;
     }
 }
