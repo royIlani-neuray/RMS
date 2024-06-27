@@ -30,6 +30,7 @@ cp ./scripts/start.sh ./bin/rms
 cp ./scripts/stop.sh ./bin/rms
 cp ./docker-compose.yml ./bin/rms
 cp ./rms-variables.env ./bin/rms
+cp ./s3-secrets-template.env ./bin/rms/s3-secrets.env
 
 cd bin
 tar -czvf neuRay_rms.tar.gz rms
