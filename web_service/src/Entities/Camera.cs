@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using WebService.CameraLogic.CameraStream;
 using WebService.Database;
 using WebService.Services.RadarRecording;
+using WebService.Services.CameraRecording;
 using WebService.WebSockets;
 
 namespace WebService.Entites;

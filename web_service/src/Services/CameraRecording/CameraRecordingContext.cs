@@ -12,7 +12,7 @@ using RtspRawVideo = RtspClientSharpCore.RawFrames.Video;
 using WebService.Utils;
 using System.Globalization;
 
-namespace WebService.Services.RadarRecording;
+namespace WebService.Services.CameraRecording;
 
 public class CameraRecordingContext : WorkerThread<RawFrame>, IServiceContext
 {

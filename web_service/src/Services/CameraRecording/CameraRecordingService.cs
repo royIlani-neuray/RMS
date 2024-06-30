@@ -12,7 +12,7 @@ using WebService.RadarLogic.Tracking;
 using System.Text.Json;
 using WebService.Recordings;
 
-namespace WebService.Services.RadarRecording;
+namespace WebService.Services.CameraRecording;
 
 public class CameraRecordingService : IExtensionService 
 {
