@@ -83,6 +83,9 @@ public class Startup
 
         Console.WriteLine("Starting Recordings Scheduler...");
         RecordingScheduler.Instance.Start();
+
+        Console.WriteLine("Starting Camera Reset Scheduler...");
+        CameraResetScheduler.Instance.Start();
     }
 
 }

@@ -12,14 +12,14 @@ using WebService.Actions.Services;
 using WebService.Services.CameraRecording;
 namespace WebService.Scheduler;
 
-public class CameraResetarScheduler : TaskScheduler{
+public class CameraResetScheduler : TaskScheduler{
 
     #region Singleton
     
     private static object singletonLock = new object();
-    private static volatile CameraResetarScheduler? instance; 
+    private static volatile CameraResetScheduler? instance; 
 
-    public static CameraResetarScheduler Instance {
+    public static CameraResetScheduler Instance {
         get 
         {
             if (instance == null)
@@ -27,7 +27,7 @@ public class CameraResetarScheduler : TaskScheduler{
                 lock (singletonLock)
                 {
                     if (instance == null)
-                        instance = new CameraResetarScheduler();
+                        instance = new CameraResetScheduler();
                 }
             }
 
@@ -35,14 +35,14 @@ public class CameraResetarScheduler : TaskScheduler{
         }
     }
 
-    private CameraResetarScheduler() : base(SCHEDULING_PERIOD_MINUTES) {}
+    private CameraResetScheduler() : base(SCHEDULING_PERIOD_MINUTES) {}
 
     #endregion
 
-    private const double SCHEDULING_PERIOD_MINUTES = 0.5;
+    private const double SCHEDULING_PERIOD_MINUTES = 180;
 
 
-    private void RestartCameras()
+    public override void RunTask()
     {
         var camerasList = CameraContext.Instance.GetCamerasBrief();
         System.Console.WriteLine($"Sending command to reset cameras...");
@@ -69,9 +69,9 @@ public class CameraResetarScheduler : TaskScheduler{
         }
     }    
 
-    public override void RunTask()
-    {
-        RestartCameras();
-    }
+    // public override void RunTask()
+    // {
+    //     RestartCameras();
+    // }
 
 }
