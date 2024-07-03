@@ -43,12 +43,7 @@ public class CameraRecordingService : IExtensionService
 
         string recordingVideoPath = System.IO.Path.Combine(entryPath, $"camera.h264");
         string recordingTimestampPath = System.IO.Path.Combine(entryPath, $"camera.ts.csv");
-        // camera reset -> work around to promise relativly short time drift
-        var disconnectCameraAction = new DisconnectCameraAction(camera);
-        disconnectCameraAction.Run();
-        var connectCameraAction = new ConnectCameraAction(camera);
-        connectCameraAction.Run();
-        //  
+        this.ResetCamera(camera);
         CameraRecordingContext recordingContext = new CameraRecordingContext(recordingVideoPath, recordingTimestampPath);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
@@ -61,6 +56,14 @@ public class CameraRecordingService : IExtensionService
         recordingContext.StopWorker();
         recordingContext.State = IServiceContext.ServiceState.Initialized;
     }
+
+    public void ResetCamera(Camera camera){
+        var disconnectCameraAction = new DisconnectCameraAction(camera);
+        disconnectCameraAction.Run();
+        var connectCameraAction = new ConnectCameraAction(camera);
+        connectCameraAction.Run();
+    }
+
 
     public void RunService(object dataObject, IServiceContext serviceContext)
     {
