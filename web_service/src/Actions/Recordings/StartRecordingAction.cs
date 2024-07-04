@@ -11,6 +11,7 @@ using WebService.Actions.Services;
 using WebService.Context;
 using WebService.Recordings;
 using WebService.Events;
+using WebService.Services.CameraRecording;
 using WebService.Services.RadarRecording;
 
 namespace WebService.Actions.Recordings;

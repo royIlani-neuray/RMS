@@ -83,6 +83,7 @@ public class Startup
 
         Console.WriteLine("Starting Recordings Scheduler...");
         RecordingScheduler.Instance.Start();
+
     }
 
 }

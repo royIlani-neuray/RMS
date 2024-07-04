@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Services.RadarRecording;
+using WebService.Services.CameraRecording;
 using WebService.Services.Inference.GateId;
 using WebService.Services.Inference.HumanDetection;
 using WebService.Services.FallDetection;

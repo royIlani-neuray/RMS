@@ -11,8 +11,9 @@ using WebService.Entites;
 using WebService.RadarLogic.Tracking;
 using System.Text.Json;
 using WebService.Recordings;
+using WebService.Actions.Cameras;
 
-namespace WebService.Services.RadarRecording;
+namespace WebService.Services.CameraRecording;
 
 public class CameraRecordingService : IExtensionService 
 {
@@ -42,7 +43,9 @@ public class CameraRecordingService : IExtensionService
 
         string recordingVideoPath = System.IO.Path.Combine(entryPath, $"camera.h264");
         string recordingTimestampPath = System.IO.Path.Combine(entryPath, $"camera.ts.csv");
-
+        // workaround to minimize the time drift between cameras and rms-given timestamp 
+        ResetCamera(camera);
+        
         CameraRecordingContext recordingContext = new CameraRecordingContext(recordingVideoPath, recordingTimestampPath);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
@@ -55,6 +58,14 @@ public class CameraRecordingService : IExtensionService
         recordingContext.StopWorker();
         recordingContext.State = IServiceContext.ServiceState.Initialized;
     }
+
+    public void ResetCamera(Camera camera){
+        var disconnectCameraAction = new DisconnectCameraAction(camera);
+        disconnectCameraAction.Run();
+        var connectCameraAction = new ConnectCameraAction(camera);
+        connectCameraAction.Run();
+    }
+
 
     public void RunService(object dataObject, IServiceContext serviceContext)
     {
