@@ -43,7 +43,9 @@ public class CameraRecordingService : IExtensionService
 
         string recordingVideoPath = System.IO.Path.Combine(entryPath, $"camera.h264");
         string recordingTimestampPath = System.IO.Path.Combine(entryPath, $"camera.ts.csv");
-        this.ResetCamera(camera);
+        // workaround to minimize the time drift between cameras and rms-given timestamp 
+        ResetCamera(camera);
+        
         CameraRecordingContext recordingContext = new CameraRecordingContext(recordingVideoPath, recordingTimestampPath);
         recordingContext.StartWorker();
         recordingContext.State = IServiceContext.ServiceState.Active;
