@@ -16,6 +16,7 @@ public class OutOfBox : ITrackingApplication
     public const ulong FRAME_HEADER_MAGIC = 0x708050603040102;
     public const int TLV_HEADER_SIZE = 8;
 
+    public const int TRACK_OBJECT_TLV_SIZE = 112;
     public const int POINT_CLOUD_INFO_SIZE = 16;
     public const int POINT_CLOUD_SIDE_INFO_SIZE = 4;
 
@@ -29,6 +30,8 @@ public class OutOfBox : ITrackingApplication
     public const int TLV_TYPE_DETECTED_POINTS_SIDE_INFO = 7;
     public const int TLV_TYPE_AZIMUT_ELEVATION_STATIC_HEAT_MAP = 8;
     public const int TLV_TYPE_TEMPERATURE_STATS = 9;
+    public const int TLV_TYPE_TRACKS_LIST = 1010;
+    public const int TLV_TYPE_TARGETS_INDEX = 1011;
 
     private RadarSettings.SensorPositionParams radarPosition;
 
@@ -63,10 +66,10 @@ public class OutOfBox : ITrackingApplication
 
         public class Point
         {
-            public float PositionX;
-            public float PositionY;
-            public float PositionZ;
-            public float Velocity;
+            public float Range; /* Range in meters */
+            public float Azimuth; /* Azimuth angle in degrees in the range [-90,90] */
+            public float Elevation; /* Elevation angle in degrees in the range [-90,90] */
+            public float Doppler; /* Doppler velocity estimate in m/s */
         }
 
         public class PointSideInfo
@@ -75,9 +78,28 @@ public class OutOfBox : ITrackingApplication
             public short Noise;
         }
 
+        public class Track
+        {
+            public uint TrackId;
+            public float PositionX;
+            public float PositionY;
+            public float PositionZ;
+            public float VelocityX;
+            public float VelocityY;
+            public float VelocityZ;
+            public float AccelerationX;
+            public float AccelerationY;
+            public float AccelerationZ;
+            public byte [] ErrorCovarianceMatrix = {};
+            public float GatingGain;
+            public float ConfidenceLevel;
+        }
+
         public FrameHeader? frameHeader;
         public List<Point> pointCloudList = new List<Point>();
         public List<PointSideInfo> pointsSideInfoList = new List<PointSideInfo>();
+        public List<byte> targetsIndexList = new List<byte>();
+        public List<Track> tracksList = new List<Track>();
     }
 
     public OutOfBox(RadarSettings.SensorPositionParams radarPosition)
@@ -111,9 +133,9 @@ public class OutOfBox : ITrackingApplication
             break;
         }
 
-        //Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
-        //Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
-        //Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
+        // Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
+        // Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
+        // Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
 
         for (int tlvIndex = 0; tlvIndex < frameData.frameHeader.NumTLVs; tlvIndex++)
         {
@@ -127,7 +149,7 @@ public class OutOfBox : ITrackingApplication
             var tlvType = reader.ReadUInt32();
             var tlvLength = reader.ReadUInt32();
 
-            //System.Console.WriteLine($"Tlv type: {tlvType}, size: {tlvLength}");
+            // System.Console.WriteLine($"Tlv type: {tlvType}, size: {tlvLength}");
 
             byte [] tlvDataBytes = new byte[tlvLength];
             
@@ -145,13 +167,13 @@ public class OutOfBox : ITrackingApplication
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
                     OutOfBoxFrameData.Point point = new OutOfBoxFrameData.Point();
-                    point.PositionX = reader.ReadSingle();
-                    point.PositionY = reader.ReadSingle();
-                    point.PositionZ = reader.ReadSingle();
-                    point.Velocity = reader.ReadSingle();
+                    point.Range = reader.ReadSingle();
+                    point.Azimuth = reader.ReadSingle();
+                    point.Elevation = reader.ReadSingle();
+                    point.Doppler = reader.ReadSingle();
                     frameData.pointCloudList.Add(point);
 
-                    //Console.WriteLine($"PointIndex: {pointIndex}, X: {point.PositionX:0.00}, Y: {point.PositionY:0.00}, Z: {point.PositionZ:0.00}, Doppler: {point.Velocity:0.00}");
+                    // Console.WriteLine($"PointIndex: {pointIndex}, Range: {point.Range:0.00}, Azimuth: {point.Azimuth:0.00}, Elevation: {point.Elevation:0.00}, Doppler: {point.Doppler:0.00}");
                 }
             }
 
@@ -165,6 +187,42 @@ public class OutOfBox : ITrackingApplication
                     pointSideInfo.Noise = reader.ReadInt16();
                     frameData.pointsSideInfoList.Add(pointSideInfo);
                 }
+            }
+
+            if (tlvType == TLV_TYPE_TRACKS_LIST)
+            {
+                var tracksCount = tlvLength / TRACK_OBJECT_TLV_SIZE;
+
+                for (int trackIndex = 0; trackIndex < tracksCount; trackIndex++)
+                {
+                    OutOfBoxFrameData.Track track = new OutOfBoxFrameData.Track();
+                    track.TrackId = reader.ReadUInt32();
+                    track.PositionX = reader.ReadSingle();
+                    track.PositionY = reader.ReadSingle();
+                    track.PositionZ = reader.ReadSingle();
+                    track.VelocityX = reader.ReadSingle();
+                    track.VelocityY = reader.ReadSingle();
+                    track.VelocityZ = reader.ReadSingle();
+                    track.AccelerationX = reader.ReadSingle();
+                    track.AccelerationY = reader.ReadSingle();
+                    track.AccelerationZ = reader.ReadSingle();
+                    track.ErrorCovarianceMatrix = reader.ReadBytes(64);
+                    track.GatingGain = reader.ReadSingle();
+                    track.ConfidenceLevel = reader.ReadSingle();
+                    frameData.tracksList.Add(track);
+
+                    // Console.WriteLine($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
+                }
+            }
+
+            if (tlvType == TLV_TYPE_TARGETS_INDEX)
+            {
+                for (int i=0; i<tlvLength; i++)
+                {
+                    frameData.targetsIndexList.Add(reader.ReadByte());
+                }
+
+                // Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
             }
 
         }
@@ -183,18 +241,51 @@ public class OutOfBox : ITrackingApplication
         foreach (var point in frameData.pointCloudList)
         {
             var convertedPoint = new FrameData.Point {
-                Doppler = point.Velocity,
-                PositionX = point.PositionX,
-                PositionY = point.PositionY,
-                PositionZ = point.PositionZ + this.radarPosition.HeightMeters
-
-                /* TODO: need to calculate and include angles */
+                Azimuth = point.Azimuth, 
+                Elevation = point.Elevation,
+                Range = point.Range,
+                Doppler = point.Doppler,
 
                 /* Note: SNR is currently not provided (need to fuse from side info list) */
             };
 
+            TrackingApplicationUtils.CalcCartesianFromSpherical(convertedPoint);
+
+            float rotatedX, rotatedY, rotatedZ;
+            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+
+            convertedPoint.PositionX = rotatedX;
+            convertedPoint.PositionY = rotatedY;
+            convertedPoint.PositionZ = rotatedZ + this.radarPosition.HeightMeters;
+            
             outFrameData.PointsList.Add(convertedPoint);
         }
+
+        foreach (var track in frameData.tracksList)
+        {
+            var convertedTrack = new FrameData.Track {
+                TrackId = track.TrackId,
+                VelocityX = track.VelocityX,
+                VelocityY = track.VelocityY,
+                VelocityZ = track.VelocityZ,
+                AccelerationX = track.AccelerationX,
+                AccelerationY = track.AccelerationY,
+                AccelerationZ = track.AccelerationZ
+            };
+
+            // rotate the track according to radar azimuth and elevation, and add height
+
+            float rotatedX, rotatedY, rotatedZ;
+            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+
+            convertedTrack.PositionX = rotatedX;
+            convertedTrack.PositionY = rotatedY;
+            convertedTrack.PositionZ = rotatedZ + this.radarPosition.HeightMeters;
+
+            outFrameData.TracksList.Add(convertedTrack);
+        }
+
+        outFrameData.TargetsIndexList = frameData.targetsIndexList;
 
         return outFrameData;
     }

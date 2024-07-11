@@ -234,8 +234,8 @@ public class LongRangeTracking : ITrackingApplication
         foreach (var point in frameData.pointCloudList)
         {
             var convertedPoint = new FrameData.Point {
-                Azimuth = point.Azimuth, // (float) ((Math.PI / 180) * point.Azimuth),
-                Elevation = point.Elevation, //(float) ((Math.PI / 180) * point.Elevation),
+                Azimuth = point.Azimuth, 
+                Elevation = point.Elevation,
                 Range = point.Range,
                 Doppler = point.Doppler,
 
