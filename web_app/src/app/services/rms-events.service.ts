@@ -32,6 +32,9 @@ export class RmsEventsService
   public recordingStartedEvent: Subject<string> = new Subject<string>()
   public recordingStoppedEvent: Subject<string> = new Subject<string>()
 
+  public recordingUploadCloudStartedEvent: Subject<string> = new Subject<string>()
+  public recordingUploadCloudFinishedEvent: Subject<string> = new Subject<string>()
+
   constructor() 
   { 
     this.socket = new WebSocket("ws://" + window.location.host + "/websocket/ws/events");
@@ -96,7 +99,14 @@ export class RmsEventsService
       {
         this.recordingStoppedEvent.next(message['data'])
       }
-
+      else if (message['type'] == 'RECORDING_UPLOAD_CLOUD_STARTED')
+      {
+        this.recordingUploadCloudStartedEvent.next(message['data'])
+      }
+      else if (message['type'] == 'RECORDING_UPLOAD_CLOUD_FINISHED')
+      {
+        this.recordingUploadCloudFinishedEvent.next(message['data'])
+      }
     }
   }
 }

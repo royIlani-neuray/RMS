@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [    
         {
-          "type": "pwa-chrome",
+          "type": "chrome",
           "request": "launch",
           "name": "Angular",
           "url": "http://192.168.91.131:4200/",

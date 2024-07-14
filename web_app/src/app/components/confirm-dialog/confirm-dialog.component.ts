@@ -10,7 +10,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface DialogData {
-  message: string
+  header: string,
+  message: string,
 }
 
 @Component({
@@ -20,6 +21,7 @@ export interface DialogData {
 })
 export class ConfirmDialogComponent implements OnInit {
 
+  header : string
   message : string
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
@@ -27,6 +29,7 @@ export class ConfirmDialogComponent implements OnInit {
 
   ngOnInit(): void 
   {
+    this.header = this.data.header
     this.message = this.data.message
   }
 

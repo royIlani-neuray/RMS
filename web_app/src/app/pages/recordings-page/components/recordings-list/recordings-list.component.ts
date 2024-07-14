@@ -10,7 +10,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { DeviceEmulatorService } from 'src/app/services/device-emulator.service';
 import { Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
@@ -18,6 +18,8 @@ import { MatSort } from '@angular/material/sort';
 import { RecordingEntry, RecordingInfo, RecordingsService } from 'src/app/services/recordings.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { RenameDialogComponent } from '../rename-dialog/rename-dialog.component';
+import { SettingsService } from 'src/app/services/settings.service';
+import { RmsEventsService } from 'src/app/services/rms-events.service';
 
 
 @Component({
@@ -38,13 +40,18 @@ export class RecordingsListComponent implements OnInit {
   
   recordingListLoaded = new Subject<boolean>();
   dataSource = new MatTableDataSource<RecordingInfo>()
-  displayedColumns: string[] = ['created_at', 'name', 'recording_size', 'recording_actions'];
+  displayedColumns: string[] = ['created_at', 'name', 'cloud', 'recording_size', 'recording_actions'];
   displayedColumnsWithExpend: string[] = [...this.displayedColumns, 'expand'];
   expandedElement: RecordingInfo | null;
 
+  cloudUploadSupport = false;
+
+  readonly DEFAULT_DATETIME = "0001-01-01T00:00:00";
 
   constructor(private deviceEmulatorService : DeviceEmulatorService, 
               private recordingsService : RecordingsService,
+              private rmsEventsService : RmsEventsService,
+              private settingsService : SettingsService,
               private router : Router, private notification: MatSnackBar,
               public dialog: MatDialog) { }
 
@@ -52,7 +59,22 @@ export class RecordingsListComponent implements OnInit {
   {
     this.recordingListLoaded.next(false);
     
-    this.getRecordingsList()
+    this.getRecordingsList();
+
+    this.settingsService.getCloudUploadSupport().subscribe({
+      next : (result) => {
+        this.cloudUploadSupport = result.support
+      }
+    })
+
+    combineLatest([
+      this.rmsEventsService.recordingUploadCloudStartedEvent,
+      this.rmsEventsService.recordingUploadCloudFinishedEvent]).subscribe({
+      next: () => 
+      {
+        this.getRecordingsList()
+      }
+    })
   }
 
   public getRecordingsList()
@@ -138,6 +160,30 @@ export class RecordingsListComponent implements OnInit {
         this.recordingsService.renameRecording(recording.name, result).subscribe({
           next : (response) => this.getRecordingsList(),
           error : (err) => this.showNotification("Error: could not rename recording")
+        });
+      }
+    });
+  }
+
+  public isRecordingUploaded(recording: RecordingInfo): boolean {
+    return recording.last_uploaded != this.DEFAULT_DATETIME;
+  }
+
+  public uploadRecordingClicked(recording: RecordingInfo)
+  {
+    let header = "Are you sure?";
+    let message = `Are you sure you want to ${this.isRecordingUploaded(recording) ? "re-":""}upload recording ${recording.name} to the cloud?`
+    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      height: '220px',
+      data: { header: header, message: message }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.recordingsService.uploadRecordingToCloud(recording.name).subscribe({
+          next : (response) => this.getRecordingsList(),
+          error : (err) => this.showNotification(`Error: ${err.error.error}`)
         });
       }
     });

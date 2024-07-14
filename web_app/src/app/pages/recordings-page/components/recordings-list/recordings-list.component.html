@@ -13,22 +13,41 @@
         <td mat-cell *matCellDef="let element"> {{element.name}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="cloud">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> <b>Cloud</b> </th>
+        <td mat-cell *matCellDef="let element">
+            <mat-spinner *ngIf="element.is_uploading" [diameter]="20"></mat-spinner>
+            <mat-icon *ngIf="!element.is_uploading && !isRecordingUploaded(element)" style="color: grey">cloud_off</mat-icon>
+            <mat-icon *ngIf="!element.is_uploading && isRecordingUploaded(element)" style="color: green">cloud_done</mat-icon>
+        </td>
+    </ng-container>
+
     <ng-container matColumnDef="recording_size">
         <th mat-header-cell *matHeaderCellDef> <b>Recording Size</b> </th>
         <td mat-cell *matCellDef="let element">{{getRecordingSize(element) | number:'1.0-2' }} MB</td>
     </ng-container>
 
     <ng-container matColumnDef="recording_actions">
-        <th mat-header-cell *matHeaderCellDef></th>
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element">
 
-            <button mat-raised-button (click)="renameRecordingClicked(element); $event.stopPropagation()" color="primary">Rename</button>
+            <button mat-icon-button matTooltip="Edit" (click)="renameRecordingClicked(element); $event.stopPropagation()" color="primary">
+                <mat-icon>edit</mat-icon>
+            </button>
 
             <a href="/api/recordings/{{element.name}}/download" target="_self" download>
-                <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="$event.stopPropagation()">Download</button>
+                <button mat-icon-button matTooltip="Download" color="primary" style="margin-left: 10px;" (click)="$event.stopPropagation()">
+                    <mat-icon>download</mat-icon>
+                </button>
             </a>
 
-            <button mat-raised-button (click)="deleteRecording(element); $event.stopPropagation()" color="primary" style="margin-left: 10px;">Delete</button>
+            <button mat-icon-button matTooltip="Upload to cloud" color="primary" style="margin-left: 10px;" [disabled]="!cloudUploadSupport || element.is_uploading" (click)="uploadRecordingClicked(element); $event.stopPropagation()">
+                <mat-icon>cloud_upload</mat-icon>
+            </button>
+
+            <button mat-icon-button matTooltip="Delete" (click)="deleteRecording(element); $event.stopPropagation()" color="primary" style="margin-left: 10px;">
+                <mat-icon>delete</mat-icon>
+            </button>
         </td>
     </ng-container>
 
@@ -45,24 +64,29 @@
     <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
     <ng-container matColumnDef="recordingExpended">
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsWithExpend.length">
-        <div class="expended-recording-content" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <table class="entries-table">
-                <thead>
-                    <th>Device Type</th>
-                    <th>Device Name</th>
-                    <th>Size MB</th>
-                    <th></th>
-                </thead>
-                <tr *ngFor="let entry of element.entries">
-                    <td>{{entry.device_type}}</td>
-                    <td>{{entry.device_name}}</td>
-                    <td>{{(entry.entry_size_bytes / (1024 * 1024)) | number:'1.0-2'}} MB</td>
-                    <td>
-                        <button *ngIf="entry.device_type=='Radar'" mat-raised-button (click)="runPlayback(element.name, entry)" color="primary">Run Playback</button>  
-                    </td>
-                </tr>
-            </table>
-        </div>
+            <div class="expended-recording-content" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div style="width: 100%">
+                    <div *ngIf="isRecordingUploaded(element)" class="last-upload">
+                        Last Cloud upload: {{getLocalDateString(element.last_uploaded)}}
+                    </div>
+                    <table class="entries-table">
+                        <thead>
+                            <th>Device Type</th>
+                            <th>Device Name</th>
+                            <th>Size MB</th>
+                            <th></th>
+                        </thead>
+                        <tr *ngFor="let entry of element.entries">
+                                <td>{{entry.device_type}}</td>
+                                <td>{{entry.device_name}}</td>
+                                <td>{{(entry.entry_size_bytes / (1024 * 1024)) | number:'1.0-2'}} MB</td>
+                            <td>
+                                <button *ngIf="entry.device_type=='Radar'" mat-raised-button (click)="runPlayback(element.name, entry)" color="primary">Run Playback</button>  
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </td>
     </ng-container>
 
@@ -92,4 +116,3 @@
     <input #fileUpload type="file" style="display: none;" (change)="onUploadFile($event)" accept=".zip">
     <button mat-raised-button (click)="fileUpload.click()" color="primary">Upload Recording</button>    
 </div>
-<br><br><br>

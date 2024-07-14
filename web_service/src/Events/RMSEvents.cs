@@ -115,4 +115,14 @@ public class RMSEvents : WebSocketServer
     {
         SendEvent("RECORDING_STOPPED", deviceId);
     }
+
+    public void RecordingUploadCloudStartedEvent(string deviceId)
+    {
+        SendEvent("RECORDING_UPLOAD_CLOUD_STARTED", deviceId);
+    }
+
+    public void RecordingUploadCloudFinishedEvent(string deviceId)
+    {
+        SendEvent("RECORDING_UPLOAD_CLOUD_FINISHED", deviceId);
+    }
 }

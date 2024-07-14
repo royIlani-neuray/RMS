@@ -12,6 +12,9 @@ import { HttpClient } from '@angular/common/http';
 export interface RecordingInfo {
   name: string
   created_at: string
+  upload_s3: boolean
+  is_uploading: boolean
+  last_uploaded: string
   entries: RecordingEntry[]
 }
 
@@ -48,6 +51,11 @@ export class RecordingsService {
   public uploadRecording(recordingFile : any)
   {
     return this.http.post("/api/recordings", recordingFile)
+  }
+
+  public uploadRecordingToCloud(recordingName : string)
+  {
+    return this.http.post("/api/recordings/" + recordingName + "/upload-cloud", {})
   }
 
   public renameRecording(recordingName : string, newRecordingName : string)

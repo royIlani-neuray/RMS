@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { CameraBrief } from 'src/app/entities/camera';
 import { RadarBrief } from 'src/app/entities/radar';
 import { CamerasService } from 'src/app/services/cameras.service';
@@ -39,17 +39,13 @@ export class TracksViewerDataService {
     this.getRadarList()
     this.getCameraList()
 
-    this.rmsEventsService.radarUpdatedEvent.subscribe({
-      next: (radarId) => 
+    combineLatest([
+      this.rmsEventsService.radarUpdatedEvent,
+      this.rmsEventsService.cameraUpdatedEvent,
+    ]).subscribe({
+      next: () => 
       {
         this.getRadarList()
-      }
-    })
-
-    this.rmsEventsService.cameraUpdatedEvent.subscribe({
-      next: (cameraId) => 
-      {
-        this.getCameraList()
       }
     })
 

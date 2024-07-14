@@ -11,6 +11,7 @@ import { MatInput } from '@angular/material/input';
 import { MatSelectionList } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
 import { CameraBrief } from 'src/app/entities/camera';
 import { RadarBrief } from 'src/app/entities/radar';
 import { AddRecordingScheduleArgs } from 'src/app/entities/recording-schedule';
@@ -66,30 +67,15 @@ export class DeviceRecorderComponent implements OnInit {
   {
     this.getRadarsList()
     this.getCamerasList()
-
-    this.rmsEventsService.radarUpdatedEvent.subscribe({
+    
+    combineLatest([
+      this.rmsEventsService.radarUpdatedEvent,
+      this.rmsEventsService.cameraUpdatedEvent,
+      this.rmsEventsService.radarDeletedEvent,
+      this.rmsEventsService.recordingStartedEvent,
+      this.rmsEventsService.recordingStoppedEvent,
+    ]).subscribe({
       next: () => 
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.cameraUpdatedEvent.subscribe({
-      next: () => 
-      {
-        this.getCamerasList()
-      }
-    })
-
-    this.rmsEventsService.recordingStartedEvent.subscribe({
-      next: (radarId) => 
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.recordingStoppedEvent.subscribe({
-      next: (radarId) => 
       {
         this.getRadarsList()
       }
