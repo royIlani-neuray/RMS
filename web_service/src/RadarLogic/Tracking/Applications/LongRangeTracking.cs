@@ -234,18 +234,18 @@ public class LongRangeTracking : ITrackingApplication
         foreach (var point in frameData.pointCloudList)
         {
             var convertedPoint = new FrameData.Point {
-                Azimuth = point.Azimuth, // (float) ((Math.PI / 180) * point.Azimuth),
-                Elevation = point.Elevation, //(float) ((Math.PI / 180) * point.Elevation),
+                Azimuth = point.Azimuth, 
+                Elevation = point.Elevation,
                 Range = point.Range,
                 Doppler = point.Doppler,
 
                 /* Note: SNR is currently not provided (need to fuse from side info list) */
             };
 
-            CalcCartesianFromSpherical(convertedPoint);
+            TrackingApplicationUtils.CalcCartesianFromSpherical(convertedPoint);
 
             float rotatedX, rotatedY, rotatedZ;
-            RotatePoint(convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
 
             convertedPoint.PositionX = rotatedX;
             convertedPoint.PositionY = rotatedY;
@@ -269,7 +269,7 @@ public class LongRangeTracking : ITrackingApplication
             // rotate the track according to radar azimuth and elevation, and add height
 
             float rotatedX, rotatedY, rotatedZ;
-            RotatePoint(track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
 
             convertedTrack.PositionX = rotatedX;
             convertedTrack.PositionY = rotatedY;
@@ -281,32 +281,6 @@ public class LongRangeTracking : ITrackingApplication
         outFrameData.TargetsIndexList = frameData.targetsIndexList;
 
         return outFrameData;
-    }
-
-    private void CalcCartesianFromSpherical(FrameData.Point point)
-    {
-        point.PositionX = (float) (point.Range * Math.Sin(point.Azimuth) * Math.Cos(point.Elevation));
-        point.PositionY = (float) (point.Range * Math.Cos(point.Azimuth) * Math.Cos(point.Elevation));
-        point.PositionZ = (float) (point.Range * Math.Sin(point.Elevation));
-    }
-
-    private void RotatePoint(float x, float y, float z, out float rotatedX, out float rotatedY, out float rotatedZ)
-    {
-        var azimuthDegrees = this.radarPosition.AzimuthTiltDegrees;
-        var elevationDegrees = this.radarPosition.ElevationTiltDegrees;
-
-        double azimuth = (Math.PI / 180) * azimuthDegrees; 
-        double elevation = (Math.PI / 180) * elevationDegrees; 
-
-        double[,] rotationMatrix = new double[3, 3] { { Math.Cos(azimuth), Math.Cos(elevation) * Math.Sin(azimuth), Math.Sin(elevation) * Math.Sin(azimuth) }, 
-                                                      { -Math.Sin(azimuth), Math.Cos(elevation) * Math.Cos(azimuth), Math.Sin(elevation) * Math.Cos(azimuth) }, 
-                                                      { 0, -Math.Sin(elevation),  Math.Cos(elevation) } };
-        
-        rotatedX = (float) (x * rotationMatrix[0,0] + y * rotationMatrix[0,1] + z * rotationMatrix[0,2]);
-        rotatedY = (float) (x * rotationMatrix[1,0] + y * rotationMatrix[1,1] + z * rotationMatrix[1,2]);
-        rotatedZ = (float) (x * rotationMatrix[2,0] + y * rotationMatrix[2,1] + z * rotationMatrix[2,2]);
-
-        // System.Console.WriteLine($"Point XYZ = [{x}, {y}, {z}], Rotation: [{rotatedX}, {rotatedY}, {rotatedZ}]");   
     }
 
 }
