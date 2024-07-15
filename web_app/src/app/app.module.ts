@@ -77,6 +77,7 @@ import { RadarTrackerWindowComponent } from './pages/tracks-viewer-page/componen
 import { VitalSignsWindowComponent } from './pages/tracks-viewer-page/components/vital-signs-window/vital-signs-window.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
 import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -148,6 +149,7 @@ import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.comp
     MatGridListModule,
     MatMenuModule,
     MatIconModule,
+    MatTooltipModule,
 
     HttpClientModule,
     RouterModule,

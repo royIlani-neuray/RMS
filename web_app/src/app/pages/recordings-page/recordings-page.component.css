@@ -4,6 +4,10 @@
     color: white;
 }
 
+mat-sidenav-container {
+    height: calc(100vh - 54px - 64px);
+}
+
 .device-sidenav {
     width: 204px;
     margin: 0;
@@ -11,8 +15,8 @@
     background-color: #f2f2f2;
 }
 
-.device-sidenav-content {
-    height: 100%;
+mat-sidenav-content {
+    box-sizing: border-box;
     padding: 20px;
 }
 

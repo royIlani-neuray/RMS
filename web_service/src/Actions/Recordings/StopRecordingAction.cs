@@ -57,10 +57,8 @@ public class StopRecordingAction : IAction
             var recordingName = linkedService.ServiceOptions[RecordingsManager.RECORDING_NAME];
             var uploadS3 = linkedService.ServiceOptions[RecordingsManager.UPLOAD_S3];
             RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName, radarId);
-            if (ServiceSettings.Instance.CloudUploadSupport &&
-                RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
-                bool.Parse(uploadS3)) {
-                    RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
+            if (bool.Parse(uploadS3)) {
+                RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
             }
         }
 
@@ -79,10 +77,8 @@ public class StopRecordingAction : IAction
             var recordingName = linkedService.ServiceOptions[RecordingsManager.RECORDING_NAME];
             var uploadS3 = linkedService.ServiceOptions[RecordingsManager.UPLOAD_S3];
             RecordingsManager.Instance.MarkDeviceRecordingFinished(recordingName, cameraId);
-            if (ServiceSettings.Instance.CloudUploadSupport &&
-                RecordingsManager.Instance.IsRecordingFinished(recordingName!) &&
-                bool.Parse(uploadS3)) {
-                    RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
+            if (bool.Parse(uploadS3)) {
+                RecordingsManager.Instance.UploadRecordingToS3(recordingName!);
             }
         }
     }

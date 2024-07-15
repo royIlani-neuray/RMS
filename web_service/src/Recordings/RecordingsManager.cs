@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Services.RadarRecording;
+using WebService.Events;
 
 namespace WebService.Recordings;
 
@@ -262,6 +263,33 @@ public class RecordingsManager
         }
     }
 
+    public void MarkUploadStart(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            recording.IsUploading = true;
+            recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
+        }
+    }
+
+    public void MarkUploadEnd(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            recording.IsUploading = false;
+            recording.LastUploaded = DateTime.UtcNow;
+            recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
+        }
+    }
+
     public bool IsRecordingFinished(string recordingName)
     {
         lock(syncLock)
@@ -270,7 +298,19 @@ public class RecordingsManager
                 throw new NotFoundException($"There is no recording entry named: {recordingName}");
 
             RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
-            return recording.RecordingEntries.All(entry => entry.IsFinished);
+            return recording.RecordingEntries.All(entry => entry.IsFinished ?? true);
+        }
+    }
+
+    public bool IsRecordingUploading(string recordingName)
+    {
+        lock(syncLock)
+        {
+            if (!IsRecordingExist(recordingName))
+                throw new NotFoundException($"There is no recording entry named: {recordingName}");
+
+            RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
+            return recording.IsUploading;
         }
     }
 
@@ -315,8 +355,32 @@ public class RecordingsManager
         }        
     }
 
-    public void UploadRecordingToS3(string recordingName)
+    public bool CanUploadRecordingToS3(string recordingName, bool raiseOnError)
     {
+        string message = "";
+        if (!ServiceSettings.Instance.CloudUploadSupport) {
+            message = $"Not supporting cloud upload, not uploading recording {recordingName}";
+        } else if (!IsRecordingFinished(recordingName)) {
+            message = $"Recording {recordingName} did not finish, not uploading to cloud";
+        } else if (IsRecordingUploading(recordingName)) {
+            message = $"Recording {recordingName} is already uploading, not uploading again";
+        }
+
+        if (message != "") {
+            if (raiseOnError) {
+                throw new Exception(message);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void UploadRecordingToS3(string recordingName, bool raiseOnError=false)
+    {
+        if (!CanUploadRecordingToS3(recordingName, raiseOnError)) {
+            return;
+        }
+
         lock(syncLock)
         {
             if (!IsRecordingExist(recordingName))
@@ -324,8 +388,13 @@ public class RecordingsManager
 
             Console.WriteLine($"Uploading recording to cloud: {recordingName}");
             var recordingPath = GetRecordingPath(recordingName);
-            // Not sure if legal to fire async task inside a lock...
-            Task.Run(() => S3Manager.Instance.UploadDirectoryAsync(recordingPath));
+            Task.Run(async () => {
+                RMSEvents.Instance.RecordingUploadCloudStartedEvent(recordingName);
+                MarkUploadStart(recordingName);
+                await S3Manager.Instance.UploadDirectoryAsync(recordingPath);
+                MarkUploadEnd(recordingName);
+                RMSEvents.Instance.RecordingUploadCloudFinishedEvent(recordingName);
+            });
         }
     }
 }

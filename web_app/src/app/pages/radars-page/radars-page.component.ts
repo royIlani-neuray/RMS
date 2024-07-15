@@ -11,7 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { RadarBrief } from 'src/app/entities/radar';
 import { RadarsService } from '../../services/radars.service';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { MatSort } from '@angular/material/sort';
 
@@ -37,37 +37,15 @@ export class RadarsPageComponent implements OnInit {
     this.deviceListLoaded.next(false);
     
     this.getRadarsList()
-
-    this.rmsEventsService.radarUpdatedEvent.subscribe({
-      next: (radarId) => 
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.radarAddedEvent.subscribe({
-      next: (radarId) => 
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.radarDeletedEvent.subscribe({
-      next: (radarId) => 
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.recordingStartedEvent.subscribe({
-      next: (radarId) =>
-      {
-        this.getRadarsList()
-      }
-    })
-
-    this.rmsEventsService.recordingStoppedEvent.subscribe({
-      next: (radarId) =>
+    
+    combineLatest([
+      this.rmsEventsService.radarUpdatedEvent,
+      this.rmsEventsService.radarAddedEvent,
+      this.rmsEventsService.radarDeletedEvent,
+      this.rmsEventsService.recordingStartedEvent,
+      this.rmsEventsService.recordingStoppedEvent,
+    ]).subscribe({
+      next: () => 
       {
         this.getRadarsList()
       }

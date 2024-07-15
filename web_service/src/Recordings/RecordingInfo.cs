@@ -31,7 +31,7 @@ public class RecordingInfo
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [JsonPropertyName("is_finished")]
-        public bool IsFinished { get; set; } = false;
+        public bool? IsFinished { get; set; }
 
         [JsonPropertyName("entry_size_bytes")]
         public float EntrySizeBytes { get; set; } = 0;
@@ -48,6 +48,12 @@ public class RecordingInfo
 
     [JsonPropertyName("upload_s3")]
     public bool UploadS3 { get; set; } = false;
+
+    [JsonPropertyName("last_uploaded")]
+    public DateTime LastUploaded { get; set; }
+
+    [JsonPropertyName("is_uploading")]
+    public bool IsUploading { get; set; } = false;
 
     public RecordingInfo()
     {

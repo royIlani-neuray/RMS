@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { CameraBrief } from 'src/app/entities/camera';
 import { CamerasService } from 'src/app/services/cameras.service';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
@@ -33,27 +33,16 @@ export class CamerasPageComponent implements OnInit {
     
     this.getCamerasList()
 
-    this.rmsEventsService.cameraUpdatedEvent.subscribe({
-      next: (cameraId) => 
+    combineLatest([
+      this.rmsEventsService.cameraUpdatedEvent,
+      this.rmsEventsService.cameraAddedEvent,
+      this.rmsEventsService.cameraDeletedEvent
+    ]).subscribe({
+      next: () => 
       {
         this.getCamerasList()
       }
     })
-
-    this.rmsEventsService.cameraAddedEvent.subscribe({
-      next: (cameraId) =>
-      {
-        this.getCamerasList()
-      }
-    })
-
-    this.rmsEventsService.cameraDeletedEvent.subscribe({
-      next: (cameraId) =>
-      {
-        this.getCamerasList()
-      }
-    })
-
   }
 
   ngAfterViewInit() {

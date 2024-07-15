@@ -11,7 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { RadarTemplateBrief } from 'src/app/entities/radar-template';
 import { TemplatesService } from '../../services/templates.service';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { CreateTemplateDialogComponent } from './components/create-template-dialog/create-template-dialog.component';
@@ -41,15 +41,11 @@ export class TemplatesPageComponent implements OnInit {
     
     this.getTemplatesList()
 
-    this.rmsEventsService.templateAddedEvent.subscribe({
-      next: (templateId) => 
-      {
-        this.getTemplatesList()
-      }
-    })
-
-    this.rmsEventsService.templateDeletedEvent.subscribe({
-      next: (templateId) => 
+    combineLatest([
+      this.rmsEventsService.cameraUpdatedEvent,
+      this.rmsEventsService.templateDeletedEvent,
+    ]).subscribe({
+      next: () => 
       {
         this.getTemplatesList()
       }

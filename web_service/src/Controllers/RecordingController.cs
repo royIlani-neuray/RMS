@@ -65,6 +65,16 @@ public class RecordingsController : ControllerBase
         return File(fileDataStream, "application/zip", archiveFileName);
     }
 
+    [HttpPost("{recordingName}/upload-cloud")]
+    public void UploadCloudRecording(string recordingName)
+    {
+        try {
+            RecordingsManager.Instance.UploadRecordingToS3(recordingName, raiseOnError: true);
+        } catch (Exception e) {
+            throw new BadRequestException(e.Message);
+        }
+    }
+
     [HttpPost()]
     [DisableRequestSizeLimit]
     public async Task UploadRecording()
