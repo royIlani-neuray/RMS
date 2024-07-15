@@ -299,8 +299,19 @@ export class ThreeJsView {
           //let elevationDeg = point.elevation * (180 / Math.PI)
           //console.log(" Az:" + azimuthDeg + " El:" + elevationDeg)
           
+          let pointColor = 0xffffff
+
+          if (point.doppler < 0)
+          {
+            pointColor = 0xff0000
+          }
+          else if (point.doppler > 0)
+          {
+            pointColor = 0x0000ff
+          }
+
           let pointGeometry = new THREE.SphereGeometry(0.02)
-          let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: 0xffffff}))
+          let pointMesh = new THREE.Mesh(pointGeometry, new MeshBasicMaterial({color: pointColor}))
           pointMesh.position.set(-point.position_x, point.position_z, point.position_y)
           this.pointsCloudGroup.add(pointMesh)
         })
