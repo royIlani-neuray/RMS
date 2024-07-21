@@ -111,6 +111,9 @@ public sealed class ServiceManager {
 
         if (service.Settings!.Enabled)
         {
+            if (linkedService.ServiceContext != null)
+                return;
+
             Console.WriteLine($"{device.LogTag} Creating {service.ServiceId} context.");
 
             try
@@ -125,7 +128,7 @@ public sealed class ServiceManager {
         }
         else
         {
-            linkedService.ServiceContext = null;
+            DisposeServiceContext(device.Id, linkedService);
         }
     }
 
@@ -135,8 +138,21 @@ public sealed class ServiceManager {
             return;
 
         IExtensionService service = services.First(service => service.ServiceId == linkedService.ServiceId);
-        System.Console.WriteLine($"[{deviceId}] Disposing {service.ServiceId} context.");
-        service.DisposeServiceContext(linkedService.ServiceContext!);
+        Console.WriteLine($"[{deviceId}] Disposing {service.ServiceId} context.");
+        
+        try
+        {
+            service.DisposeServiceContext(linkedService.ServiceContext!);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[{deviceId}] Error: failed to dispose {service.ServiceId} context. exception: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+            linkedService.ServiceContext = null;
+        }
     }
 
     public void RunServices(DeviceEntity device, object dataObject)
