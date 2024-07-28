@@ -386,13 +386,14 @@ public class RecordingsManager
             if (!IsRecordingExist(recordingName))
                 throw new NotFoundException($"There is no recording entry named: {recordingName}");
 
-            Console.WriteLine($"Uploading recording to cloud: {recordingName}");
             var recordingPath = GetRecordingPath(recordingName);
             Task.Run(async () => {
+                Console.WriteLine($"Uploading recording to cloud: {recordingName}");
                 RMSEvents.Instance.RecordingUploadCloudStartedEvent(recordingName);
                 MarkUploadStart(recordingName);
                 await S3Manager.Instance.UploadDirectoryAsync(recordingPath);
                 MarkUploadEnd(recordingName);
+                Console.WriteLine($"Done uploading recording to cloud: {recordingName}");
                 RMSEvents.Instance.RecordingUploadCloudFinishedEvent(recordingName);
             });
         }

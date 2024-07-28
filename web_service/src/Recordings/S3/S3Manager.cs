@@ -75,5 +75,19 @@ public sealed class S3Manager {
         };
 
         await transferUtility.UploadDirectoryAsync(uploadRequest);
+
+        // uploading an empty "done" file at the end
+        using var emptyStream = new MemoryStream();
+        string doneKeyPrefix = keyPrefix + "/done";
+        var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+        {
+            BucketName = S3_BUCKET,
+            InputStream = emptyStream,
+            Key = doneKeyPrefix,
+            StorageClass = S3StorageClass.Standard,
+            CannedACL = S3CannedACL.Private
+        };
+
+        await transferUtility.UploadAsync(fileTransferUtilityRequest);
     }
 }
