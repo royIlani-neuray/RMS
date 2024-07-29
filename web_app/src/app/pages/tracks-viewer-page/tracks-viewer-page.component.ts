@@ -19,6 +19,7 @@ import { TracksViewerDataService } from './tracks-viewer-data.service';
 import { FanGesturesWindowComponent } from './components/fan-gestures-window/fan-gestures-window.component';
 import { RadarTrackerWindowComponent } from './components/radar-tracker-window/radar-tracker-window.component';
 import { VitalSignsWindowComponent } from './components/vital-signs-window/vital-signs-window.component';
+import { RadarHeatmapWindowComponent } from './components/radar-heatmap-window/radar-heatmap-window.component';
 
 @Component({
   selector: 'dynamic-window',
@@ -109,6 +110,14 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
     this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
     this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
     const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarTrackerWindowComponent)
+    component?.instance.setRadar(radarId)
+  }
+
+  setRadarHeatmapWindow(radarId : string)
+  {
+    this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.clear()
+    this.gridWindows.get(this.selectedWindowIndex)!.windowCreated = true
+    const component = this.gridWindows.get(this.selectedWindowIndex)?.viewContainerRef.createComponent(RadarHeatmapWindowComponent)
     component?.instance.setRadar(radarId)
   }
 
