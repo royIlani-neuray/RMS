@@ -41,7 +41,7 @@ public class IPRadarServer : IRadarConnection
         WaitForConnectionTask();
     }
 
-    private bool initTcpListener(out TcpListener? tcpListener, out int portNumber)
+    private bool InitTcpListener(out TcpListener? tcpListener, out int portNumber)
     {
         portNumber = 0;
         tcpListener = null;
@@ -78,7 +78,7 @@ public class IPRadarServer : IRadarConnection
         {
             try
             {
-                if (initTcpListener(out tcpListenerControl, out controlPortNumber) && initTcpListener(out tcpListenerData, out dataPortNumber))
+                if (InitTcpListener(out tcpListenerControl, out controlPortNumber) && InitTcpListener(out tcpListenerData, out dataPortNumber))
                 {
                     System.Console.WriteLine($"Debug: created TCP sockets - control port: {controlPortNumber}, data: {dataPortNumber}");
                     
