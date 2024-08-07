@@ -261,6 +261,15 @@ public class OutOfBox : ITrackingApplication
             outFrameData.PointsList.Add(convertedPoint);
         }
 
+        if (frameData.pointCloudList.Count == frameData.pointsSideInfoList.Count)
+        {
+            for (int i=0; i< frameData.pointsSideInfoList.Count; i++)
+            {
+                outFrameData.PointsList[i].SNR = frameData.pointsSideInfoList[i].SNR;
+                outFrameData.PointsList[i].Noise = frameData.pointsSideInfoList[i].Noise;
+            }
+        }
+
         foreach (var track in frameData.tracksList)
         {
             var convertedTrack = new FrameData.Track {

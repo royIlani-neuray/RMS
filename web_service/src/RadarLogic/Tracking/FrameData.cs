@@ -27,7 +27,10 @@ public class FrameData
         public float Doppler { get; set; }
 
         [JsonPropertyName("snr")]
-        public float SNR { get; set; }
+        public float SNR { get; set; }  // SNR - CFAR cell to side noise ratio in dB expressed in 0.1 steps of dB
+
+        [JsonPropertyName("noise")]
+        public float Noise { get; set; }  // noise - CFAR noise level of the side of the detected cell in dB expressed in 0.1 steps of dB
 
         [JsonPropertyName("position_x")]
         public float PositionX { get; set; }       
