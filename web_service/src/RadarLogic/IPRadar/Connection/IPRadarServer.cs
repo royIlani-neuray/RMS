@@ -32,6 +32,8 @@ public class IPRadarServer : IRadarConnection
     public TcpClient? ControlStream => controlStream;
     public TcpClient? DataStream => dataStream;
 
+    public const ushort TCP_PORT_NUMBER_MIN = 30000; 
+    public const ushort TCP_PORT_NUMBER_MAX = 32000;
 
     public IPRadarServer(string radarId)
     {
@@ -42,22 +44,32 @@ public class IPRadarServer : IRadarConnection
     private bool initTcpListener(out TcpListener? tcpListener, out int portNumber)
     {
         portNumber = 0;
+        tcpListener = null;
 
-        try
+        // Create a list of ports in the allowed range, in random order for security.
+        List<int> ports = Enumerable.Range(TCP_PORT_NUMBER_MIN, TCP_PORT_NUMBER_MAX - TCP_PORT_NUMBER_MIN + 1).ToList();
+        Random rnd = new Random();
+        ports = ports.OrderBy(x => rnd.Next()).ToList();
+
+        foreach (int port in ports)
         {
-            var endpoint = new IPEndPoint(IPAddress.Any, 0);
-            tcpListener = new TcpListener(endpoint);
-            tcpListener.Start();
-            endpoint = (IPEndPoint) tcpListener.LocalEndpoint;
-            portNumber = endpoint.Port;
-        }
-        catch
-        {
-            tcpListener = null;
-            return false;
+            try
+            {
+                var endpoint = new IPEndPoint(IPAddress.Any, port);
+                tcpListener = new TcpListener(endpoint);
+                tcpListener.Start();
+                endpoint = (IPEndPoint) tcpListener.LocalEndpoint;
+                portNumber = endpoint.Port;
+                return true;
+            }
+            catch
+            {
+                // If the port is already in use, it will throw an exception and try the next port
+                continue;
+            }            
         }
 
-        return true;
+        return false;
     }
 
     private void WaitForConnectionTask()
@@ -85,6 +97,10 @@ public class IPRadarServer : IRadarConnection
 
                     var action = new RemoteRadarConnectedAction(radarId);
                     action.Run();
+                }
+                else
+                {
+                    throw new Exception("Canonot initialize TCP ports for the radar.");
                 }
 
             }
