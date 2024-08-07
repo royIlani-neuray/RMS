@@ -34,4 +34,18 @@ public class DeviceMappingController : ControllerBase
         RadarDeviceMapper.Instance.MapDevices();
     }
 
+    [HttpPost("map-remote-device")]
+    public async Task<IActionResult> MapRemoteDevice()
+    {
+        using (var ms = new MemoryStream())
+        {
+            await Request.Body.CopyToAsync(ms);
+            ms.Seek(0,SeekOrigin.Begin);
+            
+            if (!RadarDeviceMapper.Instance.AddMappedDevice(remoteDevice: true, ms))
+                throw new BadRequestException("remote device mapping failed.");
+        }
+
+        return Ok();
+    }   
 }

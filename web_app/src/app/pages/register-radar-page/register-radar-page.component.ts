@@ -30,6 +30,7 @@ export class RegisterRadarPageComponent implements OnInit {
   templatesList: RadarTemplateBrief[] = [];
   validTemplatesList: RadarTemplateBrief[] = [];
 
+  selectedDeviceInfo: DeviceMapping | undefined
   
   radarNameFC = new FormControl('', [Validators.required])
   selectedDeviceFC = new FormControl('', [Validators.required])
@@ -87,11 +88,11 @@ export class RegisterRadarPageComponent implements OnInit {
   public onDeviceSelected(event : any)
   {
     let selectedDeviceId = event.value
-    console.log(this.deviceList.length)
-    let deviceInfo = this.deviceList.find((device) => { return device.device_id == selectedDeviceId })
     
+    this.selectedDeviceInfo = this.deviceList.find((device) => { return device.device_id == selectedDeviceId })
+
     this.validTemplatesList = this.templatesList.filter((template) => {
-      return (deviceInfo!.model.startsWith(template.model)) && (template.application == deviceInfo!.application)
+      return (this.selectedDeviceInfo!.model.startsWith(template.model)) && (template.application == this.selectedDeviceInfo!.application)
     })
     
   }
@@ -116,7 +117,7 @@ export class RegisterRadarPageComponent implements OnInit {
     let calibration = this.calibrationInputFC.value!
 
     this.radarsService.registerRadar(deviceId, name, description, templateId, radarEnabled, sendTracksReport,
-      height, azimuthTilt, elevationTilt, calibration).subscribe({
+      height, azimuthTilt, elevationTilt, calibration, this.selectedDeviceInfo!.remote_device).subscribe({
       next : (response) => this.router.navigate(['/radar', deviceId]),
       error : (err) => err.status == 504 ? this.router.navigate(['/no-service']) : this.notification.open("Error: could not register the device", "Close", { duration : 4000 })
     })

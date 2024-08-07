@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.RadarLogic.IPRadar;
+using WebService.Actions.Radars;
 
 namespace WebService.Actions.Radars;
 
@@ -19,10 +20,11 @@ public class DeviceDiscoveredAction : RadarAction {
     {
         // first, update current known info in the radar entity
         var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id); 
-        radar.deviceMapping = mappedDevice;
+        radar.DeviceMapping = mappedDevice;
 
         var action = new ConnectRadarAction(radar);
         action.Run();
+
     }
 
     public static void OnDeviceDiscoveredCallback(string deviceId)

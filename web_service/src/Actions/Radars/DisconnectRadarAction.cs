@@ -35,10 +35,10 @@ public class DisconnectRadarAction : IAction
         if (radar.State == Radar.DeviceState.Connected)
         {
             radar.SetStatus("Disconnecting from the radar device...");
-            if (radar.ipRadarClient!.IsConnected())
+            if (radar.ipRadarAPI!.IsConnected())
             {
-                radar.ipRadarClient!.Disconnect();
-                radar.ipRadarClient = null;
+                radar.ipRadarAPI!.Disconnect();
+                radar.ipRadarAPI = null;
             }
 
             radar.State = Radar.DeviceState.Disconnected;

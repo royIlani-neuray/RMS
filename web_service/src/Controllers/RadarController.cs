@@ -130,11 +130,11 @@ public class RadarController : ControllerBase
     public void SendRestBroadcast(string radarId)
     {
         ValidateRadarId(radarId); 
-        IPRadarClient.SendResetBroadcast(radarId);
+        IPRadarAPI.SendResetBroadcast(radarId);
     }
 
     [HttpGet("{radarId}/tracks")]
-    public HttpTracksReport GetDeviceTracks(string radarId)
+    public HttpTracksReport GetRadarTracks(string radarId)
     {
         ValidateRadarId(radarId); 
         var radar = RadarContext.Instance.GetRadar(radarId);
@@ -151,6 +151,27 @@ public class RadarController : ControllerBase
             };
         }
     }
+
+    [HttpGet("{radarId}/remote-radar-ports")]
+    public IActionResult GetRemoteRadarPorts(string radarId)
+    {
+        ValidateRadarId(radarId); 
+        var radar = RadarContext.Instance.GetRadar(radarId);
+
+        if (radar.ipRadarAPI == null)
+        {
+            throw new WebServiceException("failed to get remote radar ports.");
+        }
+
+        radar.ipRadarAPI.GetRemoteRadarConnectionPorts(out int controlPort, out int dataPort);
+
+        byte [] response = new byte[4];
+        BitConverter.GetBytes((UInt16) controlPort).CopyTo(response, 0);
+        BitConverter.GetBytes((UInt16) dataPort).CopyTo(response, 2);
+
+        return File(response, "application/octet-stream");
+    }
+
 
     [HttpPost("{radarId}/fw-update")]
     public async Task<IActionResult> FirmewareUpdate(string radarId)
@@ -196,4 +217,13 @@ public class RadarController : ControllerBase
         action.Run();
     }
 
+    [HttpPost("{radarId}/rms-hostname")]
+    public void SetRMSHostname(string radarId, [FromBody] SetRMSHostnameArgs args)
+    {
+        ValidateRadarId(radarId); 
+        args.Validate();
+        var action = new SetRMSHostnameAction(radarId, args);
+        action.Run();
+    }
 }
+

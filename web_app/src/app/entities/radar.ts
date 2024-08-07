@@ -44,7 +44,8 @@ export interface DeviceMapping {
     application: string
     static_ip: boolean,
     registered: boolean,
-    fw_version: string
+    fw_version: string,
+    remote_device: boolean
 }
 
 export interface LinkedService {

@@ -23,9 +23,6 @@ public class Radar : DeviceEntity {
     [JsonIgnore]
     public override string StoragePath => StorageDatabase.RadarStoragePath;
 
-    [JsonPropertyName("is_recording")]
-    public bool isRecording => this.LinkedServices.Exists(service => service.ServiceId == RadarRecordingService.SERVICE_ID);
-
     [JsonPropertyName("send_tracks_report")]
     public bool SendTracksReport { get; set; }
 
@@ -33,19 +30,25 @@ public class Radar : DeviceEntity {
     public List<string> ConfigScript { get; set; }
 
     [JsonPropertyName("device_mapping")]
-    public RadarDeviceMapper.MappedDevice? deviceMapping { get; set;}
+    public RadarDeviceMapper.MappedDevice? DeviceMapping { get; set; }
 
     [JsonPropertyName("radar_settings")]
-    public RadarSettings? radarSettings { get; set;}
+    public RadarSettings? radarSettings { get; set; }
 
     [JsonIgnore]
-    public IPRadarClient? ipRadarClient;
+    public IPRadarAPI? ipRadarAPI;
 
     [JsonIgnore]
     public RadarTracker? radarTracker;
 
     [JsonIgnore]
     public RadarWebSocketServer RadarWebSocket;
+
+    [JsonPropertyName("is_recording")]
+    public bool IsRecording => this.LinkedServices.Exists(service => service.ServiceId == RadarRecordingService.SERVICE_ID);
+
+    [JsonPropertyName("remote_network")]
+    public bool RadarOnRemoteNetwork { get; set; } = false;
 
     public class RadarBrief : DeviceBrief
     {
@@ -58,7 +61,7 @@ public class Radar : DeviceEntity {
         public RadarBrief(Radar device) : base(device)
         {
             SendTracksReport = device.SendTracksReport;
-            isRecording = device.isRecording;
+            isRecording = device.IsRecording;
         }
     }
 

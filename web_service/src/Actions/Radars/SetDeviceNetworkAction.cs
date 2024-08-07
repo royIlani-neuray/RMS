@@ -58,7 +58,7 @@ public class SetDeviceNetworkAction : IAction {
 
     public void Run()
     {
-        IPRadarClient.SetDeviceNetwork(radarId, args.ipAddress, args.subnetMask, args.gwAddress, args.staticIP!.Value);
+        IPRadarAPI.SetDeviceNetwork(radarId, args.ipAddress, args.subnetMask, args.gwAddress, args.staticIP!.Value);
     }
 
 }
