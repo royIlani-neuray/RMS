@@ -48,9 +48,14 @@ public class SetRadarIdAction : IAction {
 
         var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarId); 
 
+        if (mappedDevice.remoteDevice)
+        {
+            throw new Exception("Cannot update device id to a device in a remote network.");
+        }
+
         System.Console.WriteLine($"Updating device id. Current id: [{radarId}], New id: [{args.NewRadarId}] ...");    
-        IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);
-        client.Connect();
+        IPRadarAPI client = new IPRadarAPI();
+        client.ConnectLocalRadar(mappedDevice.ipAddress);
 
         client.SetDeviceId(radarId, args.NewRadarId);
     

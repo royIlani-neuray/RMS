@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Events;
+using WebService.RadarLogic.IPRadar.Connection;
 
 namespace WebService.RadarLogic.IPRadar;
 
@@ -51,7 +52,9 @@ public class RadarDeviceMapper
 
         [JsonPropertyName("registered")]
         public bool registered { get; set; } = false;
-
+        
+        [JsonPropertyName("remote_device")]
+        public bool remoteDevice { get; set; } = false;     // a remote device is a device that is not in the local RMS network (i.e. behind NAT)     
     }
 
     #region Singleton
@@ -85,7 +88,7 @@ public class RadarDeviceMapper
 
     public void Start()
     {
-        udpClient = new UdpClient(IPRadarClient.IP_RADAR_BROADCAST_PORT_SERVER);
+        udpClient = new UdpClient(IRadarConnection.IP_RADAR_BROADCAST_PORT_SERVER);
         udpClient.EnableBroadcast = true;
 
         broadcastListenerTask = new Task(() => 
@@ -104,16 +107,16 @@ public class RadarDeviceMapper
         
         RMSEvents.Instance.DeviceMappingUpdatedEvent();
         
-        List<IPAddress> broadcastSources = IPRadarClient.GetBroadcastAddresses();
+        List<IPAddress> broadcastSources = IPRadarAPI.GetBroadcastAddresses();
 
         // create the broadcast packet
 
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.DISCOVER_DEVICE_KEY);
-        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE];
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.DISCOVER_DEVICE_KEY);
+        var packet = new byte[IPRadarAPI.MESSAGE_HEADER_SIZE];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(packet, 0, packet.Length);
 
@@ -123,7 +126,7 @@ public class RadarDeviceMapper
             // System.Console.WriteLine($"address: {address}");
 
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
-            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IRadarConnection.IP_RADAR_BROADCAST_PORT_DEVICE);
 
             UdpClient sendClient = new UdpClient(sourceEndpoint);
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
@@ -142,6 +145,89 @@ public class RadarDeviceMapper
         return $"{major}.{minor}.{hotfix}.{build}";
     }
 
+    public bool AddMappedDevice(bool remoteDevice, MemoryStream deviceInfoStream)
+    {
+        var reader = new BinaryReader(deviceInfoStream);
+        var magic = reader.ReadUInt32();
+        var protocol = reader.ReadByte();
+        var messageType = reader.ReadByte();
+        
+        if (deviceInfoStream.Length < IPRadarAPI.MESSAGE_HEADER_SIZE)
+        {
+            Console.WriteLine("invalid mapped device info message size. ignoring.");
+            return false;
+        }
+
+        if (magic != IPRadarAPI.MESSAGE_HEADER_MAGIC)
+        {
+            Console.WriteLine("Error: invalid magic in mapped device info message. ignoring.");
+            return false;
+        }
+
+        if (protocol != IPRadarAPI.PROTOCOL_REVISION)
+        {
+            Console.WriteLine("Error: invalid protocol revision in mapped device info message. ignoring.");
+            return false;
+        }
+
+        if (messageType == IPRadarAPI.DISCOVER_DEVICE_KEY)
+        {
+            // got the broadcast that we sent. ignore it.
+            return false;
+        }
+
+        if (messageType != IPRadarAPI.DEVICE_INFO_KEY)
+        {
+            Console.WriteLine("Unknown message type in mapped device info. ignoring.");
+            return false;
+        }
+
+        var guidBytes = reader.ReadBytes(IPRadarAPI.DEVICE_ID_SIZE_BYTES);           
+        Guid guid = new Guid(guidBytes);
+
+        IPAddress ip = new IPAddress(reader.ReadBytes(IPRadarAPI.IPV4_ADDRESS_SIZE));
+        IPAddress subnet = new IPAddress(reader.ReadBytes(IPRadarAPI.IPV4_ADDRESS_SIZE));
+        IPAddress gateway = new IPAddress(reader.ReadBytes(IPRadarAPI.IPV4_ADDRESS_SIZE));
+        bool staticIP = reader.ReadBoolean();
+        string model = new string(reader.ReadChars(IPRadarAPI.MODEL_STRING_MAX_LENGTH)).Replace("\x00","");
+        string appName = new string(reader.ReadChars(IPRadarAPI.APP_STRING_MAX_LENGTH)).Replace("\x00","");
+        uint fwVersion = reader.ReadUInt32();
+
+        
+        MappedDevice deviceInfo = new MappedDevice()
+        {
+            ipAddress = ip.ToString(),
+            subnetMask = subnet.ToString(),
+            gwAddress = gateway.ToString(),
+            deviceId = guid.ToString(),
+            staticIP = staticIP,
+            model = model,
+            appName = appName,
+            fwVersion = ParseFwVersion(fwVersion),
+            remoteDevice = remoteDevice
+        };
+        
+        UpdateRegisteredStatus(deviceInfo);
+
+        Console.WriteLine();
+        Console.WriteLine($"Device mapping info: [{DateTime.Now}]");
+        Console.WriteLine($"Guid: {guid}");
+        Console.WriteLine($"Remote device: {remoteDevice}");
+        Console.WriteLine($"ip: {ip}");
+        Console.WriteLine($"subnet: {subnet}");
+        Console.WriteLine($"gateway: {gateway}");
+        Console.WriteLine($"staticIP: {staticIP}");
+        Console.WriteLine($"model: {model}");
+        Console.WriteLine($"appName: {appName}");
+        Console.WriteLine($"FW version: {deviceInfo.fwVersion}");
+        Console.WriteLine();
+        
+        AddOrUpdateMappedDevice(deviceInfo);
+
+        RMSEvents.Instance.DeviceMappingUpdatedEvent();   
+        return true;     
+    }
+
     private void BrodcastListnerTask()
     {
         IPEndPoint? endpoint = null;
@@ -150,82 +236,10 @@ public class RadarDeviceMapper
         {
             var packet = udpClient!.Receive(ref endpoint); 
 
-            if (packet.Length < IPRadarClient.MESSAGE_HEADER_SIZE)
-            {
-                Console.WriteLine("invalid broadcast message size. ignoring.");
-                continue;
-            }
-
-            var reader = new BinaryReader(new MemoryStream(packet));
-            var magic = reader.ReadUInt32();
-            var protocol = reader.ReadByte();
-            var messageType = reader.ReadByte();
-            
-            if (magic != IPRadarClient.MESSAGE_HEADER_MAGIC)
-            {
-                Console.WriteLine("Error: invalid magic in broadcast message. ignoring.");
-                continue;
-            }
-
-            if (protocol != IPRadarClient.PROTOCOL_REVISION)
-            {
-                Console.WriteLine("Error: invalid protocol revision in broadcast message. ignoring.");
-                continue;
-            }
-
-            if (messageType == IPRadarClient.DISCOVER_DEVICE_KEY)
-            {
-                // got the broadcast that we sent. ignore it.
-                continue;
-            }
-
-            if (messageType != IPRadarClient.DEVICE_INFO_KEY)
-            {
-                Console.WriteLine("Unknown broadcast message type. ignoring.");
-                continue;
-            }
-
-            var guidBytes = reader.ReadBytes(IPRadarClient.DEVICE_ID_SIZE_BYTES);           
-            Guid guid = new Guid(guidBytes);
-
-            IPAddress ip = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
-            IPAddress subnet = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
-            IPAddress gateway = new IPAddress(reader.ReadBytes(IPRadarClient.IPV4_ADDRESS_SIZE));
-            bool staticIP = reader.ReadBoolean();
-            string model = new string(reader.ReadChars(IPRadarClient.MODEL_STRING_MAX_LENGTH)).Replace("\x00","");
-            string appName = new string(reader.ReadChars(IPRadarClient.APP_STRING_MAX_LENGTH)).Replace("\x00","");
-            uint fwVersion = reader.ReadUInt32();
-
-            
-            MappedDevice deviceInfo = new MappedDevice()
-            {
-                ipAddress = ip.ToString(),
-                subnetMask = subnet.ToString(),
-                gwAddress = gateway.ToString(),
-                deviceId = guid.ToString(),
-                staticIP = staticIP,
-                model = model,
-                appName = appName,
-                fwVersion = ParseFwVersion(fwVersion)
-            };
-            
-            UpdateRegisteredStatus(deviceInfo);
-
-            Console.WriteLine();
             Console.WriteLine($"Got a broadcast message from: {endpoint} [{DateTime.Now}]");
-            Console.WriteLine($"Guid: {guid}");
-            Console.WriteLine($"ip: {ip}");
-            Console.WriteLine($"subnet: {subnet}");
-            Console.WriteLine($"gateway: {gateway}");
-            Console.WriteLine($"staticIP: {staticIP}");
-            Console.WriteLine($"model: {model}");
-            Console.WriteLine($"appName: {appName}");
-            Console.WriteLine($"FW version: {deviceInfo.fwVersion}");
-            Console.WriteLine();
-            
-            AddOrUpdateMappedDevice(deviceInfo);
 
-            RMSEvents.Instance.DeviceMappingUpdatedEvent();
+            var deviceInfoStream = new MemoryStream(packet);
+            AddMappedDevice(remoteDevice: false, deviceInfoStream);
         }
     }
 

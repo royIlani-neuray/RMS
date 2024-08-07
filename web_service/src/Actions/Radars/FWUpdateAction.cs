@@ -48,8 +48,13 @@ public class FWUpdateAction : IAction {
 
             var mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radarId); 
             
-            IPRadarClient client = new IPRadarClient(mappedDevice.ipAddress);
-            client.Connect();
+            if (mappedDevice.remoteDevice)
+            {
+                throw new Exception("Cannot perform FW update on a device in a remote network.");
+            }
+
+            IPRadarAPI client = new IPRadarAPI();
+            client.ConnectLocalRadar(mappedDevice.ipAddress);
 
             client.UpdateFirmware(image);
 

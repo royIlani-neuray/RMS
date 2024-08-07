@@ -51,10 +51,10 @@ public class RadarTracker
 
     private void InitTrackingApp()
     {
-        if (radar.deviceMapping == null)
+        if (radar.DeviceMapping == null)
             throw new Exception("Error: cannot get device application.");
 
-        string appName = radar.deviceMapping.appName;
+        string appName = radar.DeviceMapping.appName;
 
         if (appName.StartsWith("PEOPLE_TRACKING") || (appName == "VITAL_SIGNS"))
         {
@@ -156,7 +156,7 @@ public class RadarTracker
                 continue;
             
             Console.WriteLine($"{radar.LogTag} Sending command - {tiCommand}");
-            var response = radar.ipRadarClient!.SendTICommand(tiCommand);
+            var response = radar.ipRadarAPI!.SendTICommand(tiCommand);
             Console.WriteLine($"{radar.LogTag} {response}");
 
             if (response != "Done")
@@ -178,7 +178,7 @@ public class RadarTracker
             
             try
             {
-                nextFrame = trackingApp!.GetNextFrame(radar.ipRadarClient!.ReadTIData);
+                nextFrame = trackingApp!.GetNextFrame(radar.ipRadarAPI!.ReadTIData);
             }
             catch (System.Exception ex)
             {

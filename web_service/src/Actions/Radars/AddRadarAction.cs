@@ -35,6 +35,9 @@ public class AddRadarArgs
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; } = false;
 
+    [JsonPropertyName("remote_network")]
+    public bool RadarOnRemoteNetwork { get; set; } = false;
+
     [JsonPropertyName("radar_position")]
     public RadarSettings.SensorPositionParams? RadarPosition { get; set; }
 
@@ -76,6 +79,7 @@ public class AddRadarAction : IAction
         radar.Name = args.Name;
         radar.Description = args.Description;
         radar.SendTracksReport = args.SendTracksReport;
+        radar.RadarOnRemoteNetwork = args.RadarOnRemoteNetwork;
 
         if (!String.IsNullOrEmpty(args.TemplateId))
         {
@@ -89,7 +93,8 @@ public class AddRadarAction : IAction
 
         try
         {
-            radar.deviceMapping = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id);
+            radar.DeviceMapping = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id);
+            radar.RadarOnRemoteNetwork = radar.DeviceMapping.remoteDevice;
         }
         catch {}
         

@@ -9,17 +9,16 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Microsoft.AspNetCore.Mvc;
+using WebService.RadarLogic.IPRadar.Connection;
 
 namespace WebService.RadarLogic.IPRadar;
 
-public class IPRadarClient 
+public class IPRadarAPI 
 {
     #region Radar protocol definitions
 
-    public const int IP_RADAR_CONTROL_PORT = 7001;
-    public const int IP_RADAR_DATA_PORT = 7002;
-    public const int IP_RADAR_BROADCAST_PORT_SERVER = 7003;
-    public const int IP_RADAR_BROADCAST_PORT_DEVICE = 7004;
+
     public const uint MESSAGE_HEADER_MAGIC = 0xE1AD1984;
     public const int MESSAGE_HEADER_SIZE = 6;
     public const byte PROTOCOL_REVISION = 1;
@@ -29,6 +28,7 @@ public class IPRadarClient
     public const byte FW_UPDATE_RESPONSE_KEY = 102;
     public const byte SET_DEVICE_ID_RESPONSE_KEY = 103;
     public const byte GET_IMU_DATA_RESPONSE_KEY = 104;
+    public const byte SET_RMS_HOSTNAME_RESPONSE_KEY = 105;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
@@ -38,8 +38,11 @@ public class IPRadarClient
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
     public const byte GET_IMU_DATA_KEY = 208;
+    public const byte SET_RMS_HOSTNAME = 209;
 
     public const int FW_UPDATE_CHUNK_SIZE = 512;
+    public const int RMS_HOSTNAME_MAX_LENGTH = 128;
+
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
@@ -50,89 +53,52 @@ public class IPRadarClient
     
     #endregion
 
-    private string ipAddress;
-    private TcpClient? controlStream;
-    private TcpClient? dataStream;
-    private bool isConnected;
+    private bool remoteConnection = false;
 
-    public IPRadarClient(string ipAddress)
-    {
-        isConnected = false;
-        this.ipAddress = ipAddress;
-    }
+    private IRadarConnection? connection;
 
-    ~IPRadarClient()
+    ~IPRadarAPI()
     {
         Disconnect();
     }
 
-    public void Connect()
+    public void ConnectLocalRadar(string localIPAddress)
     {
-        if (isConnected)
-            return;
+        remoteConnection = false;
+        connection = new IPRadarClient(localIPAddress);
+        connection.Connect();
+    }
 
-        try
-        {
-            Console.WriteLine($"Connecting to radar control port at ({ipAddress}:{IP_RADAR_CONTROL_PORT})...");
-            controlStream = new TcpClient(ipAddress, IP_RADAR_CONTROL_PORT);
-            
-            // Setting timeout to 20 seconds since FW update has long commands that takes time
-            controlStream.ReceiveTimeout = 20000;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: Connection to radar control port at {ipAddress} failed: {ex.Message}");
-            throw;
-        }
+    public void InitRemoteRadarConnection(string radarId)
+    {
+        remoteConnection = true;
+        connection = new IPRadarServer(radarId);
+        connection.Connect();
+    }
+
+    public void GetRemoteRadarConnectionPorts(out int controlPort, out int dataPort)
+    {
+        if (!remoteConnection || connection == null)
+            throw new BadRequestException("Radar is not set for remote connection.");
         
-        try
-        {
-            Console.WriteLine($"Connecting to radar data port at ({ipAddress}:{IP_RADAR_DATA_PORT})...");
-            dataStream = new TcpClient(ipAddress, IP_RADAR_DATA_PORT);
-            
-            // setting to 2 sec so that we can operate even at a slow frame rate of 1 fps
-            dataStream.ReceiveTimeout = 2000;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: Connection to radar data port at {ipAddress} failed: {ex.Message}");
-            controlStream.Close();
-            throw;
-        }
-
-        isConnected = true;
+        IPRadarServer server = (IPRadarServer) connection;
+        controlPort = server.ControlPort;
+        dataPort = server.DataPort;
     }
 
     public void Disconnect()
     {
-        if (isConnected)
-        {
-            if (controlStream != null)
-            {
-                // Console.WriteLine($"Debug: Disconnnect - Closing control stream...");
-                controlStream.Close();
-                controlStream = null;
-            }
-            
-            if (dataStream != null)
-            {
-                // Console.WriteLine($"Debug: Disconnnect - Closing data stream...");
-                dataStream.Close();
-                dataStream = null;
-            }
-            
-            isConnected = false;
-        }
+        connection?.Disconnect();
     }
 
     public bool IsConnected()
     {
-        return isConnected;
+        return (connection != null) && connection.IsRadarConnected;
     }
 
     public void ResetRadar()
     {
-        if (!isConnected)
+        if (!IsConnected())
             throw new Exception("ResetRadar failed - radar not connected.");
         
         System.Console.WriteLine("Sending Reset command...");
@@ -140,29 +106,29 @@ public class IPRadarClient
         // create the reset command packet
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.RESET_RADAR_KEY);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.RESET_RADAR_KEY);
         var packet = new byte[MESSAGE_HEADER_SIZE];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(packet, 0, packet.Length);
 
         // send the command
-        controlStream!.GetStream().Write(packet, 0, packet.Length);
+        connection!.ControlStream!.GetStream().Write(packet, 0, packet.Length);
 
         Disconnect();
     }
 
     public string SendTICommand(string command)
     {
-        if (!isConnected)
+        if (!IsConnected())
             throw new Exception("SendTICommand failed - radar not connected.");
         
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.TI_COMMAND_KEY);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.TI_COMMAND_KEY);
 
         var commandArray = command.ToCharArray();
 
@@ -190,13 +156,13 @@ public class IPRadarClient
 
     public int ReadTIData(byte[] dataArray, int size)
     {
-        if (!isConnected)
+        if (!IsConnected())
             throw new Exception("ReadTIData failed - radar not connected.");
 
         //System.Console.WriteLine($"Debug: Trying to Read from data stream... size: {size}"); 
 
         int bytesRead = 0;
-        var stream = dataStream!.GetStream();
+        var stream = connection!.DataStream!.GetStream();
 
         try
         {
@@ -218,14 +184,14 @@ public class IPRadarClient
 
     public void GetIMUData()
     {
-        if (!isConnected)
-            throw new Exception("SendTICommand failed - radar not connected.");
+        if (!IsConnected())
+            throw new Exception("GetIMUData failed - radar not connected.");
 
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.GET_IMU_DATA_KEY);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.GET_IMU_DATA_KEY);
 
         var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 10, GET_IMU_DATA_RESPONSE_KEY);
 
@@ -242,6 +208,36 @@ public class IPRadarClient
                 Console.WriteLine($"IMU data: roll_deg {rollDegrees}");
             }
         }
+    }
+
+    public void SetRMSHostname(string hostname)
+    {
+        if (!IsConnected())
+            throw new Exception("SetRMSHostname failed - radar not connected.");
+        
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.SET_RMS_HOSTNAME);
+
+        var hostnameArray = hostname.ToCharArray();
+
+        if (hostnameArray.Length > RMS_HOSTNAME_MAX_LENGTH)
+            throw new Exception($"Error: RMS hostname exceed max length of {RMS_HOSTNAME_MAX_LENGTH} bytes");
+        
+        writer.Write(hostnameArray);
+        
+        int padLength = RMS_HOSTNAME_MAX_LENGTH - hostnameArray.Length;
+
+        if (padLength > 0)
+        {
+            var padArray = new byte[padLength];
+            padArray[0] = 0x0;
+            writer.Write(padArray);
+        }
+        
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE, SET_RMS_HOSTNAME_RESPONSE_KEY);
     }
 
     public static List<IPAddress> GetBroadcastAddresses()
@@ -294,9 +290,9 @@ public class IPRadarClient
         // create the broadcast packet
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.CONFIGURE_NETWORK_KEY);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.CONFIGURE_NETWORK_KEY);
 
         Guid guid = new Guid(deviceId);
         writer.Write(guid.ToByteArray());
@@ -305,7 +301,7 @@ public class IPRadarClient
         writer.Write(IPAddress.Parse(gwAddress).GetAddressBytes());
         writer.Write(staticIP);
 
-        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES + (IPV4_ADDRESS_SIZE * 3) + 1];
+        var packet = new byte[IPRadarAPI.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES + (IPV4_ADDRESS_SIZE * 3) + 1];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(packet, 0, packet.Length);
 
@@ -313,7 +309,7 @@ public class IPRadarClient
         foreach (var address in broadcastSources)
         {
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
-            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IRadarConnection.IP_RADAR_BROADCAST_PORT_DEVICE);
 
             UdpClient sendClient = new UdpClient(sourceEndpoint);
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
@@ -333,14 +329,14 @@ public class IPRadarClient
         // create the broadcast packet
         var stream = new MemoryStream();
         BinaryWriter writer = new BinaryWriter(stream);
-        writer.Write(IPRadarClient.MESSAGE_HEADER_MAGIC);
-        writer.Write(IPRadarClient.PROTOCOL_REVISION);
-        writer.Write(IPRadarClient.RESET_RADAR_KEY);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.RESET_RADAR_KEY);
 
         Guid guid = new Guid(deviceId);
         writer.Write(guid.ToByteArray());
 
-        var packet = new byte[IPRadarClient.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES];
+        var packet = new byte[IPRadarAPI.MESSAGE_HEADER_SIZE + DEVICE_ID_SIZE_BYTES];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(packet, 0, packet.Length);
 
@@ -348,7 +344,7 @@ public class IPRadarClient
         foreach (var address in broadcastSources)
         {
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
-            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IPRadarClient.IP_RADAR_BROADCAST_PORT_DEVICE);
+            IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IRadarConnection.IP_RADAR_BROADCAST_PORT_DEVICE);
 
             UdpClient sendClient = new UdpClient(sourceEndpoint);
             sendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
@@ -380,12 +376,12 @@ public class IPRadarClient
         requestStream.Read(request, 0, request.Length);
 
         // send the command
-        controlStream!.GetStream().Write(request, 0, request.Length);
+        connection!.ControlStream!.GetStream().Write(request, 0, request.Length);
 
         
         // read the response
         var responseBytes = new byte[responseSize];
-        int count = controlStream.GetStream().Read(responseBytes, 0, responseBytes.Length);
+        int count = connection.ControlStream.GetStream().Read(responseBytes, 0, responseBytes.Length);
 
         if (count != responseSize)
             throw new Exception("Error: Invalid response size for command");
@@ -403,12 +399,12 @@ public class IPRadarClient
         var protocol = reader.ReadByte();
         var messageType = reader.ReadByte();
 
-        if (magic != IPRadarClient.MESSAGE_HEADER_MAGIC)
+        if (magic != IPRadarAPI.MESSAGE_HEADER_MAGIC)
         {
             throw new Exception("Error: invalid magic in response header");
         }
 
-        if (protocol != IPRadarClient.PROTOCOL_REVISION)
+        if (protocol != IPRadarAPI.PROTOCOL_REVISION)
         {
             throw new Exception("Invalid protocol in response header");
         }
@@ -526,7 +522,7 @@ public class IPRadarClient
 
     public void UpdateFirmware(byte [] image)
     {
-        if (!isConnected)
+        if (!IsConnected())
             throw new Exception("UpdateFirmware failed - radar not connected.");
 
         ValidateImage(image);

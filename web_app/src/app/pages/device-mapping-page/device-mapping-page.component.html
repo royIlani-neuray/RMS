@@ -54,7 +54,10 @@
 
         <ng-container matColumnDef="set_network">
             <th mat-header-cell *matHeaderCellDef> <b>Network</b></th>
-            <td mat-cell *matCellDef="let element"><button mat-raised-button (click)="setNetworkClicked(element)" color="primary">Set Network</button></td>
+            <td mat-cell *matCellDef="let element">
+                {{element.remote_device ? 'Remote Network' : ''}}
+                <button mat-raised-button *ngIf="!element.remote_device" (click)="setNetworkClicked(element)" color="primary">Set Network</button>
+            </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

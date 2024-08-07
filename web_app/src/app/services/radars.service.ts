@@ -79,7 +79,7 @@ export class RadarsService {
   }
 
   public registerRadar(radarId : string, name : string, description : string, templateId : string, enabled : boolean, sendTracksReport : boolean,
-    height : number, azimuthTilt : number, elevationTilt : number, calibration : string)
+    height : number, azimuthTilt : number, elevationTilt : number, calibration : string, remoteDevice : boolean)
   {
     return this.http.post("/api/radars", {
       name : name,
@@ -88,6 +88,7 @@ export class RadarsService {
       template_id: templateId,
       enabled: enabled,
       send_tracks_report : sendTracksReport,
+      remote_network : remoteDevice,
       radar_position : {
         height : height,
         azimuth_tilt : azimuthTilt,

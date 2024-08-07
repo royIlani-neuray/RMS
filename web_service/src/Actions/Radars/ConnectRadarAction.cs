@@ -21,47 +21,63 @@ public class ConnectRadarAction : IAction
         this.radar = radar;
     }
 
-    public void Run()
+    private bool ConnectLocalRadar()
     {
-        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
-
-        if (!radar.Enabled)
-        {
-            Console.WriteLine($"{radar.LogTag} radar device is disabled - ignore connect action.");
-            return;
-        }
+        if (radar.State == Radar.DeviceState.Connected)
+            return true;
 
         if (radar.State == Radar.DeviceState.Disconnected)
         {
-            radar.SetStatus("Connecting to the radar device...");
-
             try
             {
                 RadarDeviceMapper.MappedDevice mappedDevice;
 
                 // Note: radar must be mapped before connection attempt, unless it has static IP.
-                if ((radar.deviceMapping != null) && radar.deviceMapping.staticIP)
+                if ((radar.DeviceMapping != null) && radar.DeviceMapping.staticIP)
                 {
-                    mappedDevice = radar.deviceMapping;
+                    mappedDevice = radar.DeviceMapping;
                 }
                 else
                 {
                     mappedDevice = RadarDeviceMapper.Instance.GetMappedDevice(radar.Id); 
                 }
 
-                radar.ipRadarClient = new IPRadarClient(mappedDevice.ipAddress);
-                radar.ipRadarClient.Connect();
+                if (mappedDevice.remoteDevice)
+                {
+                    Console.WriteLine($"{radar.LogTag} Error: radar device is registered as remote network - ignore connect action.");
+                    return false;
+                }
+
+                radar.SetStatus("Connecting to the radar device...");
+                radar.ipRadarAPI = new IPRadarAPI();
+                radar.ipRadarAPI.ConnectLocalRadar(mappedDevice.ipAddress);
             }
             catch
             {
                 radar.SetStatus("Error: connection attempt to the radar failed.");
-                return;
+                return false;
             }
 
             radar.State = Radar.DeviceState.Connected;
             radar.SetStatus("The radar device is connected.");
+            return true;
         }
 
+        return false;
+    }
+
+    public void InitRemoteRadarPorts()
+    {
+        if (radar.State == Radar.DeviceState.Disconnected && (radar.ipRadarAPI == null))
+        {
+            var radarAPI = new IPRadarAPI();
+            radarAPI.InitRemoteRadarConnection(radar.Id);
+            radar.ipRadarAPI = radarAPI;
+        }
+    }
+
+    public void ActivateRadar()
+    {
         if (radar.State == Radar.DeviceState.Connected)
         {
             if (radar.ConfigScript.Count == 0)
@@ -75,6 +91,36 @@ public class ConnectRadarAction : IAction
             radar.radarTracker.Start();
 
             radar.State = Radar.DeviceState.Active;
+        }
+    }
+
+    public void Run()
+    {
+        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
+
+        if (!radar.Enabled)
+        {
+            Console.WriteLine($"{radar.LogTag} radar device is disabled - ignore connect action.");
+            return;
+        }
+
+        if (radar.RadarOnRemoteNetwork)
+        {
+            // instead of connecting, just initialize the IPRadarAPI for remote connection.
+            // connection will be initiated by the radar.
+            InitRemoteRadarPorts();
+
+            // once the radar is connected this action is triggered again, this time we'll activate the radar.
+            ActivateRadar();
+        }
+        else
+        {
+            bool connected = ConnectLocalRadar();
+
+            if (connected)
+            {
+                ActivateRadar();
+            }
         }
 
 
