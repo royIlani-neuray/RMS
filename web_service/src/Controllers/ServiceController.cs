@@ -7,6 +7,7 @@
 **
 ***/
 using Microsoft.AspNetCore.Mvc;
+using WebService.Actions.SystemActions;
 
 namespace WebService.Controllers;
 
@@ -21,4 +22,11 @@ public class ServiceController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("storage-info")]
+    public GetStorageInfoResults GetStorageInfo()
+    {
+        var action = new GetStorageInfoAction();
+        action.Run();
+        return action.Results!;
+    }
 }
