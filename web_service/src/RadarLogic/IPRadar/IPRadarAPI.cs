@@ -29,6 +29,7 @@ public class IPRadarAPI
     public const byte SET_DEVICE_ID_RESPONSE_KEY = 103;
     public const byte GET_IMU_DATA_RESPONSE_KEY = 104;
     public const byte SET_RMS_HOSTNAME_RESPONSE_KEY = 105;
+    public const byte CALIBRATION_DATA_RESPONSE_KEY = 106;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
@@ -38,7 +39,8 @@ public class IPRadarAPI
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
     public const byte GET_IMU_DATA_KEY = 208;
-    public const byte SET_RMS_HOSTNAME = 209;
+    public const byte SET_RMS_HOSTNAME_KEY = 209;
+    public const byte GET_CALIBRATION_DATA_KEY = 210;
 
     public const int FW_UPDATE_CHUNK_SIZE = 512;
     public const int RMS_HOSTNAME_MAX_LENGTH = 128;
@@ -46,6 +48,7 @@ public class IPRadarAPI
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
+    public const int MAX_CALIBRATION_DATA_SIZE = 24;
 
     public const int IPV4_ADDRESS_SIZE = 4;
     public const int MODEL_STRING_MAX_LENGTH = 15;
@@ -210,6 +213,46 @@ public class IPRadarAPI
         }
     }
 
+    public string GetCalibrationData()
+    {
+        if (!IsConnected())
+            throw new Exception("GetCalibrationData failed - radar not connected.");
+
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.GET_CALIBRATION_DATA_KEY);
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 102, CALIBRATION_DATA_RESPONSE_KEY);
+
+        int status = reader.ReadByte();
+        int numElements = reader.ReadByte();
+        float rangeBias = reader.ReadSingle();
+
+        float [] rxChPhaseComp = new float[MAX_CALIBRATION_DATA_SIZE];
+
+        string calibrationString = $"{rangeBias:0.0000}";
+
+        for (int i=0; i<MAX_CALIBRATION_DATA_SIZE; i++)
+        {
+            rxChPhaseComp[i] = reader.ReadSingle();
+
+            if (i < numElements)
+            {
+                calibrationString += $" {rxChPhaseComp[i]:0.0000}";
+            }
+        }
+
+        System.Console.WriteLine("Calibration Data:");
+        System.Console.WriteLine($"Calibration status: {status}");
+        System.Console.WriteLine($"Calibration num elements: {numElements}");
+        System.Console.WriteLine($"Calibration rangeBias: {rangeBias}");
+        System.Console.WriteLine($"Calibration string: {calibrationString}");
+
+        return calibrationString;
+    }
+
     public void SetRMSHostname(string hostname)
     {
         if (!IsConnected())
@@ -219,7 +262,7 @@ public class IPRadarAPI
         BinaryWriter writer = new BinaryWriter(stream);
         writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
         writer.Write(IPRadarAPI.PROTOCOL_REVISION);
-        writer.Write(IPRadarAPI.SET_RMS_HOSTNAME);
+        writer.Write(IPRadarAPI.SET_RMS_HOSTNAME_KEY);
 
         var hostnameArray = hostname.ToCharArray();
 

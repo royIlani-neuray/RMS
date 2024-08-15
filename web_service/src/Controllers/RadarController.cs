@@ -225,5 +225,14 @@ public class RadarController : ControllerBase
         var action = new SetRMSHostnameAction(radarId, args);
         action.Run();
     }
+
+    [HttpGet("{radarId}/calibration")]
+    public string GetRadarCalibration(string radarId)
+    {
+        ValidateRadarId(radarId); 
+        var action = new GetCalibrationData(radarId);
+        action.Run();
+        return action.Results;
+    }
 }
 
