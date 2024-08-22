@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using WebService.Context;
 using WebService.Services.RadarRecording;
 using WebService.Events;
+using Serilog;
 
 namespace WebService.Recordings;
 
@@ -43,7 +44,7 @@ public class RecordingsManager
     {
         if (!Directory.Exists(RecordingsStoragePath))
         {
-            System.Console.WriteLine($"Creating recordings folder: {RecordingsStoragePath}");
+            Log.Information($"Creating recordings folder: {RecordingsStoragePath}");
             Directory.CreateDirectory(RecordingsStoragePath);
         }
     }
@@ -222,9 +223,9 @@ public class RecordingsManager
                     UpdateEntrySizeBytes(recording);
                     recordings.Add(recording);
                 }
-                catch 
+                catch (Exception ex) 
                 {
-                    System.Console.WriteLine($"Failed to load recording info from folder: {recordingDir.Name}");
+                    Log.Error($"Failed to load recording info from folder: {recordingDir.Name}", ex);
                 }
             }
         }
@@ -240,7 +241,7 @@ public class RecordingsManager
         {
             try
             {
-                //System.Console.WriteLine($"Debug: delete existing file: {tempFile}...");
+                //Log.Debug($"delete existing file: {tempFile}...");
                 File.Delete(tempFile);
             }
             catch {}
@@ -388,12 +389,12 @@ public class RecordingsManager
 
             var recordingPath = GetRecordingPath(recordingName);
             Task.Run(async () => {
-                Console.WriteLine($"Uploading recording to cloud: {recordingName}");
+                Log.Information($"Uploading recording to cloud: {recordingName}");
                 RMSEvents.Instance.RecordingUploadCloudStartedEvent(recordingName);
                 MarkUploadStart(recordingName);
                 await S3Manager.Instance.UploadDirectoryAsync(recordingPath);
                 MarkUploadEnd(recordingName);
-                Console.WriteLine($"Done uploading recording to cloud: {recordingName}");
+                Log.Information($"Done uploading recording to cloud: {recordingName}");
                 RMSEvents.Instance.RecordingUploadCloudFinishedEvent(recordingName);
             });
         }

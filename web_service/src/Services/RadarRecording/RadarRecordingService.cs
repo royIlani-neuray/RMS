@@ -10,6 +10,7 @@ using WebService.Entites;
 using WebService.RadarLogic.Tracking;
 using System.Text.Json;
 using WebService.Recordings;
+using Serilog;
 
 namespace WebService.Services.RadarRecording;
 
@@ -43,7 +44,7 @@ public class RadarRecordingService : IExtensionService
         if (radar.radarSettings!.DetectionParams == null)
         {
             // TODO: need to parse DetectionParams on configs that has subframes. for now this is a patch...
-            System.Console.WriteLine("Warning: unknown frame rate, setting to 4.16");
+            Log.Warning("unknown frame rate, setting to 4.16");
             frameRate = 4.16F;
         }
         else

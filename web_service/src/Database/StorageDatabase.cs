@@ -6,6 +6,8 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
+
 namespace WebService.Database;
 
 public class StorageDatabase
@@ -23,32 +25,32 @@ public class StorageDatabase
 
         if (!System.IO.Directory.Exists(RadarStoragePath))
         {
-            System.Console.WriteLine("Creating radars storage folder.");
+            Log.Information("Creating radars storage folder.");
             System.IO.Directory.CreateDirectory(RadarStoragePath);
         }
 
         if (!System.IO.Directory.Exists(UserStoragePath))
         {
-            System.Console.WriteLine("Creating users storage folder.");
+            Log.Information("Creating users storage folder.");
             System.IO.Directory.CreateDirectory(UserStoragePath);
         }
 
         if (!System.IO.Directory.Exists(CameraStoragePath))
         {
-            System.Console.WriteLine("Creating cameras storage folder.");
+            Log.Information("Creating cameras storage folder.");
             System.IO.Directory.CreateDirectory(CameraStoragePath);
         }
 
         if (!System.IO.Directory.Exists(RecordingSchedulesStoragePath))
         {
-            System.Console.WriteLine("Creating recording schedules storage folder.");
+            Log.Information("Creating recording schedules storage folder.");
             System.IO.Directory.CreateDirectory(RecordingSchedulesStoragePath);
         }
 
 
         if (!System.IO.Directory.Exists(TemplateStoragePath))
         {
-            System.Console.WriteLine("Creating templates storage folder.");
+            Log.Information("Creating templates storage folder.");
             System.IO.Directory.CreateDirectory(TemplateStoragePath);
 
             // copy default templates

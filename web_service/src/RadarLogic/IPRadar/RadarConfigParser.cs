@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.Entites;
 
 namespace WebService.RadarLogic.IPRadar;
@@ -47,7 +48,7 @@ public class RadarConfigParser
             var key = parseMethod.Item1;
             var action = parseMethod.Item2;
 
-            //System.Console.WriteLine("Parsing config line: " + key);
+            // Log.Debug("Parsing config line: " + key);
             if (TryGetConfigParams(configScript, key, out configParams))
                 action(configParams);
         }
@@ -159,7 +160,7 @@ public class RadarConfigParser
         TxCount = CountBits(txChannelEn);
         RxCount = CountBits(rxChannelEn);
 
-        //Console.WriteLine($"TX Count: {TxCount}, RX Count: {RxCount}");
+        // Log.Debug($"TX Count: {TxCount}, RX Count: {RxCount}");
     }
 
     private void GetDopplerResolution(int chirpCount, double bandwidth, float startFreq, float rampEndTime, float idleTime, float chirpLoops, int txCount, out double dopplerResolution, out double maxVelocity)
@@ -172,8 +173,8 @@ public class RadarConfigParser
 
     private double GetMaxRange(float digOutSampleRate, float freqSlopeConst)
     {
-        // System.Console.WriteLine($"digOutSampleRate: {digOutSampleRate}");
-        // System.Console.WriteLine($"freqSlopeConst: {freqSlopeConst}");
+        // Log.Debug($"digOutSampleRate: {digOutSampleRate}");
+        // Log.Debug($"freqSlopeConst: {freqSlopeConst}");
 
         var freqSlopeHzPerSec = freqSlopeConst * 1e12;
         return (digOutSampleRate * 1e3 * 0.9 * 3e8) / (2 * freqSlopeHzPerSec);
@@ -220,10 +221,10 @@ public class RadarConfigParser
         double maxRange = GetMaxRange(digOutSampleRate, freqSlopeConst);
         int frameSize = GetFrameSizeBytes(chirpLoops, txCount, rxCount, numAdcSamples);
 
-        // System.Console.WriteLine($"RangeRes: {rangeResolution}");
-        // System.Console.WriteLine($"DoppplerRes: {dopplerResolution}");
-        // System.Console.WriteLine($"Max Velocity: {maxVelocity}");
-        // System.Console.WriteLine($"Max Range: {maxRange}");
+        // Log.Debug($"RangeRes: {rangeResolution}");
+        // Log.Debug($"DoppplerRes: {dopplerResolution}");
+        // Log.Debug($"Max Velocity: {maxVelocity}");
+        // Log.Debug($"Max Range: {maxRange}");
 
         this.radarSettings!.DetectionParams = new RadarSettings.DetectionParameters() {
             FrameRate = frameRate,

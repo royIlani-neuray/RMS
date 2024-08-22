@@ -10,6 +10,7 @@ using System.Text.Json;
 using WebService.Utils;
 using WebService.RadarLogic.Tracking;
 using WebService.Entites;
+using Serilog;
 
 namespace WebService.Services.Inference.SmartFanGestures;
 
@@ -34,15 +35,15 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
         predictions = new SmartFanGesturesPredictions(radar.RadarWebSocket, minRequiredHitCount, majorityWindowSize);
         this.modelName = modelName;
 
-        //System.Console.WriteLine("\n*** DEBUG: SmartFanContext ***");
-        //System.Console.WriteLine($"model name: {modelName}");
-        //System.Console.WriteLine($"required Window Size: {requiredWindowSize}");
-        //System.Console.WriteLine($"window Shift Size: {windowShiftSize}");
-        //System.Console.WriteLine($"required Points Per Frame: {POINTS_COUNT_PER_FRAME}");
-        //System.Console.WriteLine($"min Points For Valid Frame: {MIN_POINTS_FOR_VALID_FRAME}");
-        //System.Console.WriteLine($"max Invalid Frames: {MAX_INVALID_FRAMES}");
-        //System.Console.WriteLine($"minRequiredHitCount: {minRequiredHitCount}");
-        //System.Console.WriteLine($"majorityWindowSize: {majorityWindowSize}\n");
+        // Log.Debug("\n*** DEBUG: SmartFanContext ***");
+        // Log.Debug($"model name: {modelName}");
+        // Log.Debug($"required Window Size: {requiredWindowSize}");
+        // Log.Debug($"window Shift Size: {windowShiftSize}");
+        // Log.Debug($"required Points Per Frame: {POINTS_COUNT_PER_FRAME}");
+        // Log.Debug($"min Points For Valid Frame: {MIN_POINTS_FOR_VALID_FRAME}");
+        // Log.Debug($"max Invalid Frames: {MAX_INVALID_FRAMES}");
+        // Log.Debug($"minRequiredHitCount: {minRequiredHitCount}");
+        // Log.Debug($"majorityWindowSize: {majorityWindowSize}\n");
     }
 
     public void HandleFrame(FrameData frameData)
@@ -58,7 +59,7 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
             string requestJsonString = JsonSerializer.Serialize(predictRequest);
             string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
             SmartFanGestureResponse response = JsonSerializer.Deserialize<SmartFanGestureResponse>(responseJsonString)!;
-            //System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
+            //Log.Debug($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
 
             predictions.UpdateTrackPrediction(trackId, response.Label, response.Confidence);   
         }
@@ -79,7 +80,7 @@ public class SmartFanContext : WorkerThread<FrameData>, IServiceContext
         catch (Exception ex)
         {
             State = IServiceContext.ServiceState.Error;
-            System.Console.WriteLine("Error: failed running SmartFanGesture inference: " + ex.Message);
+            Log.Error("failed running SmartFanGesture inference", ex);
             return;
         }
 

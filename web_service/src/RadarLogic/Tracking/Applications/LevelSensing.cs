@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.Entites;
 
 namespace WebService.RadarLogic.Tracking.Applications;
@@ -70,7 +71,7 @@ public class LevelSensing : ITrackingApplication
             var len = readTIDataFunction(headerBytes, headerBytes.Length);
             if (len != FRAME_HEADER_SIZE)
             {
-                //Console.WriteLine($"failed reading frame header. read len: {len}");
+                //Log.Error($"failed reading frame header. read len: {len}");
                 continue;
             }
 
@@ -78,16 +79,16 @@ public class LevelSensing : ITrackingApplication
             
             if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
             {
-                Console.WriteLine("invalid magic header");
+                Log.Error("invalid magic header");
                 continue;
             }
 
             break;
         }
 
-        // Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
-        // Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
-        // Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
+        Log.Verbose($"Platform: {frameData.frameHeader.Platform:X}");
+        Log.Verbose($"Frame Number: {frameData.frameHeader.FrameNumber}");
+        Log.Verbose($"numTLVs: {frameData.frameHeader.NumTLVs}");
 
         for (int tlvIndex = 0; tlvIndex < frameData.frameHeader.NumTLVs; tlvIndex++)
         {

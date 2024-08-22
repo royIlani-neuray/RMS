@@ -9,6 +9,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Events;
 using WebService.RadarLogic.IPRadar.Connection;
@@ -101,7 +102,7 @@ public class RadarDeviceMapper
 
     public void MapDevices()
     {
-        System.Console.WriteLine($"Sending device mapping broadcast...");
+        Log.Information($"Sending device mapping broadcast...");
 
         mappedDevices.Clear();
         
@@ -123,7 +124,7 @@ public class RadarDeviceMapper
         // send for each address
         foreach (var address in broadcastSources)
         {
-            // System.Console.WriteLine($"address: {address}");
+            // Log.Debug($"address: {address}");
 
             IPEndPoint sourceEndpoint = new IPEndPoint(address, 0);
             IPEndPoint targetEndpoint = new IPEndPoint(IPAddress.Broadcast, IRadarConnection.IP_RADAR_BROADCAST_PORT_DEVICE);
@@ -154,19 +155,19 @@ public class RadarDeviceMapper
         
         if (deviceInfoStream.Length < IPRadarAPI.MESSAGE_HEADER_SIZE)
         {
-            Console.WriteLine("invalid mapped device info message size. ignoring.");
+            Log.Error("invalid mapped device info message size. ignoring.");
             return false;
         }
 
         if (magic != IPRadarAPI.MESSAGE_HEADER_MAGIC)
         {
-            Console.WriteLine("Error: invalid magic in mapped device info message. ignoring.");
+            Log.Error("invalid magic in mapped device info message. ignoring.");
             return false;
         }
 
         if (protocol != IPRadarAPI.PROTOCOL_REVISION)
         {
-            Console.WriteLine("Error: invalid protocol revision in mapped device info message. ignoring.");
+            Log.Error("invalid protocol revision in mapped device info message. ignoring.");
             return false;
         }
 
@@ -178,7 +179,7 @@ public class RadarDeviceMapper
 
         if (messageType != IPRadarAPI.DEVICE_INFO_KEY)
         {
-            Console.WriteLine("Unknown message type in mapped device info. ignoring.");
+            Log.Warning("Unknown message type in mapped device info. ignoring.");
             return false;
         }
 
@@ -209,18 +210,18 @@ public class RadarDeviceMapper
         
         UpdateRegisteredStatus(deviceInfo);
 
-        Console.WriteLine();
-        Console.WriteLine($"Device mapping info: [{DateTime.Now}]");
-        Console.WriteLine($"Guid: {guid}");
-        Console.WriteLine($"Remote device: {remoteDevice}");
-        Console.WriteLine($"ip: {ip}");
-        Console.WriteLine($"subnet: {subnet}");
-        Console.WriteLine($"gateway: {gateway}");
-        Console.WriteLine($"staticIP: {staticIP}");
-        Console.WriteLine($"model: {model}");
-        Console.WriteLine($"appName: {appName}");
-        Console.WriteLine($"FW version: {deviceInfo.fwVersion}");
-        Console.WriteLine();
+        Log.Information("");
+        Log.Information($"Device mapping info: [{DateTime.Now}]");
+        Log.Information($"Guid: {guid}");
+        Log.Information($"Remote device: {remoteDevice}");
+        Log.Information($"ip: {ip}");
+        Log.Information($"subnet: {subnet}");
+        Log.Information($"gateway: {gateway}");
+        Log.Information($"staticIP: {staticIP}");
+        Log.Information($"model: {model}");
+        Log.Information($"appName: {appName}");
+        Log.Information($"FW version: {deviceInfo.fwVersion}");
+        Log.Information("");
         
         AddOrUpdateMappedDevice(deviceInfo);
 
@@ -236,7 +237,7 @@ public class RadarDeviceMapper
         {
             var packet = udpClient!.Receive(ref endpoint); 
 
-            Console.WriteLine($"Got a broadcast message from: {endpoint} [{DateTime.Now}]");
+            Log.Information($"Got a broadcast message from: {endpoint} [{DateTime.Now}]");
 
             var deviceInfoStream = new MemoryStream(packet);
             AddMappedDevice(remoteDevice: false, deviceInfoStream);

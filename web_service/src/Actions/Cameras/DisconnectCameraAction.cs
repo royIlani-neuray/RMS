@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.Entites;
 
 namespace WebService.Actions.Cameras;
@@ -21,7 +22,7 @@ public class DisconnectCameraAction : IAction
 
     public void Run()
     {
-        //System.Console.WriteLine($"Debug: DisconnectCameraAction - state: {camera.State}, enabled: {camera.Enabled}");
+        //Log.Debug($"DisconnectCameraAction - state: {camera.State}, enabled: {camera.Enabled}");
 
         if (camera.State == Camera.DeviceState.Active)
         {

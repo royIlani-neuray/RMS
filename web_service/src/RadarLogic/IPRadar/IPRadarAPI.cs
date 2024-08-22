@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using WebService.RadarLogic.IPRadar.Connection;
 
 namespace WebService.RadarLogic.IPRadar;
@@ -104,7 +105,7 @@ public class IPRadarAPI
         if (!IsConnected())
             throw new Exception("ResetRadar failed - radar not connected.");
         
-        System.Console.WriteLine("Sending Reset command...");
+        Log.Information("Sending Reset command...");
 
         // create the reset command packet
         var stream = new MemoryStream();
@@ -162,7 +163,7 @@ public class IPRadarAPI
         if (!IsConnected())
             throw new Exception("ReadTIData failed - radar not connected.");
 
-        //System.Console.WriteLine($"Debug: Trying to Read from data stream... size: {size}"); 
+        // Log.Debug($"Trying to Read from data stream... size: {size}"); 
 
         int bytesRead = 0;
         var stream = connection!.DataStream!.GetStream();
@@ -172,12 +173,12 @@ public class IPRadarAPI
             while (bytesRead < size)
             {
                 bytesRead += stream.Read(dataArray, bytesRead, size - bytesRead);
-                //System.Console.WriteLine($"Debug: Read {bytesRead} out of {size}");
+                // Log.Debug($"Read {bytesRead} out of {size}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[{DateTime.Now}] Debug: ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}"); 
+            Log.Debug($"ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}", ex); 
             throw;
         }
 
@@ -203,12 +204,12 @@ public class IPRadarAPI
         float pitchDegrees = reader.ReadSingle();
         float rollDegrees = reader.ReadSingle();
 
-        Console.WriteLine($"IMU supported? {isSupported}");
+        Log.Information($"IMU supported? {isSupported}");
         if (isSupported) {
-            Console.WriteLine($"IMU active? {isActive}");
+            Log.Information($"IMU active? {isActive}");
             if (isActive) {
-                Console.WriteLine($"IMU data: pitch_deg {pitchDegrees}");
-                Console.WriteLine($"IMU data: roll_deg {rollDegrees}");
+                Log.Information($"IMU data: pitch_deg {pitchDegrees}");
+                Log.Information($"IMU data: roll_deg {rollDegrees}");
             }
         }
     }
@@ -244,11 +245,11 @@ public class IPRadarAPI
             }
         }
 
-        System.Console.WriteLine("Calibration Data:");
-        System.Console.WriteLine($"Calibration status: {status}");
-        System.Console.WriteLine($"Calibration num elements: {numElements}");
-        System.Console.WriteLine($"Calibration rangeBias: {rangeBias}");
-        System.Console.WriteLine($"Calibration string: {calibrationString}");
+        Log.Debug("Calibration Data:");
+        Log.Debug($"Calibration status: {status}");
+        Log.Debug($"Calibration num elements: {numElements}");
+        Log.Debug($"Calibration rangeBias: {rangeBias}");
+        Log.Debug($"Calibration string: {calibrationString}");
 
         return calibrationString;
     }
@@ -321,14 +322,14 @@ public class IPRadarAPI
             gwAddress = "0.0.0.0";
         }
 
-        Console.WriteLine("");
-        Console.WriteLine("Setting Device Network:");
-        Console.WriteLine($"** Device: {deviceId}");
-        Console.WriteLine($"** IP Address: {deviceId}");
-        Console.WriteLine($"** Subnet Mask: {subnetMask}");
-        Console.WriteLine($"** Gateway Address: {gwAddress}");
-        Console.WriteLine($"** Static IP: {staticIP}");
-        Console.WriteLine("");
+        Log.Information("");
+        Log.Information("Setting Device Network:");
+        Log.Information($"** Device: {deviceId}");
+        Log.Information($"** IP Address: {deviceId}");
+        Log.Information($"** Subnet Mask: {subnetMask}");
+        Log.Information($"** Gateway Address: {gwAddress}");
+        Log.Information($"** Static IP: {staticIP}");
+        Log.Information("");
 
         // create the broadcast packet
         var stream = new MemoryStream();
@@ -365,9 +366,9 @@ public class IPRadarAPI
     {
         List<IPAddress> broadcastSources = GetBroadcastAddresses();
 
-        Console.WriteLine("");
-        Console.WriteLine($"** Sending Device-Reset broadcast to: {deviceId}");
-        Console.WriteLine("");
+        Log.Information("");
+        Log.Information($"** Sending Device-Reset broadcast to: {deviceId}");
+        Log.Information("");
 
         // create the broadcast packet
         var stream = new MemoryStream();
@@ -492,7 +493,7 @@ public class IPRadarAPI
                 pos += dataSize;
             }
 
-            System.Console.WriteLine($"uploading chunk: {chunkNumber + 1} / {totalChunks}");
+            Log.Information($"uploading chunk: {chunkNumber + 1} / {totalChunks}");
             
             var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 1, FW_UPDATE_RESPONSE_KEY);
 
@@ -570,18 +571,18 @@ public class IPRadarAPI
 
         ValidateImage(image);
         
-        System.Console.WriteLine($"Initializing FW update process...");
+        Log.Information($"Initializing FW update process...");
         InitFirmwareUpdate(image);
 
-        System.Console.WriteLine($"Uploading Firmware image. image size: {image.Length}");
+        Log.Information($"Uploading Firmware image. image size: {image.Length}");
 
         UploadFirmwareImage(image);
 
-        System.Console.WriteLine($"FW image uploaded, applying update...");
+        Log.Information($"FW image uploaded, applying update...");
 
         ApplyFirmwareUpdate();
 
-        System.Console.WriteLine($"FW update process is done!");
+        Log.Information($"FW update process is done!");
         
     }
 

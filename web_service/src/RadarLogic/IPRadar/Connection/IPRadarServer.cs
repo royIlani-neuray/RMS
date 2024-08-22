@@ -9,6 +9,7 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Serilog;
 using WebService.Actions.Radars;
 using WebService.RadarLogic.IPRadar.Connection;
 
@@ -80,7 +81,7 @@ public class IPRadarServer : IRadarConnection
             {
                 if (InitTcpListener(out tcpListenerControl, out controlPortNumber) && InitTcpListener(out tcpListenerData, out dataPortNumber))
                 {
-                    System.Console.WriteLine($"Debug: created TCP sockets - control port: {controlPortNumber}, data: {dataPortNumber}");
+                    Log.Debug($"created TCP sockets - control port: {controlPortNumber}, data: {dataPortNumber}");
                     
                     controlStream = await tcpListenerControl!.AcceptTcpClientAsync();                    
                     // Setting timeout to 20 seconds since FW update has long commands that takes time
@@ -91,7 +92,7 @@ public class IPRadarServer : IRadarConnection
                     // setting datastream to 2 sec so that we can operate even at a slow frame rate of 1 fps
                     dataStream.ReceiveTimeout = 2000;
                     
-                    System.Console.WriteLine("Debug: Remote Radar connected.");
+                    Log.Debug("Remote Radar connected.");
 
                     isConnected = true;
 
@@ -106,7 +107,7 @@ public class IPRadarServer : IRadarConnection
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"Error: WaitForConnectionTask - failed. Exception: {ex}");
+                Log.Error($"WaitForConnectionTask - failed.", ex);
             }
             finally
             {
@@ -133,14 +134,14 @@ public class IPRadarServer : IRadarConnection
         {
             if (controlStream != null)
             {
-                // Console.WriteLine($"Debug: Disconnnect - Closing control stream...");
+                //Log.Debug($"Disconnnect - Closing control stream...");
                 controlStream.Close();
                 controlStream = null;
             }
             
             if (dataStream != null)
             {
-                // Console.WriteLine($"Debug: Disconnnect - Closing data stream...");
+                //Log.Debug($"Disconnnect - Closing data stream...");
                 dataStream.Close();
                 dataStream = null;
             }

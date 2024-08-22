@@ -9,6 +9,7 @@
 using WebService.Entites;
 using WebService.Context;
 using WebService.Events;
+using Serilog;
 
 namespace WebService.Actions.RadarTemplates;
 
@@ -18,7 +19,7 @@ public class DeleteTemplateAction : RadarTemplateAction
 
     protected override void RunTemplateAction(RadarTemplate template)
     {
-        System.Console.WriteLine($"Deleting radar template - {template.Id}");
+        Log.Information($"Deleting radar template - {template.Id}");
         TemplateContext.Instance.DeleteTemplate(template);
 
         RMSEvents.Instance.TemplateDeletedEvent(template.Id);

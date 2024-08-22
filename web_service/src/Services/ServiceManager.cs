@@ -98,8 +98,7 @@ public sealed class ServiceManager {
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"{device.LogTag} Error: could not initialize service context for service: {linkedService.ServiceId}");
-                System.Console.WriteLine($"{device.LogTag} Error: {ex.Message}");
+                device.Log.Error($"could not initialize service context for service: {linkedService.ServiceId}", ex);
                 throw;
             }
         }
@@ -114,7 +113,7 @@ public sealed class ServiceManager {
             if (linkedService.ServiceContext != null)
                 return;
 
-            Console.WriteLine($"{device.LogTag} Creating {service.ServiceId} context.");
+            device.Log.Information($"Creating {service.ServiceId} context.");
 
             try
             {
@@ -122,23 +121,23 @@ public sealed class ServiceManager {
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{device.LogTag} Error: failed to create service context. exception:\n{ex}");
+                device.Log.Error("Error: failed to create service context.", ex);
                 throw;
             }
         }
         else
         {
-            DisposeServiceContext(device.Id, linkedService);
+            DisposeServiceContext(device, linkedService);
         }
     }
 
-    public void DisposeServiceContext(string deviceId, DeviceEntity.LinkedService linkedService)
+    public void DisposeServiceContext(DeviceEntity device, DeviceEntity.LinkedService linkedService)
     {
         if (linkedService.ServiceContext == null)
             return;
 
         IExtensionService service = services.First(service => service.ServiceId == linkedService.ServiceId);
-        Console.WriteLine($"[{deviceId}] Disposing {service.ServiceId} context.");
+        device.Log.Information($"Disposing {service.ServiceId} context.");
         
         try
         {
@@ -146,7 +145,7 @@ public sealed class ServiceManager {
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[{deviceId}] Error: failed to dispose {service.ServiceId} context. exception: {ex.Message}");
+            device.Log.Error($"failed to dispose {service.ServiceId} context.", ex);
             throw;
         }
         finally
@@ -168,9 +167,9 @@ public sealed class ServiceManager {
 
                 service.RunService(dataObject, linkedService.ServiceContext);
             }
-            catch
+            catch (Exception ex)
             {
-                System.Console.WriteLine($"{device.LogTag} Error: unexpected error while running service: {linkedService.ServiceId}");
+                device.Log.Error($"unexpected error while running service: {linkedService.ServiceId}", ex);
             }
         }
     }

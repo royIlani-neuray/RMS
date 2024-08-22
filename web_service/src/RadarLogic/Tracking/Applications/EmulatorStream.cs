@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json;
+using Serilog;
 using WebService.Entites;
 
 namespace WebService.RadarLogic.Tracking.Applications;
@@ -33,7 +34,7 @@ public class EmulatorStream : ITrackingApplication
 
         if (len != sizeof(uint))
         {
-            System.Console.WriteLine("Error: Failed to get frame size from emulator stream.");
+            Log.Error("Failed to get frame size from emulator stream.");
             throw new Exception("Error: Failed to get frame size from emulator stream.");
         }
 
@@ -52,7 +53,7 @@ public class EmulatorStream : ITrackingApplication
             
             if (len != frameSize)
             {
-                System.Console.WriteLine("Error: Failed to get frame data from emulator stream.");
+                Log.Error("Failed to get frame data from emulator stream.");
                 throw new Exception("Error: Failed to get frame data from emulator stream.");
             }
 

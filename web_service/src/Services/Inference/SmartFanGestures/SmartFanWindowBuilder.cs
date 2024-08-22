@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.RadarLogic.Tracking;
 using WebService.Services.Inference.Utils;
 
@@ -64,7 +65,7 @@ public class SmartFanWindowBuilder : TracksWindowBuilder
                 // track window is ready, convert it to a request format
                 
                 readyWindows.Add(trackId, CreateSmartFanGestureRequest(trackId));
-                // System.Console.WriteLine($"Debug: Got Ready Window for inference! [{trackId}] - [{DateTime.Now}]");
+                //Log.Debug($"Got Ready Window for inference! [{trackId}] - [{DateTime.Now}]");
                 
                 // we want to reuse some of the window frames for the next inference, so instead of clearing it we
                 // only remove the first 'windowShiftSize' frames.

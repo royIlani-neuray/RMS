@@ -7,6 +7,8 @@
 **
 ***/
 
+using Serilog;
+
 namespace WebService.Services.Inference.Utils;
 
 public abstract class HitMissPredictor<T> 
@@ -48,27 +50,27 @@ public abstract class HitMissPredictor<T>
         {
             hits = 1;
             currentPrediction = newPrediction;
-            System.Console.WriteLine($"FIRST HIT: {newPrediction}\n");
+            Log.Verbose($"FIRST HIT: {newPrediction}\n");
             return;
         }
 
         if (IsEqual(currentPrediction, newPrediction))
         {
             hits++;
-            System.Console.WriteLine($"HITS: {hits}\n");
+            Log.Verbose($"HITS: {hits}\n");
         }
         else
         {
             if (hits < requiredHitCount)
             {
-                System.Console.WriteLine($"HIT RESET\n");
+                Log.Verbose($"HIT RESET\n");
                 hits = 1;
                 currentPrediction = newPrediction;
                 return;
             }
 
             misses++;
-            System.Console.WriteLine($"MISES: {misses}\n");
+            Log.Verbose($"MISES: {misses}\n");
             if (misses >= requiredMissCount)
             {
                 misses = 0;

@@ -44,7 +44,7 @@ public class ConnectRadarAction : IAction
 
                 if (mappedDevice.remoteDevice)
                 {
-                    Console.WriteLine($"{radar.LogTag} Error: radar device is registered as remote network - ignore connect action.");
+                    radar.Log.Error("radar device is registered as remote network - ignore connect action.");
                     return false;
                 }
 
@@ -96,11 +96,11 @@ public class ConnectRadarAction : IAction
 
     public void Run()
     {
-        //System.Console.WriteLine($"Debug: ConnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
+        // radar.Log.Debug($"ConnectRadarAction - state: {radar.State}, enabled: {radar.Enabled}");
 
         if (!radar.Enabled)
         {
-            Console.WriteLine($"{radar.LogTag} radar device is disabled - ignore connect action.");
+            radar.Log.Information("radar device is disabled - ignore connect action.");
             return;
         }
 

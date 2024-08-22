@@ -9,6 +9,7 @@
 using WebService.RadarLogic.IPRadar;
 using WebService.Context;
 using System.Text.Json.Serialization;
+using Serilog;
 
 namespace WebService.Actions.Radars;
 
@@ -53,7 +54,7 @@ public class SetRadarIdAction : IAction {
             throw new Exception("Cannot update device id to a device in a remote network.");
         }
 
-        System.Console.WriteLine($"Updating device id. Current id: [{radarId}], New id: [{args.NewRadarId}] ...");    
+        Log.Information($"Updating radar device id. Current id: [{radarId}], New id: [{args.NewRadarId}] ...");    
         IPRadarAPI client = new IPRadarAPI();
         client.ConnectLocalRadar(mappedDevice.ipAddress);
 

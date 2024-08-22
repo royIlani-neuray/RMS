@@ -13,6 +13,7 @@ using WebService.RadarLogic.Tracking;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
 using WebService.RadarLogic.IPRadar;
+using Serilog;
 
 namespace WebService.Controllers;
 
@@ -191,13 +192,13 @@ public class RadarController : ControllerBase
     }   
 
     [HttpPost("{radarId}/tracks-loopback")]
-    public void TracksLoopback(string radarId, [FromBody] object data)
+    public void TracksLoopback(string radarId, [FromBody] string data)
     {
         // this API is used for debug
 
-        System.Console.WriteLine("***** Tracks Loopback ******");
-        System.Console.WriteLine(data);
-        System.Console.WriteLine("****************************");
+        Log.Debug("***** Tracks Loopback ******");
+        Log.Debug(data);
+        Log.Debug("****************************");
     }
 
     [HttpPost("{radarId}/services")]

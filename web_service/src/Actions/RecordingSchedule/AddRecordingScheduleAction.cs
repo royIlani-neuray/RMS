@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 
@@ -93,10 +94,10 @@ public class AddRecordingScheduleAction : IAction
             UploadS3 = args.UploadS3,
         };
 
-        System.Console.WriteLine($"Adding new schedule - {schedule.Name}");
+        Log.Information($"Adding new schedule - {schedule.Name}");
  
         RecordingScheduleContext.Instance.AddSchedule(schedule);
 
-        System.Console.WriteLine($"Recording Schedule added.");
+        Log.Information($"Recording Schedule added.");
     }
 }

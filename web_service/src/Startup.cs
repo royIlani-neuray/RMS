@@ -6,10 +6,6 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 using WebService.Database;
 using WebService.Context;
 using WebService.RadarLogic.IPRadar;
@@ -17,7 +13,7 @@ using WebService.Actions.Radars;
 using WebService.Scheduler;
 using WebService.Services;
 using WebService.Events;
-using System.Collections;
+using Serilog;
 
 public class Startup 
 {
@@ -35,55 +31,54 @@ public class Startup
     {
         string version = config["RMS_version"]!;
 
-        Console.WriteLine($"Radar Management Service Started - Version: {version}");
+        Log.Information($"Radar Management Service Started - Version: {version}");
 
-        Console.WriteLine($"Running as user: {Environment.UserName}");
+        Log.Information($"Running as user: {Environment.UserName}");
 
         ServiceSettings.Instance.RMSVersion = version;
 
-        Console.WriteLine("Initializing DB...");
+        Log.Information("Initializing DB...");
         StorageDatabase.DatabaseInit();
     
-        Console.WriteLine("Initializing S3 connection...");
+        Log.Information("Initializing S3 connection...");
         var rmsName = config.GetSection("RMS_name").Get<String>();
         S3Manager.Instance.InitS3Connection(rmsName!);
 
-        Console.WriteLine("Loading users from storage...");
+        Log.Information("Loading users from storage...");
         UserContext.Instance.LoadUsersFromStorage();
 
-        Console.WriteLine("Loading templates from storage...");
+        Log.Information("Loading templates from storage...");
         TemplateContext.Instance.LoadTemplatesFromStorage();
 
-        Console.WriteLine("Loading recording schedules from storage...");
+        Log.Information("Loading recording schedules from storage...");
         RecordingScheduleContext.Instance.LoadSchedulesFromStorage();
 
-        Console.WriteLine("Loading services...");
+        Log.Information("Loading services...");
         var servicesSettings = config.GetSection("services").Get<List<ExtensionServiceSettings>>();
 
         ServiceManager.Instance.InitExtensionServices(servicesSettings);
 
-        Console.WriteLine("Loading cameras from storage...");
+        Log.Information("Loading cameras from storage...");
         CameraContext.Instance.LoadCamerasFromStorage();
 
-        Console.WriteLine("Loading radars from storage...");
+        Log.Information("Loading radars from storage...");
         RadarContext.Instance.LoadRadarsFromStorage();
 
-        Console.WriteLine("Starting Radar Device Mapper...");
+        Log.Information("Starting Radar Device Mapper...");
         RadarDeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
         RadarDeviceMapper.Instance.Start();
 
-        Console.WriteLine("Starting Events WebSocket...");
+        Log.Information("Starting Events WebSocket...");
         RMSEvents.Instance.StartWorker();   
 
-        Console.WriteLine("Starting Device Mapping Scheduler...");
+        Log.Information("Starting Device Mapping Scheduler...");
         DeviceMappingScheduler.Instance.Start();
 
-        Console.WriteLine("Starting Connection Scheduler...");
+        Log.Information("Starting Connection Scheduler...");
         ConnectionScheduler.Instance.Start();
 
-        Console.WriteLine("Starting Recordings Scheduler...");
+        Log.Information("Starting Recordings Scheduler...");
         RecordingScheduler.Instance.Start();
-
     }
 
 }

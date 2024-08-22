@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
@@ -74,11 +75,11 @@ public class AddTemplateAction : IAction
         RadarConfigParser configParser = new RadarConfigParser(template.ConfigScript);
         template.radarSettings = configParser.GetRadarSettings();
 
-        System.Console.WriteLine($"Adding new template - [{template.Name}]");
+        Log.Information($"Adding new template - [{template.Name}]");
  
         TemplateContext.Instance.AddTemplate(template);
 
-        System.Console.WriteLine($"Radar template added.");
+        Log.Information($"Radar template added.");
 
         RMSEvents.Instance.TemplateAddedEvent(template.Id);
     }

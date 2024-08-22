@@ -11,6 +11,7 @@ using RtspRawVideo = RtspClientSharpCore.RawFrames.Video;
 using WebService.Actions.Cameras;
 using WebService.Entites;
 using WebService.Services;
+using Serilog;
 
 namespace WebService.CameraLogic.CameraStream;
 
@@ -122,7 +123,7 @@ public class CameraStreamer
 
             try
             {
-                //Console.WriteLine($"Connecting to camera URL: {camera.RTSPUrl}");
+                camera.Log.Debug($"Connecting to camera URL: {camera.RTSPUrl}");
                 await rtspClient.ConnectAsync(cancellationTokenSource!.Token);
 
                 camera.SetStatus("The device is active.");
@@ -135,7 +136,7 @@ public class CameraStreamer
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"{camera.LogTag} Camera stream error: " + ex.Message);
+                camera.Log.Error("Camera stream error", ex);
                 throw;
             }
         }

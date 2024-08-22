@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.RadarLogic.IPRadar;
 
 namespace WebService.Scheduler;
@@ -42,7 +43,7 @@ public class DeviceMappingScheduler : TaskScheduler {
     public override void RunTask()
     {
         // Trigger device mapping
-        System.Console.WriteLine("Mapping Scheduler: Triggering device mapping.");
+        Log.Information("Mapping Scheduler: Triggering device mapping.");
 
         RadarDeviceMapper.Instance.MapDevices();
     }

@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.RadarLogic.Tracking;
 using WebService.WebSockets;
 
@@ -43,13 +44,13 @@ public class FallDetectionTracker
 
         this.deviceWebSocketsServer = deviceWebSocketsServer;
 
-        // Console.WriteLine($"** Debug:");
-        // Console.WriteLine($"** Debug: FALL DETECTION PARAMS:");
-        // Console.WriteLine($"** Debug: fallingThreshold: {fallingThreshold}");
-        // Console.WriteLine($"** Debug: minTrackingDurationFrames: {minTrackingDurationFrames}");
-        // Console.WriteLine($"** Debug: maxTrackingDurationFrames: {maxTrackingDurationFrames}");
-        // Console.WriteLine($"** Debug: alertCooldownSeconds: {alertCooldownSeconds}");
-        // Console.WriteLine($"** Debug:");
+        // Log.Debug($"**");
+        // Log.Debug($"** FALL DETECTION PARAMS:");
+        // Log.Debug($"** fallingThreshold: {fallingThreshold}");
+        // Log.Debug($"** minTrackingDurationFrames: {minTrackingDurationFrames}");
+        // Log.Debug($"** maxTrackingDurationFrames: {maxTrackingDurationFrames}");
+        // Log.Debug($"** alertCooldownSeconds: {alertCooldownSeconds}");
+        // Log.Debug($"**");
 
     }
 
@@ -72,7 +73,7 @@ public class FallDetectionTracker
 
     private void UpdateFallData(FallData fallData, float currentHeight)
     {
-        // Console.WriteLine($"** Debug: Track-{fallData.TrackId}, Height: {currentHeight:0.00} meters");
+        // Log.Debug($"** Track-{fallData.TrackId}, Height: {currentHeight:0.00} meters");
 
         if (fallData.lastDetectionTime.AddSeconds(alertCooldownSeconds) > DateTime.UtcNow)
         {
@@ -96,7 +97,7 @@ public class FallDetectionTracker
             fallData.lastDetectionTime = DateTime.UtcNow;
             fallData.LastHeights.Clear();
             
-            //Console.WriteLine($"****** FALL DETECTED!!!!!! Track {fallData.TrackId} ***********");
+            Log.Debug($"****** FALL DETECTED!!!!!! Track {fallData.TrackId} ***********");
             deviceWebSocketsServer.SendFallDetectionData(fallData);
         }
         

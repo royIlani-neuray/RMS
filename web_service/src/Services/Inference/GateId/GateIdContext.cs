@@ -10,6 +10,7 @@ using System.Text.Json;
 using WebService.Utils;
 using WebService.RadarLogic.Tracking;
 using WebService.Entites;
+using Serilog;
 
 namespace WebService.Services.Inference.GateId;
 
@@ -48,7 +49,7 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
             string requestJsonString = JsonSerializer.Serialize(predictRequest);
             string responseJsonString = await InferenceServiceClient.Instance.Predict(modelName, requestJsonString);
             GateIdResponse response = JsonSerializer.Deserialize<GateIdResponse>(responseJsonString)!;
-            //System.Console.WriteLine($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
+            // Log.Debug($"Gate Id - Track-{trackId} => {response.Label} [ {(response.Accuracy * 100):0.00} % ]");
 
             predictions.UpdateTrackPrediction(trackId, response.Label, response.Confidence);   
         }
@@ -69,7 +70,7 @@ public class GateIdContext : WorkerThread<FrameData>, IServiceContext
         catch (Exception ex)
         {
             State = IServiceContext.ServiceState.Error;
-            System.Console.WriteLine("Error: failed running GateId inference: " + ex.Message);
+            Log.Error("failed running GateId inference", ex);
             return;
         }
 

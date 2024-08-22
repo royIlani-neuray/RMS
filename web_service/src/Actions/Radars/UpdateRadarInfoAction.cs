@@ -38,7 +38,7 @@ public class UpdateRadarInfoAction : RadarAction
 
     protected override void RunRadarAction(Radar radar)
     {
-        System.Console.WriteLine($"Updating radar info - {radar.Id}");
+        radar.Log.Information("Updating radar info.");
 
         radar.Name = args.Name;
         radar.Description = args.Description;

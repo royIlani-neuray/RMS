@@ -10,6 +10,7 @@ using Utils;
 using System.Text;
 using System.Text.Json;
 using WebService.Utils;
+using Serilog;
 
 namespace WebService.RadarLogic.Tracking;
 
@@ -36,15 +37,15 @@ public class TracksHttpReporter : WorkerThread<FrameData>
             string reportsURL = ServiceSettings.Instance.ReportsURL;
             int ReportsIntervalSec = ServiceSettings.Instance.ReportsIntervalSec;
 
-            //System.Console.WriteLine($"ReportsURL: {reportsURL}");
-            //System.Console.WriteLine($"ReportsIntervalSec: {ReportsIntervalSec}");
+            //Log.Debug($"ReportsURL: {reportsURL}");
+            //Log.Debug($"ReportsIntervalSec: {ReportsIntervalSec}");
 
             DateTime currentTime = DateTime.Now;
             var timeDiffSeconds = (currentTime - LastReportTime).TotalSeconds;
 
             if (reportsURL == String.Empty)
             {
-                //System.Console.WriteLine("Warning: reports URL is not set. cannot send report.");
+                //Log.Warning("reports URL is not set. cannot send report.");
                 return Task.CompletedTask;
             }
 
@@ -59,7 +60,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
                 // report only if there is a detection
                 return Task.CompletedTask;
             }
-            System.Console.WriteLine($"Sening report: - {reportsURL} - {DateTime.Now}");
+            Log.Information($"Sending report to: {reportsURL}");
             LastReportTime = DateTime.Now;
 
             HttpTracksReport httpReport = new HttpTracksReport(workItem);
@@ -76,7 +77,7 @@ public class TracksHttpReporter : WorkerThread<FrameData>
         }
         catch (System.Exception ex)
         {
-            System.Console.WriteLine($"Error: could not send tracks report - {ex.Message}");
+            Log.Error($"could not send tracks report", ex);
         }
 
         return Task.CompletedTask;
