@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 
@@ -38,25 +39,25 @@ public class UpdateRecordingSchedule : IAction
     public void Run()
     {
         var schedule = RecordingScheduleContext.Instance.GetSchedule(scheduleId);
-        System.Console.WriteLine($"Updating schedule - {schedule.Name}");
+        Log.Information($"Updating schedule - {schedule.Name}");
 
         if (args.Name != null && args.Name != schedule.Name) {
             if (RecordingScheduleContext.Instance.IsScheduleNameExist(args.Name))
                 throw new Exception($"Cannot update schedule name to {args.Name}. Another schedule with the same Name already exist.");
-            System.Console.WriteLine($"Updating schedule - new name: {args.Name}");
+            Log.Information($"Updating schedule - new name: {args.Name}");
             schedule.Name = args.Name;
         }
         if (args.Enabled != null && args.Enabled != schedule.Enabled) {
-            System.Console.WriteLine($"Updating schedule - enabled: {args.Enabled}");
+            Log.Information($"Updating schedule - enabled: {args.Enabled}");
             schedule.Enabled = args.Enabled ?? true;
         }
         if (args.UploadS3 != null && args.UploadS3 != schedule.UploadS3) {
-            System.Console.WriteLine($"Updating schedule - uploadS3: {args.UploadS3}");
+            Log.Information($"Updating schedule - uploadS3: {args.UploadS3}");
             schedule.UploadS3 = args.UploadS3 ?? true;
         }
  
         RecordingScheduleContext.Instance.UpdateSchedule(schedule);
 
-        System.Console.WriteLine($"Recording Schedule updated.");
+        Log.Information($"Recording Schedule updated.");
     }
 }

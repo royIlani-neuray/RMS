@@ -8,6 +8,7 @@
 ***/
 using WebService.CameraLogic.CameraStream;
 using WebService.Entites;
+using Serilog;
 
 namespace WebService.Actions.Cameras;
 
@@ -22,11 +23,11 @@ public class ConnectCameraAction : IAction
 
     public void Run()
     {
-        //System.Console.WriteLine($"Debug: ConnectCameraAction - state: {camera.State}, enabled: {camera.Enabled}");
+        // Log.Debug($"ConnectCameraAction - state: {camera.State}, enabled: {camera.Enabled}");
 
         if (!camera.Enabled)
         {
-            Console.WriteLine($"{camera.LogTag} camera device is disabled - ignore connect action.");
+            camera.Log.Information("camera device is disabled - ignore connect action.");
             return;
         }
 

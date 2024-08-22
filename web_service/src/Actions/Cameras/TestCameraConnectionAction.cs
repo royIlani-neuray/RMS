@@ -7,6 +7,7 @@
 **
 ***/
 using RtspClientSharpCore;
+using Serilog;
 using System.Text.Json.Serialization;
 
 namespace WebService.Actions.Cameras;
@@ -60,7 +61,7 @@ public class TestCameraConnectionAction
         {
             try
             {
-                Console.WriteLine($"Testing Connection to camera. URL: {args.RTSPUrl}");
+                Log.Information($"Testing Connection to camera. URL: {args.RTSPUrl}");
                 await rtspClient.ConnectAsync(cancellationTokenSource.Token);
                 results.Connected = true;
                 results.StatusString = "Camera connection successfull.";
@@ -75,7 +76,7 @@ public class TestCameraConnectionAction
             }
         }
 
-        System.Console.WriteLine(results.StatusString);
+        Log.Information(results.StatusString);
         return results;
     }
 }

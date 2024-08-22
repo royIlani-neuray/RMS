@@ -9,6 +9,8 @@
 using System.Text.Json.Serialization;
 using WebService.Events;
 using WebService.Services;
+using Serilog;
+using Amazon.S3.Model;
 
 namespace WebService.Entites;
 
@@ -59,8 +61,18 @@ public abstract class DeviceEntity : IEntity {
     [JsonPropertyName("description")]
     public String Description { get; set; }
 
+    private String deviceId = String.Empty;
+
     [JsonPropertyName("device_id")]
-    public String Id { get; set; }
+    public String Id 
+    { 
+        get => deviceId; 
+        set
+        {
+            deviceId = value;
+            InitDeviceLogger();
+        } 
+    }
 
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
@@ -105,21 +117,31 @@ public abstract class DeviceEntity : IEntity {
         State = DeviceState.Disconnected;
         Name = String.Empty;
         Description = String.Empty;
-        Id = String.Empty;
         Status = String.Empty;
         Enabled = false;
         EntityLock = new ReaderWriterLockSlim();
         LinkedServices = new List<LinkedService>();
-
+        Log = Serilog.Log.Logger;
     }
 
     [JsonIgnore]
-    public string LogTag => $"[{Type} - {Id}]";
+    public Serilog.ILogger Log;
+
+    private void InitDeviceLogger()
+    {
+        Log = new LoggerConfiguration()
+            .Enrich.WithProperty("DeviceTag", $"[{Type} - {Id}] ")
+            .WriteTo.File(path: $"./data/logs/{Type.ToString().ToLower()}/{Id}.log",    // Dedicated file for this logger
+                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message}{NewLine}{Exception}",
+                          fileSizeLimitBytes: 10485760)  
+            .WriteTo.Logger(Serilog.Log.Logger) // This forwards to the global logger
+            .CreateLogger();
+    }
 
     public void SetStatus(string status)
     {
         this.Status = status;
-        System.Console.WriteLine($"{LogTag} {status}");
+        this.Log.Information(status);
 
         if (Type == DeviceTypes.Radar)
         {

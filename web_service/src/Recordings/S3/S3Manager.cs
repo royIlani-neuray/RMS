@@ -9,6 +9,7 @@
 using System.Text.Json;
 using Amazon.S3;
 using Amazon.S3.Transfer;
+using Serilog;
 
 public sealed class S3Manager {
 
@@ -47,7 +48,7 @@ public sealed class S3Manager {
         var region = Environment.GetEnvironmentVariable("S3_REGION");
         ServiceSettings.Instance.CloudUploadSupport = (AccessKey != null) && (SecretKey != null) && (region != null);
         if (!ServiceSettings.Instance.CloudUploadSupport) {
-            Console.WriteLine("No S3 credentials found, not supporting recording uploads");
+            Log.Warning("No S3 credentials found, not supporting recording uploads");
             return;
         }
         client = new AmazonS3Client(AccessKey, SecretKey, Amazon.RegionEndpoint.GetBySystemName(region));
@@ -57,7 +58,7 @@ public sealed class S3Manager {
     public async Task UploadDirectoryAsync(string directoryPath, bool withRoot = true)
     {
         if (!ServiceSettings.Instance.CloudUploadSupport) {
-            Console.WriteLine($"ERROR: Cannot upload to S3 as cloud is not supported");
+            Log.Error($"Cannot upload to S3 as cloud is not supported");
             return;
         }
         using var transferUtility = new TransferUtility(client);

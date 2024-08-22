@@ -10,6 +10,7 @@ using WebService.Entites;
 using WebService.Services;
 using WebService.RadarLogic.Tracking.Applications;
 using WebService.Actions.Radars;
+using WebService.Services.RadarRecording;
 
 namespace WebService.RadarLogic.Tracking;
 
@@ -148,20 +149,19 @@ public class RadarTracker
     private void ConfigureRadar()
     {
         radar.SetStatus($"Configuring the device...");
-        Console.WriteLine($"{radar.LogTag} Configuration Time: {DateTime.Now}");
 
         foreach (string tiCommand in radar.ConfigScript)
         {
             if (string.IsNullOrWhiteSpace(tiCommand) || tiCommand.StartsWith("%"))
                 continue;
             
-            Console.WriteLine($"{radar.LogTag} Sending command - {tiCommand}");
+            radar.Log.Information($"Sending command - {tiCommand}");
             var response = radar.ipRadarAPI!.SendTICommand(tiCommand);
-            Console.WriteLine($"{radar.LogTag} {response}");
+            radar.Log.Information(response);
 
             if (response != "Done")
             {
-                Console.WriteLine($"{radar.LogTag} The command '{tiCommand}' failed - got: {response}");
+                radar.Log.Error($"The command '{tiCommand}' failed - got: {response}");
                 throw new Exception("Error: failed to configure the device!");
             }
         }
@@ -174,7 +174,7 @@ public class RadarTracker
         while (runTracker)
         {
             FrameData nextFrame;
-            //System.Console.WriteLine("Getting next frame...");
+            //Log.Debug("Getting next frame...");
             
             try
             {
@@ -182,7 +182,7 @@ public class RadarTracker
             }
             catch (System.Exception ex)
             {
-                System.Console.WriteLine($"{radar.LogTag} Error: failed getting frame: {ex.Message}");
+                radar.Log.Error("failed getting frame", ex);
                 throw;
             }
             
@@ -203,6 +203,6 @@ public class RadarTracker
             ServiceManager.Instance.RunServices(radar, LastFrameData);
         }
 
-        // System.Console.WriteLine("Debug: Tracking loop exited.");
+        // Log.Debug("Tracking loop exited.");
     }
 } 

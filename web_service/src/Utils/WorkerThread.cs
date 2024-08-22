@@ -6,6 +6,8 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
+
 namespace WebService.Utils;
 
 public abstract class WorkerThread<T> 
@@ -36,7 +38,7 @@ public abstract class WorkerThread<T>
             if (WorkQueue.Count == MaxCapacity)
             {
                 // remove the oldest item from the queue in favor of the new one.
-                System.Console.WriteLine($"Warning: Worker thread '{WorkerName}' is full! dropping item!");
+                Log.Warning($"Worker thread '{WorkerName}' is full! dropping item!");
                 WorkQueue.Dequeue();
             }
 
@@ -95,8 +97,7 @@ public abstract class WorkerThread<T>
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine("Unexpected exception in worker thread!");
-                    System.Console.WriteLine(ex);
+                    Log.Error("Unexpected exception in worker thread!", ex);
                 } 
             }
             else

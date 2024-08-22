@@ -1,4 +1,5 @@
 
+using Serilog;
 using Utils;
 
 namespace WebService.Services.Inference;
@@ -44,13 +45,13 @@ public class InferenceServiceClient
         if (host == null)
         {
             host = "localhost";
-            System.Console.WriteLine($"Warning: Inference Service host not provided. using host - {host}");
+            Log.Warning($"Inference Service host not provided. using host - {host}");
         }
         
         if (port == null)
         {
             port = "16502";
-            System.Console.WriteLine($"Warning: Inference Service port not provided. using port - {port}");
+            Log.Warning($"Inference Service port not provided. using port - {port}");
         }
 
         UriBuilder builder = new UriBuilder();
@@ -80,7 +81,7 @@ public class InferenceServiceClient
         
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            System.Console.WriteLine($"Inference Service Predict error - status code: {response.StatusCode}");
+            Log.Error($"Inference Service Predict error - status code: {response.StatusCode}");
         }
 
         return responseBody;

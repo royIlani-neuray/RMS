@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using WebService.Utils;
 using System.Net.WebSockets;
+using Serilog;
 
 namespace WebService.WebSockets;
 
@@ -35,7 +36,7 @@ public class WebSocketServer : WorkerThread<WebSocketMessage>
 
         foreach (var client in WebSocketClientList)
         {
-            System.Console.WriteLine("Debug: Forcing websocket client close...");
+            Log.Debug("Forcing websocket client close...");
             var webSocket = client.Item1;
             var clientTCS = client.Item2;
             clientTCS.SetResult(webSocket);
@@ -60,7 +61,7 @@ public class WebSocketServer : WorkerThread<WebSocketMessage>
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        //System.Console.WriteLine("Got Socket close request!");
+                        // Log.Information("Got Socket close request!");
                         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
                         break;
                     }
@@ -98,7 +99,7 @@ public class WebSocketServer : WorkerThread<WebSocketMessage>
         }
         catch (System.Exception ex)
         {
-            System.Console.WriteLine($"Websocket server error: could not send object - {ex.Message}");
+            Log.Error($"Websocket server error: could not send object", ex);
         }
         finally
         {

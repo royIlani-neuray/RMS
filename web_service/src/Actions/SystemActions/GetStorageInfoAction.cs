@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
+using Serilog;
 
 namespace WebService.Actions.SystemActions;
 
@@ -38,7 +39,7 @@ public class GetStorageInfoAction : IAction
         long freeSpaceMB = drive.TotalFreeSpace  / BYTES_IN_MEGABYTE;
         double percentFree = ((double) drive.TotalFreeSpace / drive.TotalSize) * 100;
 
-        Console.WriteLine($"Storage Info: {freeSpaceMB} MB is available out of {totalSpaceMB} MB [{percentFree:0.00}% free]");
+        Log.Information($"Storage Info: {freeSpaceMB} MB is available out of {totalSpaceMB} MB [{percentFree:0.00}% free]");
 
         Results = new GetStorageInfoResults()
         {

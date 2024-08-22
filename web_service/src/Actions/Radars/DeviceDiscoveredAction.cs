@@ -9,6 +9,7 @@
 using WebService.Entites;
 using WebService.RadarLogic.IPRadar;
 using WebService.Actions.Radars;
+using Serilog;
 
 namespace WebService.Actions.Radars;
 
@@ -36,11 +37,11 @@ public class DeviceDiscoveredAction : RadarAction {
         }
         catch (NotFoundException)
         {
-            System.Console.WriteLine($"[{deviceId}] The following radar is not registerd in the system. ignoring discovery event.");
+            Log.Information($"[{deviceId}] The following radar is not registerd in the system. ignoring discovery event.");
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine($"[{deviceId}] Unexpected error on DeviceDiscoveredAction. error: {ex.Message}");
+            Log.Error($"[{deviceId}] Unexpected error on DeviceDiscoveredAction.", ex);
         }
     }
 }

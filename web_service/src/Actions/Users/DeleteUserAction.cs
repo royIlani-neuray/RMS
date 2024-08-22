@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
+using Serilog;
 
 namespace WebService.Actions.Users;
 
@@ -17,7 +18,7 @@ public class DeleteUserAction : UserAction
 
     protected override void RunUserAction(User user)
     {
-        System.Console.WriteLine($"Deleting user - {user.Id}");
+        Log.Information($"Deleting user - {user.Id}");
         UserContext.Instance.DeleteUser(user);
     }
 }

@@ -18,7 +18,7 @@ public class DeleteRadarAction : RadarAction
 
     protected override void RunRadarAction(Radar radar)
     {
-        System.Console.WriteLine($"Deleting radar device - {radar.Id}");
+        radar.Log.Information($"Deleting radar device...");
 
         var disconnectAction = new DisconnectRadarAction(radar);
         disconnectAction.Run();

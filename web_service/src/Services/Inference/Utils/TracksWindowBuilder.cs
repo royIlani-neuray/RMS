@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.RadarLogic.Tracking;
 
 namespace WebService.Services.Inference.Utils;
@@ -80,7 +81,7 @@ public class TracksWindowBuilder
                 if (window.invalidFramesCount > maxInvalidFramesInWindow)
                 {
                     // this track has invalid window - shift the frames and continue to build the window
-                    // System.Console.WriteLine($"Debug: Bad Window for inference! [{trackId}]. - [{DateTime.Now}]");
+                    // Log.Debug($"Bad Window for inference! [{trackId}]. - [{DateTime.Now}]");
                     ShiftTrackWindow(trackId);
                 }
             }
@@ -125,9 +126,9 @@ public class TracksWindowBuilder
         {
             if (lastFrame.PointsList.Count != frame.TargetsIndexList.Count)
             {
-                System.Console.WriteLine($"Error: mismatch of points to target-indexs between frames {lastFrame.FrameNumber} and {frame.FrameNumber}!");
-                System.Console.WriteLine($"lastFrame.PointsList.Count : {lastFrame.PointsList.Count}");
-                System.Console.WriteLine($"frame.TargetsIndexList.Count : {frame.TargetsIndexList.Count}");
+                Log.Error($"mismatch of points to target-indexs between frames {lastFrame.FrameNumber} and {frame.FrameNumber}!");
+                Log.Error($"lastFrame.PointsList.Count : {lastFrame.PointsList.Count}");
+                Log.Error($"frame.TargetsIndexList.Count : {frame.TargetsIndexList.Count}");
             }
             else
             {
@@ -146,7 +147,7 @@ public class TracksWindowBuilder
         }
         else
         {
-            System.Console.WriteLine("Warning: lost frames! ignoring last frame points!");
+            Log.Warning("lost frames! ignoring last frame points!");
         }
 
         // check invalid frames per track

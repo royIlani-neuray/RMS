@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 
@@ -62,10 +63,10 @@ public class AddUserAction : IAction
         user.Email = args.Email;
         user.EmployeeId = args.EmployeeId;
 
-        System.Console.WriteLine($"Adding new user - [{user.FirstName} {user.LastName}]");
+        Log.Information($"Adding new user - [{user.FirstName} {user.LastName}]");
  
         UserContext.Instance.AddUser(user);
 
-        System.Console.WriteLine($"User added.");
+        Log.Information($"User added.");
     }
 }

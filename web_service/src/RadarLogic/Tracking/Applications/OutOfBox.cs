@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.Entites;
 
 namespace WebService.RadarLogic.Tracking.Applications;
@@ -118,7 +119,7 @@ public class OutOfBox : ITrackingApplication
             var len = readTIDataFunction(headerBytes, headerBytes.Length);
             if (len != FRAME_HEADER_SIZE)
             {
-                //Console.WriteLine($"failed reading frame header. read len: {len}");
+                //Log.Error($"failed reading frame header. read len: {len}");
                 continue;
             }
 
@@ -126,16 +127,16 @@ public class OutOfBox : ITrackingApplication
             
             if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
             {
-                Console.WriteLine("invalid magic header");
+                Log.Error("invalid magic header");
                 continue;
             }
 
             break;
         }
 
-        // Console.WriteLine($"Platform: {frameData.frameHeader.Platform:X}");
-        // Console.WriteLine($"Frame Number: {frameData.frameHeader.FrameNumber}");
-        // Console.WriteLine($"numTLVs: {frameData.frameHeader.NumTLVs}");
+        Log.Verbose($"Platform: {frameData.frameHeader.Platform:X}");
+        Log.Verbose($"Frame Number: {frameData.frameHeader.FrameNumber}");
+        Log.Verbose($"numTLVs: {frameData.frameHeader.NumTLVs}");
 
         for (int tlvIndex = 0; tlvIndex < frameData.frameHeader.NumTLVs; tlvIndex++)
         {
@@ -149,7 +150,7 @@ public class OutOfBox : ITrackingApplication
             var tlvType = reader.ReadUInt32();
             var tlvLength = reader.ReadUInt32();
 
-            // System.Console.WriteLine($"Tlv type: {tlvType}, size: {tlvLength}");
+            Log.Verbose($"Tlv type: {tlvType}, size: {tlvLength}");
 
             byte [] tlvDataBytes = new byte[tlvLength];
             
@@ -173,7 +174,7 @@ public class OutOfBox : ITrackingApplication
                     point.Doppler = reader.ReadSingle();
                     frameData.pointCloudList.Add(point);
 
-                    // Console.WriteLine($"PointIndex: {pointIndex}, Range: {point.Range:0.00}, Azimuth: {point.Azimuth:0.00}, Elevation: {point.Elevation:0.00}, Doppler: {point.Doppler:0.00}");
+                    Log.Verbose($"PointIndex: {pointIndex}, Range: {point.Range:0.00}, Azimuth: {point.Azimuth:0.00}, Elevation: {point.Elevation:0.00}, Doppler: {point.Doppler:0.00}");
                 }
             }
 
@@ -211,7 +212,7 @@ public class OutOfBox : ITrackingApplication
                     track.ConfidenceLevel = reader.ReadSingle();
                     frameData.tracksList.Add(track);
 
-                    // Console.WriteLine($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
+                    Log.Verbose($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
                 }
             }
 
@@ -222,7 +223,7 @@ public class OutOfBox : ITrackingApplication
                     frameData.targetsIndexList.Add(reader.ReadByte());
                 }
 
-                // Console.WriteLine($"Number of points: {frameData.targetsIndexList.Count}");
+                Log.Verbose($"Number of points: {frameData.targetsIndexList.Count}");
             }
 
         }

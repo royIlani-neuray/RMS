@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
@@ -84,11 +85,11 @@ public class AddCameraAction : IAction
         camera.ResolutionX = args.ResolutionX;
         camera.ResolutionY = args.ResolutionY;
 
-        System.Console.WriteLine($"Adding new camera - [{camera.Name}]");
+        Log.Information($"Adding new camera - [{camera.Name}]");
  
         CameraContext.Instance.AddCamera(camera);
 
-        System.Console.WriteLine($"Camera added.");
+        Log.Information($"Camera added.");
 
         RMSEvents.Instance.CameraAddedEvent(camera.Id);
 
@@ -103,7 +104,7 @@ public class AddCameraAction : IAction
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine($"Error: could not enable camera device! - {ex.Message}");
+                    Log.Error($"Error: could not enable camera device!", ex);
                 }
             });
             enableCameraTask.Start();

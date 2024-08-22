@@ -29,7 +29,7 @@ public class UnlinkServiceAction : IAction
         if (linkedService == null)
             throw new Exception($"Could not find linked service with id - {serviceId}");
         
-        ServiceManager.Instance.DisposeServiceContext(device.Id, linkedService);
+        ServiceManager.Instance.DisposeServiceContext(device, linkedService);
         device.LinkedServices.Remove(linkedService);
     }
 }

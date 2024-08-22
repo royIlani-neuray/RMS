@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using System.Text.Json;
+using Serilog;
 
 namespace WebService.Database;
 
@@ -31,7 +32,7 @@ public class EntityStorage<Entity> where Entity : IEntity {
         }
         else
         {
-            Console.WriteLine($"Warning: could not delete entity file for {entity.EntityType}: {entity.Id}");
+            Log.Warning($"could not delete entity file for {entity.EntityType}: {entity.Id}");
         }
     }
 
@@ -52,7 +53,7 @@ public class EntityStorage<Entity> where Entity : IEntity {
             entities.Add(entity.Id, entity);
         }
 
-        Console.WriteLine($"Loaded {entities.Keys.Count} entities from storage.");
+        Log.Information($"Loaded {entities.Keys.Count} entities from storage.");
         return entities;
     }
 

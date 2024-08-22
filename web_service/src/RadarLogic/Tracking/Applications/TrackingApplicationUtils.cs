@@ -6,6 +6,8 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
+
 namespace WebService.RadarLogic.Tracking.Applications;
 
 public static class TrackingApplicationUtils
@@ -30,6 +32,6 @@ public static class TrackingApplicationUtils
         rotatedY = (float) (x * rotationMatrix[1,0] + y * rotationMatrix[1,1] + z * rotationMatrix[1,2]);
         rotatedZ = (float) (x * rotationMatrix[2,0] + y * rotationMatrix[2,1] + z * rotationMatrix[2,2]);
 
-        // System.Console.WriteLine($"Point XYZ = [{x}, {y}, {z}], Rotation: [{rotatedX}, {rotatedY}, {rotatedZ}]");   
+        // Log.Debug($"Point XYZ = [{x}, {y}, {z}], Rotation: [{rotatedX}, {rotatedY}, {rotatedZ}]");   
     }
 }

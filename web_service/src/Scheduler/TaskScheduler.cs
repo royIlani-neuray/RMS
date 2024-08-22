@@ -6,6 +6,8 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
+
 public abstract class TaskScheduler {
 
     private Task? SchedulerTask;
@@ -41,7 +43,7 @@ public abstract class TaskScheduler {
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"Unexpected exeption in scheduler: {ex.Message}");
+                Log.Error($"Unexpected exeption in scheduler", ex);
             }
 
             Thread.Sleep((int)(SchedulingPeriodMinutes * 60 * 1000));

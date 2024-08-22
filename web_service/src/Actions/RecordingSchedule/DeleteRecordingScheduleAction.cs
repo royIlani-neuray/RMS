@@ -8,6 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.Context;
+using Serilog;
 
 namespace WebService.Actions.RecordingSchedules;
 
@@ -17,7 +18,7 @@ public class DeleteRecordingScheduleAction : RecordingScheduleAction
 
     protected override void RunRecordingScheduleAction(RecordingSchedule schedule)
     {
-        System.Console.WriteLine($"Deleting schedule - {schedule.Id}");
+        Log.Information($"Deleting schedule - {schedule.Id}");
         RecordingScheduleContext.Instance.DeleteSchedule(schedule);
     }
 }

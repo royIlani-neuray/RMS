@@ -7,6 +7,7 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
@@ -72,7 +73,7 @@ public class AddRadarAction : IAction
     {
         args.Validate();
 
-        System.Console.WriteLine($"Registering radar device - {args.Id}");
+        Log.Information($"Registering radar device - {args.Id}");
 
         Radar radar = new Radar();
         radar.Id = args.Id;
@@ -100,7 +101,7 @@ public class AddRadarAction : IAction
         
         RadarContext.Instance.AddRadar(radar);
 
-        System.Console.WriteLine($"Radar device registered.");
+        radar.Log.Information("Radar device registered.");
         
         RMSEvents.Instance.RadarAddedEvent(radar.Id);
 
@@ -115,7 +116,7 @@ public class AddRadarAction : IAction
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine($"Error: could not enable radar device! - {ex.Message}");
+                    radar.Log.Error("could not enable radar device!", ex);
                 }
             });
             enableRadarTask.Start();

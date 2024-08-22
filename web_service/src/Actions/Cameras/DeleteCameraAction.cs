@@ -9,6 +9,7 @@
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
+using Serilog;
 
 namespace WebService.Actions.Cameras;
 
@@ -18,7 +19,7 @@ public class DeleteCameraAction : CameraAction {
 
     protected override void RunCameraAction(Camera camera)
     {
-        System.Console.WriteLine($"Deleting camera - {camera.Id}");
+        camera.Log.Information("Deleting camera...");
 
         var disconnectAction = new DisconnectCameraAction(camera);
         disconnectAction.Run();

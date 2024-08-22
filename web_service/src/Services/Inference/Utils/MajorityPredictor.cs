@@ -7,6 +7,8 @@
 **
 ***/
 
+using Serilog;
+
 namespace WebService.Services.Inference.Utils;
 
 public class MajorityPerdictor
@@ -49,8 +51,6 @@ public class MajorityPerdictor
         {
             int valueCount = inferenceWindow.Where(entry => entry == value).Count();
 
-            // System.Console.WriteLine($"Debug: '{value}' : {valueCount}");
-
             if (valueCount > currentValueCount)
             {
                 currentPrediction = value;
@@ -58,7 +58,7 @@ public class MajorityPerdictor
             }
         }
 
-        // System.Console.WriteLine($"Debug: Prediction: '{currentPrediction}' [{currentValueCount}]");
+        //Log.Debug($"Prediction: '{currentPrediction}' [{currentValueCount}]");
 
     }
 }

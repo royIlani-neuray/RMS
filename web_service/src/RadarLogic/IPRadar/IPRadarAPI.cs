@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using WebService.RadarLogic.IPRadar.Connection;
 
 namespace WebService.RadarLogic.IPRadar;
@@ -29,6 +30,7 @@ public class IPRadarAPI
     public const byte SET_DEVICE_ID_RESPONSE_KEY = 103;
     public const byte GET_IMU_DATA_RESPONSE_KEY = 104;
     public const byte SET_RMS_HOSTNAME_RESPONSE_KEY = 105;
+    public const byte CALIBRATION_DATA_RESPONSE_KEY = 106;
     public const byte DISCOVER_DEVICE_KEY = 200;
     public const byte CONFIGURE_NETWORK_KEY = 201;
     public const byte TI_COMMAND_KEY = 202;
@@ -38,7 +40,8 @@ public class IPRadarAPI
     public const byte FW_UPDATE_WRITE_CHUNK_KEY = 206;
     public const byte FW_UPDATE_APPLY_KEY = 207;
     public const byte GET_IMU_DATA_KEY = 208;
-    public const byte SET_RMS_HOSTNAME = 209;
+    public const byte SET_RMS_HOSTNAME_KEY = 209;
+    public const byte GET_CALIBRATION_DATA_KEY = 210;
 
     public const int FW_UPDATE_CHUNK_SIZE = 512;
     public const int RMS_HOSTNAME_MAX_LENGTH = 128;
@@ -46,6 +49,7 @@ public class IPRadarAPI
     public const int DEVICE_ID_SIZE_BYTES = 16; // GUID
     public const int MAX_TI_COMMAND_SIZE = 256;
     public const int MAX_TI_RESPONSE_SIZE = 256;
+    public const int MAX_CALIBRATION_DATA_SIZE = 24;
 
     public const int IPV4_ADDRESS_SIZE = 4;
     public const int MODEL_STRING_MAX_LENGTH = 15;
@@ -101,7 +105,7 @@ public class IPRadarAPI
         if (!IsConnected())
             throw new Exception("ResetRadar failed - radar not connected.");
         
-        System.Console.WriteLine("Sending Reset command...");
+        Log.Information("Sending Reset command...");
 
         // create the reset command packet
         var stream = new MemoryStream();
@@ -159,7 +163,7 @@ public class IPRadarAPI
         if (!IsConnected())
             throw new Exception("ReadTIData failed - radar not connected.");
 
-        //System.Console.WriteLine($"Debug: Trying to Read from data stream... size: {size}"); 
+        // Log.Debug($"Trying to Read from data stream... size: {size}"); 
 
         int bytesRead = 0;
         var stream = connection!.DataStream!.GetStream();
@@ -169,12 +173,12 @@ public class IPRadarAPI
             while (bytesRead < size)
             {
                 bytesRead += stream.Read(dataArray, bytesRead, size - bytesRead);
-                //System.Console.WriteLine($"Debug: Read {bytesRead} out of {size}");
+                // Log.Debug($"Read {bytesRead} out of {size}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[{DateTime.Now}] Debug: ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}"); 
+            Log.Debug($"ReadTIData failed. message: '{ex.Message}', size to read: {size}, bytes read: {bytesRead}", ex); 
             throw;
         }
 
@@ -200,14 +204,54 @@ public class IPRadarAPI
         float pitchDegrees = reader.ReadSingle();
         float rollDegrees = reader.ReadSingle();
 
-        Console.WriteLine($"IMU supported? {isSupported}");
+        Log.Information($"IMU supported? {isSupported}");
         if (isSupported) {
-            Console.WriteLine($"IMU active? {isActive}");
+            Log.Information($"IMU active? {isActive}");
             if (isActive) {
-                Console.WriteLine($"IMU data: pitch_deg {pitchDegrees}");
-                Console.WriteLine($"IMU data: roll_deg {rollDegrees}");
+                Log.Information($"IMU data: pitch_deg {pitchDegrees}");
+                Log.Information($"IMU data: roll_deg {rollDegrees}");
             }
         }
+    }
+
+    public string GetCalibrationData()
+    {
+        if (!IsConnected())
+            throw new Exception("GetCalibrationData failed - radar not connected.");
+
+        var stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
+        writer.Write(IPRadarAPI.PROTOCOL_REVISION);
+        writer.Write(IPRadarAPI.GET_CALIBRATION_DATA_KEY);
+
+        var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 102, CALIBRATION_DATA_RESPONSE_KEY);
+
+        int status = reader.ReadByte();
+        int numElements = reader.ReadByte();
+        float rangeBias = reader.ReadSingle();
+
+        float [] rxChPhaseComp = new float[MAX_CALIBRATION_DATA_SIZE];
+
+        string calibrationString = $"{rangeBias:0.0000}";
+
+        for (int i=0; i<MAX_CALIBRATION_DATA_SIZE; i++)
+        {
+            rxChPhaseComp[i] = reader.ReadSingle();
+
+            if (i < numElements)
+            {
+                calibrationString += $" {rxChPhaseComp[i]:0.0000}";
+            }
+        }
+
+        Log.Debug("Calibration Data:");
+        Log.Debug($"Calibration status: {status}");
+        Log.Debug($"Calibration num elements: {numElements}");
+        Log.Debug($"Calibration rangeBias: {rangeBias}");
+        Log.Debug($"Calibration string: {calibrationString}");
+
+        return calibrationString;
     }
 
     public void SetRMSHostname(string hostname)
@@ -219,7 +263,7 @@ public class IPRadarAPI
         BinaryWriter writer = new BinaryWriter(stream);
         writer.Write(IPRadarAPI.MESSAGE_HEADER_MAGIC);
         writer.Write(IPRadarAPI.PROTOCOL_REVISION);
-        writer.Write(IPRadarAPI.SET_RMS_HOSTNAME);
+        writer.Write(IPRadarAPI.SET_RMS_HOSTNAME_KEY);
 
         var hostnameArray = hostname.ToCharArray();
 
@@ -278,14 +322,14 @@ public class IPRadarAPI
             gwAddress = "0.0.0.0";
         }
 
-        Console.WriteLine("");
-        Console.WriteLine("Setting Device Network:");
-        Console.WriteLine($"** Device: {deviceId}");
-        Console.WriteLine($"** IP Address: {deviceId}");
-        Console.WriteLine($"** Subnet Mask: {subnetMask}");
-        Console.WriteLine($"** Gateway Address: {gwAddress}");
-        Console.WriteLine($"** Static IP: {staticIP}");
-        Console.WriteLine("");
+        Log.Information("");
+        Log.Information("Setting Device Network:");
+        Log.Information($"** Device: {deviceId}");
+        Log.Information($"** IP Address: {deviceId}");
+        Log.Information($"** Subnet Mask: {subnetMask}");
+        Log.Information($"** Gateway Address: {gwAddress}");
+        Log.Information($"** Static IP: {staticIP}");
+        Log.Information("");
 
         // create the broadcast packet
         var stream = new MemoryStream();
@@ -322,9 +366,9 @@ public class IPRadarAPI
     {
         List<IPAddress> broadcastSources = GetBroadcastAddresses();
 
-        Console.WriteLine("");
-        Console.WriteLine($"** Sending Device-Reset broadcast to: {deviceId}");
-        Console.WriteLine("");
+        Log.Information("");
+        Log.Information($"** Sending Device-Reset broadcast to: {deviceId}");
+        Log.Information("");
 
         // create the broadcast packet
         var stream = new MemoryStream();
@@ -449,7 +493,7 @@ public class IPRadarAPI
                 pos += dataSize;
             }
 
-            System.Console.WriteLine($"uploading chunk: {chunkNumber + 1} / {totalChunks}");
+            Log.Information($"uploading chunk: {chunkNumber + 1} / {totalChunks}");
             
             var reader = SendAndRecieveMessage(stream, responseSize: MESSAGE_HEADER_SIZE + 1, FW_UPDATE_RESPONSE_KEY);
 
@@ -527,18 +571,18 @@ public class IPRadarAPI
 
         ValidateImage(image);
         
-        System.Console.WriteLine($"Initializing FW update process...");
+        Log.Information($"Initializing FW update process...");
         InitFirmwareUpdate(image);
 
-        System.Console.WriteLine($"Uploading Firmware image. image size: {image.Length}");
+        Log.Information($"Uploading Firmware image. image size: {image.Length}");
 
         UploadFirmwareImage(image);
 
-        System.Console.WriteLine($"FW image uploaded, applying update...");
+        Log.Information($"FW image uploaded, applying update...");
 
         ApplyFirmwareUpdate();
 
-        System.Console.WriteLine($"FW update process is done!");
+        Log.Information($"FW update process is done!");
         
     }
 

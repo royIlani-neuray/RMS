@@ -9,6 +9,7 @@
 using WebService.Context;
 using WebService.Entites;
 using WebService.Actions.Recordings;
+using Serilog;
 
 namespace WebService.Scheduler;
 
@@ -66,7 +67,7 @@ public class RecordingScheduler : TaskScheduler{
 
     private void StartSchedule(RecordingSchedule schedule, DateTime now)
     {
-        System.Console.WriteLine($"Recording Scheduler: Starting scheduled recording - {schedule.Name}");
+        Log.Information($"Recording Scheduler: Starting scheduled recording - {schedule.Name}");
         schedule.LastStart = now;
         RecordingScheduleContext.Instance.UpdateSchedule(schedule);
         String recordingName = $"{SCHEDULED_NAME_PREFIX}_{schedule.Name}_{now:yyyy-MM-dd_HH-mm-ss.fff}";
@@ -83,7 +84,7 @@ public class RecordingScheduler : TaskScheduler{
 
     private void StopSchedule(RecordingSchedule schedule, DateTime now)
     {
-        System.Console.WriteLine($"Recording Scheduler: Stopping scheduled recording - {schedule.Name}");
+        Log.Information($"Recording Scheduler: Stopping scheduled recording - {schedule.Name}");
         schedule.LastEnd = now;
         RecordingScheduleContext.Instance.UpdateSchedule(schedule);
         StopRecordingArgs args = new()
@@ -98,7 +99,7 @@ public class RecordingScheduler : TaskScheduler{
     public override void RunTask()
     {
         DateTime now = DateTime.Now;
-        System.Console.WriteLine($"Recording Scheduler: Checking for recording schedules... now: {now.DayOfWeek}, {now}");
+        Log.Information($"Recording Scheduler: Checking for recording schedules... now: {now.DayOfWeek}, {now}");
         var schedulesList = RecordingScheduleContext.Instance.GetSchedules();
         foreach (var schedule in schedulesList)
         {

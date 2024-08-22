@@ -68,7 +68,7 @@ public class SetRadarConfigAction : RadarAction
     protected override void RunRadarAction(Radar radar)
     {
         List<string> configScript;
-        Console.WriteLine($"Setting radar config for device - {radar.Id}");
+        radar.Log.Information($"Setting radar configuration");
 
         if (!string.IsNullOrWhiteSpace(args.TemplateId))
         {

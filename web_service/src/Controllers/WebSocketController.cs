@@ -7,6 +7,7 @@
 **
 ***/
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using WebService.Context;
 using WebService.Entites;
 using WebService.Events;
@@ -40,7 +41,7 @@ public class WebSocketController : ControllerBase
     [HttpGet("radars/{radarId}")]
     public async Task GetRadarWebsocket(string radarId)
     {
-        //System.Console.WriteLine($"In get radar device websocket - radar id: {radarId}");
+        // Log.Debug($"In get radar device websocket - radar id: {radarId}");
 
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
@@ -55,7 +56,7 @@ public class WebSocketController : ControllerBase
             // from this function, otherwise the socket connection will close
             await socketFinishedTcs.Task;
 
-            //System.Console.WriteLine($"Websocket connection closed - radar device id: {radarId}");
+            //Log.Debug($"Websocket connection closed - radar device id: {radarId}");
         }
         else
         {

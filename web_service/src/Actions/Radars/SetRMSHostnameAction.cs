@@ -39,7 +39,7 @@ public class SetRMSHostnameAction : RadarAction {
         bool doDisconnect = false;
         IPRadarAPI? client = radar.ipRadarAPI;
 
-        Console.WriteLine($"Setting RMS hostname for device - {radar.Id}");
+        radar.Log.Information("Setting RMS hostname for radar device");
         
         // on local radars we can connect even if the radar is disabled.
         if (client == null && !radar.RadarOnRemoteNetwork)
@@ -61,12 +61,12 @@ public class SetRMSHostnameAction : RadarAction {
 
         try
         {
-            System.Console.WriteLine($"Setting RMS hostname to: {args.Hostname}");
+            radar.Log.Information($"Setting RMS hostname to: {args.Hostname}");
             client.SetRMSHostname(args.Hostname);
         }
-        catch
+        catch (Exception ex)
         {
-            System.Console.WriteLine("Error: failed to set RMS hostname in radar.");
+            radar.Log.Error("Error: failed to set RMS hostname in radar.", ex);
             throw;
         }
         finally

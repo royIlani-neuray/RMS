@@ -6,6 +6,7 @@
 ** without explicit written authorization from the company.
 **
 ***/
+using Serilog;
 using WebService.Database;
 using WebService.Entites;
 using WebService.RadarLogic.IPRadar;
@@ -54,9 +55,9 @@ public sealed class TemplateContext : EntityContext<RadarTemplate> {
                 RadarConfigParser configParser = new RadarConfigParser(template.ConfigScript);
                 template.radarSettings = configParser.GetRadarSettings();
             }
-            catch
+            catch (Exception ex)
             {
-                System.Console.WriteLine($"Error: failed to parse config script for template - {template.Id}");
+                Log.Error($"failed to parse config script for template - {template.Id}", ex);
             }
         }
     }
