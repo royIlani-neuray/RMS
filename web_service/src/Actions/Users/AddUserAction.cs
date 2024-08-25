@@ -7,13 +7,15 @@
 **
 ***/
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Serilog;
 using WebService.Context;
 using WebService.Entites;
+using WebService.Security;
 
 namespace WebService.Actions.Users;
 
-public class AddUserArgs 
+public partial class AddUserArgs 
 {
     [JsonPropertyName("first_name")]
     public String FirstName { get; set; }
@@ -27,21 +29,44 @@ public class AddUserArgs
     [JsonPropertyName("email")]
     public String Email { get; set; }
 
+    [JsonPropertyName("password")]
+    public String Password { get; set; }
+
     public AddUserArgs()
     {
         FirstName = String.Empty;
         LastName = String.Empty;
         EmployeeId = String.Empty;
         Email = String.Empty;
+        Password = String.Empty;
+    }
+
+    private bool IsValidPassword()
+    {
+        // Define a regular expression for a strong password
+        // ^(?=.*[a-z]) - Ensures at least one lowercase letter.
+        // (?=.*[A-Z]) - Ensures at least one uppercase letter
+        // (?=.*\d)- Ensures at least one digit.
+        // (?=.*[@$!%*?&]) -  Ensures at least one special character
+        // [A-Za-z\d@$!%*?&]{8,}$ - Ensures the password is at least 8 characters long.
+        var passwordPattern = PasswordRegex();
+
+        // Check if the password matches the pattern
+        return passwordPattern.IsMatch(Password);
     }
 
     public void Validate()
     {
-        if (string.IsNullOrWhiteSpace(FirstName))
-            throw new HttpRequestException("User first name not defined");
-        if (string.IsNullOrWhiteSpace(LastName))
-            throw new HttpRequestException("User last name not defined");
+        if (string.IsNullOrWhiteSpace(Email))
+            throw new HttpRequestException("User email not defined");
+        if (string.IsNullOrWhiteSpace(Password))
+            throw new HttpRequestException("User password is missing");
+        if (!IsValidPassword())
+            throw new HttpRequestException("invalid password provided - password is not strong enough.");
     }
+
+    [GeneratedRegex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")]
+    private static partial Regex PasswordRegex();
 }
 
 public class AddUserAction : IAction 
@@ -67,6 +92,18 @@ public class AddUserAction : IAction
  
         UserContext.Instance.AddUser(user);
 
-        Log.Information($"User added.");
+        try
+        {
+            user.Password = JWTAuthentication.HashUserPassword(user.Id, args.Password);
+            UserContext.Instance.UpdateUser(user);
+        }
+        catch (Exception ex)
+        {
+            UserContext.Instance.DeleteUser(user);
+            Log.Error("failed to store user password", ex);
+            throw;
+        }
+
+        Log.Information($"User '{user.Email}' added successfuly.");
     }
 }

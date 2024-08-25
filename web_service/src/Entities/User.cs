@@ -34,6 +34,12 @@ public class User : IEntity
     [JsonPropertyName("email")]
     public String Email { get; set; }
 
+    [JsonPropertyName("password")]
+    public String Password { get; set; }
+
+    [JsonPropertyName("roles")]
+    public List<String> Roles { get; set; }
+
     [JsonPropertyName("registered_at")]
     public DateTime RegisteredAt { get; set; }
 
@@ -67,6 +73,13 @@ public class User : IEntity
         LastName = String.Empty;
         EmployeeId = String.Empty;
         Email = String.Empty;
+        Password = String.Empty;
+        Roles = [];
         RegisteredAt = DateTime.UtcNow;
+    }
+
+    public User ShallowClone()
+    {
+        return (User) this.MemberwiseClone();
     }
 }
