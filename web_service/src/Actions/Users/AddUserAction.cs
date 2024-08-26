@@ -32,6 +32,9 @@ public partial class AddUserArgs
     [JsonPropertyName("password")]
     public String Password { get; set; }
 
+    [JsonPropertyName("roles")]
+    public List<string> Roles { get; set; }
+
     public AddUserArgs()
     {
         FirstName = String.Empty;
@@ -39,6 +42,7 @@ public partial class AddUserArgs
         EmployeeId = String.Empty;
         Email = String.Empty;
         Password = String.Empty;
+        Roles = [];
     }
 
     private bool IsValidPassword()
@@ -87,8 +91,9 @@ public class AddUserAction : IAction
         user.LastName = args.LastName;
         user.Email = args.Email;
         user.EmployeeId = args.EmployeeId;
+        user.Roles = args.Roles;
 
-        Log.Information($"Adding new user - [{user.FirstName} {user.LastName}]");
+        Log.Information($"Adding new user - [{user.Email}, Roles: '{string.Join(", ", user.Roles)}']");
  
         UserContext.Instance.AddUser(user);
 
