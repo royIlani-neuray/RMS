@@ -40,3 +40,9 @@
     margin-top: 1.5rem;
   }
   
+  .error-message {
+    color: #f44336; /* Red color for error */
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }

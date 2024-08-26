@@ -57,11 +57,15 @@ public class User : IEntity
         [JsonPropertyName("last_name")]
         public String LastName { get; set; }
 
+        [JsonPropertyName("email")]
+        public String Email { get; set; }
+
         public UserBrief(User user)
         {
             Id = user.Id;
             FirstName = user.FirstName;
             LastName = user.LastName;
+            Email = user.Email;
         }
     }
 

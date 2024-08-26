@@ -53,7 +53,6 @@ public class UserController : ControllerBase
         return user;
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public void AddUser([FromBody] AddUserArgs args)
     {
