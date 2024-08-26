@@ -8,6 +8,7 @@
 ***/
 import { Component } from '@angular/core';
 import { SettingsService } from './services/settings.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,16 @@ export class AppComponent {
   title = 'Radar Management Service';
 
   version : string
+  isLoginPage: boolean = false;
 
-  constructor(private settingsService : SettingsService) { }
+  constructor(private settingsService : SettingsService, private router : Router) 
+  { 
+      // Listen to route changes
+      this.router.events.subscribe((event) => {
+        // Check if the current route is 'login'
+        this.isLoginPage = this.router.url === '/login';
+      });
+  }
 
   ngOnInit(): void 
   {

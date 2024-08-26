@@ -29,9 +29,12 @@ import { DeviceRecorderComponent } from './pages/recordings-page/components/devi
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent },
+
+  { path: 'login', component: LoginPageComponent },
 
   { 
     path: 'radar/:radar_id', 

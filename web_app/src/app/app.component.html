@@ -1,5 +1,5 @@
 
-<mat-toolbar color="primary" class="app-navbar">
+<mat-toolbar color="primary" class="app-navbar" *ngIf="!isLoginPage">
   <mat-toolbar-row style="height: 54px;">
     <div>
       <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>

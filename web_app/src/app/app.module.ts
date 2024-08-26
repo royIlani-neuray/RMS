@@ -79,6 +79,7 @@ import { SchedulesListComponent } from './pages/recordings-page/components/sched
 import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +120,8 @@ import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/componen
     RadarTrackerWindowComponent,
     VitalSignsWindowComponent,
     DaysOfWeekComponent,
-    RadarHeatmapWindowComponent
+    RadarHeatmapWindowComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
