@@ -38,4 +38,10 @@ export class AppComponent {
       }
     })
   }
+
+  signout(): void
+  {
+    localStorage.removeItem('auth');
+    this.router.navigate(['login']);
+  }
 }
