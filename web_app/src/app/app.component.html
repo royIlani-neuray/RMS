@@ -1,5 +1,5 @@
 
-<mat-toolbar color="primary" class="app-navbar">
+<mat-toolbar color="primary" class="app-navbar" *ngIf="!isLoginPage">
   <mat-toolbar-row style="height: 54px;">
     <div>
       <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
@@ -10,7 +10,8 @@
       <a routerLink="/tracks-viewer" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Tracks Viewer</button></a>|
       <a routerLink="/templates" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Templates</button></a>|
       <a routerLink="/recordings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Recordings</button></a>|
-      <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a> 
+      <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a>| 
+      <button mat-button (click)="signout()">Sign out</button> 
     </div>
 
     <span class="flexExpand"></span>

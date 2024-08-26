@@ -13,7 +13,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
+import { JwtInterceptor } from './security/jwt-interceptor'
+import { getJwtToken } from './security/role-guard';
+import { JwtModule } from '@auth0/angular-jwt';
+
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
@@ -79,6 +83,7 @@ import { SchedulesListComponent } from './pages/recordings-page/components/sched
 import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +124,8 @@ import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/componen
     RadarTrackerWindowComponent,
     VitalSignsWindowComponent,
     DaysOfWeekComponent,
-    RadarHeatmapWindowComponent
+    RadarHeatmapWindowComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
@@ -156,9 +162,16 @@ import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/componen
     HttpClientModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    JwtModule.forRoot({ config: {tokenGetter: getJwtToken}})
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

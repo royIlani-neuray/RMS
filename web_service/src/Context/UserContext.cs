@@ -53,7 +53,7 @@ public sealed class UserContext : EntityContext<User> {
         if (String.IsNullOrWhiteSpace(employeeId))
             return false;
 
-        if (entities.Values.ToList().Exists(user => user.EmployeeId == employeeId))
+        if (entities.Values.ToList().Exists(user => user.EmployeeId.Equals(employeeId, StringComparison.CurrentCultureIgnoreCase)))
             return true;
         
         return false;
@@ -64,7 +64,7 @@ public sealed class UserContext : EntityContext<User> {
         if (String.IsNullOrWhiteSpace(email))
             return false;
 
-        if (entities.Values.ToList().Exists(user => user.Email == email))
+        if (entities.Values.ToList().Exists(user => user.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)))
             return true;
         
         return false;
@@ -75,15 +75,27 @@ public sealed class UserContext : EntityContext<User> {
         return GetEntity(userId);
     }
 
+    public User GetUserByEmail(string email)
+    {
+        var user = entities.Values.FirstOrDefault(user => user.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
+        
+        if (user == null)
+        {
+            throw new NotFoundException($"Could not find user with the given email");
+        }
+
+        return user;
+    }
+
     public void AddUser(User user)
     {
         if (IsUserExist(user.Id))
             throw new Exception("Cannot add user. Another user with the same ID already exist.");
 
-        if (IsEmployeeIdExist(user.Id))
+        if (!string.IsNullOrWhiteSpace(user.EmployeeId) && IsEmployeeIdExist(user.EmployeeId))
             throw new Exception("Cannot add user. Another user with the employee ID already exist.");
 
-        if (IsEmailExist(user.Id))
+        if (IsEmailExist(user.Email))
             throw new Exception("Cannot add user. Another user with the given email already exist.");
 
         AddEntity(user);

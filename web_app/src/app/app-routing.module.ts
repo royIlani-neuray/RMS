@@ -8,6 +8,7 @@
 ***/
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoleGuard } from './security/role-guard';
 
 import { RadarPageComponent } from './pages/radar-page/radar-page.component';
 import { RadarsPageComponent } from './pages/radars-page/radars-page.component';
@@ -29,14 +30,18 @@ import { DeviceRecorderComponent } from './pages/recordings-page/components/devi
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 const routes: Routes = [
-  { path: '', component: RadarsPageComponent },
+  { path: '', component: RadarsPageComponent, canActivate: [RoleGuard] },
+
+  { path: 'login', component: LoginPageComponent },
 
   { 
     path: 'radar/:radar_id', 
     title: 'Devices - RMS | neuRay Labs', 
     component: RadarPageComponent,
+    canActivate: [RoleGuard],
     children: [
       {
         path: '',
@@ -54,21 +59,22 @@ const routes: Routes = [
     ] 
   },
 
-  { path: 'radars', title: 'Radars - RMS | neuRay Labs', component: RadarsPageComponent },
+  { path: 'radars', title: 'Radars - RMS | neuRay Labs', component: RadarsPageComponent, canActivate: [RoleGuard] },
 
-  { path: 'cameras', title: 'Cameras - RMS | neuRay Labs', component: CamerasPageComponent },
-  { path: 'camera/:camera_id', title: 'Cameras - RMS | neuRay Labs', component: CameraPageComponent },
+  { path: 'cameras', title: 'Cameras - RMS | neuRay Labs', component: CamerasPageComponent, canActivate: [RoleGuard] },
+  { path: 'camera/:camera_id', title: 'Cameras - RMS | neuRay Labs', component: CameraPageComponent, canActivate: [RoleGuard] },
 
-  { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent },
-  { path: 'register-radar', title: 'Register Radar Device - RMS | neuRay Labs', component: RegisterRadarPageComponent },
+  { path: 'device-mapping', title: 'Device Mapping - RMS | neuRay Labs', component: DeviceMappingPageComponent, canActivate: [RoleGuard] },
+  { path: 'register-radar', title: 'Register Radar Device - RMS | neuRay Labs', component: RegisterRadarPageComponent, canActivate: [RoleGuard] },
 
-  { path: 'templates', title: 'Templates - RMS | neuRay Labs', component: TemplatesPageComponent},
-  { path: 'template/:template_id', title: 'Templates - RMS | neuRay Labs', component: TemplatePageComponent },
+  { path: 'templates', title: 'Templates - RMS | neuRay Labs', component: TemplatesPageComponent, canActivate: [RoleGuard]},
+  { path: 'template/:template_id', title: 'Templates - RMS | neuRay Labs', component: TemplatePageComponent, canActivate: [RoleGuard] },
 
   { 
     path: 'recordings', 
     title: 'Recordings - RMS | neuRay Labs', 
     component: RecordingsPageComponent,
+    canActivate: [RoleGuard],
     children: [
       {
         path: '',
@@ -89,12 +95,12 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'tracks-viewer', title: 'Tracks Viewer - RMS | neuRay Labs', component: TracksViewerPageComponent},
-  { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent },
-  { path: 'no-service', component: ErrorPageNoServiceComponent },
+  { path: 'tracks-viewer', title: 'Tracks Viewer - RMS | neuRay Labs', component: TracksViewerPageComponent, canActivate: [RoleGuard] },
+  { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent, canActivate: [RoleGuard] },
+  { path: 'no-service', component: ErrorPageNoServiceComponent, canActivate: [RoleGuard] },
   
   //Wild Card Route for 404 request
-  { path: '**', pathMatch: 'full', title: '404 - RMS | neuRay Labs', component: ErrorPageNotFoundComponent },
+  { path: '**', pathMatch: 'full', title: '404 - RMS | neuRay Labs', component: ErrorPageNotFoundComponent, canActivate: [RoleGuard] },
 ];
 
 @NgModule({

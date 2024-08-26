@@ -10,18 +10,22 @@ using WebService.Entites;
 using WebService.Context;
 using WebService.Actions.Users;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WebService.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebService.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("users")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
+    private readonly JWTAuthentication JwtAuth;
 
-    public UserController(ILogger<UserController> logger)
+    public UserController(JWTAuthentication authentication)
     {
-        _logger = logger;
+        JwtAuth = authentication;
     }
 
     private void ValidateUserId(string userId)
@@ -43,7 +47,10 @@ public class UserController : ControllerBase
         if (!UserContext.Instance.IsUserExist(userId))
             throw new NotFoundException("There is no user with the provided id");
 
-        return UserContext.Instance.GetUser(userId);
+        // remove the password hash from the user data
+        var user = UserContext.Instance.GetUser(userId).ShallowClone();
+        user.Password = "RESTRICTED_DATA";
+        return user;
     }
 
     [HttpPost]
@@ -55,11 +62,24 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{userId}")]
+    [Authorize(Roles = "Administrator")]
     public void DeleteUser(string userId)
     {        
         ValidateUserId(userId); 
         var action = new DeleteUserAction(userId);
         action.Run();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("auth")]
+    public IActionResult AuthenticateUser([FromBody] AuthRequest args)
+    {
+        if (!JwtAuth.AuthenticateUser(args, out string jwtToken))
+        {
+            return Unauthorized();
+        }
+
+        return Ok(new { token = jwtToken });
     }
 
 }
