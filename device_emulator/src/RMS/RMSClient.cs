@@ -157,7 +157,7 @@ public class RMSClient
         IPAddress gw = IPAddress.Parse("0.0.0.0");
         writer.Write(gw.GetAddressBytes());
 
-        bool isStaticIpSet = false;
+        bool isStaticIpSet = true;
         writer.Write(isStaticIpSet);
 
         string model = "DEVICE_EMULATOR";

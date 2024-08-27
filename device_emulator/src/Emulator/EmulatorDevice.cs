@@ -102,6 +102,8 @@ public class EmulatorDevice {
 
     public void Run()
     {
+        System.Console.WriteLine("Starting emulator excution, waiting for RMS connection...");
+        
         while (true)
         {
             TcpClient controlClient = controlServer.AcceptTcpClient();            

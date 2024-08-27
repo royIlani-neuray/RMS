@@ -124,7 +124,10 @@ public class Emulator {
     public void Start()
     {
         rmsClient = new RMSClient();
-        emulatorTask = Task.Run(() => EmulatorMain());
+        emulatorTask = Task.Run(EmulatorMain);
+
+        // register the device in RMS if needed.
+        Task.Run(RegisterEmulatorAsync);
     }
 
     public async Task RegisterEmulatorAsync()
@@ -144,14 +147,12 @@ public class Emulator {
         System.Console.WriteLine("Registered the Emulator in RMS.");
     }
 
-    private async Task EmulatorMain()
+    private void EmulatorMain()
     {
         System.Console.WriteLine($"Emulator Device ID: {deviceId}");
 
         System.Console.WriteLine("Starting the device...");
         device = new EmulatorDevice();
-
-        await RegisterEmulatorAsync();
 
         System.Console.WriteLine("Sending device info broadcast");
         rmsClient!.SendDeviceDiscoveryMessage(deviceId);

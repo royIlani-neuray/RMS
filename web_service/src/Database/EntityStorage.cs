@@ -19,7 +19,22 @@ public class EntityStorage<Entity> where Entity : IEntity {
     public static void SaveEntity(Entity entity)
     {
         string jsonString = JsonSerializer.Serialize(entity);
-        File.WriteAllText(System.IO.Path.Combine(entity.StoragePath, entity.Id + StorageFileExtention), jsonString);
+
+        // in order to avoid loosing data in case the disk is full we first write the updated file to a temp file
+        // and then rename it.
+        string filePath = System.IO.Path.Combine(entity.StoragePath, entity.Id + StorageFileExtention);
+        string tmpFilePath = System.IO.Path.Combine(entity.StoragePath, entity.Id + "_tmp" + StorageFileExtention);
+        
+        try
+        {
+            File.WriteAllText(tmpFilePath, jsonString);
+            File.Move(tmpFilePath, filePath, true);
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to save entity in storage! [path: {filePath}]", ex);
+            throw;
+        }
     } 
 
     public static void DeleteEntity(Entity entity)
