@@ -13,6 +13,7 @@ using WebService.Services.Inference.GateId;
 using WebService.Services.Inference.HumanDetection;
 using WebService.Services.FallDetection;
 using WebService.Services.Inference.SmartFanGestures;
+using WebService.Services.LineCrossing;
 
 namespace WebService.Services;
 
@@ -30,8 +31,7 @@ public sealed class ServiceManager {
             {
                 lock (singletonLock)
                 {
-                    if (instance == null)
-                        instance = new ServiceManager();
+                    instance ??= new ServiceManager();
                 }
             }
 
@@ -41,8 +41,8 @@ public sealed class ServiceManager {
 
     private ServiceManager() 
     {
-        servicesSettings = new List<ExtensionServiceSettings>();
-        services = new List<IExtensionService>();
+        servicesSettings = [];
+        services = [];
     }
 
     #endregion
@@ -53,10 +53,7 @@ public sealed class ServiceManager {
 
     public void InitExtensionServices(List<ExtensionServiceSettings>? servicesSettings)
     {
-        if (servicesSettings == null)
-        {
-            servicesSettings = new List<ExtensionServiceSettings>();
-        }
+        servicesSettings ??= [];
         
         this.servicesSettings = servicesSettings;
 
@@ -66,6 +63,7 @@ public sealed class ServiceManager {
         services.Add(new CameraRecordingService());
         services.Add(new FallDetectionService());
         services.Add(new SmartFanService());
+        services.Add(new LineCrossingService());
 
         foreach (var service in services)
         {

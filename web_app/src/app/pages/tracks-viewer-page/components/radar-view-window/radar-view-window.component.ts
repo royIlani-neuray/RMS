@@ -148,6 +148,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
             // update the scene with the latest frame data
             this.threeJsView.updateTracks(frameData.tracks)
             this.threeJsView.updatePointsCloud(frameData.points)
+            this.threeJsView.updateCrossLines(radar)
             this.frameDataSubject.next(frameData)
           }
         })

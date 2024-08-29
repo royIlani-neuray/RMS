@@ -50,5 +50,7 @@ export interface DeviceMapping {
 
 export interface LinkedService {
     service_id: string
-    service_options: Map<string, string>
+    service_options: {
+        [key: string]: string;
+    };
 }
