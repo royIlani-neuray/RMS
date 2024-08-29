@@ -82,5 +82,16 @@ public class RadarWebSocketServer : WebSocketServer
         };
 
         fallDetectionRateLimiter.Run(() => Enqueue(message));
-    }   
+    }
+
+    public void SendLineCrossingEvent(Object LineCrossingData)
+    {
+        var message = new WebSocketMessage() 
+        {
+            MessageType = "LINE_CROSSING",
+            MessageData = LineCrossingData
+        };
+
+        Enqueue(message);
+    }    
 }

@@ -129,13 +129,24 @@ public abstract class DeviceEntity : IEntity {
 
     private void InitDeviceLogger()
     {
-        Log = new LoggerConfiguration()
+        var loggerConfig = new LoggerConfiguration()
             .Enrich.WithProperty("DeviceTag", $"[{Type} - {Id}] ")
             .WriteTo.File(path: $"./data/logs/{Type.ToString().ToLower()}/{Id}.log",    // Dedicated file for this logger
                           outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message}{NewLine}{Exception}",
-                          fileSizeLimitBytes: 10485760)  
-            .WriteTo.Logger(Serilog.Log.Logger) // This forwards to the global logger
-            .CreateLogger();
+                          fileSizeLimitBytes: 10485760,
+                          restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)  
+            .WriteTo.Logger(Serilog.Log.Logger); // This forwards to the global logger
+        
+        if (Serilog.Log.Logger.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
+        {
+            loggerConfig = loggerConfig.MinimumLevel.Verbose();
+        }
+        else if (Serilog.Log.Logger.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+        {
+            loggerConfig = loggerConfig.MinimumLevel.Debug();
+        }
+
+        Log = loggerConfig.CreateLogger();
     }
 
     public void SetStatus(string status)

@@ -33,6 +33,8 @@ export class ThreeJsView {
     private tracksGroup : THREE.Group
     private pointsCloudGroup : THREE.Group
 
+    public drawCrossLines : boolean = true;
+
     public showBoundingBox : boolean = true;
     public showStaticBoundingBox : boolean = false;
     public showTracks : boolean = true;
@@ -125,6 +127,8 @@ export class ThreeJsView {
       this.scene.add(this.tracksGroup)
       this.scene.add(this.pointsCloudGroup)
       
+      this.drawCrossLines = true;
+
       if (radar.radar_settings.boundary_box != null)
       {
         let boundingBoxSizeX = Math.abs(radar.radar_settings.boundary_box.x_max - radar.radar_settings.boundary_box.x_min)
@@ -195,7 +199,81 @@ export class ThreeJsView {
         this.radar.rotateY((-radar.radar_settings.sensor_position.azimuth_tilt) * (Math.PI / 180))
         this.scene.add(this.radar)  
       }
+    }
 
+    public updateCrossLines(radar : Radar)
+    {
+      // drawing cross lines on first frame instead of initScene since we need to 
+      // wait for text fonts to load.
+      if (!this.drawCrossLines)
+        return;
+
+      const lineCrossService = radar.linked_services.find(s => s.service_id === "LINE_CROSSING");
+
+      if (lineCrossService)
+      {
+        const linesJson = lineCrossService.service_options["lines"]
+
+        if (linesJson)
+        {
+          const lines = JSON.parse(linesJson);
+          this.drawLineCrossing(lines);
+        }
+      }
+
+      this.drawCrossLines = false;
+    }
+    
+    private drawLineCrossing(lines : [])
+    {
+      lines.forEach(line => 
+      {
+        if (line['enabled'])
+        {
+          const start = new THREE.Vector3(-line['start']['x'], 0, line['start']['y'])
+          const end = new THREE.Vector3(-line['end']['x'], 0, line['end']['y'])
+          const points = [];
+          points.push(start, end);
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+          const lineDraw = new THREE.Line(geometry, material);
+          this.scene.add(lineDraw);
+
+
+          // Draw line name text
+          const name = line['name']
+
+          // Create a text geometry with the desired text and font
+          const textGeometry = new TextGeometry(name, {
+            font: this.threeJsFont,
+            size: 0.2,
+            height: 0.02,
+            curveSegments: 12
+          });
+
+          // Center the text geometry
+          textGeometry.center();
+
+          // Create a material for the text
+          const textMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+
+          // Create a mesh for the text using the geometry and material
+          const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+          const centerX = (start.x + end.x) / 2;
+          const centerZ = (start.z + end.z) / 2;
+          textMesh.position.set(centerX, 0, centerZ)
+
+          const angle = Math.atan2(end.z - start.z, end.x - start.x);
+
+          textMesh.rotateX(Math.PI / 2);
+          textMesh.rotateY(Math.PI);
+          textMesh.rotateZ(-angle);
+          
+          this.scene.add(textMesh);
+        }
+      })
+      
     }
 
     private clearGroup(group : THREE.Group)

@@ -22,7 +22,7 @@ public class FallDetectionService : IExtensionService
 
     public string ServiceId => SERVICE_ID;
 
-    public List<DeviceEntity.DeviceTypes> SupportedDeviceTypes => new List<DeviceEntity.DeviceTypes>() { DeviceEntity.DeviceTypes.Radar };
+    public List<DeviceEntity.DeviceTypes> SupportedDeviceTypes => [DeviceEntity.DeviceTypes.Radar];
 
     public ExtensionServiceSettings? Settings { get; set; }
 
