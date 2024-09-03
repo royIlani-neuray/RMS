@@ -23,15 +23,15 @@ public class SettingsController : ControllerBase
     }
 
     [HttpGet("")]
-    public ServiceSettings.SettingsData GetSettings()
+    public RMSSettings.SettingsData GetSettings()
     {
-        return ServiceSettings.Instance.GetSettings();
+        return RMSSettings.Instance.GetSettings();
     }
 
     [HttpPut("")]
-    public void UpdateSettings([FromBody] ServiceSettings.SettingsData settings)
+    public void UpdateSettings([FromBody] RMSSettings.SettingsData settings)
     {
-        ServiceSettings.Instance.UpdateSettings(settings);
+        RMSSettings.Instance.UpdateSettings(settings);
     }
 
 
@@ -45,7 +45,7 @@ public class SettingsController : ControllerBase
     public ReportsUrl GetTrackingReportURL()
     {
         return new ReportsUrl{
-            URL = ServiceSettings.Instance.ReportsURL
+            URL = RMSSettings.Instance.ReportsURL
         };
     }
 
@@ -61,7 +61,7 @@ public class SettingsController : ControllerBase
                 throw new BadRequestException("invalid url provided.");
         }
 
-        ServiceSettings.Instance.ReportsURL = reportsUrl.URL!;       
+        RMSSettings.Instance.ReportsURL = reportsUrl.URL!;
     }
 
 
@@ -75,7 +75,7 @@ public class SettingsController : ControllerBase
     public object GetReportsInterval()
     {
         return new ReportsInterval{
-            IntervalSeconds = ServiceSettings.Instance.ReportsIntervalSec
+            IntervalSeconds = RMSSettings.Instance.ReportsIntervalSec
         };
     }
 
@@ -85,7 +85,19 @@ public class SettingsController : ControllerBase
         if (reportsInterval.IntervalSeconds == null)
             throw new BadRequestException("missing interval_seconds.");
 
-        ServiceSettings.Instance.ReportsIntervalSec = reportsInterval.IntervalSeconds.Value;
+        RMSSettings.Instance.ReportsIntervalSec = reportsInterval.IntervalSeconds.Value;
+    }
+
+    [HttpGet("recordings-retention")]
+    public object GetRecordingRetention()
+    {
+        return RMSSettings.Instance.RecordingsRetentionSettings;
+    }
+
+    [HttpPost("recordings-retention")]
+    public void SetRecordingRetention([FromBody] RMSSettings.RecordingsRetention recordingsRetention)
+    {
+        RMSSettings.Instance.RecordingsRetentionSettings = recordingsRetention;
     }
 
     [HttpGet("version")]
@@ -93,7 +105,7 @@ public class SettingsController : ControllerBase
     {
         return new 
         {
-            version = ServiceSettings.Instance.RMSVersion
+            version = RMSSettings.Instance.RMSVersion
         };
     }
 
@@ -102,7 +114,7 @@ public class SettingsController : ControllerBase
     {
         return new
         {
-            support = ServiceSettings.Instance.CloudUploadSupport
+            support = RMSSettings.Instance.CloudUploadSupport
         };
     }
 }

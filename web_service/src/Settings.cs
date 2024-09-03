@@ -9,9 +9,21 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class ServiceSettings 
+public class RMSSettings 
 {
     public static readonly string SettingsFilePath = "./data/settings.json";
+
+    public class RecordingsRetention
+    {
+        [JsonPropertyName("enabled")]
+        public bool Enabled { get; set; } = true;
+
+        [JsonPropertyName("expiration_days")]
+        public int ExpirationDays { get; set; } = 7;
+
+        [JsonPropertyName("delete_uploaded_only")]
+        public bool DeleteUploadedOnly { get; set; } = true;
+    }
 
     public class SettingsData
     {
@@ -20,6 +32,9 @@ public class ServiceSettings
         
         [JsonPropertyName("reports_url")]
         public string ReportsURL { get; set; } = String.Empty;
+
+        [JsonPropertyName("recordings_retention")]
+        public RecordingsRetention RecordingsRetentionSettings { get; set; } = new();
     }
 
     public int ReportsIntervalSec 
@@ -42,14 +57,24 @@ public class ServiceSettings
         }
     }
 
+    public RecordingsRetention RecordingsRetentionSettings
+    { 
+        get { return Settings!.RecordingsRetentionSettings; }
+        set 
+        {
+            Settings!.RecordingsRetentionSettings = value;
+            SaveSettings();
+        }
+    }
+
     private SettingsData? Settings;
 
     #region Singleton
     
     private static object singletonLock = new object();
-    private static volatile ServiceSettings? instance; 
+    private static volatile RMSSettings? instance; 
 
-    public static ServiceSettings Instance {
+    public static RMSSettings Instance {
         get 
         {
             if (instance == null)
@@ -57,7 +82,7 @@ public class ServiceSettings
                 lock (singletonLock)
                 {
                     if (instance == null)
-                        instance = new ServiceSettings();
+                        instance = new RMSSettings();
                 }
             }
 
@@ -68,7 +93,7 @@ public class ServiceSettings
     public string RMSVersion { get; set; } = String.Empty;
     public bool CloudUploadSupport { get; set; } = false;
 
-    private ServiceSettings() 
+    private RMSSettings() 
     {
         if (File.Exists(SettingsFilePath))
         {

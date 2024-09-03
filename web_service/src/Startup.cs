@@ -35,7 +35,7 @@ public class Startup
 
         Log.Information($"Running as user: {Environment.UserName}");
 
-        ServiceSettings.Instance.RMSVersion = version;
+        RMSSettings.Instance.RMSVersion = version;
 
         Log.Information("Initializing DB...");
         StorageDatabase.DatabaseInit();
@@ -79,6 +79,10 @@ public class Startup
 
         Log.Information("Starting Recordings Scheduler...");
         RecordingScheduler.Instance.Start();
+
+        Log.Information("Starting Recordings Rettention Scheduler...");
+        RecordingsRetentionScheduler.Instance.Start();
+
     }
 
 }

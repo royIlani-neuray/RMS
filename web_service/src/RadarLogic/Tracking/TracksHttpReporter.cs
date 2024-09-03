@@ -34,8 +34,8 @@ public class TracksHttpReporter : WorkerThread<FrameData>
     {
         try
         {
-            string reportsURL = ServiceSettings.Instance.ReportsURL;
-            int ReportsIntervalSec = ServiceSettings.Instance.ReportsIntervalSec;
+            string reportsURL = RMSSettings.Instance.ReportsURL;
+            int ReportsIntervalSec = RMSSettings.Instance.ReportsIntervalSec;
 
             //Log.Debug($"ReportsURL: {reportsURL}");
             //Log.Debug($"ReportsIntervalSec: {ReportsIntervalSec}");

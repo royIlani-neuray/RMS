@@ -13,7 +13,7 @@ namespace WebService.WebSockets;
 
 public class RadarWebSocketServer : WebSocketServer
 {
-    private const int MAX_FRAME_RATE_FPS = 10;
+    private const int MAX_FRAME_RATE_FPS = 11;  // Need to be a bit more than the desired max, to account for jitter in frame streaming
     private const int GATE_ID_PREDICTIONS_RATE = 2;
     private const int FALL_DETECTION_SEND_RATE = 5;
     private const int FAN_GESTURES_SEND_RATE = 5;

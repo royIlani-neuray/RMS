@@ -46,8 +46,8 @@ public sealed class S3Manager {
         var AccessKey = Environment.GetEnvironmentVariable("S3_ACCESS_KEY");
         var SecretKey = Environment.GetEnvironmentVariable("S3_SECRET_KEY");
         var region = Environment.GetEnvironmentVariable("S3_REGION");
-        ServiceSettings.Instance.CloudUploadSupport = (AccessKey != null) && (SecretKey != null) && (region != null);
-        if (!ServiceSettings.Instance.CloudUploadSupport) {
+        RMSSettings.Instance.CloudUploadSupport = (AccessKey != null) && (SecretKey != null) && (region != null);
+        if (!RMSSettings.Instance.CloudUploadSupport) {
             Log.Warning("No S3 credentials found, not supporting recording uploads");
             return;
         }
@@ -57,7 +57,7 @@ public sealed class S3Manager {
 
     public async Task UploadDirectoryAsync(string directoryPath, bool withRoot = true)
     {
-        if (!ServiceSettings.Instance.CloudUploadSupport) {
+        if (!RMSSettings.Instance.CloudUploadSupport) {
             Log.Error($"Cannot upload to S3 as cloud is not supported");
             return;
         }
