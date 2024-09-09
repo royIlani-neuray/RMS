@@ -15,6 +15,7 @@ public class StorageDatabase
 {
     public const string RadarStoragePath = "./data/radars";
     public const string CameraStoragePath = "./data/cameras";
+    public const string DeviceGroupStoragePath = "./data/device_groups";
     public const string TemplateStoragePath = "./data/templates";
     public const string UserStoragePath = "./data/users";
     public const string RecordingSchedulesStoragePath = "./data/recordings_schedules";
@@ -79,6 +80,12 @@ public class StorageDatabase
         {
             Log.Information("Creating cameras storage folder.");
             System.IO.Directory.CreateDirectory(CameraStoragePath);
+        }
+
+        if (!System.IO.Directory.Exists(DeviceGroupStoragePath))
+        {
+            Log.Information("Creating device groups storage folder.");
+            System.IO.Directory.CreateDirectory(DeviceGroupStoragePath);
         }
 
         if (!System.IO.Directory.Exists(RecordingSchedulesStoragePath))

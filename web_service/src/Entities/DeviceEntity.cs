@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using WebService.Events;
 using WebService.Services;
 using Serilog;
-using Amazon.S3.Model;
 
 namespace WebService.Entites;
 
