@@ -66,6 +66,22 @@ public class RMSEvents : WebSocketServer
         SendEvent("RADAR_DEVICE_DELETED", radarId);
     }
 
+    public void DeviceGroupAddedEvent(string groupId)
+    {
+        SendEvent("DEVICE_GROUP_ADDED", groupId);
+    }
+
+    public void DeviceGroupUpdatedEvent(string groupId)
+    {
+        SendEvent("DEVICE_GROUP_UPDATED", groupId);
+    }
+
+    public void DeviceGroupDeletedEvent(string groupId)
+    {
+        SendEvent("DEVICE_GROUP_DELETED", groupId);
+    }
+
+
     public void DeviceMappingUpdatedEvent()
     {
         SendEvent("DEVICE_MAPPING_UPDATED", new Object());

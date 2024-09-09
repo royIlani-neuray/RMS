@@ -64,6 +64,9 @@ public class Startup
         Log.Information("Loading radars from storage...");
         RadarContext.Instance.LoadRadarsFromStorage();
 
+        Log.Information("Loading Device Groups...");
+        DeviceGroupContext.Instance.LoadDeviceGroupsFromStorage();
+
         Log.Information("Starting Radar Device Mapper...");
         RadarDeviceMapper.Instance.SetDeviceDiscoveredCallback(DeviceDiscoveredAction.OnDeviceDiscoveredCallback);
         RadarDeviceMapper.Instance.Start();

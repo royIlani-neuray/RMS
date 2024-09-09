@@ -118,8 +118,9 @@ public class RadarTracker
                 InitTrackingApp();                
                 TreakingLoop();               
             }
-            catch
+            catch (Exception ex)
             {
+                radar.Log.Error("RadarTracker task error: ", ex);
                 // unexpected connection timeout, trigger a disconnect flow
                 TriggerDisconnectAction();
             }
