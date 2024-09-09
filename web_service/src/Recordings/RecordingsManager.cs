@@ -359,7 +359,7 @@ public class RecordingsManager
     public bool CanUploadRecordingToS3(string recordingName, bool raiseOnError)
     {
         string message = "";
-        if (!ServiceSettings.Instance.CloudUploadSupport) {
+        if (!RMSSettings.Instance.CloudUploadSupport) {
             message = $"Not supporting cloud upload, not uploading recording {recordingName}";
         } else if (!IsRecordingFinished(recordingName)) {
             message = $"Recording {recordingName} did not finish, not uploading to cloud";
