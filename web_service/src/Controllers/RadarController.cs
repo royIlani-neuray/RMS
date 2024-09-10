@@ -230,11 +230,11 @@ public class RadarController : ControllerBase
     }
 
     [HttpGet("{radarId}/log")]
-    public IActionResult GetRadarLogs(string radarId)
+    public IActionResult GetRadarLog(string radarId)
     {
         ValidateRadarId(radarId); 
         var radar = RadarContext.Instance.GetRadar(radarId);
-        var logContent = System.IO.File.ReadAllText(radar.LogFilePath);
+        var logContent = Utils.LogFileReader.ReadLastLines(radar.LogFilePath, 5000);
         return Content(logContent, "text/plain");
     }
 }

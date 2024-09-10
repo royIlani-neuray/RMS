@@ -85,6 +85,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RadarHeatmapWindowComponent } from './pages/device-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RadarLogComponent } from './pages/radar-page/components/radar-log/radar-log.component';
+import { SystemLogPageComponent } from './pages/system-log-page/system-log-page.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +128,8 @@ import { RadarLogComponent } from './pages/radar-page/components/radar-log/radar
     DaysOfWeekComponent,
     RadarHeatmapWindowComponent,
     LoginPageComponent,
-    RadarLogComponent
+    RadarLogComponent,
+    SystemLogPageComponent
   ],
   imports: [
     BrowserModule,
