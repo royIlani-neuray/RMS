@@ -21,13 +21,6 @@ namespace WebService.Controllers;
 [Route("radars")]
 public class RadarController : ControllerBase
 {
-    private readonly ILogger<RadarController> _logger;
-
-    public RadarController(ILogger<RadarController> logger)
-    {
-        _logger = logger;
-    }
-
     private void ValidateRadarId(string radarId)
     {
         if (string.IsNullOrWhiteSpace(radarId) || !Guid.TryParse(radarId, out _))
@@ -234,6 +227,15 @@ public class RadarController : ControllerBase
         var action = new GetCalibrationData(radarId);
         action.Run();
         return action.Results;
+    }
+
+    [HttpGet("{radarId}/log")]
+    public IActionResult GetRadarLog(string radarId)
+    {
+        ValidateRadarId(radarId); 
+        var radar = RadarContext.Instance.GetRadar(radarId);
+        var logContent = Utils.LogFileReader.ReadLastLines(radar.LogFilePath, 5000);
+        return Content(logContent, "text/plain");
     }
 }
 

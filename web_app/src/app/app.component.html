@@ -4,14 +4,37 @@
     <div>
       <a routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><span>{{title}}</span></a>
       <span style="padding-right: 50px;"></span>
-      <a routerLink="/radars" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Radars</button></a>|
-      <a routerLink="/cameras" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Cameras</button></a>|
-      <a routerLink="/device-mapping" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Device Mapping</button></a>|
+
+      <a style="text-decoration: none; color: inherit;"><button mat-button [matMenuTriggerFor]="devicesSubmenu">Devices</button></a>|
       <a routerLink="/device-viewer" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Live View</button></a>|
-      <a routerLink="/templates" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Templates</button></a>|
       <a routerLink="/recordings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Recordings</button></a>|
-      <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page" style="text-decoration: none; color: inherit;"><button mat-button>Settings</button></a>| 
+      <a style="text-decoration: none; color: inherit;"><button mat-button [matMenuTriggerFor]="systemSubmenu">System</button></a>|
       <button mat-button (click)="signout()">Sign out</button> 
+    
+      <mat-menu #devicesSubmenu="matMenu"  class="sub-menu">
+        <ng-template matMenuContent>
+          <button mat-menu-item routerLink="/radars" routerLinkActive="active" ariaCurrentWhenActive="page" [matMenuTriggerFor]="radarsSubmenu">Radars</button>
+          <button mat-menu-item routerLink="/cameras" routerLinkActive="active" ariaCurrentWhenActive="page">Cameras</button>
+          <button mat-menu-item routerLink="/radars" routerLinkActive="active" ariaCurrentWhenActive="page">Device Groups</button>
+        </ng-template>
+      </mat-menu>
+
+      <mat-menu #radarsSubmenu="matMenu"  class="sub-menu">
+        <ng-template matMenuContent>
+          <button mat-menu-item routerLink="/radars" routerLinkActive="active" ariaCurrentWhenActive="page">Registered Radars</button>
+          <button mat-menu-item routerLink="/templates" routerLinkActive="active" ariaCurrentWhenActive="page">Configuration Templates</button>
+          <button mat-menu-item routerLink="/device-mapping" routerLinkActive="active" ariaCurrentWhenActive="page">Device Mapping</button>
+        </ng-template>
+      </mat-menu>
+
+      <mat-menu #systemSubmenu="matMenu"  class="sub-menu">
+        <ng-template matMenuContent>
+          <button mat-menu-item routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page">Settings</button>
+          <button mat-menu-item routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page">Manage Users</button>
+          <button mat-menu-item routerLink="/system-log" routerLinkActive="active" ariaCurrentWhenActive="page">System Log</button>
+        </ng-template>
+      </mat-menu>
+
     </div>
 
     <span class="flexExpand"></span>

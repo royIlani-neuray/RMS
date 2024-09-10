@@ -126,11 +126,14 @@ public abstract class DeviceEntity : IEntity {
     [JsonIgnore]
     public Serilog.ILogger Log;
 
+    [JsonIgnore]
+    public string LogFilePath => $"./data/logs/{Type.ToString().ToLower()}/{Id}.log";
+
     private void InitDeviceLogger()
     {
         var loggerConfig = new LoggerConfiguration()
             .Enrich.WithProperty("DeviceTag", $"[{Type} - {Id}] ")
-            .WriteTo.File(path: $"./data/logs/{Type.ToString().ToLower()}/{Id}.log",    // Dedicated file for this logger
+            .WriteTo.File(path: LogFilePath,    // Dedicated file for this logger
                           outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message}{NewLine}{Exception}",
                           fileSizeLimitBytes: 10485760,
                           restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)  
@@ -148,10 +151,18 @@ public abstract class DeviceEntity : IEntity {
         Log = loggerConfig.CreateLogger();
     }
 
-    public void SetStatus(string status)
+    public void SetStatus(string status, bool logAsError=false)
     {
         this.Status = status;
-        this.Log.Information(status);
+
+        if (logAsError)
+        {
+            this.Log.Error(status);
+        }
+        else
+        {
+            this.Log.Information(status);
+        }
 
         if (Type == DeviceTypes.Radar)
         {

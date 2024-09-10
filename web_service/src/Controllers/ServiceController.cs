@@ -29,4 +29,12 @@ public class ServiceController : ControllerBase
         action.Run();
         return action.Results!;
     }
+
+    [HttpGet("system-log")]
+    public IActionResult GetSystemLog()
+    {
+        string logPath = "./data/logs/rms.log"; // TODO: read from config.
+        var logContent = Utils.LogFileReader.ReadLastLines(logPath, 5000);
+        return Content(logContent, "text/plain");
+    }
 }

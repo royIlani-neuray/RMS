@@ -29,3 +29,18 @@
 
   min-height: 0px;
 }
+
+::ng-deep .sub-menu .mat-menu-content {
+  background-color: #3f51b5; /* Change background to blue */
+  min-width: 200px; /* Adjust the width */
+}
+
+::ng-deep .sub-menu .mat-menu-item {
+  font-weight: 500; /* A bit thicker than normal, but not bold */
+  color: white; /* Change text color to white */
+}
+
+.menu-separator {
+  padding-left: 20px;
+  padding-right: 20px;
+}

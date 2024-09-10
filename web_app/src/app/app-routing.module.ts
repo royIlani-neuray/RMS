@@ -31,6 +31,8 @@ import { CamerasPageComponent } from './pages/cameras-page/cameras-page.componen
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { RadarLogComponent } from './pages/radar-page/components/radar-log/radar-log.component';
+import { SystemLogPageComponent } from './pages/system-log-page/system-log-page.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent, canActivate: [RoleGuard] },
@@ -55,7 +57,12 @@ const routes: Routes = [
       {
         path: 'radar-settings',
         component: RadarSettingsComponent
+      },
+      {
+        path: 'radar-log',
+        component: RadarLogComponent
       }
+
     ] 
   },
 
@@ -97,6 +104,7 @@ const routes: Routes = [
   },
   { path: 'device-viewer', title: 'Device Viewer - RMS | neuRay Labs', component: DeviceViewerPageComponent, canActivate: [RoleGuard] },
   { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent, canActivate: [RoleGuard] },
+  { path: 'system-log', title: 'System Log - RMS | neuRay Labs', component: SystemLogPageComponent, canActivate: [RoleGuard] },
   { path: 'no-service', component: ErrorPageNoServiceComponent, canActivate: [RoleGuard] },
   
   //Wild Card Route for 404 request
