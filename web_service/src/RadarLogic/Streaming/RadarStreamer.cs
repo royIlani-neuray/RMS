@@ -74,7 +74,7 @@ public class RadarStreamer
 
             streamingApp = new LongRangeTracking(radar.radarSettings.SensorPosition);
         }
-        else if (appName == "OUT_OF_BOX")
+        else if (appName == "OUT_OF_BOX" || appName == "PC_RANGE_DOPPLER")
         {
             if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {
