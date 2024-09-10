@@ -84,6 +84,7 @@ import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.comp
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RadarHeatmapWindowComponent } from './pages/device-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { RadarLogComponent } from './pages/radar-page/components/radar-log/radar-log.component';
 
 @NgModule({
   declarations: [
@@ -125,7 +126,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
     VitalSignsWindowComponent,
     DaysOfWeekComponent,
     RadarHeatmapWindowComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    RadarLogComponent
   ],
   imports: [
     BrowserModule,

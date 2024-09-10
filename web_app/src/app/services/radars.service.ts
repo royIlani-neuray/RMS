@@ -119,4 +119,8 @@ export class RadarsService {
     })  
   }
 
+  public getRadarLog(radarId : string)
+  {
+    return this.http.get("/api/radars/" + radarId + "/log", { responseType: 'text' })
+  }
 }

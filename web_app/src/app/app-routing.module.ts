@@ -31,6 +31,7 @@ import { CamerasPageComponent } from './pages/cameras-page/cameras-page.componen
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { RadarLogComponent } from './pages/radar-page/components/radar-log/radar-log.component';
 
 const routes: Routes = [
   { path: '', component: RadarsPageComponent, canActivate: [RoleGuard] },
@@ -55,7 +56,12 @@ const routes: Routes = [
       {
         path: 'radar-settings',
         component: RadarSettingsComponent
+      },
+      {
+        path: 'radar-log',
+        component: RadarLogComponent
       }
+
     ] 
   },
 

@@ -126,11 +126,14 @@ public abstract class DeviceEntity : IEntity {
     [JsonIgnore]
     public Serilog.ILogger Log;
 
+    [JsonIgnore]
+    public string LogFilePath => $"./data/logs/{Type.ToString().ToLower()}/{Id}.log";
+
     private void InitDeviceLogger()
     {
         var loggerConfig = new LoggerConfiguration()
             .Enrich.WithProperty("DeviceTag", $"[{Type} - {Id}] ")
-            .WriteTo.File(path: $"./data/logs/{Type.ToString().ToLower()}/{Id}.log",    // Dedicated file for this logger
+            .WriteTo.File(path: LogFilePath,    // Dedicated file for this logger
                           outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message}{NewLine}{Exception}",
                           fileSizeLimitBytes: 10485760,
                           restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)  
