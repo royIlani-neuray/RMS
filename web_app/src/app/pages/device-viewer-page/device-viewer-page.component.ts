@@ -15,7 +15,7 @@ import { CameraViewWindowComponent } from './components/camera-view-window/camer
 import { GaitIdWindowComponent } from './components/gait-id-window/gait-id-window.component';
 import { FallDetectionWindowComponent } from './components/fall-detection-window/fall-detection-window.component';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
-import { TracksViewerDataService } from './tracks-viewer-data.service';
+import { DeviceViewerDataService } from './device-viewer-data.service';
 import { FanGesturesWindowComponent } from './components/fan-gestures-window/fan-gestures-window.component';
 import { RadarTrackerWindowComponent } from './components/radar-tracker-window/radar-tracker-window.component';
 import { VitalSignsWindowComponent } from './components/vital-signs-window/vital-signs-window.component';
@@ -32,11 +32,11 @@ export class DynamicWindow {
 
 @Component({
   selector: 'app-tracks-viewer-page',
-  templateUrl: './tracks-viewer-page.component.html',
-  styleUrls: ['./tracks-viewer-page.component.css'],
-  providers: [TracksViewerDataService]
+  templateUrl: './device-viewer-page.component.html',
+  styleUrls: ['./device-viewer-page.component.css'],
+  providers: [DeviceViewerDataService]
 })
-export class TracksViewerPageComponent implements OnInit, AfterViewInit {
+export class DeviceViewerPageComponent implements OnInit, AfterViewInit {
   
   @ViewChild(MatDrawer) drawer : MatDrawer;
   @ViewChild(MatGridList) windowsGrid: MatGridList;
@@ -49,7 +49,7 @@ export class TracksViewerPageComponent implements OnInit, AfterViewInit {
   windowsCount = 1
   selectedWindowIndex = 0
 
-  constructor(public tracksViewerData : TracksViewerDataService,
+  constructor(public tracksViewerData : DeviceViewerDataService,
               private rmsEventsService : RmsEventsService) { }
 
   ngOnInit(): void 

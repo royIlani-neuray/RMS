@@ -8,19 +8,19 @@
 ***/
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TracksViewerPageComponent } from './tracks-viewer-page.component';
+import { DeviceViewerPageComponent } from './device-viewer-page.component';
 
-describe('TracksViewerPageComponent', () => {
-  let component: TracksViewerPageComponent;
-  let fixture: ComponentFixture<TracksViewerPageComponent>;
+describe('DeviceViewerPageComponent', () => {
+  let component: DeviceViewerPageComponent;
+  let fixture: ComponentFixture<DeviceViewerPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TracksViewerPageComponent ]
+      declarations: [ DeviceViewerPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TracksViewerPageComponent);
+    fixture = TestBed.createComponent(DeviceViewerPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

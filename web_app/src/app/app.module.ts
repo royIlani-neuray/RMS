@@ -62,27 +62,27 @@ import { RecordingsPageComponent } from './pages/recordings-page/recordings-page
 import { RadarInfoComponent } from './pages/radar-page/components/radar-info/radar-info.component';
 import { RadarSettingsComponent } from './pages/radar-page/components/radar-settings/radar-settings.component';
 import { EditRadarInfoDialogComponent } from './pages/radar-page/components/edit-radar-info-dialog/edit-radar-info-dialog.component';
-import { DynamicWindow, TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
-import { RadarViewWindowComponent } from './pages/tracks-viewer-page/components/radar-view-window/radar-view-window.component';
-import { RadarDetailsInfoComponent } from './pages/tracks-viewer-page/components/radar-details-info/radar-details-info.component';
+import { DynamicWindow, DeviceViewerPageComponent } from './pages/device-viewer-page/device-viewer-page.component';
+import { RadarViewWindowComponent } from './pages/device-viewer-page/components/radar-view-window/radar-view-window.component';
+import { RadarDetailsInfoComponent } from './pages/device-viewer-page/components/radar-details-info/radar-details-info.component';
 import { ConfigScriptDialogComponent } from './pages/radar-page/components/config-script-dialog/config-script-dialog.component';
 import { CreateTemplateDialogComponent } from './pages/templates-page/components/create-template-dialog/create-template-dialog.component';
-import { CameraViewWindowComponent } from './pages/tracks-viewer-page/components/camera-view-window/camera-view-window.component';
+import { CameraViewWindowComponent } from './pages/device-viewer-page/components/camera-view-window/camera-view-window.component';
 import { RenameDialogComponent } from './pages/recordings-page/components/rename-dialog/rename-dialog.component';
 import { RecordingsListComponent } from './pages/recordings-page/components/recordings-list/recordings-list.component';
 import { DeviceRecorderComponent } from './pages/recordings-page/components/device-recorder/device-recorder.component';
 import { CamerasPageComponent } from './pages/cameras-page/cameras-page.component';
 import { CameraPageComponent } from './pages/camera-page/camera-page.component';
 import { RegisterCameraDialogComponent } from './pages/cameras-page/components/register-camera-dialog/register-camera-dialog.component';
-import { GaitIdWindowComponent } from './pages/tracks-viewer-page/components/gait-id-window/gait-id-window.component';
-import { FallDetectionWindowComponent } from './pages/tracks-viewer-page/components/fall-detection-window/fall-detection-window.component';
-import { FanGesturesWindowComponent } from './pages/tracks-viewer-page/components/fan-gestures-window/fan-gestures-window.component';
-import { RadarTrackerWindowComponent } from './pages/tracks-viewer-page/components/radar-tracker-window/radar-tracker-window.component';
-import { VitalSignsWindowComponent } from './pages/tracks-viewer-page/components/vital-signs-window/vital-signs-window.component';
+import { GaitIdWindowComponent } from './pages/device-viewer-page/components/gait-id-window/gait-id-window.component';
+import { FallDetectionWindowComponent } from './pages/device-viewer-page/components/fall-detection-window/fall-detection-window.component';
+import { FanGesturesWindowComponent } from './pages/device-viewer-page/components/fan-gestures-window/fan-gestures-window.component';
+import { RadarTrackerWindowComponent } from './pages/device-viewer-page/components/radar-tracker-window/radar-tracker-window.component';
+import { VitalSignsWindowComponent } from './pages/device-viewer-page/components/vital-signs-window/vital-signs-window.component';
 import { SchedulesListComponent } from './pages/recordings-page/components/schedules-list/schedules-list.component';
 import { DaysOfWeekComponent } from './components/days-of-week/days-of-week.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { RadarHeatmapWindowComponent } from './pages/tracks-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
+import { RadarHeatmapWindowComponent } from './pages/device-viewer-page/components/radar-heatmap-window/radar-heatmap-window.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 @NgModule({
@@ -104,7 +104,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
     RecordingsPageComponent,
     RadarInfoComponent,
     RadarSettingsComponent,
-    TracksViewerPageComponent,
+    DeviceViewerPageComponent,
     RadarViewWindowComponent,
     DynamicWindow,
     RadarDetailsInfoComponent,

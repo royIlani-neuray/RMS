@@ -18,7 +18,7 @@ import { RmsEventsService } from 'src/app/services/rms-events.service';
 import { RadarViewWindowComponent } from './components/radar-view-window/radar-view-window.component';
 
 @Injectable()
-export class TracksViewerDataService {
+export class DeviceViewerDataService {
 
   private selectedWindow : RadarViewWindowComponent
   public selectedWindowSubject: Subject<RadarViewWindowComponent> = new Subject<RadarViewWindowComponent>()

@@ -7,7 +7,7 @@
 **
 ***/
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { TracksViewerDataService } from '../../tracks-viewer-data.service';
+import { DeviceViewerDataService } from '../../device-viewer-data.service';
 import { RadarsService } from 'src/app/services/radars.service';
 import { Radar } from 'src/app/entities/radar';
 import { Router } from '@angular/router';
@@ -29,7 +29,7 @@ export class RadarViewWindowComponent implements OnInit, OnDestroy, AfterViewIni
   
   private threeJsView: ThreeJsView = new ThreeJsView()
   
-  constructor(public tracksViewerData : TracksViewerDataService,
+  constructor(public tracksViewerData : DeviceViewerDataService,
               private radarsService : RadarsService,
               private deviceWebsocketService : RadarWebsocketService,
               private router : Router) { }
