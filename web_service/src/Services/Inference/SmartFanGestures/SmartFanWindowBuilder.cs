@@ -7,7 +7,6 @@
 **
 ***/
 using Serilog;
-using WebService.RadarLogic.Tracking;
 using WebService.Services.Inference.Utils;
 
 namespace WebService.Services.Inference.SmartFanGestures;

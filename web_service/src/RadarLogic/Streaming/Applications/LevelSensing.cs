@@ -7,11 +7,10 @@
 **
 ***/
 using Serilog;
-using WebService.Entites;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public class LevelSensing : ITrackingApplication 
+public class LevelSensing : IFirmwareApplication 
 {
     public const int FRAME_HEADER_SIZE = 36;
     public const ulong FRAME_HEADER_MAGIC = 0x708050603040102;
@@ -60,7 +59,7 @@ public class LevelSensing : ITrackingApplication
 
     }
 
-    public LevelSensingFrameData ReadFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public LevelSensingFrameData ReadFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
         LevelSensingFrameData frameData = new();
 
@@ -142,7 +141,7 @@ public class LevelSensing : ITrackingApplication
         return frameData;
     }
 
-    public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public FrameData GetNextFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
         LevelSensingFrameData frameData = ReadFrame(readTIDataFunction);
         

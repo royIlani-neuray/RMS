@@ -9,7 +9,7 @@
 using WebService.Entites;
 using WebService.Context;
 using WebService.Actions.Radars;
-using WebService.RadarLogic.Tracking;
+using WebService.RadarLogic.Streaming;
 using Microsoft.AspNetCore.Mvc;
 using WebService.Actions.Services;
 using WebService.RadarLogic.IPRadar;
@@ -140,9 +140,9 @@ public class RadarController : ControllerBase
         ValidateRadarId(radarId); 
         var radar = RadarContext.Instance.GetRadar(radarId);
 
-        if ((radar.radarTracker != null) && (radar.radarTracker.LastFrameData != null))
+        if ((radar.radarStreamer != null) && (radar.radarStreamer.LastFrameData != null))
         {
-            return new HttpTracksReport(radar.radarTracker.LastFrameData);
+            return new HttpTracksReport(radar.radarStreamer.LastFrameData);
         }
         else
         {

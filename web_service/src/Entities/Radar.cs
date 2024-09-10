@@ -8,7 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 using WebService.RadarLogic.IPRadar;
-using WebService.RadarLogic.Tracking;
+using WebService.RadarLogic.Streaming;
 using WebService.WebSockets;
 using WebService.Database;
 using WebService.Services.RadarRecording;
@@ -39,7 +39,7 @@ public class Radar : DeviceEntity {
     public IPRadarAPI? ipRadarAPI;
 
     [JsonIgnore]
-    public RadarTracker? radarTracker;
+    public RadarStreamer? radarStreamer;
 
     [JsonIgnore]
     public RadarWebSocketServer RadarWebSocket;

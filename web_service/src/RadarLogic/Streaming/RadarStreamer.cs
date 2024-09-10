@@ -8,23 +8,22 @@
 ***/
 using WebService.Entites;
 using WebService.Services;
-using WebService.RadarLogic.Tracking.Applications;
 using WebService.Actions.Radars;
-using WebService.Services.RadarRecording;
+using WebService.RadarLogic.Streaming.Applications;
 
-namespace WebService.RadarLogic.Tracking;
+namespace WebService.RadarLogic.Streaming;
 
-public class RadarTracker 
+public class RadarStreamer 
 {
     private Radar radar;
     private Task? trackerTask;
-    private ITrackingApplication? trackingApp;
+    private IFirmwareApplication? streamingApp;
     private bool runTracker;
-    private TracksHttpReporter tracksHttpReporter;
+    private TracksHttpReporter tracksHttpReporter;  // TODO: move this feature to a dedicated service.
     
     public FrameData? LastFrameData;
 
-    public RadarTracker(Radar radar)
+    public RadarStreamer(Radar radar)
     {
         this.radar = radar;
         runTracker = false;
@@ -50,7 +49,7 @@ public class RadarTracker
         disconnectTask.Start();
     }
 
-    private void InitTrackingApp()
+    private void InitStreamingApp()
     {
         if (radar.DeviceMapping == null)
             throw new Exception("Error: cannot get device application.");
@@ -64,7 +63,7 @@ public class RadarTracker
                 throw new Exception($"Error: cannot create tracker app - missing radar position.");
             }
 
-            trackingApp = new PeopleTracking(radar.radarSettings.SensorPosition);
+            streamingApp = new PeopleTracking(radar.radarSettings.SensorPosition);
         }
         else if (appName == "LONG_RANGE_TRACKING")
         {
@@ -73,7 +72,7 @@ public class RadarTracker
                 throw new Exception($"Error: cannot create tracker app - missing radar position.");
             }
 
-            trackingApp = new LongRangeTracking(radar.radarSettings.SensorPosition);
+            streamingApp = new LongRangeTracking(radar.radarSettings.SensorPosition);
         }
         else if (appName == "OUT_OF_BOX")
         {
@@ -82,19 +81,19 @@ public class RadarTracker
                 throw new Exception($"Error: cannot create tracker app - missing radar position.");
             }
 
-            trackingApp = new OutOfBox(radar.radarSettings.SensorPosition);
+            streamingApp = new OutOfBox(radar.radarSettings.SensorPosition);
         }
         else if (appName == "TRAFFIC_MONITORING")
         {
-            trackingApp = new TrafficMonitoring();
+            streamingApp = new TrafficMonitoring();
         }
         else if (appName == "LEVEL_SENSING")
         {
-            trackingApp = new LevelSensing();
+            streamingApp = new LevelSensing();
         }
         else if (appName == "EMULATOR_APPLICATION")
         {
-            trackingApp = new EmulatorStream(radar.Name, radar.Id);
+            streamingApp = new EmulatorStream(radar.Name, radar.Id);
         }
         else throw new Exception($"Error: no tracker exist for application: {appName}");
     }
@@ -115,7 +114,7 @@ public class RadarTracker
                 tracksHttpReporter.StartWorker();
                 ServiceManager.Instance.InitDeviceServices(radar);
                 ConfigureRadar();
-                InitTrackingApp();                
+                InitStreamingApp();                
                 TreakingLoop();               
             }
             catch (Exception ex)
@@ -179,7 +178,7 @@ public class RadarTracker
             
             try
             {
-                nextFrame = trackingApp!.GetNextFrame(radar.ipRadarAPI!.ReadTIData);
+                nextFrame = streamingApp!.GetNextFrame(radar.ipRadarAPI!.ReadTIData);
             }
             catch (System.Exception ex)
             {
@@ -204,6 +203,6 @@ public class RadarTracker
             ServiceManager.Instance.RunServices(radar, LastFrameData);
         }
 
-        // Log.Debug("Tracking loop exited.");
+        // Log.Debug("Streaming loop exited.");
     }
 } 

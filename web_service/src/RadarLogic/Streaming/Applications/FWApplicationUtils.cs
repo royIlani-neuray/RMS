@@ -8,9 +8,9 @@
 ***/
 using Serilog;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public static class TrackingApplicationUtils
+public static class FWApplicationUtils
 {
     public static void CalcCartesianFromSpherical(FrameData.Point point)
     {
