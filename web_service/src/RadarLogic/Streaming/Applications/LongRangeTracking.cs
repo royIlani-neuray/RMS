@@ -9,30 +9,26 @@
 using Serilog;
 using WebService.Entites;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public class PeopleTracking : ITrackingApplication 
+public class LongRangeTracking : IFirmwareApplication 
 {
     public const int FRAME_HEADER_SIZE = 40;
     public const ulong FRAME_HEADER_MAGIC = 0x708050603040102;
     public const int TLV_HEADER_SIZE = 8;
 
     public const int TRACK_OBJECT_TLV_SIZE = 112;
-    public const int POINT_CLOUD_UNIT_SIZE = 20;
-    public const int POINT_CLOUD_INFO_SIZE = 8;
-    public const int TARGET_HEIGHT_INFO_SIZE = 12;
-    public const int VITAL_SIGNS_CIRCULAR_BUFFER_SIZE = 15;
+    public const int POINT_CLOUD_INFO_SIZE = 16;
+    public const int POINT_CLOUD_SIDE_INFO_SIZE = 4;
 
-    public const int TLV_TYPE_POINT_CLOUD = 1020;
+    public const int TLV_TYPE_POINT_CLOUD = 1000;
     public const int TLV_TYPE_TRACKS_LIST = 1010;
     public const int TLV_TYPE_TARGETS_INDEX = 1011;
-    public const int TLV_TYPE_TARGETS_HEIGHT = 1012;
-    public const int TLV_TYPE_PRESENCE_INDICATION = 1021;
-    public const int TLV_TYPE_VITAL_SIGNS = 1040;
+    public const int TLV_TYPE_POINT_CLOUD_SIDE_INFO = 7;
 
     private RadarSettings.SensorPositionParams radarPosition;
 
-    public class PeopleTrackingFrameData {
+    public class LongRangeTrackingFrameData {
 
         public class FrameHeader 
         {
@@ -41,7 +37,7 @@ public class PeopleTracking : ITrackingApplication
             public uint TotalPacketLen;
             public uint Platform;
             public uint FrameNumber;
-            public uint TimeStamp;
+            public uint TimeCpuCycles;
             public uint NumDetectedObjects;
             public uint NumTLVs;
             public uint SubFrameNumber;
@@ -54,7 +50,7 @@ public class PeopleTracking : ITrackingApplication
                 TotalPacketLen = reader.ReadUInt32();
                 Platform = reader.ReadUInt32();
                 FrameNumber = reader.ReadUInt32();
-                TimeStamp = reader.ReadUInt32();
+                TimeCpuCycles = reader.ReadUInt32();
                 NumDetectedObjects = reader.ReadUInt32();
                 NumTLVs = reader.ReadUInt32();
                 SubFrameNumber = reader.ReadUInt32();
@@ -63,20 +59,16 @@ public class PeopleTracking : ITrackingApplication
 
         public class Point
         {
-            public float Elevation;
-            public float Azimuth;
-            public float Doppler;
-            public float Range;
-            public float SNR;
+            public float Range; /* Range in meters */
+            public float Azimuth; /* Azimuth angle in degrees in the range [-90,90] */
+            public float Elevation; /* Elevation angle in degrees in the range [-90,90] */
+            public float Doppler; /* Doppler velocity estimate in m/s */
         }
 
-        public class PointUnit
+        public class PointSideInfo
         {
-            public float ElevationUnit;
-            public float AzimuthUnit;
-            public float DopplerUnit;
-            public float RangeUnit;
-            public float SnrUnit;
+            public short SNR;
+            public short Noise;
         }
 
         public class Track
@@ -96,41 +88,22 @@ public class PeopleTracking : ITrackingApplication
             public float ConfidenceLevel;
         }
 
-        public class TargetHeight
-        {
-            public uint TargetId;
-            public float MaxZ;
-            public float MinZ;
-        }
-
-        public class VitalSignsInfo
-        {
-            public uint TargetId;                             // Target ID used for XYZ location
-            public uint RangeBin;                             // range bin for XYZ location
-            public float BreathingDeviation;                  // deviation of breathing measurement over time
-            public float HeartRate;                           // Heart Rate Measurement
-            public float BreathingRate;                       // Breath Rate Measurement
-            public List<float> HeartCircularBuffer = new();   // Buffer of heartrate waveform
-            public List<float> BreathCircularBuffer = new();  // Buffer of breathrate waveform
-        }
-
         public FrameHeader? frameHeader;
-        public List<Point> pointCloudList = new();
-        public List<TargetHeight> targetsHeightList = new();
-        public List<byte> targetsIndexList = new();
-        public List<Track> tracksList = new();
-        public VitalSignsInfo? vitalSigns;
+        public List<Point> pointCloudList = new List<Point>();
+        public List<PointSideInfo> pointsSideInfoList = new List<PointSideInfo>();
+        public List<byte> targetsIndexList = new List<byte>();
+        public List<Track> tracksList = new List<Track>();
 
     }
 
-    public PeopleTracking(RadarSettings.SensorPositionParams radarPosition)
+    public LongRangeTracking(RadarSettings.SensorPositionParams radarPosition)
     {
         this.radarPosition = radarPosition;
     }
 
-    public PeopleTrackingFrameData ReadFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public LongRangeTrackingFrameData ReadFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
-        PeopleTrackingFrameData frameData = new PeopleTrackingFrameData();
+        LongRangeTrackingFrameData frameData = new LongRangeTrackingFrameData();
 
         while (true)
         {
@@ -143,7 +116,7 @@ public class PeopleTracking : ITrackingApplication
                 continue;
             }
 
-            frameData.frameHeader = new PeopleTrackingFrameData.FrameHeader(headerBytes);
+            frameData.frameHeader = new LongRangeTrackingFrameData.FrameHeader(headerBytes);
             
             if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
             {
@@ -170,6 +143,8 @@ public class PeopleTracking : ITrackingApplication
             var tlvType = reader.ReadUInt32();
             var tlvLength = reader.ReadUInt32();
 
+            Log.Verbose($"Tlv type: {tlvType}, size: {tlvLength}");
+
             byte [] tlvDataBytes = new byte[tlvLength];
             
             int bytesRead = readTIDataFunction(tlvDataBytes, tlvDataBytes.Length);
@@ -182,26 +157,29 @@ public class PeopleTracking : ITrackingApplication
 
             if (tlvType == TLV_TYPE_POINT_CLOUD)
             {
-                // get point unit data first
-                PeopleTrackingFrameData.PointUnit pointUnit = new PeopleTrackingFrameData.PointUnit();
-                pointUnit.ElevationUnit = reader.ReadSingle();
-                pointUnit.AzimuthUnit = reader.ReadSingle();
-                pointUnit.DopplerUnit = reader.ReadSingle();
-                pointUnit.RangeUnit = reader.ReadSingle();
-                pointUnit.SnrUnit = reader.ReadSingle();
-
-                var pointsCount = (tlvLength - POINT_CLOUD_UNIT_SIZE) / POINT_CLOUD_INFO_SIZE;
+                var pointsCount = tlvLength / POINT_CLOUD_INFO_SIZE;
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
-                    PeopleTrackingFrameData.Point point = new PeopleTrackingFrameData.Point();
-                    point.Elevation = reader.ReadSByte() * pointUnit.ElevationUnit;
-                    point.Azimuth = reader.ReadSByte() * pointUnit.AzimuthUnit;
-                    point.Doppler = reader.ReadInt16() * pointUnit.DopplerUnit;
-                    point.Range = reader.ReadUInt16() * pointUnit.RangeUnit;
-                    point.SNR = reader.ReadUInt16() * pointUnit.SnrUnit;
+                    LongRangeTrackingFrameData.Point point = new LongRangeTrackingFrameData.Point();
+                    point.Range = reader.ReadSingle();
+                    point.Azimuth = reader.ReadSingle();
+                    point.Elevation = reader.ReadSingle();
+                    point.Doppler = reader.ReadSingle();
                     frameData.pointCloudList.Add(point);
 
                     Log.Verbose($"PointIndex: {pointIndex}, Range: {point.Range:0.00}, Azimuth: {point.Azimuth:0.00}, Elevation: {point.Elevation:0.00}, Doppler: {point.Doppler:0.00}");
+                }
+            }
+
+            if (tlvType == TLV_TYPE_POINT_CLOUD_SIDE_INFO)
+            {
+                var pointsCloudSideInfoCount = tlvLength / POINT_CLOUD_SIDE_INFO_SIZE;
+                for (int pointIndex = 0; pointIndex < pointsCloudSideInfoCount; pointIndex++)
+                {
+                    LongRangeTrackingFrameData.PointSideInfo pointSideInfo = new LongRangeTrackingFrameData.PointSideInfo();
+                    pointSideInfo.SNR = reader.ReadInt16();
+                    pointSideInfo.Noise = reader.ReadInt16();
+                    frameData.pointsSideInfoList.Add(pointSideInfo);
                 }
             }
 
@@ -211,7 +189,7 @@ public class PeopleTracking : ITrackingApplication
 
                 for (int trackIndex = 0; trackIndex < tracksCount; trackIndex++)
                 {
-                    PeopleTrackingFrameData.Track track = new PeopleTrackingFrameData.Track();
+                    LongRangeTrackingFrameData.Track track = new LongRangeTrackingFrameData.Track();
                     track.TrackId = reader.ReadUInt32();
                     track.PositionX = reader.ReadSingle();
                     track.PositionY = reader.ReadSingle();
@@ -241,71 +219,34 @@ public class PeopleTracking : ITrackingApplication
                 Log.Verbose($"Number of points: {frameData.targetsIndexList.Count}");
             }
 
-            if (tlvType == TLV_TYPE_TARGETS_HEIGHT)
-            {
-                var targetsCount = tlvLength / TARGET_HEIGHT_INFO_SIZE;
-                for (int targetIndex = 0; targetIndex < targetsCount; targetIndex++)
-                {
-                    PeopleTrackingFrameData.TargetHeight target = new PeopleTrackingFrameData.TargetHeight();
-                    target.TargetId = reader.ReadUInt32();
-                    target.MaxZ = reader.ReadSingle();
-                    target.MinZ = reader.ReadSingle();
-                    frameData.targetsHeightList.Add(target);
-                    
-                    Log.Verbose($"Target Height: Track-{target.TargetId}, Max-Z: {target.MaxZ:0.00}, Min-Z: {target.MinZ:0.00}");
-                }
-            }
-
-            if (tlvType == TLV_TYPE_VITAL_SIGNS)
-            {
-                frameData.vitalSigns = new PeopleTrackingFrameData.VitalSignsInfo
-                {
-                    TargetId = reader.ReadUInt16(),
-                    RangeBin = reader.ReadUInt16(),
-                    BreathingDeviation = reader.ReadSingle(),
-                    HeartRate = reader.ReadSingle(),
-                    BreathingRate = reader.ReadSingle()
-                };
-
-                for (int i=0; i<VITAL_SIGNS_CIRCULAR_BUFFER_SIZE; i++)
-                {
-                    frameData.vitalSigns.HeartCircularBuffer.Add(reader.ReadSingle());
-                }
-
-                for (int i=0; i<VITAL_SIGNS_CIRCULAR_BUFFER_SIZE; i++)
-                {
-                    frameData.vitalSigns.BreathCircularBuffer.Add(reader.ReadSingle());
-                }
-
-                Log.Verbose($"Vital Signs: Track-{frameData.vitalSigns.TargetId}, Heart Rate: {frameData.vitalSigns.HeartRate:0.00}, Breathing Rate: {frameData.vitalSigns.BreathingRate:0.00}");
-            }
         }
 
         return frameData;
     }
 
-    public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public FrameData GetNextFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
-        PeopleTrackingFrameData frameData = ReadFrame(readTIDataFunction);
+        LongRangeTrackingFrameData frameData = ReadFrame(readTIDataFunction);
         
         // convert to generic frame data
-        FrameData outFrameData = new();
+        FrameData outFrameData = new Streaming.FrameData();
         outFrameData.FrameNumber = frameData.frameHeader!.FrameNumber;
 
         foreach (var point in frameData.pointCloudList)
         {
             var convertedPoint = new FrameData.Point {
-                Azimuth = point.Azimuth,
+                Azimuth = point.Azimuth, 
                 Elevation = point.Elevation,
                 Range = point.Range,
                 Doppler = point.Doppler,
-                SNR = point.SNR
+
+                /* Note: SNR is currently not provided (need to fuse from side info list) */
             };
 
-            TrackingApplicationUtils.CalcCartesianFromSpherical(convertedPoint);
+            FWApplicationUtils.CalcCartesianFromSpherical(convertedPoint);
 
             float rotatedX, rotatedY, rotatedZ;
-            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+            FWApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
 
             convertedPoint.PositionX = rotatedX;
             convertedPoint.PositionY = rotatedY;
@@ -329,7 +270,7 @@ public class PeopleTracking : ITrackingApplication
             // rotate the track according to radar azimuth and elevation, and add height
 
             float rotatedX, rotatedY, rotatedZ;
-            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
+            FWApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
 
             convertedTrack.PositionX = rotatedX;
             convertedTrack.PositionY = rotatedY;
@@ -339,26 +280,6 @@ public class PeopleTracking : ITrackingApplication
         }
 
         outFrameData.TargetsIndexList = frameData.targetsIndexList;
-
-        outFrameData.TargetsHeightList = frameData.targetsHeightList.ConvertAll(target => new FrameData.TargetHeight() {
-            TargetId = target.TargetId,
-            MaxZ = target.MaxZ,
-            MinZ = target.MinZ
-        });
-
-        if (frameData.vitalSigns != null)
-        {
-            outFrameData.VitalSigns = new FrameData.VitalSignsInfo()
-            {
-                TargetId = frameData.vitalSigns.TargetId,
-                RangeBin = frameData.vitalSigns.RangeBin,
-                BreathingDeviation = frameData.vitalSigns.BreathingDeviation,
-                HeartRate = frameData.vitalSigns.HeartRate,
-                BreathingRate = frameData.vitalSigns.BreathingRate,
-                HeartCircularBuffer = frameData.vitalSigns.HeartCircularBuffer,
-                BreathCircularBuffer = frameData.vitalSigns.BreathCircularBuffer
-            };
-        }
 
         return outFrameData;
     }

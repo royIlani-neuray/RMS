@@ -6,10 +6,6 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using System.Text.Json;
-using WebService.Utils;
-using WebService.RadarLogic.Tracking;
-using WebService.Entites;
 
 namespace WebService.Services.LineCrossing;
 

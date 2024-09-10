@@ -7,62 +7,65 @@
 **
 ***/
 using Serilog;
-using WebService.Entites;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public class LongRangeTracking : ITrackingApplication 
+public class TrafficMonitoring : IFirmwareApplication 
 {
-    public const int FRAME_HEADER_SIZE = 40;
+    public const int FRAME_HEADER_SIZE = 52;
     public const ulong FRAME_HEADER_MAGIC = 0x708050603040102;
     public const int TLV_HEADER_SIZE = 8;
-
     public const int TRACK_OBJECT_TLV_SIZE = 112;
     public const int POINT_CLOUD_INFO_SIZE = 16;
     public const int POINT_CLOUD_SIDE_INFO_SIZE = 4;
 
-    public const int TLV_TYPE_POINT_CLOUD = 1000;
-    public const int TLV_TYPE_TRACKS_LIST = 1010;
-    public const int TLV_TYPE_TARGETS_INDEX = 1011;
-    public const int TLV_TYPE_POINT_CLOUD_SIDE_INFO = 7;
+    public const int TLV_TYPE_POINT_CLOUD = 6;
+    public const int TLV_TYPE_TRACKS_LIST = 7;
+    public const int TLV_TYPE_TARGETS_INDEX = 8;
+    public const int TLV_TYPE_POINT_CLOUD_SIDE_INFO = 9;
 
-    private RadarSettings.SensorPositionParams radarPosition;
-
-    public class LongRangeTrackingFrameData {
-
+    public class TrafficAppFrameData {
         public class FrameHeader 
         {
             public ulong MagicWord;
             public uint Version;
-            public uint TotalPacketLen;
             public uint Platform;
+            public uint TimeStamp;
+            public uint TotalPacketLen;
             public uint FrameNumber;
-            public uint TimeCpuCycles;
-            public uint NumDetectedObjects;
-            public uint NumTLVs;
             public uint SubFrameNumber;
+            public uint ChirpProcessingMargin;
+            public uint FrameProcessingMargin;
+            public uint TrackingProcessingTime;
+            public uint UARTSendingTime;
+            public ushort NumTLVs;
+            public ushort Checksum;
 
             public FrameHeader(byte [] headerBytes)
             {
                 var reader = new BinaryReader(new MemoryStream(headerBytes));
                 MagicWord = reader.ReadUInt64();
                 Version = reader.ReadUInt32();
-                TotalPacketLen = reader.ReadUInt32();
                 Platform = reader.ReadUInt32();
+                TimeStamp = reader.ReadUInt32();
+                TotalPacketLen = reader.ReadUInt32();
                 FrameNumber = reader.ReadUInt32();
-                TimeCpuCycles = reader.ReadUInt32();
-                NumDetectedObjects = reader.ReadUInt32();
-                NumTLVs = reader.ReadUInt32();
                 SubFrameNumber = reader.ReadUInt32();
+                ChirpProcessingMargin = reader.ReadUInt32();
+                FrameProcessingMargin = reader.ReadUInt32();
+                TrackingProcessingTime = reader.ReadUInt32();
+                UARTSendingTime = reader.ReadUInt32();
+                NumTLVs = reader.ReadUInt16();
+                Checksum = reader.ReadUInt16();
             }
         }
 
         public class Point
         {
-            public float Range; /* Range in meters */
-            public float Azimuth; /* Azimuth angle in degrees in the range [-90,90] */
-            public float Elevation; /* Elevation angle in degrees in the range [-90,90] */
-            public float Doppler; /* Doppler velocity estimate in m/s */
+            public float Range;
+            public float Azimuth;
+            public float Elevation;
+            public float Doppler;
         }
 
         public class PointSideInfo
@@ -90,20 +93,13 @@ public class LongRangeTracking : ITrackingApplication
 
         public FrameHeader? frameHeader;
         public List<Point> pointCloudList = new List<Point>();
-        public List<PointSideInfo> pointsSideInfoList = new List<PointSideInfo>();
-        public List<byte> targetsIndexList = new List<byte>();
+        public List<PointSideInfo> pointCloudSideInfo = new List<PointSideInfo>();
         public List<Track> tracksList = new List<Track>();
-
     }
 
-    public LongRangeTracking(RadarSettings.SensorPositionParams radarPosition)
+    public TrafficAppFrameData ReadFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
-        this.radarPosition = radarPosition;
-    }
-
-    public LongRangeTrackingFrameData ReadFrame(ITrackingApplication.ReadTIData readTIDataFunction)
-    {
-        LongRangeTrackingFrameData frameData = new LongRangeTrackingFrameData();
+        TrafficAppFrameData frameData = new TrafficAppFrameData();
 
         while (true)
         {
@@ -116,7 +112,7 @@ public class LongRangeTracking : ITrackingApplication
                 continue;
             }
 
-            frameData.frameHeader = new LongRangeTrackingFrameData.FrameHeader(headerBytes);
+            frameData.frameHeader = new TrafficAppFrameData.FrameHeader(headerBytes);
             
             if (frameData.frameHeader.MagicWord != FRAME_HEADER_MAGIC)
             {
@@ -143,14 +139,10 @@ public class LongRangeTracking : ITrackingApplication
             var tlvType = reader.ReadUInt32();
             var tlvLength = reader.ReadUInt32();
 
-            Log.Verbose($"Tlv type: {tlvType}, size: {tlvLength}");
-
             byte [] tlvDataBytes = new byte[tlvLength];
-            
-            int bytesRead = readTIDataFunction(tlvDataBytes, tlvDataBytes.Length);
-            if (bytesRead != tlvLength)
+            if (readTIDataFunction(tlvDataBytes, tlvDataBytes.Length) != tlvLength)
             {
-                throw new Exception($"failed reading TLV data! expected: {tlvLength}, got {bytesRead} bytes");
+                throw new Exception("failed reading TLV data!");
             }
 
             reader = new BinaryReader(new MemoryStream(tlvDataBytes));
@@ -160,7 +152,7 @@ public class LongRangeTracking : ITrackingApplication
                 var pointsCount = tlvLength / POINT_CLOUD_INFO_SIZE;
                 for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
-                    LongRangeTrackingFrameData.Point point = new LongRangeTrackingFrameData.Point();
+                    TrafficAppFrameData.Point point = new TrafficAppFrameData.Point();
                     point.Range = reader.ReadSingle();
                     point.Azimuth = reader.ReadSingle();
                     point.Elevation = reader.ReadSingle();
@@ -173,23 +165,24 @@ public class LongRangeTracking : ITrackingApplication
 
             if (tlvType == TLV_TYPE_POINT_CLOUD_SIDE_INFO)
             {
-                var pointsCloudSideInfoCount = tlvLength / POINT_CLOUD_SIDE_INFO_SIZE;
-                for (int pointIndex = 0; pointIndex < pointsCloudSideInfoCount; pointIndex++)
+                var pointsCount = tlvLength / POINT_CLOUD_SIDE_INFO_SIZE;
+                for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
                 {
-                    LongRangeTrackingFrameData.PointSideInfo pointSideInfo = new LongRangeTrackingFrameData.PointSideInfo();
-                    pointSideInfo.SNR = reader.ReadInt16();
-                    pointSideInfo.Noise = reader.ReadInt16();
-                    frameData.pointsSideInfoList.Add(pointSideInfo);
+                    TrafficAppFrameData.PointSideInfo point = new TrafficAppFrameData.PointSideInfo();
+                    point.SNR = reader.ReadInt16();
+                    point.Noise = reader.ReadInt16();
+                    frameData.pointCloudSideInfo.Add(point);
+
+                    Log.Verbose($"PintSideInfo: {pointIndex}, SNR: {point.SNR}, Noise: {point.Noise}");
                 }
             }
 
             if (tlvType == TLV_TYPE_TRACKS_LIST)
             {
                 var tracksCount = tlvLength / TRACK_OBJECT_TLV_SIZE;
-
                 for (int trackIndex = 0; trackIndex < tracksCount; trackIndex++)
                 {
-                    LongRangeTrackingFrameData.Track track = new LongRangeTrackingFrameData.Track();
+                    TrafficAppFrameData.Track track = new TrafficAppFrameData.Track();
                     track.TrackId = reader.ReadUInt32();
                     track.PositionX = reader.ReadSingle();
                     track.PositionY = reader.ReadSingle();
@@ -205,60 +198,40 @@ public class LongRangeTracking : ITrackingApplication
                     track.ConfidenceLevel = reader.ReadSingle();
                     frameData.tracksList.Add(track);
 
-                    Log.Verbose($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ: {track.PositionZ:0.00}, velX: {track.VelocityX:0.00}, velY: {track.VelocityY:0.00},  velZ: {track.VelocityZ:0.00}");
+                    Log.Verbose($"Track ID: {track.TrackId}, posX: {track.PositionX:0.00}, posY: {track.PositionY:0.00}, posZ:{track.PositionZ:0.00}, velX:{track.VelocityX:0.00}, velY:{track.VelocityY:0.00},  velZ:{track.VelocityZ:0.00}");
                 }
             }
-
-            if (tlvType == TLV_TYPE_TARGETS_INDEX)
-            {
-                for (int i=0; i<tlvLength; i++)
-                {
-                    frameData.targetsIndexList.Add(reader.ReadByte());
-                }
-
-                Log.Verbose($"Number of points: {frameData.targetsIndexList.Count}");
-            }
-
         }
 
-        return frameData;
+        return frameData;  
     }
 
-    public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public FrameData GetNextFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
-        LongRangeTrackingFrameData frameData = ReadFrame(readTIDataFunction);
+        TrafficAppFrameData trafficAppFrameData = ReadFrame(readTIDataFunction);
         
         // convert to generic frame data
-        FrameData outFrameData = new Tracking.FrameData();
-        outFrameData.FrameNumber = frameData.frameHeader!.FrameNumber;
-
-        foreach (var point in frameData.pointCloudList)
+        FrameData outFrameData = new Streaming.FrameData();
+        
+        foreach (var point in trafficAppFrameData.pointCloudList)
         {
             var convertedPoint = new FrameData.Point {
-                Azimuth = point.Azimuth, 
+                Azimuth = point.Azimuth,
                 Elevation = point.Elevation,
                 Range = point.Range,
-                Doppler = point.Doppler,
-
-                /* Note: SNR is currently not provided (need to fuse from side info list) */
+                Doppler = point.Doppler
             };
-
-            TrackingApplicationUtils.CalcCartesianFromSpherical(convertedPoint);
-
-            float rotatedX, rotatedY, rotatedZ;
-            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, convertedPoint.PositionX, convertedPoint.PositionY, convertedPoint.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
-
-            convertedPoint.PositionX = rotatedX;
-            convertedPoint.PositionY = rotatedY;
-            convertedPoint.PositionZ = rotatedZ + this.radarPosition.HeightMeters;
             
             outFrameData.PointsList.Add(convertedPoint);
         }
 
-        foreach (var track in frameData.tracksList)
+        foreach (var track in trafficAppFrameData.tracksList)
         {
             var convertedTrack = new FrameData.Track {
                 TrackId = track.TrackId,
+                PositionX = track.PositionX,
+                PositionY = track.PositionY,
+                PositionZ = track.PositionZ,
                 VelocityX = track.VelocityX,
                 VelocityY = track.VelocityY,
                 VelocityZ = track.VelocityZ,
@@ -267,19 +240,8 @@ public class LongRangeTracking : ITrackingApplication
                 AccelerationZ = track.AccelerationZ
             };
 
-            // rotate the track according to radar azimuth and elevation, and add height
-
-            float rotatedX, rotatedY, rotatedZ;
-            TrackingApplicationUtils.RotatePoint(radarPosition.AzimuthTiltDegrees, radarPosition.ElevationTiltDegrees, track.PositionX, track.PositionY, track.PositionZ, out rotatedX, out rotatedY, out rotatedZ);
-
-            convertedTrack.PositionX = rotatedX;
-            convertedTrack.PositionY = rotatedY;
-            convertedTrack.PositionZ = rotatedZ + this.radarPosition.HeightMeters;
-
             outFrameData.TracksList.Add(convertedTrack);
         }
-
-        outFrameData.TargetsIndexList = frameData.targetsIndexList;
 
         return outFrameData;
     }

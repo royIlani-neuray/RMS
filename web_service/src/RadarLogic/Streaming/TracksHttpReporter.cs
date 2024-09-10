@@ -12,7 +12,7 @@ using System.Text.Json;
 using WebService.Utils;
 using Serilog;
 
-namespace WebService.RadarLogic.Tracking;
+namespace WebService.RadarLogic.Streaming;
 
 public class TracksHttpReporter : WorkerThread<FrameData>
 {

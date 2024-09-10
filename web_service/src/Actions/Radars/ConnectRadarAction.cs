@@ -8,7 +8,7 @@
 ***/
 using WebService.Entites;
 using WebService.RadarLogic.IPRadar;
-using WebService.RadarLogic.Tracking;
+using WebService.RadarLogic.Streaming;
 
 namespace WebService.Actions.Radars;
 
@@ -86,9 +86,9 @@ public class ConnectRadarAction : IAction
                 return;
             }
 
-            radar.SetStatus("Starting radar tracker...");
-            radar.radarTracker = new RadarTracker(radar);
-            radar.radarTracker.Start();
+            radar.SetStatus("Starting radar streamer...");
+            radar.radarStreamer = new RadarStreamer(radar);
+            radar.radarStreamer.Start();
 
             radar.State = Radar.DeviceState.Active;
         }

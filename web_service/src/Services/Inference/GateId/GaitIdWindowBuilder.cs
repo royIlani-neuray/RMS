@@ -6,7 +6,6 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.RadarLogic.Tracking;
 using WebService.Services.Inference.Utils;
 
 namespace WebService.Services.Inference.GateId;

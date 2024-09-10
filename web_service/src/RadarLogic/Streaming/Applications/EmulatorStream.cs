@@ -8,11 +8,10 @@
 ***/
 using System.Text.Json;
 using Serilog;
-using WebService.Entites;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public class EmulatorStream : ITrackingApplication
+public class EmulatorStream : IFirmwareApplication
 {
     private string deviceId;
     private string deviceName;
@@ -25,7 +24,7 @@ public class EmulatorStream : ITrackingApplication
         frameNumber = 0;
     }
 
-    public FrameData GetNextFrame(ITrackingApplication.ReadTIData readTIDataFunction)
+    public FrameData GetNextFrame(IFirmwareApplication.ReadTIData readTIDataFunction)
     {
         FrameData frame;
         byte [] frameSizeBytes = new byte[4];

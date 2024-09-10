@@ -8,7 +8,7 @@
 ***/
 using System.Text.Json.Serialization;
 
-namespace WebService.RadarLogic.Tracking;
+namespace WebService.RadarLogic.Streaming;
 
 public class FrameData 
 {

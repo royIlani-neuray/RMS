@@ -6,11 +6,10 @@
 ** without explicit written authorization from the company.
 **
 ***/
-using WebService.RadarLogic.Tracking;
 
-namespace WebService.RadarLogic.Tracking.Applications;
+namespace WebService.RadarLogic.Streaming.Applications;
 
-public interface ITrackingApplication 
+public interface IFirmwareApplication 
 {
     public delegate int ReadTIData(byte[] dataArray, int size);
     public FrameData GetNextFrame(ReadTIData readTIDataFunction);

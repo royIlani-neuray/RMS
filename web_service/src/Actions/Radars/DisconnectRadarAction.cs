@@ -26,8 +26,8 @@ public class DisconnectRadarAction : IAction
         if (radar.State == Radar.DeviceState.Active)
         {
             radar.SetStatus("Stopping tracker...");
-            radar.radarTracker!.Stop();
-            radar.radarTracker = null;
+            radar.radarStreamer!.Stop();
+            radar.radarStreamer = null;
             radar.SetStatus("Tracker stopped.");
             radar.State = Radar.DeviceState.Connected;
         }   
