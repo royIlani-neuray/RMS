@@ -18,7 +18,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
 import { TemplatesPageComponent } from './pages/templates-page/templates-page.component';
 import { TemplatePageComponent } from './pages/template-page/template-page.component';
 import { RecordingsPageComponent } from './pages/recordings-page/recordings-page.component';
-import { TracksViewerPageComponent } from './pages/tracks-viewer-page/tracks-viewer-page.component';
+import { DeviceViewerPageComponent } from './pages/device-viewer-page/device-viewer-page.component';
 
 import { ErrorPageNotFoundComponent} from './pages/error-page-not-found/error-page-not-found.component';
 import { ErrorPageNoServiceComponent } from './pages/error-page-no-service/error-page-no-service.component';
@@ -95,7 +95,7 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'tracks-viewer', title: 'Tracks Viewer - RMS | neuRay Labs', component: TracksViewerPageComponent, canActivate: [RoleGuard] },
+  { path: 'device-viewer', title: 'Device Viewer - RMS | neuRay Labs', component: DeviceViewerPageComponent, canActivate: [RoleGuard] },
   { path: 'settings', title: 'Settings - RMS | neuRay Labs', component: SettingsPageComponent, canActivate: [RoleGuard] },
   { path: 'no-service', component: ErrorPageNoServiceComponent, canActivate: [RoleGuard] },
   

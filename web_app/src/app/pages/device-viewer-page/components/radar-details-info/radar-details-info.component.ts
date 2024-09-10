@@ -11,7 +11,7 @@ import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { TrackData } from 'src/app/entities/frame-data';
 import { GateIdPrediction } from 'src/app/services/radar-websocket.service';
-import { TracksViewerDataService } from '../../tracks-viewer-data.service';
+import { DeviceViewerDataService } from '../../device-viewer-data.service';
 import { RadarViewWindowComponent } from '../radar-view-window/radar-view-window.component';
 
 
@@ -40,7 +40,7 @@ export class RadarDetailsInfoComponent implements OnInit, OnDestroy {
   frameDataSubscription! : any
   predictionsSubscription! : any
 
-  constructor(public tracksViewerData : TracksViewerDataService) { }
+  constructor(public tracksViewerData : DeviceViewerDataService) { }
 
   ngOnInit(): void 
   {
