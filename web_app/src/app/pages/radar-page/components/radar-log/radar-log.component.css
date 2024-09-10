@@ -4,5 +4,8 @@
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #ddd; /* Optional: for better visibility */
     padding: 10px; /* Optional: for better readability */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    line-height: 1.5;
+    font-family: monospace;
+    font-size: 14px;
 }
-

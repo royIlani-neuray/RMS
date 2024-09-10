@@ -54,7 +54,7 @@ public class ConnectRadarAction : IAction
             }
             catch
             {
-                radar.SetStatus("Error: connection attempt to the radar failed.");
+                radar.SetStatus("Error: connection attempt to the radar failed.", logAsError: true);
                 return false;
             }
 

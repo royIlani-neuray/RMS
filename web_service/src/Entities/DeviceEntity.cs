@@ -151,10 +151,18 @@ public abstract class DeviceEntity : IEntity {
         Log = loggerConfig.CreateLogger();
     }
 
-    public void SetStatus(string status)
+    public void SetStatus(string status, bool logAsError=false)
     {
         this.Status = status;
-        this.Log.Information(status);
+
+        if (logAsError)
+        {
+            this.Log.Error(status);
+        }
+        else
+        {
+            this.Log.Information(status);
+        }
 
         if (Type == DeviceTypes.Radar)
         {
