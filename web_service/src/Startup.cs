@@ -14,6 +14,7 @@ using WebService.Scheduler;
 using WebService.Services;
 using WebService.Events;
 using Serilog;
+using WebService.Recordings;
 
 public class Startup 
 {
@@ -73,6 +74,9 @@ public class Startup
 
         Log.Information("Starting Events WebSocket...");
         RMSEvents.Instance.StartWorker();   
+
+        Log.Information("initializing Recording Manager...");
+        RecordingsManager.Instance.Init();
 
         Log.Information("Starting Device Mapping Scheduler...");
         DeviceMappingScheduler.Instance.Start();

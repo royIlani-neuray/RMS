@@ -16,7 +16,7 @@ public class RMSSettings
     public class RecordingsRetention
     {
         [JsonPropertyName("enabled")]
-        public bool Enabled { get; set; } = true;
+        public bool Enabled { get; set; } = false;
 
         [JsonPropertyName("expiration_days")]
         public int ExpirationDays { get; set; } = 7;

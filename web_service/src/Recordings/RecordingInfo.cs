@@ -31,7 +31,7 @@ public class RecordingInfo
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [JsonPropertyName("is_finished")]
-        public bool? IsFinished { get; set; }
+        public bool IsFinished { get; set; } = false;
 
         [JsonPropertyName("entry_size_bytes")]
         public float EntrySizeBytes { get; set; } = 0;
@@ -72,5 +72,10 @@ public class RecordingInfo
     {
         var jsonString = JsonSerializer.Serialize<RecordingInfo>(this, new JsonSerializerOptions{WriteIndented=true});
         File.WriteAllText(filePath, jsonString);
+    }
+
+    public bool IsFinished()
+    {
+        return RecordingEntries.All(entry => entry.IsFinished);
     }
 }

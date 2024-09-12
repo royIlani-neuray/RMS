@@ -14,6 +14,10 @@ using WebService.Context;
 using WebService.Services.RadarRecording;
 using WebService.Events;
 using Serilog;
+using WebService.Actions.Services;
+using WebService.Services.CameraRecording;
+using WebService.Scheduler;
+using WebService.Actions.Recordings;
 
 namespace WebService.Recordings;
 
@@ -72,6 +76,37 @@ public class RecordingsManager
 
     public const string RECORDING_NAME = "RECORDING_NAME";
     public const string UPLOAD_S3 = "UPLOAD_S3";
+
+    public void Init()
+    {
+        FixRecordingsUploadState();
+        StopAllRunningRecordings();
+        RecordingScheduler.Instance.RestoreSchedules();
+    }
+
+    public void FixRecordingsUploadState()
+    {
+        lock(syncLock)
+        {
+            Log.Information("Fixing recordings upload state");
+            foreach(var recording in GetRecordings().FindAll(recording => recording.IsUploading)) {
+                recording.IsUploading = false;
+                recording.SaveToFile(GetRecordingMetaFilePath(recording.Name));
+            }
+        }
+    }
+
+    public void StopAllRunningRecordings()
+    {
+        Log.Information($"Stopping all running recordings");
+        StopRecordingArgs args = new()
+        {
+            RadarIds = RadarContext.Instance.GetRadarsBrief().Select(radar => radar.Id).ToList(),
+            CameraIds = CameraContext.Instance.GetCamerasBrief().Select(camera => camera.Id).ToList(),
+        };
+        var action = new StopRecordingAction(args);
+        action.Run();
+    }
 
     private bool IsEntryNameValid(string recordingName)
     {
@@ -299,7 +334,7 @@ public class RecordingsManager
                 throw new NotFoundException($"There is no recording entry named: {recordingName}");
 
             RecordingInfo recording = RecordingInfo.LoadFromFile(GetRecordingMetaFilePath(recordingName));
-            return recording.RecordingEntries.All(entry => entry.IsFinished ?? true);
+            return recording.IsFinished();
         }
     }
 

@@ -45,6 +45,51 @@ public class RecordingScheduler : TaskScheduler{
     private const double SCHEDULING_PERIOD_MINUTES = 1;
     private const int CHECK_LAST_MINUTES = 2;  // to not miss events while sleeping over the exact minute
 
+    public void RestoreSchedules()
+    {
+        DateTime now = DateTime.UtcNow;
+        var schedulesList = RecordingScheduleContext.Instance.GetSchedules();
+        foreach (var schedule in schedulesList)
+        {
+            if (schedule.LastStart > schedule.LastEnd) {
+                schedule.LastEnd = now;
+                RecordingScheduleContext.Instance.UpdateSchedule(schedule);
+                if (schedule.Enabled && IsTimeDuringSchedule(schedule, now)) {
+                    Log.Information($"Schedule {schedule.Name} got terminated, restoring it");
+                    StartSchedule(schedule, now);
+                }
+            }
+        }
+    }
+
+    private bool IsTimeDuringSchedule(RecordingSchedule schedule, DateTime time)
+    {
+        DayOfWeek timeDay = time.DayOfWeek;
+        TimeOnly timeTime = TimeOnly.FromDateTime(time);
+        bool startedOnTimeDay = false, endedOnTimeDay = false;
+        if (schedule.StartDays.Contains(timeDay) && schedule.StartTime < timeTime) {
+            startedOnTimeDay = true;
+        }
+        if (schedule.EndDays.Contains(timeDay) && schedule.EndTime < timeTime) {
+            endedOnTimeDay = true;
+        }
+        if (startedOnTimeDay && !endedOnTimeDay) return true;
+        if (endedOnTimeDay && !startedOnTimeDay) return false;
+        if (endedOnTimeDay && startedOnTimeDay) return schedule.StartTime > schedule.EndTime;
+
+        int dayBefore = Mod((int)timeDay - 1, 7);
+        int DaysFromLastEndToDayBefore = schedule.EndDays.Select(endDay => Mod(dayBefore - (int)endDay, 7)).Min(); 
+        int DaysFromLastStartToDayBefore = schedule.StartDays.Select(startDay => Mod(dayBefore - (int)timeDay, 7)).Min(); 
+        if (DaysFromLastEndToDayBefore > DaysFromLastStartToDayBefore) return true;
+        if (DaysFromLastEndToDayBefore < DaysFromLastStartToDayBefore) return false;
+        return schedule.StartTime > schedule.EndTime;
+    }
+
+    public static int Mod(int dividend, int divisor)
+    {
+        return ((dividend % divisor) + divisor) % divisor;
+    }
+
     private bool ShouldStart(RecordingSchedule schedule, DateTime now)
     {
         DateTime startTime = now.Date.Add(schedule.StartTime.ToTimeSpan());
@@ -98,7 +143,7 @@ public class RecordingScheduler : TaskScheduler{
 
     public override void RunTask()
     {
-        DateTime now = DateTime.Now;
+        DateTime now = DateTime.UtcNow;
         Log.Information($"Recording Scheduler: Checking for recording schedules... now: {now.DayOfWeek}, {now}");
         var schedulesList = RecordingScheduleContext.Instance.GetSchedules();
         foreach (var schedule in schedulesList)
