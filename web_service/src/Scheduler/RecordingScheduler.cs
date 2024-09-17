@@ -144,7 +144,7 @@ public class RecordingScheduler : TaskScheduler{
     public override void RunTask()
     {
         DateTime now = DateTime.UtcNow;
-        Log.Information($"Recording Scheduler: Checking for recording schedules... now: {now.DayOfWeek}, {now}");
+        Log.Verbose($"Recording Scheduler: Checking for recording schedules... now: {now.DayOfWeek}, {now}");
         var schedulesList = RecordingScheduleContext.Instance.GetSchedules();
         foreach (var schedule in schedulesList)
         {
