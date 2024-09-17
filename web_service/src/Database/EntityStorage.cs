@@ -32,6 +32,12 @@ public class EntityStorage<Entity> where Entity : IEntity {
         }
         catch (Exception ex)
         {
+            if (File.Exists(tmpFilePath))
+            {
+                // in case the disk is full we will get an empty tmp file
+                File.Delete(tmpFilePath);
+            }
+
             Log.Error($"Failed to save entity in storage! [path: {filePath}]", ex);
             throw;
         }
