@@ -16,9 +16,9 @@ namespace WebService.RadarLogic.Streaming;
 public class RadarStreamer 
 {
     private Radar radar;
-    private Task? trackerTask;
+    private Task? streamerTask;
     private IFirmwareApplication? streamingApp;
-    private bool runTracker;
+    private bool runStreamer;
     private TracksHttpReporter tracksHttpReporter;  // TODO: move this feature to a dedicated service.
     
     public FrameData? LastFrameData;
@@ -26,7 +26,7 @@ public class RadarStreamer
     public RadarStreamer(Radar radar)
     {
         this.radar = radar;
-        runTracker = false;
+        runStreamer = false;
         tracksHttpReporter = new TracksHttpReporter();
     }
 
@@ -60,7 +60,7 @@ public class RadarStreamer
         {
             if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {
-                throw new Exception($"Error: cannot create tracker app - missing radar position.");
+                throw new Exception($"Error: cannot create streaming app - missing radar position.");
             }
 
             streamingApp = new PeopleTracking(radar.radarSettings.SensorPosition);
@@ -69,7 +69,7 @@ public class RadarStreamer
         {
             if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {
-                throw new Exception($"Error: cannot create tracker app - missing radar position.");
+                throw new Exception($"Error: cannot create streaming app - missing radar position.");
             }
 
             streamingApp = new LongRangeTracking(radar.radarSettings.SensorPosition);
@@ -78,7 +78,7 @@ public class RadarStreamer
         {
             if ((radar.radarSettings == null) || (radar.radarSettings.SensorPosition == null))
             {
-                throw new Exception($"Error: cannot create tracker app - missing radar position.");
+                throw new Exception($"Error: cannot create streaming app - missing radar position.");
             }
 
             streamingApp = new OutOfBox(radar.radarSettings.SensorPosition);
@@ -95,19 +95,19 @@ public class RadarStreamer
         {
             streamingApp = new EmulatorStream(radar.Name, radar.Id);
         }
-        else throw new Exception($"Error: no tracker exist for application: {appName}");
+        else throw new Exception($"Error: no streaming app exist for application: {appName}");
     }
 
     public void Start()
     {
-        if (runTracker)
+        if (runStreamer)
         {
-            throw new Exception("Error: tracker already started!");
+            throw new Exception("Error: streamer already started!");
         }
 
-        runTracker = true;
+        runStreamer = true;
 
-        trackerTask = new Task(() => 
+        streamerTask = new Task(() => 
         {
             try
             {
@@ -130,20 +130,20 @@ public class RadarStreamer
         });
 
         
-        trackerTask.Start();
+        streamerTask.Start();
     }
 
     public void Stop()
     {
-        if (!runTracker)
+        if (!runStreamer)
             return;
 
-        runTracker = false;
+        runStreamer = false;
 
-        if (trackerTask == null)
+        if (streamerTask == null)
             return;
 
-        trackerTask.Wait();
+        streamerTask.Wait();
     }
 
     private void ConfigureRadar()
@@ -171,7 +171,7 @@ public class RadarStreamer
     {
         radar.SetStatus("The device is active.");
 
-        while (runTracker)
+        while (runStreamer)
         {
             FrameData nextFrame;
             //Log.Debug("Getting next frame...");
