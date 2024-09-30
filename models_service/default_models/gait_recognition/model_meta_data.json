@@ -1,0 +1,32 @@
+{
+    "version": "",
+    "base_labels": [
+            "atar",
+            "connie",
+            "elad",
+            "guy",
+            "guy_2",
+            "itay",
+            "jonathan",
+            "lotem",
+            "marina",
+            "max",
+            "meitar",
+            "naor",
+            "nitzan",
+            "noam",
+            "or",
+            "roni",
+            "roy",
+            "shaked",
+            "shlomi",
+            "yotam"
+    ],
+    "num_points_in_frame": 128,
+    "num_frames_in_window": 32,
+    "num_overlapped_frames_between_windows": 8,
+    "num_windows_for_decision": 10,
+    "decision_method": "majority",
+    "type": "gait_recognition",
+    "model_strategy": "MM_GAIT_NET_4D"
+}

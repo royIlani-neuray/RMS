@@ -33,7 +33,7 @@
         "antGeometry1 -1 0 -1 0 -3 -2 -3 -2 -3 -2 -3 -2",
         "antPhaseRot 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1",
         "fovCfg -1 70.0 20.0",
-        "compRangeBiasAndRxChanPhase 0 1 0 -1 0 1 0 -1 0 1 0 -1 0 1 0 -1 0 1 0 -1 0 1 0 -1 0",
+        "compRangeBiasAndRxChanPhase 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0",
         "%",
         "% Tracker Layer Parameters",
         "% See the Tracking Layer Tuning Guide for more information",

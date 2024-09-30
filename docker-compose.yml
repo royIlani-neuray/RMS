@@ -48,7 +48,20 @@ services:
     profiles:
       - donotstart
 
+  models_service:
+    image: models_service:latest
+    network_mode: "host"
+    build:
+      context: ./models_service
+      dockerfile: ./Dockerfile
+    env_file:
+      - rms-variables.env
+    volumes:
+      - models_service_storage:/app/data
+      - ~/.vsdbg:/remote_debugger:rw
+
 volumes:
   webservice_storage:
   webservice_recordings:
   inference_service_storage:
+  models_service_storage:

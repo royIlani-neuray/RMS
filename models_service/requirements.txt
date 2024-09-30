@@ -1,0 +1,12 @@
+fastapi[standard]
+fastapi_utils
+typing-inspect
+uvicorn
+
+numpy < 2
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
+torch_geometric
+

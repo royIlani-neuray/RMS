@@ -21,6 +21,15 @@
             "sourceFileMap": {
                 "/src": "${workspaceFolder}/web_service"
             }
+        },
+        {
+            "name": "Run models_service/src/main.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/models_service/src/main.py",
+            "console": "integratedTerminal",
+            "args": ["-config", "config.json"],
+            "cwd": "${workspaceFolder}/models_service"
         }
 
     ],
