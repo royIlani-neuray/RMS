@@ -1,0 +1,6 @@
+Files here are automatically copied to the models storage folder upon creation.
+used for storing default models that can be used.
+
+Each model should be stored in its own directory
+The folder must contain a model_meta_data.json file
+

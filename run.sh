@@ -11,7 +11,6 @@
 #docker save --output radar_service.tar radar_service:latest
 #docker load < image.tar
 
-
 docker compose build
 docker compose up
 #docker compose rm

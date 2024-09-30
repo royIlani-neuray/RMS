@@ -1,0 +1,8 @@
+{
+    "logging" : {
+        "filename" : "models_service.log",
+        "level" : "DEBUG",
+        "max_file_size_mb" : 20,
+        "max_files" : 5
+    }
+}

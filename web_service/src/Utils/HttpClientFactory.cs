@@ -55,6 +55,9 @@ public class HttpClientFactory {
         // add here any named client needed.
         InferenceServiceClient.Instance.GetHttpClientDetails(out string name, out Uri baseAddress);
         AddNamedClient(name, baseAddress);
+
+        ModelsServiceClient.Instance.GetHttpClientDetails(out name, out baseAddress);
+        AddNamedClient(name, baseAddress);
     }
 
     public HttpClient CreateClient()
