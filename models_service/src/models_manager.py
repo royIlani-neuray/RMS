@@ -98,4 +98,4 @@ class ModelsManager(object):
 
         output = "elad" , 100
         logging.info(f"Prediction result - Model: {model_name}, Label: {output[0]}, Confidence: {output[1]}")
-        return { "label" : output[0], "confidence" : output[1] } 
+        return { "label" : output[0], "confidence" : output[1], "is_valid": output[2] } 

@@ -1,7 +1,6 @@
 import torch
 import importlib
 import numpy as np
-from .mm_gait_net_4d import mmGaitNet4D
 
 from .constants import STRATEGIES
 
@@ -35,24 +34,6 @@ class Recognizer:
 
     def set_strategy(self):
         class_name = STRATEGIES[self.config['model_strategy']]
-        #module = importlib.import_module('.' + self.config['model_strategy'].lower()        )
+        module = importlib.import_module("." + self.config['model_strategy'].lower(), 'models.gait_recognition')
 
-        #return getattr(module, class_name)
-        return mmGaitNet4D
-
-
-if __name__ == '__main__':
-    '''Unit-test'''
-    import json
-
-    CONFIG_PATH = r"./unit_test_data/gait_recognition/model_meta_data.json"
-    MODEL_PATH = r"./unit_test_data/gait_recognition/model_weights.pth"
-    WINDOW_PATH = r"./unit_test_data/gait_recognition/window.npy"
-
-    with open(CONFIG_PATH, 'r') as f:
-        config_ = json.load(f)
-
-    recognizer = Recognizer(config_, MODEL_PATH)
-
-    window_ = np.load(WINDOW_PATH, allow_pickle=True).item()["x"]
-    print(recognizer.recognize(window_))
+        return getattr(module, class_name)

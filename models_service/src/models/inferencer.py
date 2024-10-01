@@ -1,8 +1,6 @@
 import json
 import glob
 
-import numpy as np
-
 from .gait_recognition.recognizer import Recognizer
 
 
@@ -31,13 +29,3 @@ class Inferencer:
             }
 
         return model_info
-
-
-if __name__ == '__main__':
-    '''Unit-test'''
-
-    WINDOW_PATH = r"./unit_test_data/gait_recognition/window.npy"
-    window_ = np.load(WINDOW_PATH, allow_pickle=True).item()["x"]
-
-    inferencer = Inferencer(r"C:\Users\GuyAdar\Code\ai_research\services\unit_test_data\gait_recognition")
-    print(inferencer.run(window_))
