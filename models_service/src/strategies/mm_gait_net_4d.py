@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch_geometric
 
 from .base import Base
-from ..common.constants import X_IDX, Y_IDX, Z_IDX, V_IDX
+from constants import X_IDX, Y_IDX, Z_IDX, V_IDX
 
 
 class ResidualBlock(nn.Module):

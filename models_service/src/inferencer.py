@@ -9,6 +9,12 @@ class Inferencer:
         self.model_info = self.get_model_info(model_folder_path)
         self.inference_method = self.get_model_inference_method()
 
+    def translate(prediction_input):
+        window = []
+        for frame in prediction_input["frames"]:
+            window.append()
+        return window
+    
     def run(self, window):
         return self.inference_method(window)
 

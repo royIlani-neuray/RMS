@@ -57,7 +57,7 @@ class Recognizer:
 
     def set_strategy(self):
         class_name = STRATEGIES[self.config['model_strategy']]
-        module = importlib.import_module("." + self.config['model_strategy'].lower(), 'models.recognition')
+        module = importlib.import_module("strategies." + self.config['model_strategy'].lower(), 'models.recognition')
 
         return getattr(module, class_name)
 

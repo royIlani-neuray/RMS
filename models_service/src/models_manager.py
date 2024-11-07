@@ -87,13 +87,11 @@ class ModelsManager(object):
     
     def run_prediction(self, model_name : str, prediction_input : dict) -> dict:
         
-        #print(len(prediction_input['frames'][0]["range"]))
-
         model_data = self._get_model_data(model_name)
 
-        #window = translate(prediction_input)
+        window = model_data.inferencer.translate(prediction_input)
         
-        output = model_data.inferencer.run(prediction_input)
+        output = model_data.inferencer.run(window)
 
         logging.info(f"Prediction result - Model: {model_name}, Label: {output[0]}, Confidence: {output[1]}")
         return { "label" : output[0], "confidence" : output[1], "is_valid": output[2] } 
