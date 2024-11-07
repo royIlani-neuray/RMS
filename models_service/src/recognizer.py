@@ -20,9 +20,9 @@ class Recognizer:
 
         self.subjects = self.config["base_labels"]
 
-    def recognize(self, window):
+    def recognize(self, window):        
         if not self.is_valid_window(window):
-            return None, None
+            return 0, 0, False
 
         self.strategy.model.eval()
 
@@ -38,7 +38,7 @@ class Recognizer:
             classes_probabilities = torch.round(torch.softmax(logits[0], 0), decimals=3).cpu().numpy()
             predicted_class_idx = np.argmax(classes_probabilities)
 
-            return self.subjects[predicted_class_idx], classes_probabilities[predicted_class_idx]
+            return self.subjects[predicted_class_idx], classes_probabilities[predicted_class_idx], True
 
     def is_valid_window(self, window):
         return self.task.validate_for_task(window)[0]
