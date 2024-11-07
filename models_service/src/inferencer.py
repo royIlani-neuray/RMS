@@ -12,7 +12,21 @@ class Inferencer:
     def translate(self, prediction_input):
         window = []
         for frame in prediction_input["frames"]:
-            window.append()
+            frame_points = []
+            for idx in range(len(frame["range"])):
+                point = [
+                    idx,
+                    None,
+                    None,
+                    None,
+                    frame["velocity"][idx],
+                    frame["intensity"][idx],
+                    frame["azimuth"][idx],
+                    frame["elevation"][idx],
+                    frame["range"][idx]
+                ]
+                frame_points.append(point)
+            window.append(frame_points)
         return window
     
     def run(self, window):
