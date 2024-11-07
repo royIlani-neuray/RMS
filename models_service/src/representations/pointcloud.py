@@ -12,12 +12,12 @@ class PointCloud(Base):
 
     def __init__(self, args):
         super().__init__(args)
-        self.window_size = args.window_size
-        self.window_shift = args.window_shift
-        self.bad_frames_threshold = args.bad_frames_threshold
-        self.min_points_in_frame_threshold = args.min_points_in_frame_threshold
-        self.no_data_padding = args.no_data_padding
-        self.polar = args.polar
+        self.window_size = args["num_frames_in_window"]
+        self.window_shift = args["num_overlapped_frames_between_windows"]
+        self.bad_frames_threshold = args["bad_frames_threshold"]
+        self.min_points_in_frame_threshold = args["min_points_in_frame_threshold"]
+        self.no_data_padding = args["no_data_padding"]
+        self.polar = args["polar"]
         self.frame_size = getattr(args, 'frame_size', PADDING_SIZE)
 
     def get_samples_validator(self):

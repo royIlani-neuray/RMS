@@ -53,7 +53,7 @@ class Recognizer:
         class_name = REPRESENTATIONS[representation_type]
         module = importlib.import_module("representations." + class_name.lower())
         representation_class = getattr(module, class_name)
-        return representation_class(self.args)
+        return representation_class(self.config)
 
     def set_strategy(self):
         class_name = STRATEGIES[self.config['model_strategy']]

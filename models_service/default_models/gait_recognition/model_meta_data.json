@@ -25,8 +25,13 @@
     "num_points_in_frame": 128,
     "num_frames_in_window": 32,
     "num_overlapped_frames_between_windows": 8,
+    "bad_frames_threshold": 10, 
+    "min-points-in-frame-threshold": 7,
+    "no_data_padding": false,
+    "polar": true,
     "num_windows_for_decision": 10,
     "decision_method": "majority",
+    "type": "gait_recognition",
     "model_strategy": "MM_GAIT_NET_4D",
     "task": "GAIT",
     "representation_type": "POINT_CLOUD"
