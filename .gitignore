@@ -359,3 +359,4 @@ s3-secrets.env
 set_git_token.sh
 
 .venv/
+.myenv/
