@@ -33,8 +33,6 @@ class Recognizer:
 
             logits, embeddings = self.strategy(data)
 
-            _, predicted = torch.max(logits.data, 1)
-
             classes_probabilities = torch.round(torch.softmax(logits[0], 0), decimals=3).cpu().numpy()
             predicted_class_idx = np.argmax(classes_probabilities)
 
