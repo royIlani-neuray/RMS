@@ -1,7 +1,7 @@
 import json
 import glob
 
-from .gait_recognition.recognizer import Recognizer
+from recognizer import Recognizer
 
 
 class Inferencer:

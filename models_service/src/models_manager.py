@@ -12,7 +12,7 @@ import logging
 import shutil
 from exceptions import *
 from dataclasses import dataclass
-from models.inferencer import Inferencer  
+from inferencer import Inferencer  
 
 DEFAULT_MODELS_PATH = "./default_models"
 MODELS_PATH = "./data/models"
@@ -91,11 +91,9 @@ class ModelsManager(object):
 
         model_data = self._get_model_data(model_name)
 
-        # translation...
         #window = translate(prediction_input)
         
-        #output = model_data.inferencer.run(window)
+        output = model_data.inferencer.run(prediction_input)
 
-        output = "elad" , 100
         logging.info(f"Prediction result - Model: {model_name}, Label: {output[0]}, Confidence: {output[1]}")
         return { "label" : output[0], "confidence" : output[1], "is_valid": output[2] } 

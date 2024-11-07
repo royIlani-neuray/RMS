@@ -27,6 +27,7 @@
     "num_overlapped_frames_between_windows": 8,
     "num_windows_for_decision": 10,
     "decision_method": "majority",
-    "type": "gait_recognition",
-    "model_strategy": "MM_GAIT_NET_4D"
+    "model_strategy": "MM_GAIT_NET_4D",
+    "task": "GAIT",
+    "representation_type": "POINT_CLOUD"
 }

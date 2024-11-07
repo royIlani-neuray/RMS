@@ -1,8 +1,9 @@
 import torch
 import importlib
 import numpy as np
+from torch_geometric.data import Data
 
-from .constants import STRATEGIES
+from constants import STRATEGIES, TASKS, REPRESENTATIONS
 
 
 class Recognizer:
@@ -10,18 +11,25 @@ class Recognizer:
         self.config = config
         self.pretrained_model_path = pretrained_model_path
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.task = self.set_task(self.config["task"])
+        self.representation = self.set_representation(self.config["representation_type"])
         self.strategy = self.set_strategy()(config=self.config,
                                             device=self.device,
                                             pretrained_model_path=self.pretrained_model_path,
                                             mode='test')
+
         self.subjects = self.config["base_labels"]
 
     def recognize(self, window):
+        if not self.is_valid_window(window):
+            return None, None
+
         self.strategy.model.eval()
 
         with torch.no_grad():
-            window = torch.tensor(window)
-            data = window.to(self.device)
+            data = self.representation.create_sample_representation(window)
+            data = Data(**data)
+            data = data.to(self.device)
 
             logits, embeddings = self.strategy(data)
 
@@ -32,8 +40,25 @@ class Recognizer:
 
             return self.subjects[predicted_class_idx], classes_probabilities[predicted_class_idx]
 
+    def is_valid_window(self, window):
+        return self.task.validate_for_task(window)[0]
+
+    def set_task(self, task):
+        class_name = TASKS[task]
+        module = importlib.import_module("tasks." + class_name.lower())
+        task_class = getattr(module, class_name)
+        return task_class()
+
+    def set_representation(self, representation_type):
+        class_name = REPRESENTATIONS[representation_type]
+        module = importlib.import_module("representations." + class_name.lower())
+        representation_class = getattr(module, class_name)
+        return representation_class(self.args)
+
     def set_strategy(self):
         class_name = STRATEGIES[self.config['model_strategy']]
-        module = importlib.import_module("." + self.config['model_strategy'].lower(), 'models.gait_recognition')
+        module = importlib.import_module("." + self.config['model_strategy'].lower(), 'models.recognition')
 
         return getattr(module, class_name)
+
+
